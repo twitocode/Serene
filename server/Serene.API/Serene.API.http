@@ -4,3 +4,8 @@ GET {{Serene_API_HostAddress}}/health/
 Accept: application/json
 
 ###
+
+GET {{Serene_API_HostAddress}}/health-authorized/
+Accept: application/json
+
+###

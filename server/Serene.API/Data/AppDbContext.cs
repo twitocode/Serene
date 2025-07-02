@@ -1,12 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Serene.API.Common;
 using Serene.API.Data.Entities;
 
 namespace Serene.API.Data;
 
-public class AppDbContext(IConfiguration configuration, DbContextOptions options) : DbContext
+public class AppDbContext(IConfiguration configuration, DbContextOptions options)
+    : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
-    public DbSet<User> Users { get; set; }
     public DbSet<Journal> Journals { get; set; }
     public DbSet<Preference> UserPreferences { get; set; }
     public DbSet<Resource> Resources { get; set; }
@@ -26,14 +28,14 @@ public class AppDbContext(IConfiguration configuration, DbContextOptions options
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<User>(entity => { });
+
 
         //Journal---------------------------------------
-
         modelBuilder.Entity<Journal>(entity =>
         {
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("now()");
-
 
             entity.Property(e => e.Activities)
                 .HasConversion(
