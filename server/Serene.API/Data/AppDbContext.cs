@@ -1,0 +1,82 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Serene.API.Common;
+using Serene.API.Data.Entities;
+
+namespace Serene.API.Data;
+
+public class AppDbContext(IConfiguration configuration, DbContextOptions options) : DbContext
+{
+    public DbSet<User> Users { get; set; }
+    public DbSet<Journal> Journals { get; set; }
+    public DbSet<Preference> UserPreferences { get; set; }
+    public DbSet<Resource> Resources { get; set; }
+    public DbSet<MoodEntry> MoodEntries { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseNpgsql(configuration.GetConnectionString(MagicStrings.DatabaseConnectionStringName), o => o
+            .SetPostgresVersion(15, 12)
+            .UseNodaTime()
+            .MapEnum<MoodType>("mood")
+            .MapEnum<ResourceType>("resource_type")
+        ).UseSnakeCaseNamingConvention();
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+
+        //Journal---------------------------------------
+
+        modelBuilder.Entity<Journal>(entity =>
+        {
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()");
+
+
+            entity.Property(e => e.Activities)
+                .HasConversion(
+                    v => v.Select(x => x.ToString()).ToList(),
+                    v => v.Select(Enum.Parse<ActivityType>).ToList()
+                );
+        });
+
+
+        //Mood------------------------------------------
+        modelBuilder
+            .Entity<MoodEntry>()
+            .Property(e => e.CreatedAt)
+            .HasDefaultValueSql("now()");
+
+        //Resource--------------------------------------
+        modelBuilder
+            .Entity<Resource>()
+            .Property(e => e.CreatedAt)
+            .HasDefaultValueSql("now()");
+
+        //Preference------------------------------------
+        modelBuilder
+            .Entity<Preference>()
+            .Property(e => e.CreatedAt)
+            .HasDefaultValueSql("now()");
+
+        modelBuilder.Entity<Preference>(entity =>
+        {
+            entity.HasKey(p => p.UserId);
+
+            // Configure the one-to-one relationship
+            entity.HasOne(p => p.User) // Preference has one User
+                .WithOne(u => u.UserPreferences) // User has one Preference
+                .HasForeignKey<Preference>(p => p.UserId); // UserId is the FK on Preference
+
+            entity.Property(p => p.Theme)
+                .IsRequired();
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()");
+
+            entity.Property(p => p.PageLock).IsRequired(false); // Make nullable
+        });
+    }
+}
