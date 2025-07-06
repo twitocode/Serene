@@ -16,6 +16,8 @@ public enum Gender
 public class User : IdentityUser<Guid>, IEntity
 {
     public string FirstName { get; set; }
+
+
     public string LastName { get; set; }
 
     [NotMapped] public string FullName => $"{FirstName} {LastName}";

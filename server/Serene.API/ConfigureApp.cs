@@ -11,7 +11,7 @@ public static class ConfigureApp
     public static async Task Configure(this WebApplication app)
     {
         app.UseSerilogRequestLogging();
-        //app.UseCors();
+        app.UseCors();
 
         app.UseHttpsRedirection();
         app.UseAuthentication();

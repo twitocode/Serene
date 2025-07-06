@@ -10,7 +10,7 @@ using Serene.API.Features.Auth.Services;
 
 namespace Serene.API.Features.Auth.Endpoints;
 
-public class Login : IEndpoint
+public class Login(ILogger<Login> logger) : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -25,31 +25,39 @@ public class Login : IEndpoint
             .WithTags(Tags.Auth);
     }
 
-    private static async Task<Result<string>> Handle(LoginRequest loginRequest,
+    private async Task<Result<string>> Handle(LoginRequest loginRequest,
         UserManager<User> userManager, IJwtService jwtService)
     {
         var user = await userManager.FindByEmailAsync(loginRequest.Email);
 
-        if (user is null || !await userManager.CheckPasswordAsync(user, loginRequest.Password))
-            return Result<string>.BadRequest(
-                new Error("", $"User not found with email {loginRequest.Email} or password was invalid")
-            );
+        if (user is not null)
+        {
+            if (string.IsNullOrEmpty(user.PasswordHash)) logger.LogWarning("User does not have a password");
+            if (!await userManager.CheckPasswordAsync(user, loginRequest.Password))
+                return Result<string>.BadRequest(
+                    new Error("", "Password was invalid or registered with an external provider")
+                );
 
-        var (accessToken, expirationDate) = jwtService.GenerateToken(user);
-        var refreshToken = jwtService.GenerateRefreshToken();
+            var (accessToken, expirationDate) = jwtService.GenerateToken(user);
+            var refreshToken = jwtService.GenerateRefreshToken();
 
-        var refreshTokenExpirationDate = DateTime.UtcNow.AddDays(7);
-        user.RefreshToken = refreshToken;
-        user.RefreshTokenExpirationDate = refreshTokenExpirationDate.ToInstant();
+            var refreshTokenExpirationDate = DateTime.UtcNow.AddDays(7);
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpirationDate = refreshTokenExpirationDate.ToInstant();
 
-        var result = await userManager.UpdateAsync(user);
-        if (!result.Succeeded)
-            return Result<string>.InternalServerError(new Error("", "Failed to update user with tokens"));
+            var result = await userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+                return Result<string>.InternalServerError(new Error("", "Failed to update user with tokens"));
 
-        jwtService.WriteAuthTokenAsHttpOnlyCookie("ACCESS_TOKEN", accessToken, expirationDate);
-        jwtService.WriteAuthTokenAsHttpOnlyCookie("REFRESH_TOKEN", refreshToken, refreshTokenExpirationDate);
+            jwtService.WriteAuthTokenAsHttpOnlyCookie("ACCESS_TOKEN", accessToken, expirationDate);
+            jwtService.WriteAuthTokenAsHttpOnlyCookie("REFRESH_TOKEN", refreshToken, refreshTokenExpirationDate);
 
-        return Result<string>.Success("Successfully logged in");
+            return Result<string>.Success("Successfully logged in");
+        }
+
+        return Result<string>.BadRequest(
+            new Error("", $"User not found with email {loginRequest.Email}")
+        );
     }
 }
 

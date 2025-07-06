@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Threading.RateLimiting;
 using FluentValidation;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -129,25 +129,45 @@ public static class ConfigureServices
             {
                 o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                o.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                // o.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultSignInScheme =
+                    IdentityConstants.ExternalScheme; // Use Identity's external scheme for external logins
             })
             //Add cookie -> add Google -> add jwt VERY IMPORTANT
-            .AddCookie()
+            // .AddCookie()
             .AddGoogle(o =>
             {
                 var clientId = builder.Configuration["Authentication:Google:ClientId"];
-                var clientSecret = builder.Configuration["Authentication:Google:ClientId"];
+                var clientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
 
                 if (clientId == null) throw new ArgumentNullException(nameof(clientId));
-
                 if (clientSecret == null) throw new ArgumentNullException(nameof(clientSecret));
 
                 o.ClientId = clientId;
                 o.ClientSecret = clientSecret;
-                o.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                // o.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                o.SignInScheme = IdentityConstants.ExternalScheme;
+
+                // IMPORTANT: Add the scopes to request additional profile information
+                o.Scope.Add("profile"); // This implicitly includes userinfo.profile and picture
+                o.Scope.Add("https://www.googleapis.com/auth/user.gender.read");
+                o.Scope.Add("https://www.googleapis.com/auth/user.addresses.read"); // For country claim
+
+                // Map Google claims to your application's claims if needed (optional here,
+                // as we're directly using the values to populate User properties)
+                o.ClaimActions.MapJsonKey(ClaimTypes.Gender, "gender");
+                o.ClaimActions.MapJsonKey(ClaimTypes.Country,
+                    "country"); // Google may not provide this directly, 'locale' is more common for initial country code
+                o.ClaimActions.MapJsonKey("picture", "picture"); // Map the profile picture URL
+                o.ClaimActions.MapJsonKey(ClaimTypes.GivenName, "given_name");
+                o.ClaimActions.MapJsonKey(ClaimTypes.Surname, "family_name");
+                o.ClaimActions.MapJsonKey("locale", "locale"); // To get locale which can infer country
             })
             .AddJwtBearer(options =>
             {
+                var issuers = builder.Configuration.GetSection("JwtOptions:Issuers").Get<string[]>();
+                var audiences = builder.Configuration.GetSection("JwtOptions:Audiences").Get<string[]>();
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     IssuerSigningKey = JwtService.SecurityKey(builder.Configuration["JwtOptions:Secret"]!),
@@ -156,20 +176,15 @@ public static class ConfigureServices
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ClockSkew = TimeSpan.Zero,
-                    ValidIssuer = builder.Configuration["JwtOptions:Issuer"],
-                    ValidAudiences = new List<string?>
-                    {
-                        builder.Configuration["JwtOptions:Audience"],
-                        "https://localhost:7105"
-                    }
+                    ValidIssuers = issuers,
+                    ValidAudiences = audiences
                 };
-
 
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = async context =>
                     {
-                        Log.Information("JWT Token received");
+                        Log.Information("JWT Authentication Request Received");
                         //the token to valid from the request's cookies
                         var accessToken = context.Request.Cookies["ACCESS_TOKEN"];
                         if (string.IsNullOrEmpty(accessToken))
@@ -191,9 +206,6 @@ public static class ConfigureServices
                     OnChallenge = async context =>
                     {
                         Log.Information("JWT Token Authentication Failed");
-                        Log.Error("AuthenticateFailure type: {Type}, message: {Message}",
-                            context.AuthenticateFailure?.GetType().FullName,
-                            context.AuthenticateFailure?.Message);
 
                         context.HandleResponse();
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -204,7 +216,7 @@ public static class ConfigureServices
                             context.Error = "JWT.InvalidToken";
                         if (string.IsNullOrEmpty(context.ErrorDescription))
                             context.ErrorDescription = "This request requires a valid JWT access token to be provided";
-                    
+
 
                         switch (context.AuthenticateFailure)
                         {
@@ -248,7 +260,8 @@ public static class ConfigureServices
                                 break;
                             default:
                                 context.Error = "JWT.UnknownError";
-                                context.ErrorDescription = context.AuthenticateFailure?.Message ??  "An unknown error occurred during authentication.";
+                                context.ErrorDescription = context.AuthenticateFailure?.Message ??
+                                                           "An unknown error occurred during authentication.";
                                 Log.Error("No authentication exception: likely no token was provided.");
                                 break;
                         }

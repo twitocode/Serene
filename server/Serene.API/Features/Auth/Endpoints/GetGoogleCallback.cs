@@ -7,6 +7,7 @@ using NodaTime.Extensions;
 using Serene.API.Common;
 using Serene.API.Common.Exceptions;
 using Serene.API.Common.Results;
+using Serene.API.Data;
 using Serene.API.Data.Entities;
 using Serene.API.Features.Auth.Services;
 
@@ -15,10 +16,10 @@ namespace Serene.API.Features.Auth.Endpoints;
 /// <summary>
 ///     Called from the client
 /// </summary>
-public class GetGoogleCallback : IEndpoint
+public class GetGoogleCallback(ILogger<GetGoogleCallback> logger) : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app) =>
-        app.MapGet("/auth/login/callback", Handle)
+        app.MapGet("/auth/login/google/callback", Handle)
             .WithName("GoogleLoginCallback")
             .WithSummary("Callback for Google logins")
             .WithTags(Tags.Auth);
@@ -42,6 +43,7 @@ public class GetGoogleCallback : IEndpoint
         user.RefreshTokenExpirationDate = refreshTokenExpirationDate.ToInstant();
 
         var updateResult = await userManager.UpdateAsync(user);
+        foreach (var updateResultError in updateResult.Errors) logger.LogError(updateResultError.Description);
         if (!updateResult.Succeeded)
             throw new ApiException(StatusCodes.Status500InternalServerError, "UpdateUserError",
                 "Failed to update user with tokens");
@@ -63,14 +65,20 @@ public class GetGoogleCallback : IEndpoint
         var user = await userManager.FindByEmailAsync(email);
         if (user is not null) return Result<User>.Success(user);
 
+        var (firstName, lastName, countryCode, userGender, avatarUrl) = GetClaimDetails(principal);
+
         //make a new user
         user = new User
         {
             Email = email,
-            UserName = principal.Identity.Name,
-            CountryCode = principal.FindFirstValue(ClaimTypes.Country) ?? string.Empty,
-            Pronouns = string.Empty,
-            Gender = Enum.Parse<Gender>(principal.FindFirstValue(ClaimTypes.Gender) ?? string.Empty)
+            UserName = principal.FindFirstValue(ClaimTypes.Email) ?? string.Empty,
+            CountryCode = countryCode,
+            Pronouns = string
+                .Empty, //redirect to profile-setup to finish setting up profile b/c google does not support it
+            Gender = userGender,
+            FirstName = firstName,
+            LastName = lastName,
+            AvatarUrl = avatarUrl ?? DefaultData.DefaultAvatarUrl
         };
 
         var result = await userManager.CreateAsync(user);
@@ -84,5 +92,40 @@ public class GetGoogleCallback : IEndpoint
             Result<User>.InternalServerError(new Error("", "Failed to add Google login to user"));
 
         return Result<User>.Success(user);
+    }
+
+    private (string? firstName, string? lastName, string countryCode, Gender userGender, string? avatarUrl)
+        GetClaimDetails(ClaimsPrincipal principal)
+    {
+        // Extract First Name and Last Name
+        var firstName = principal.FindFirstValue(ClaimTypes.GivenName);
+        var lastName = principal.FindFirstValue(ClaimTypes.Surname);
+        if (string.IsNullOrEmpty(lastName)) lastName = "<none>";
+
+        // Extract Country Code (from ClaimTypes.Country or locale if not available)
+        var countryCode = principal.FindFirstValue(ClaimTypes.Country) ??
+                          principal.FindFirstValue("locale")?.Split('-').LastOrDefault()?.ToUpper() ??
+                          string.Empty;
+
+        // Extract Gender
+        var userGender = Gender.None;
+        var genderClaimValue = principal.FindFirstValue(ClaimTypes.Gender);
+
+        if (!string.IsNullOrEmpty(genderClaimValue))
+        {
+            // Google's ClaimTypes.Gender can be "male", "female", "other", or "unspecified"
+            if (genderClaimValue.Equals("male", StringComparison.OrdinalIgnoreCase))
+                userGender = Gender.Male;
+            else if (genderClaimValue.Equals("female", StringComparison.OrdinalIgnoreCase))
+                userGender = Gender.Female;
+            else if (genderClaimValue.Equals("non-binary", StringComparison.OrdinalIgnoreCase))
+                userGender = Gender.NonBinary;
+            else
+                userGender = Gender.None; //Ask the user later on the client-side
+        }
+
+        // Extract AvatarUrl (from 'picture' claim, often available with profile scope)
+        var avatarUrl = principal.FindFirstValue("picture");
+        return (firstName, lastName, countryCode, userGender, avatarUrl);
     }
 }

@@ -11,8 +11,8 @@ namespace Serene.API.Features.Auth.Services;
 public class JwtOptions
 {
     public required string Secret { get; init; }
-    public required string Audience { get; init; }
-    public required string Issuer { get; init; }
+    public required string[] Audiences { get; init; }
+    public required string[] Issuers { get; init; }
     public required int ExpirationTimeInMinutes { get; init; }
 }
 
@@ -30,14 +30,16 @@ public class JwtService(IOptions<JwtOptions> options, IHttpContextAccessor httpC
             [
                 new Claim(ClaimTypes.NameIdentifier, user.Email ?? user.UserName ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Iss, options.Value.Issuer),
-                new Claim(JwtRegisteredClaimNames.Aud, options.Value.Audience),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Iss, options.Value.Issuers[0]),
+                new Claim(JwtRegisteredClaimNames.Aud, options.Value.Audiences[0]),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
+                    ClaimValueTypes.Integer64)
             ],
             signingCredentials: signingCredentials,
             expires: expirationDate,
-            issuer: options.Value.Issuer,
-            audience: options.Value.Audience
+            issuer: options.Value.Issuers[0],
+            audience: options.Value.Audiences[0]
         );
 
         return (new JwtSecurityTokenHandler().WriteToken(token), expirationDate);
@@ -60,7 +62,8 @@ public class JwtService(IOptions<JwtOptions> options, IHttpContextAccessor httpC
                 Secure = true,
                 HttpOnly = true,
                 IsEssential = true,
-                SameSite = SameSiteMode.Strict
+                //SameSite = SameSiteMode.Strict //only works for server
+                SameSite = SameSiteMode.Lax //better balance
             });
     }
 
