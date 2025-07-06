@@ -4,28 +4,28 @@ namespace Serene.API.Common.Filters;
 
 public class RequestValidationFilter<TRequest>(
     ILogger<RequestValidationFilter<TRequest>> logger,
-    IValidator<TRequest>? validator = null) : IEndpointFilter
+    IValidator<TRequest> validator) : IEndpointFilter
 {
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
-        var requestName = typeof(TRequest).FullName;
-
-        if (validator is null)
-        {
-            logger.LogInformation("{Request}: No validator configured.", requestName);
-            return await next(context);
-        }
-
-        logger.LogInformation("{Request}: Validating...", requestName);
         var request = context.Arguments.OfType<TRequest>().First();
         var validationResult = await validator.ValidateAsync(request, context.HttpContext.RequestAborted);
+
         if (!validationResult.IsValid)
         {
-            logger.LogWarning("{Request}: Validation failed.", requestName);
-            return TypedResults.ValidationProblem(validationResult.ToDictionary());
+            logger.LogWarning("{Request}: Validation failed with {Validator}",
+                $"{context.HttpContext.Request.Method} => {context.HttpContext.Request.Path}", typeof(TRequest).Name);
+
+            return TypedResults.ValidationProblem(
+                validationResult.ToDictionary(), 
+                validationResult.ToString(),
+                title: $"{typeof(TRequest).Name} Validation failed",
+                instance: $"{context.HttpContext.Request.Method} => {context.HttpContext.Request.Path}");
         }
 
-        logger.LogInformation("{Request}: Validation succeeded.", requestName);
+        logger.LogInformation("{Request}: Validation succeed with {Validator}",
+            $"{context.HttpContext.Request.Method} => {context.HttpContext.Request.Path}", typeof(TRequest).Name);
+        
         return await next(context);
     }
 }

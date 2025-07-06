@@ -1,4 +1,6 @@
-﻿namespace System.Security.Claims;
+﻿using System.Security.Claims;
+
+namespace Serene.API.Features.Auth;
 
 public static class ClaimsPrincipalExtensions
 {

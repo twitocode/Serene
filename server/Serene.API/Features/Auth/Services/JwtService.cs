@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serene.API.Data.Entities;
 
-namespace Serene.API.Auth.Services;
+namespace Serene.API.Features.Auth.Services;
 
 public class JwtOptions
 {

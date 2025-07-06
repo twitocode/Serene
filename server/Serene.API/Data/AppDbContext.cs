@@ -21,6 +21,7 @@ public class AppDbContext(IConfiguration configuration, DbContextOptions options
             .UseNodaTime()
             .MapEnum<MoodType>("mood")
             .MapEnum<ResourceType>("resource_type")
+            .MapEnum<Gender>("gender")
         ).UseSnakeCaseNamingConvention();
     }
 

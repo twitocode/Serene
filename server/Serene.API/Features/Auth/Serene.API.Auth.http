@@ -1,0 +1,4 @@
+@Serene_API_HostAddress = http://localhost:5026
+
+GET {{Serene_API_HostAddress}}/auth/register/
+Accept: application/json

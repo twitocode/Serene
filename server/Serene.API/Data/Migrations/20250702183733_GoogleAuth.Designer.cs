@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -14,9 +15,11 @@ using Serene.API.Data.Entities;
 namespace Serene.API.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250702183733_GoogleAuth")]
+    partial class GoogleAuth
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -403,11 +406,6 @@ namespace Serene.API.Data.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("email_confirmed");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("first_name");
-
                     b.Property<Gender>("Gender")
                         .HasColumnType("gender")
                         .HasColumnName("gender");
@@ -415,11 +413,6 @@ namespace Serene.API.Data.Migrations
                     b.Property<Instant>("LastMoodCheckin")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_mood_checkin");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("last_name");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean")

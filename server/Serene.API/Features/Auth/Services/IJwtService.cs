@@ -1,6 +1,6 @@
 ﻿using Serene.API.Data.Entities;
 
-namespace Serene.API.Auth.Services;
+namespace Serene.API.Features.Auth.Services;
 
 public interface IJwtService
 {

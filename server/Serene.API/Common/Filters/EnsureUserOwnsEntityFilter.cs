@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Serene.API.Common.Results;
 using Serene.API.Data;
 using Serene.API.Data.Entities;
+using Serene.API.Features.Auth;
 
 namespace Serene.API.Common.Filters;
 
