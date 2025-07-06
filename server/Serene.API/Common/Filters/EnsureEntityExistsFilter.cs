@@ -11,6 +11,7 @@ public class EnsureEntityExistsFilter<TRequest, TEntity>(AppDbContext database, 
 {
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
+        //TODO: maybe get id from jwt?
         var request = context.Arguments.OfType<TRequest>().Single();
         var cancellationToken = context.HttpContext.RequestAborted;
         var id = idSelector(request);

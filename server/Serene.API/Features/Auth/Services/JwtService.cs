@@ -34,7 +34,7 @@ public class JwtService(IOptions<JwtOptions> options, IHttpContextAccessor httpC
                 new Claim(JwtRegisteredClaimNames.Aud, options.Value.Audience),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             ],
-            signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature),
+            signingCredentials: signingCredentials,
             expires: expirationDate,
             issuer: options.Value.Issuer,
             audience: options.Value.Audience
@@ -64,8 +64,5 @@ public class JwtService(IOptions<JwtOptions> options, IHttpContextAccessor httpC
             });
     }
 
-    public static SymmetricSecurityKey SecurityKey(string key)
-    {
-        return new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key));
-    }
+    public static SymmetricSecurityKey SecurityKey(string key) => new(Encoding.ASCII.GetBytes(key));
 }

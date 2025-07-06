@@ -31,13 +31,13 @@ public class GetGoogleCallback : IEndpoint
 
         var loginResult = await LoginWithGoogleAsync(result.Principal, userManager);
 
-        if (!loginResult.IsSuccess) return loginResult.MapTypedResult();
+        if (!loginResult.IsSuccess) return loginResult.MapTypedResult(context);
         var user = loginResult.Value;
 
         var (accessToken, expirationDate) = jwtService.GenerateToken(user);
         var refreshToken = jwtService.GenerateRefreshToken();
 
-        var refreshTokenExpirationDate = DateTime.UtcNow.AddDays(value: 7);
+        var refreshTokenExpirationDate = DateTime.UtcNow.AddDays(7);
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpirationDate = refreshTokenExpirationDate.ToInstant();
 
@@ -54,12 +54,11 @@ public class GetGoogleCallback : IEndpoint
     private async Task<Result<User>> LoginWithGoogleAsync(ClaimsPrincipal principal, UserManager<User> userManager)
     {
         if (principal.Identity is null)
-            return Result<User>.Failure(Error.BadRequest("Identity is null"));
+            return Result<User>.BadRequest(new Error("", "Identity is null"));
 
         var email = principal.FindFirstValue(ClaimTypes.Email);
         if (email is null)
-            //REDO
-            throw new Exception("Email not found");
+            return Result<User>.BadRequest(new Error("", "Email not found"));
 
         var user = await userManager.FindByEmailAsync(email);
         if (user is not null) return Result<User>.Success(user);
@@ -75,13 +74,15 @@ public class GetGoogleCallback : IEndpoint
         };
 
         var result = await userManager.CreateAsync(user);
-        if (!result.Succeeded) Result<User>.Failure(Error.InternalServerError("Failed to create user with Google"));
+        if (!result.Succeeded)
+            Result<User>.InternalServerError(new Error("", "Failed to create user with Google"));
 
         var info = new UserLoginInfo("Google", principal.FindFirstValue(ClaimTypes.Email) ?? string.Empty, "Google");
         var loginResult = await userManager.AddLoginAsync(user, info);
 
         if (!loginResult.Succeeded)
-            Result<User>.Failure(Error.InternalServerError("Failed to add Google login to user"));
+            Result<User>.InternalServerError(new Error("", "Failed to add Google login to user"));
+
         return Result<User>.Success(user);
     }
 }

@@ -15,10 +15,10 @@ public class Login : IEndpoint
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
         return app.MapPost("/auth/login", async ([FromBody] LoginRequest loginRequest,
-                UserManager<User> userManager, IJwtService jwtService) =>
+                UserManager<User> userManager, IJwtService jwtService, HttpContext context) =>
             {
                 var result = await Handle(loginRequest, userManager, jwtService);
-                return result.MapTypedResult();
+                return result.MapTypedResult(context);
             })
             .WithSummary("Logs in a user")
             .WithRequestValidation<LoginRequest>()
@@ -31,8 +31,9 @@ public class Login : IEndpoint
         var user = await userManager.FindByEmailAsync(loginRequest.Email);
 
         if (user is null || !await userManager.CheckPasswordAsync(user, loginRequest.Password))
-            return Result<string>.Failure(
-                Error.BadRequest($"User not found with email {loginRequest.Email} or password was invalid"));
+            return Result<string>.BadRequest(
+                new Error("", $"User not found with email {loginRequest.Email} or password was invalid")
+            );
 
         var (accessToken, expirationDate) = jwtService.GenerateToken(user);
         var refreshToken = jwtService.GenerateRefreshToken();
@@ -43,7 +44,7 @@ public class Login : IEndpoint
 
         var result = await userManager.UpdateAsync(user);
         if (!result.Succeeded)
-            return Result<string>.Failure(Error.InternalServerError("Failed to update user with tokens"));
+            return Result<string>.InternalServerError(new Error("", "Failed to update user with tokens"));
 
         jwtService.WriteAuthTokenAsHttpOnlyCookie("ACCESS_TOKEN", accessToken, expirationDate);
         jwtService.WriteAuthTokenAsHttpOnlyCookie("REFRESH_TOKEN", refreshToken, refreshTokenExpirationDate);

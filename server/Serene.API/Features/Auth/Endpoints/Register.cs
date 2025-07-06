@@ -14,10 +14,10 @@ public class Register : IEndpoint
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
         return app.MapPost("/auth/register", async ([FromBody] RegisterRequest registerRequest,
-                UserManager<User> userManager) =>
+                UserManager<User> userManager, HttpContext context) =>
             {
                 var result = await Handle(registerRequest, userManager);
-                return result.MapTypedResult();
+                return result.MapTypedResult(context);
             })
             .WithSummary("Registers a user")
             .WithRequestValidation<RegisterRequest>()
@@ -30,7 +30,7 @@ public class Register : IEndpoint
         var userExists = await userManager.FindByEmailAsync(registerRequest.Email) is not null;
 
         if (userExists)
-            return Result<string>.Failure(Error.BadRequest("User already exists with the email"));
+            return Result<string>.BadRequest(new Error("", "User already exists with the email"));
 
         var user = new User
         {
@@ -49,7 +49,7 @@ public class Register : IEndpoint
         var result = await userManager.CreateAsync(user);
 
         if (!result.Succeeded)
-            return Result<string>.Failure(Error.InternalServerError("Failed to create user"));
+            return Result<string>.InternalServerError(new Error("", "Failed to create user"));
 
 
         return Result<string>.Success("Successfully created user");

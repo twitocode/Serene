@@ -11,7 +11,7 @@ public static class ConfigureApp
     public static async Task Configure(this WebApplication app)
     {
         app.UseSerilogRequestLogging();
-        app.UseCors();
+        //app.UseCors();
 
         app.UseHttpsRedirection();
         app.UseAuthentication();
@@ -28,7 +28,7 @@ public static class ConfigureApp
 
         var versionedGroup = app.MapGroup("v1");
         app.MapEndpoints(versionedGroup);
-        
+
         await app.EnsureDatabaseCreated();
     }
 
@@ -41,7 +41,7 @@ public static class ConfigureApp
 
     private static void UseScalar(this WebApplication app)
     {
-        app.MapScalarApiReference(o => { o.WithTitle("Serene API"); });
+        app.MapScalarApiReference(options => { });
     }
 
     private static void UseMiddleware(this WebApplication app)

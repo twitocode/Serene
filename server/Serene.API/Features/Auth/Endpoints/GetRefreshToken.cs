@@ -20,7 +20,7 @@ public class GetRefreshToken : IEndpoint
                 IJwtService jwtService, AppDbContext db) =>
             {
                 var result = await Handle(getRefreshTokenRequest, httpContext, jwtService, db);
-                return result.MapTypedResult();
+                return result.MapTypedResult(httpContext);
             })
             .WithSummary("Gets a new refresh token")
             .WithRequestValidation<GetRefreshTokenRequest>()
@@ -34,10 +34,10 @@ public class GetRefreshToken : IEndpoint
 
         var user = await GetUserByRefreshToken(getRefreshTokenRequest.RefreshToken, db);
         if (user == null)
-            return Result<string>.Failure(Error.InternalServerError("Unable to retrieve user from refresh token"));
+            return Result<string>.InternalServerError(new Error("", "Unable to retrieve user from refresh token"));
 
         if (user.RefreshTokenExpirationDate < DateTime.UtcNow.ToInstant())
-            return Result<string>.Failure(Error.BadRequest("Refresh token already expired"));
+            return Result<string>.BadRequest(new Error("", "Refresh token already expired"));
 
         var (accessToken, expirationDate) = jwtService.GenerateToken(user);
         var refreshToken = jwtService.GenerateRefreshToken();

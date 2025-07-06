@@ -24,6 +24,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime" Version="9.0.4"/>
         <PackageReference Include="Npgsql.NodaTime" Version="9.0.3"/>
@@ -36,7 +37,6 @@
         <Folder Include="Common\Middleware\"/>
         <Folder Include="Data\Migrations\"/>
         <Folder Include="Features\"/>
-        <Folder Include="Features\Mood\" />
     </ItemGroup>
 
 </Project>
