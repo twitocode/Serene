@@ -41,6 +41,7 @@
         <Folder Include="Common\Middleware\"/>
         <Folder Include="Data\Migrations\"/>
         <Folder Include="Features\"/>
+        <Folder Include="Features\Auth\Requests\" />
     </ItemGroup>
 
 </Project>
