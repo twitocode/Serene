@@ -20,6 +20,6 @@ public class GetServerHealthAuthorized : IEndpoint
 
     private static Result<string> Handle()
     {
-        return Result<string>.Success("Healthy server 🎂😊");
+        return Result<string>.Success("Healthy authorization server 🎂😊");
     }
 }

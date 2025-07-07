@@ -22,4 +22,13 @@ public static class ClaimsPrincipalExtensions
 
         return email;
     }
+    
+    public static bool GetIsSetupCompleted(this ClaimsPrincipal claimsPrincipal)
+    {
+        var pc = claimsPrincipal.FindFirstValue("profile-completed");
+        if (pc is null || !bool.TryParse(pc, out var completed))
+            throw new InvalidOperationException("Profile completed is not provided from token");
+
+        return completed;
+    }
 }

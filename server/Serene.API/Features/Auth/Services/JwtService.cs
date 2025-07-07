@@ -34,7 +34,8 @@ public class JwtService(IOptions<JwtOptions> options, IHttpContextAccessor httpC
                 new Claim(JwtRegisteredClaimNames.Aud, options.Value.Audiences[0]),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
-                    ClaimValueTypes.Integer64)
+                    ClaimValueTypes.Integer64),
+                new Claim("profile-completed", user.IsSetupCompleted.ToString())
             ],
             signingCredentials: signingCredentials,
             expires: expirationDate,

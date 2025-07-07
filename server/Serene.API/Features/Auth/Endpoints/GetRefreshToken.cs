@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NodaTime.Extensions;
@@ -15,11 +16,11 @@ public class GetRefreshToken() : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
-        return app.MapPost("/auth/refresh-token", async ([FromBody] GetRefreshTokenRequest getRefreshTokenRequest, IJwtService jwtService, AppDbContext db,
+        return app.MapPost("/auth/refresh-token", async ([FromBody] GetRefreshTokenRequest getRefreshTokenRequest, IJwtService jwtService, AppDbContext db, UserManager<User> userManager,
                 HttpContext httpContext, CancellationToken cancellationToken
             ) =>
             {
-                var result = await Handle(getRefreshTokenRequest, jwtService, db, httpContext, cancellationToken);
+                var result = await Handle(getRefreshTokenRequest, jwtService, db, userManager, httpContext, cancellationToken);
                 return result.MapTypedResult(httpContext);
             })
             .WithSummary("Gets a new refresh token")
@@ -27,7 +28,7 @@ public class GetRefreshToken() : IEndpoint
             .WithTags(Tags.Auth);
     }
 
-    private async Task<Result<string>> Handle(GetRefreshTokenRequest getRefreshTokenRequest, IJwtService jwtService, AppDbContext db, HttpContext httpContext,
+    private async Task<Result<string>> Handle(GetRefreshTokenRequest getRefreshTokenRequest, IJwtService jwtService, AppDbContext db, UserManager<User> userManager, HttpContext httpContext,
         CancellationToken cancellationToken)
     {
         getRefreshTokenRequest.RefreshToken = httpContext.Request.Cookies["REFRESH_TOKEN"] ?? "";
@@ -45,7 +46,11 @@ public class GetRefreshToken() : IEndpoint
         var refreshTokenExpirationDate = DateTime.UtcNow.AddDays(7);
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpirationDate = refreshTokenExpirationDate.ToInstant();
-
+        
+        var result = await userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+            return Result<string>.InternalServerError(new Error("", "Failed to update user with refresh tokens"));
+        
         jwtService.WriteAuthTokenAsHttpOnlyCookie("ACCESS_TOKEN", accessToken, expirationDate);
         jwtService.WriteAuthTokenAsHttpOnlyCookie("REFRESH_TOKEN", refreshToken, refreshTokenExpirationDate);
         return Result<string>.Success("Successfully registered user and assigned token");

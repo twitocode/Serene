@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Text.RegularExpressions;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Serene.API.Common;
@@ -36,34 +37,22 @@ public class Register : IEndpoint
         var user = new User
         {
             UserName = registerRequest.Email,
-            FirstName = registerRequest.FirstName,
-            LastName = registerRequest.LastName,
-            CountryCode = registerRequest.CountryCode,
             Email = registerRequest.Email,
-            AvatarUrl = registerRequest.AvatarUrl ?? DefaultData.DefaultAvatarUrl,
-            Pronouns = registerRequest.Pronouns,
-            Gender = Enum.Parse<Gender>(registerRequest.Gender) //might break later
         };
 
         user.PasswordHash = userManager.PasswordHasher.HashPassword(user, registerRequest.Password);
-
         var result = await userManager.CreateAsync(user);
 
         if (!result.Succeeded)
             return Result<string>.InternalServerError(new Error("", "Failed to create user"));
 
-        return Result<string>.Success("Successfully created user, sent confirmation email");
+        return Result<string>.Success("Successfully created user");
     }
 
     public record RegisterRequest(
         string Email,
-        string Password,
-        string FirstName,
-        string LastName,
-        string CountryCode,
-        string? AvatarUrl,
-        string Pronouns,
-        string Gender);
+        string Password
+      );
 
     public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
     {
@@ -71,31 +60,20 @@ public class Register : IEndpoint
         {
             RuleFor(x => x.Email)
                 .NotEmpty()
-                .EmailAddress();
+                .WithMessage("Email is required.")
+                .Must(BeAValidEmailAddress)
+                .WithMessage("Invalid email address.");
 
             RuleFor(x => x.Password)
                 .NotEmpty().MinimumLength(6).MaximumLength(30);
-
-            RuleFor(x => x.CountryCode)
-                // .Length(2)
-                .NotEmpty();
-
-            // RuleFor(x => x.AvatarUrl)
-            //     .NotEmpty();
-
-            RuleFor(x => x.Pronouns)
-                .NotEmpty();
-
-            //make a custom rule for enums
-            RuleFor(x => x.Gender)
-                .IsEnumName(typeof(Gender), false)
-                .NotEmpty();
-
-            RuleFor(x => x.FirstName)
-                .NotEmpty();
-
-            RuleFor(x => x.LastName)
-                .NotEmpty();
+        }
+        
+        
+        private bool BeAValidEmailAddress(string email)
+        {
+            // Basic regex for email validation (can be replaced with a more robust one)
+            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+            return Regex.IsMatch(email, pattern);
         }
     }
 }

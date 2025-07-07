@@ -309,7 +309,9 @@ namespace Serene.API.Data.Migrations
                         .HasColumnName("page_lock");
 
                     b.Property<int>("Theme")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
+                        .HasDefaultValue(0)
                         .HasColumnName("theme");
 
                     b.HasKey("UserId")
@@ -341,7 +343,9 @@ namespace Serene.API.Data.Migrations
                         .HasColumnName("markdown_link");
 
                     b.Property<ResourceType>("ResourceType")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("resource_type")
+                        .HasDefaultValue(ResourceType.Article)
                         .HasColumnName("resource_type");
 
                     b.Property<string>("Summary")
@@ -376,8 +380,9 @@ namespace Serene.API.Data.Migrations
                         .HasColumnName("access_failed_count");
 
                     b.Property<string>("AvatarUrl")
-                        .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text")
+                        .HasDefaultValue("")
                         .HasColumnName("avatar_url");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -385,14 +390,17 @@ namespace Serene.API.Data.Migrations
                         .HasColumnType("text")
                         .HasColumnName("concurrency_stamp");
 
-                    b.Property<string>("CountryCode")
-                        .IsRequired()
+                    b.Property<string>("Country")
                         .HasColumnType("text")
-                        .HasColumnName("country_code");
+                        .HasColumnName("country");
 
                     b.Property<Instant>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
+
+                    b.Property<Instant>("DateOfBirth")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_of_birth");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -404,20 +412,26 @@ namespace Serene.API.Data.Migrations
                         .HasColumnName("email_confirmed");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("first_name");
 
                     b.Property<Gender>("Gender")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("gender")
+                        .HasDefaultValue(Gender.None)
                         .HasColumnName("gender");
+
+                    b.Property<bool>("IsSetupCompleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_setup_completed");
 
                     b.Property<Instant>("LastMoodCheckin")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_mood_checkin");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("last_name");
 
@@ -452,7 +466,6 @@ namespace Serene.API.Data.Migrations
                         .HasColumnName("phone_number_confirmed");
 
                     b.Property<string>("Pronouns")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("pronouns");
 

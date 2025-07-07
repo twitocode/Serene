@@ -42,7 +42,7 @@ public class AppDbContext(IConfiguration configuration, DbContextOptions options
                 .HasDefaultValue(false)
                 .IsRequired();
 
-            entity.Property(e => e.CountryCode)
+            entity.Property(e => e.Country)
                 .IsRequired(false);
 
             entity.Property(e => e.AvatarUrl)
@@ -54,8 +54,8 @@ public class AppDbContext(IConfiguration configuration, DbContextOptions options
 
             entity.Property(e => e.Gender)
                 .HasDefaultValue(Gender.None)
-                .IsRequired(false);
-            
+                .IsRequired();
+
             entity.Property(e => e.DateOfBirth); //maybe add something
             entity.Property(e => e.LastMoodCheckin); //maybe add something
             entity.Property(e => e.RefreshToken); //maybe add something
@@ -88,27 +88,27 @@ public class AppDbContext(IConfiguration configuration, DbContextOptions options
         {
             entity.Property(e => e.MarkdownLink)
                 .IsRequired(false);
-            
+
             entity.Property(e => e.Title)
                 .IsRequired();
-            
+
             entity.Property(e => e.Summary)
                 .IsRequired();
-            
+
             entity.Property(e => e.Thumbnail)
                 .IsRequired(false);
-            
+
             entity.Property(e => e.Author)
                 .IsRequired();
-            
+
             entity.Property(e => e.ResourceType)
                 .HasDefaultValue(ResourceType.Article)
                 .IsRequired();
-            
+
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("now()");
         });
-      
+
 
         //Preference------------------------------------
         modelBuilder.Entity<Preference>(entity =>
@@ -123,10 +123,10 @@ public class AppDbContext(IConfiguration configuration, DbContextOptions options
             entity.Property(p => p.Theme)
                 .HasDefaultValue(Theme.Light)
                 .IsRequired();
-            
+
             entity.Property(p => p.PageLock)
                 .IsRequired(false); // Make nullable
-            
+
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("now()");
         });

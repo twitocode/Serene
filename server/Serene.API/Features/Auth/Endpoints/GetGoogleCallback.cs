@@ -74,13 +74,9 @@ public class GetGoogleCallback(ILogger<GetGoogleCallback> logger)
         user = new User
         {
             Email = email,
-            UserName = principal.FindFirstValue(ClaimTypes.Email) ?? string.Empty,
-            CountryCode = countryCode,
-            Pronouns = string
-                .Empty, //redirect to profile-setup to finish setting up profile b/c google does not support it
-            Gender = userGender,
-            FirstName = firstName,
-            LastName = lastName,
+            FirstName = firstName ?? string.Empty,
+            LastName = lastName ?? string.Empty,
+            UserName = email.Split("@")[0] + Guid.NewGuid(), //test@test.com -> test2232-12323-23-23- temporary username
             AvatarUrl = avatarUrl ?? DefaultData.DefaultAvatarUrl,
             EmailConfirmed = true
         };
