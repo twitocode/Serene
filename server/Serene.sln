@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serene.API", "Serene.API\Serene.API.csproj", "{5D13B3B2-DAE7-4532-B4D7-FB4F4539C740}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serene.API", "src\Serene.API\Serene.API.csproj", "{5D13B3B2-DAE7-4532-B4D7-FB4F4539C740}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serene.Tests", "Serene.Tests\Serene.Tests.csproj", "{FA241386-2B45-467A-A3CB-69F03BE6ED5C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serene.Tests", "tests\Serene.Tests\Serene.Tests.csproj", "{FA241386-2B45-467A-A3CB-69F03BE6ED5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
