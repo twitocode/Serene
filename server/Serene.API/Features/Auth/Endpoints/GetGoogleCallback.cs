@@ -78,7 +78,8 @@ public class GetGoogleCallback(ILogger<GetGoogleCallback> logger) : IEndpoint
             Gender = userGender,
             FirstName = firstName,
             LastName = lastName,
-            AvatarUrl = avatarUrl ?? DefaultData.DefaultAvatarUrl
+            AvatarUrl = avatarUrl ?? DefaultData.DefaultAvatarUrl,
+            EmailConfirmed = true
         };
 
         var result = await userManager.CreateAsync(user);

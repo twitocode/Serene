@@ -4,19 +4,20 @@ using Microsoft.AspNetCore.Mvc;
 using Serene.API.Common;
 using Serene.API.Common.Extensions;
 using Serene.API.Common.Results;
+using Serene.API.Common.Services;
 using Serene.API.Data;
 using Serene.API.Data.Entities;
 
 namespace Serene.API.Features.Auth.Endpoints;
 
-public class Register : IEndpoint
+public class Register(IEmailService emailService) : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
         return app.MapPost("/auth/register", async ([FromBody] RegisterRequest registerRequest,
                 UserManager<User> userManager, HttpContext context) =>
             {
-                var result = await Handle(registerRequest, userManager);
+                var result = await Handle(registerRequest, userManager, emailService);
                 return result.MapTypedResult(context);
             })
             .WithSummary("Registers a user")
@@ -25,7 +26,7 @@ public class Register : IEndpoint
     }
 
     private static async Task<Result<string>> Handle(RegisterRequest registerRequest,
-        UserManager<User> userManager)
+        UserManager<User> userManager,  IEmailService emailService)
     {
         var userExists = await userManager.FindByEmailAsync(registerRequest.Email) is not null;
 
@@ -51,8 +52,10 @@ public class Register : IEndpoint
         if (!result.Succeeded)
             return Result<string>.InternalServerError(new Error("", "Failed to create user"));
 
+        if (!await emailService.SendConfirmationEmail(user.Email, 123456))
+            return Result<string>.InternalServerError(new Error("", "Could not send email to user"));
 
-        return Result<string>.Success("Successfully created user");
+        return Result<string>.Success("Successfully created user, sent confirmation email");
     }
 
     public record RegisterRequest(

@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Serene.API.Common;
 using Serene.API.Common.Results;
+using Serene.API.Common.Services;
 using Serene.API.Data;
 using Serene.API.Data.Entities;
 using Serene.API.Features.Auth.Endpoints;
@@ -37,6 +38,8 @@ public static class ConfigureServices
         builder.AddIdentityOptions();
         builder.AddAuthentication();
         builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
+        
+        builder.Services.AddSingleton<IEmailService, SmtpEmailService>();
     }
 
     private static IServiceCollection AddEndpoints(this IServiceCollection services, Assembly assembly)
