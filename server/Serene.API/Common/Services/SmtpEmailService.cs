@@ -5,25 +5,28 @@ namespace Serene.API.Common.Services;
 
 public class SmtpEmailService(IConfiguration configuration, ILogger<SmtpEmailService> logger) : IEmailService
 {
-    private readonly string Username = configuration["Email:Username"] ?? throw new ArgumentNullException("Email:Username");
-    private readonly string Password = configuration["Email:Password"] ?? throw new ArgumentNullException("Email:Password");
-    
-    public async Task<bool> SendConfirmationEmail(string userEmail, int code)
+    private readonly string Password =
+        configuration["Email:Password"] ?? throw new ArgumentNullException("Email:Password");
+
+    private readonly string Username =
+        configuration["Email:Username"] ?? throw new ArgumentNullException("Email:Username");
+
+    public async Task<bool> SendConfirmationEmail(string userEmail, string code, CancellationToken cancellationToken)
     {
-        MailMessage mailMessage = new MailMessage();
+        var mailMessage = new MailMessage();
         mailMessage.From = new MailAddress(Username, "Serene"); // Use a verified sender
         mailMessage.To.Add(new MailAddress(userEmail));
         mailMessage.Subject = "Confirm your email for Serene";
         mailMessage.IsBodyHtml = true;
         mailMessage.Body = $"""Enter in this code into Serene to confirm your email: <strong>{code}</strong>""";
 
-        using SmtpClient smtpClient = new SmtpClient("smtp.google.com", 587); // Your SMTP host and port
+        using var smtpClient = new SmtpClient("smtp.google.com", 587); // Your SMTP host and port
         smtpClient.Credentials = new NetworkCredential(Username, Password);
         smtpClient.EnableSsl = true; // Use SSL/TLS
 
         try
         {
-            await smtpClient.SendMailAsync(mailMessage);
+            await smtpClient.SendMailAsync(mailMessage, cancellationToken);
             return true;
         }
         catch (SmtpFailedRecipientsException ex) // Catch this first if you need specific handling

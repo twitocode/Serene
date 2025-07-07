@@ -11,15 +11,15 @@ using Serene.API.Features.Auth.Services;
 
 namespace Serene.API.Features.Auth.Endpoints;
 
-public class GetRefreshToken : IEndpoint
+public class GetRefreshToken() : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
-        return app.MapPost("/auth/refresh-token", async ([FromBody] GetRefreshTokenRequest getRefreshTokenRequest,
-                HttpContext httpContext,
-                IJwtService jwtService, AppDbContext db) =>
+        return app.MapPost("/auth/refresh-token", async ([FromBody] GetRefreshTokenRequest getRefreshTokenRequest, IJwtService jwtService, AppDbContext db,
+                HttpContext httpContext, CancellationToken cancellationToken
+            ) =>
             {
-                var result = await Handle(getRefreshTokenRequest, httpContext, jwtService, db);
+                var result = await Handle(getRefreshTokenRequest, jwtService, db, httpContext, cancellationToken);
                 return result.MapTypedResult(httpContext);
             })
             .WithSummary("Gets a new refresh token")
@@ -27,12 +27,12 @@ public class GetRefreshToken : IEndpoint
             .WithTags(Tags.Auth);
     }
 
-    private async Task<Result<string>> Handle(GetRefreshTokenRequest getRefreshTokenRequest,
-        HttpContext httpContext, IJwtService jwtService, AppDbContext db)
+    private async Task<Result<string>> Handle(GetRefreshTokenRequest getRefreshTokenRequest, IJwtService jwtService, AppDbContext db, HttpContext httpContext,
+        CancellationToken cancellationToken)
     {
         getRefreshTokenRequest.RefreshToken = httpContext.Request.Cookies["REFRESH_TOKEN"] ?? "";
 
-        var user = await GetUserByRefreshToken(getRefreshTokenRequest.RefreshToken, db);
+        var user = await GetUserByRefreshToken(getRefreshTokenRequest.RefreshToken, db, cancellationToken);
         if (user == null)
             return Result<string>.InternalServerError(new Error("", "Unable to retrieve user from refresh token"));
 
@@ -51,9 +51,9 @@ public class GetRefreshToken : IEndpoint
         return Result<string>.Success("Successfully registered user and assigned token");
     }
 
-    private async Task<User?> GetUserByRefreshToken(string refreshToken, AppDbContext db)
+    private async Task<User?> GetUserByRefreshToken(string refreshToken, AppDbContext db, CancellationToken cancellationToken)
     {
-        var user = await db.Users.FirstOrDefaultAsync(x => x.RefreshToken == refreshToken);
+        var user = await db.Users.FirstOrDefaultAsync(x => x.RefreshToken == refreshToken, cancellationToken);
         return user;
     }
 

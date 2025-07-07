@@ -4,20 +4,20 @@ using Microsoft.AspNetCore.Mvc;
 using Serene.API.Common;
 using Serene.API.Common.Extensions;
 using Serene.API.Common.Results;
-using Serene.API.Common.Services;
 using Serene.API.Data;
 using Serene.API.Data.Entities;
 
 namespace Serene.API.Features.Auth.Endpoints;
 
-public class Register(IEmailService emailService) : IEndpoint
+public class Register : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
         return app.MapPost("/auth/register", async ([FromBody] RegisterRequest registerRequest,
-                UserManager<User> userManager, HttpContext context) =>
+                UserManager<User> userManager,
+                HttpContext context, CancellationToken cancellationToken) =>
             {
-                var result = await Handle(registerRequest, userManager, emailService);
+                var result = await Handle(registerRequest, userManager, cancellationToken);
                 return result.MapTypedResult(context);
             })
             .WithSummary("Registers a user")
@@ -25,8 +25,8 @@ public class Register(IEmailService emailService) : IEndpoint
             .WithTags(Tags.Auth);
     }
 
-    private static async Task<Result<string>> Handle(RegisterRequest registerRequest,
-        UserManager<User> userManager,  IEmailService emailService)
+    private async Task<Result<string>> Handle(RegisterRequest registerRequest, UserManager<User> userManager,
+        CancellationToken cancellationToken)
     {
         var userExists = await userManager.FindByEmailAsync(registerRequest.Email) is not null;
 
@@ -51,9 +51,6 @@ public class Register(IEmailService emailService) : IEndpoint
 
         if (!result.Succeeded)
             return Result<string>.InternalServerError(new Error("", "Failed to create user"));
-
-        if (!await emailService.SendConfirmationEmail(user.Email, 123456))
-            return Result<string>.InternalServerError(new Error("", "Could not send email to user"));
 
         return Result<string>.Success("Successfully created user, sent confirmation email");
     }

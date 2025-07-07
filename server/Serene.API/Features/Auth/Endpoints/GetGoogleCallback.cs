@@ -16,7 +16,8 @@ namespace Serene.API.Features.Auth.Endpoints;
 /// <summary>
 ///     Called from the client
 /// </summary>
-public class GetGoogleCallback(ILogger<GetGoogleCallback> logger) : IEndpoint
+public class GetGoogleCallback(ILogger<GetGoogleCallback> logger)
+    : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app) =>
         app.MapGet("/auth/login/google/callback", Handle)
@@ -24,13 +25,14 @@ public class GetGoogleCallback(ILogger<GetGoogleCallback> logger) : IEndpoint
             .WithSummary("Callback for Google logins")
             .WithTags(Tags.Auth);
 
-    private async Task<IResult> Handle([FromQuery] string returnUrl,
-        UserManager<User> userManager, HttpContext context, IJwtService jwtService)
+    private async Task<IResult> Handle([FromQuery] string returnUrl, UserManager<User> userManager,
+        IJwtService jwtService, HttpContext context,
+        CancellationToken cancellationToken)
     {
         var result = await context.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
         if (!result.Succeeded) return TypedResults.Unauthorized();
 
-        var loginResult = await LoginWithGoogleAsync(result.Principal, userManager);
+        var loginResult = await LoginWithGoogleAsync(result.Principal, userManager, cancellationToken);
 
         if (!loginResult.IsSuccess) return loginResult.MapTypedResult(context);
         var user = loginResult.Value;
@@ -53,7 +55,8 @@ public class GetGoogleCallback(ILogger<GetGoogleCallback> logger) : IEndpoint
         return TypedResults.Redirect(returnUrl);
     }
 
-    private async Task<Result<User>> LoginWithGoogleAsync(ClaimsPrincipal principal, UserManager<User> userManager)
+    private async Task<Result<User>> LoginWithGoogleAsync(ClaimsPrincipal principal, UserManager<User> userManager,
+        CancellationToken cancellationToken)
     {
         if (principal.Identity is null)
             return Result<User>.BadRequest(new Error("", "Identity is null"));

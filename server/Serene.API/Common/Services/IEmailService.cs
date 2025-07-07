@@ -2,5 +2,5 @@
 
 public interface IEmailService
 {
-    public Task<bool> SendConfirmationEmail(string userEmail, int code);
+    public Task<bool> SendConfirmationEmail(string userEmail, string code, CancellationToken cancellationToken);
 }

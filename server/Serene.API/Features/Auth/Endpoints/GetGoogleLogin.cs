@@ -14,8 +14,8 @@ public class GetGoogleLogin : IEndpoint
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app) => app.MapGet("/auth/login/google", Handle)
         .WithSummary("Logs in a user with Google").WithTags(Tags.Auth);
 
-    private static ChallengeHttpResult Handle([FromQuery] string returnUrl, LinkGenerator linkGenerator,
-        SignInManager<User> signInManager, HttpContext context)
+    private ChallengeHttpResult Handle([FromQuery] string returnUrl, HttpContext context, LinkGenerator linkGenerator,
+        SignInManager<User> signInManager)
     {
         var properties = signInManager.ConfigureExternalAuthenticationProperties("Google",
             linkGenerator.GetPathByName(context, "GoogleLoginCallback") + $"?returnUrl={returnUrl}");

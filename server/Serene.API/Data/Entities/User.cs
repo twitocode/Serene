@@ -16,18 +16,18 @@ public enum Gender
 public class User : IdentityUser<Guid>, IEntity
 {
     public string FirstName { get; set; }
-
-
     public string LastName { get; set; }
 
     [NotMapped] public string FullName => $"{FirstName} {LastName}";
 
+    public bool IsSetupCompleted { get; set; }
     public string CountryCode { get; set; }
     public string AvatarUrl { get; set; } = DefaultData.DefaultAvatarUrl;
     public string Pronouns { get; set; }
     public Gender Gender { get; set; } = Gender.None;
-
-    //public Instant DateOfBirth { get; set; }
+    
+    //used to send age-specific content; will allow all ages don't worry
+    public Instant DateOfBirth { get; set; }
     public Instant LastMoodCheckin { get; set; }
 
     public string? RefreshToken { get; set; }

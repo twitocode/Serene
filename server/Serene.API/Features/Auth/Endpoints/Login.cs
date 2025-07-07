@@ -14,10 +14,12 @@ public class Login(ILogger<Login> logger) : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
-        return app.MapPost("/auth/login", async ([FromBody] LoginRequest loginRequest,
-                UserManager<User> userManager, IJwtService jwtService, HttpContext context) =>
+        return app.MapPost("/auth/login", async ([FromBody] LoginRequest loginRequest, UserManager<User> userManager,
+                IJwtService jwtService,
+                CancellationToken cancellationToken,
+                HttpContext context) =>
             {
-                var result = await Handle(loginRequest, userManager, jwtService);
+                var result = await Handle(loginRequest, userManager, jwtService, cancellationToken);
                 return result.MapTypedResult(context);
             })
             .WithSummary("Logs in a user")
@@ -25,8 +27,9 @@ public class Login(ILogger<Login> logger) : IEndpoint
             .WithTags(Tags.Auth);
     }
 
-    private async Task<Result<string>> Handle(LoginRequest loginRequest,
-        UserManager<User> userManager, IJwtService jwtService)
+    private async Task<Result<string>> Handle(LoginRequest loginRequest, UserManager<User> userManager,
+        IJwtService jwtService,
+        CancellationToken cancellationToken)
     {
         var user = await userManager.FindByEmailAsync(loginRequest.Email);
 

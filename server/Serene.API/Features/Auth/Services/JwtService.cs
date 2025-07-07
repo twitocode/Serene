@@ -28,7 +28,7 @@ public class JwtService(IOptions<JwtOptions> options, IHttpContextAccessor httpC
         (
             claims:
             [
-                new Claim(ClaimTypes.NameIdentifier, user.Email ?? user.UserName ?? string.Empty),
+                new Claim(ClaimTypes.Email, user.Email ?? user.UserName ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Iss, options.Value.Issuers[0]),
                 new Claim(JwtRegisteredClaimNames.Aud, options.Value.Audiences[0]),

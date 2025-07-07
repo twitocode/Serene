@@ -7,8 +7,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Resend;
 using Serene.API.Common;
 using Serene.API.Common.Results;
 using Serene.API.Common.Services;
@@ -18,6 +21,7 @@ using Serene.API.Features.Auth.Endpoints;
 using Serene.API.Features.Auth.Services;
 using Serene.API.Features.Health.Endpoints;
 using Serene.API.Features.Mood.Endpoints;
+using Serene.API.Features.Users.Endpoints;
 using Serilog;
 
 namespace Serene.API;
@@ -37,9 +41,9 @@ public static class ConfigureServices
         builder.AddAppCors();
         builder.AddIdentityOptions();
         builder.AddAuthentication();
+        builder.AddHybridCache();
         builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
-        
-        builder.Services.AddSingleton<IEmailService, SmtpEmailService>();
+        builder.AddEmailService();
     }
 
     private static IServiceCollection AddEndpoints(this IServiceCollection services, Assembly assembly)
@@ -59,12 +63,56 @@ public static class ConfigureServices
         builder.Services.AddOpenApi(options => { });
     }
 
+    private static void AddEmailService(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddOptions();
+        builder.Services.AddHttpClient<ResendClient>();
+        builder.Services.Configure<ResendClientOptions>(o =>
+        {
+            o.ApiToken = builder.Configuration["Resend:ApiToken"] ??
+                         throw new ArgumentNullException("Resend:ApiToken");
+        });
+
+        builder.Services.AddScoped<IResend>(sp =>
+        {
+            var options = sp.GetRequiredService<IOptionsSnapshot<ResendClientOptions>>();
+            var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+            return new ResendClient(options, httpClientFactory.CreateClient());
+        });
+
+        builder.Services.AddScoped<IEmailService, ResendEmailService>();
+    }
+
+    private static void AddHybridCache(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = builder.Configuration.GetConnectionString("Redis");
+        });
+
+
+        builder.Services.AddHybridCache(options =>
+        {
+            // Maximum size of cached items
+            options.MaximumPayloadBytes = 1024 * 1024 * 10; // 10MB
+            options.MaximumKeyLength = 512;
+
+            // Default timeouts
+            options.DefaultEntryOptions = new HybridCacheEntryOptions
+            {
+                Expiration = TimeSpan.FromMinutes(30),
+                LocalCacheExpiration = TimeSpan.FromMinutes(30)
+            };
+        });
+    }
+
     private static void AddValidators(this WebApplicationBuilder builder)
     {
         //test endpoints
         builder.Services.AddValidatorsFromAssemblyContaining<Register>();
         builder.Services.AddValidatorsFromAssemblyContaining<GetServerHealth>();
         builder.Services.AddValidatorsFromAssemblyContaining<GetLastMoodCheckin>();
+        builder.Services.AddValidatorsFromAssemblyContaining<VerifyConfirmationEmail>();
     }
 
     private static void AddSerilog(this WebApplicationBuilder builder)

@@ -29,7 +29,38 @@ public class AppDbContext(IConfiguration configuration, DbContextOptions options
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<User>(entity => { });
+        //User------------------------------------------
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.Property(e => e.FirstName)
+                .IsRequired(false);
+
+            entity.Property(e => e.LastName)
+                .IsRequired(false);
+
+            entity.Property(e => e.IsSetupCompleted)
+                .HasDefaultValue(false)
+                .IsRequired();
+
+            entity.Property(e => e.CountryCode)
+                .IsRequired(false);
+
+            entity.Property(e => e.AvatarUrl)
+                .HasDefaultValue(DefaultData.DefaultAvatarUrl)
+                .IsRequired(false);
+
+            entity.Property(e => e.Pronouns)
+                .IsRequired(false);
+
+            entity.Property(e => e.Gender)
+                .HasDefaultValue(Gender.None)
+                .IsRequired(false);
+            
+            entity.Property(e => e.DateOfBirth); //maybe add something
+            entity.Property(e => e.LastMoodCheckin); //maybe add something
+            entity.Property(e => e.RefreshToken); //maybe add something
+            entity.Property(e => e.RefreshTokenExpirationDate); //maybe add something
+        });
 
 
         //Journal---------------------------------------
@@ -53,17 +84,33 @@ public class AppDbContext(IConfiguration configuration, DbContextOptions options
             .HasDefaultValueSql("now()");
 
         //Resource--------------------------------------
-        modelBuilder
-            .Entity<Resource>()
-            .Property(e => e.CreatedAt)
-            .HasDefaultValueSql("now()");
+        modelBuilder.Entity<Resource>(entity =>
+        {
+            entity.Property(e => e.MarkdownLink)
+                .IsRequired(false);
+            
+            entity.Property(e => e.Title)
+                .IsRequired();
+            
+            entity.Property(e => e.Summary)
+                .IsRequired();
+            
+            entity.Property(e => e.Thumbnail)
+                .IsRequired(false);
+            
+            entity.Property(e => e.Author)
+                .IsRequired();
+            
+            entity.Property(e => e.ResourceType)
+                .HasDefaultValue(ResourceType.Article)
+                .IsRequired();
+            
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()");
+        });
+      
 
         //Preference------------------------------------
-        modelBuilder
-            .Entity<Preference>()
-            .Property(e => e.CreatedAt)
-            .HasDefaultValueSql("now()");
-
         modelBuilder.Entity<Preference>(entity =>
         {
             entity.HasKey(p => p.UserId);
@@ -74,12 +121,14 @@ public class AppDbContext(IConfiguration configuration, DbContextOptions options
                 .HasForeignKey<Preference>(p => p.UserId); // UserId is the FK on Preference
 
             entity.Property(p => p.Theme)
+                .HasDefaultValue(Theme.Light)
                 .IsRequired();
-
+            
+            entity.Property(p => p.PageLock)
+                .IsRequired(false); // Make nullable
+            
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("now()");
-
-            entity.Property(p => p.PageLock).IsRequired(false); // Make nullable
         });
     }
 }
