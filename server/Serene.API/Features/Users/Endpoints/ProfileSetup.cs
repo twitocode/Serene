@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Hybrid;
 using NodaTime;
-using NodaTime.Extensions;
 using Serene.API.Common;
 using Serene.API.Common.Extensions;
 using Serene.API.Common.Results;
@@ -21,7 +20,7 @@ public record ProfileSetupRequest(
     string LastName,
     string Username,
     string Country,
-    string? AvatarUrl,
+    string AvatarUrl,
     string Pronouns,
     string DateOfBirth,
     string Gender);
@@ -37,7 +36,7 @@ public class ProfileSetupValidator : AbstractValidator<ProfileSetupRequest>
         RuleFor(x => x.LastName)
             .MaximumLength(30)
             .NotEmpty();
-        
+
         RuleFor(x => x.Username)
             .MaximumLength(15)
             .NotEmpty();
@@ -51,11 +50,11 @@ public class ProfileSetupValidator : AbstractValidator<ProfileSetupRequest>
             .When(x => !string.IsNullOrEmpty(x.AvatarUrl));
 
         RuleFor(x => x.Pronouns)
-            .Matches((_) =>
+            .Matches(_ =>
             {
                 const string subjects = "(he|she|it|they)";
                 const string objects = "(him|her|its|them)";
-                
+
                 return $"^{subjects}/{objects}$";
             }, RegexOptions.IgnoreCase)
             .NotEmpty();
@@ -96,7 +95,7 @@ public class ProfileSetupValidator : AbstractValidator<ProfileSetupRequest>
         {
             if (context.User.GetIsSetupCompleted())
                 return Result<string>.Unauthorized(new Error("", "User has already completed their profile"));
-            
+
             var id = context.User.GetUserId();
             var user = await userManager.FindByIdAsync(id.ToString());
 
@@ -105,11 +104,16 @@ public class ProfileSetupValidator : AbstractValidator<ProfileSetupRequest>
                 return Result<string>.BadRequest(new Error("",
                     "The user is already confirmed, you should not be here"));
 
-            user.FirstName = request.FirstName;
-            user.LastName = request.LastName;
+            user.FirstName = string.IsNullOrEmpty(user.FirstName) ? request.FirstName : user.FirstName;
+            user.LastName = string.IsNullOrEmpty(user.LastName) ? request.LastName : user.LastName;
             user.UserName = request.Username;
             user.Country = request.Country;
-            user.AvatarUrl = request.AvatarUrl ?? DefaultData.DefaultAvatarUrl;
+
+            user.AvatarUrl = user.AvatarUrl switch
+            {
+                DefaultData.DefaultAvatarUrl => request.AvatarUrl,
+                _ => user.AvatarUrl
+            };
             user.Pronouns = request.Pronouns;
             user.DateOfBirth = GetUserDateOfBirth(request.DateOfBirth);
             user.Gender = request.Gender.ToGender();
@@ -129,8 +133,8 @@ public class ProfileSetupValidator : AbstractValidator<ProfileSetupRequest>
                 "d",
                 CultureInfo.InvariantCulture,
                 DateTimeStyles.None);
-            
-            DateTime utcDateTime = DateTime.SpecifyKind(parsedDateTime, DateTimeKind.Utc);
+
+            var utcDateTime = DateTime.SpecifyKind(parsedDateTime, DateTimeKind.Utc);
             return Instant.FromDateTimeUtc(utcDateTime);
         }
     }

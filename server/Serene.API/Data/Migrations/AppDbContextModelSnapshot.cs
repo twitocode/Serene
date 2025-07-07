@@ -382,7 +382,7 @@ namespace Serene.API.Data.Migrations
                     b.Property<string>("AvatarUrl")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("text")
-                        .HasDefaultValue("")
+                        .HasDefaultValue("https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg")
                         .HasColumnName("avatar_url");
 
                     b.Property<string>("ConcurrencyStamp")
