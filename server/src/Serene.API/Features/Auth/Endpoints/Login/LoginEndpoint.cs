@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime.Extensions;
 using Serene.API.Common;
@@ -8,9 +7,9 @@ using Serene.API.Common.Results;
 using Serene.API.Data.Entities;
 using Serene.API.Features.Auth.Services;
 
-namespace Serene.API.Features.Auth.Endpoints;
+namespace Serene.API.Features.Auth.Endpoints.Login;
 
-public class Login(ILogger<Login> logger) : IEndpoint
+public class LoginEndpoint(ILogger<LoginEndpoint> logger) : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -64,17 +63,5 @@ public class Login(ILogger<Login> logger) : IEndpoint
     }
 }
 
-public record LoginRequest(string Email, string Password);
 
-public class LoginRequestValidator : AbstractValidator<LoginRequest>
-{
-    public LoginRequestValidator()
-    {
-        RuleFor(x => x.Email)
-            .NotEmpty()
-            .EmailAddress();
 
-        RuleFor(x => x.Password)
-            .NotEmpty().MinimumLength(6).MaximumLength(30);
-    }
-}

@@ -1,5 +1,4 @@
 using System.Text;
-using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
@@ -10,22 +9,22 @@ using Serene.API.Common.Results;
 using Serene.API.Data.Entities;
 using Serene.API.Features.Auth;
 
-namespace Serene.API.Features.Users.Endpoints;
+namespace Serene.API.Features.Users.Endpoints.VerifyConfirmationEmail;
 
 public class VerifyConfirmationEmail : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app) =>
-        app.MapPut("/users/confirmation-email", async ([FromBody] Request request, HttpContext httpContext,
+        app.MapPut("/users/confirmation-email", async ([FromBody] VerifyConfirmationEmailRequest verifyConfirmationEmailRequest, HttpContext httpContext,
                 CancellationToken cancellationToken, HybridCache cache, IDistributedCache dCache,
                 UserManager<User> userManager) =>
             {
-                var result = await Handle(request.Code, cache, dCache, userManager, httpContext, cancellationToken);
+                var result = await Handle(verifyConfirmationEmailRequest.Code, cache, dCache, userManager, httpContext, cancellationToken);
                 return result.MapTypedResult(httpContext);
             })
             .WithTags(Tags.Users)
             .WithSummary("Verify Confirmation Code")
             .RequireAuthorization()
-            .WithRequestValidation<Request>();
+            .WithRequestValidation<VerifyConfirmationEmailRequest>();
 
     private async Task<Result<string>> Handle(string code, HybridCache cache, IDistributedCache dCache,
         UserManager<User> userManager, HttpContext context, CancellationToken cancellationToken)
@@ -54,13 +53,6 @@ public class VerifyConfirmationEmail : IEndpoint
 
     private string EmailCacheKey(Guid id) => $"email-confirmation-code-{id}";
 
-    public record Request(string Code);
 
-    public class VerifyConfirmationEmailValidator : AbstractValidator<Request>
-    {
-        public VerifyConfirmationEmailValidator()
-        {
-            RuleFor(x => x.Code).Length(6).NotNull();
-        }
-    }
+
 }

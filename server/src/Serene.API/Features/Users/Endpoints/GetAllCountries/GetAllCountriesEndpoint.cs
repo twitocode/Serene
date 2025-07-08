@@ -2,9 +2,9 @@
 using Serene.API.Common.Results;
 using Serene.API.Data;
 
-namespace Serene.API.Features.Users.Endpoints;
+namespace Serene.API.Features.Users.Endpoints.GetAllCountries;
 
-public class GetAllCountries : IEndpoint
+public class GetAllCountriesEndpoint : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app) =>
         app.MapGet("/users/countries", () => Result<string[]>.Success(DefaultData.Countries))

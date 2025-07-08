@@ -5,9 +5,9 @@ using Serene.API.Common.Results;
 using Serene.API.Common.Services;
 using Serene.API.Features.Auth;
 
-namespace Serene.API.Features.Users.Endpoints;
+namespace Serene.API.Features.Users.Endpoints.SendConfirmationEmail;
 
-public class SendConfirmationEmail : IEndpoint
+public class SendConfirmationEmailEndpoint : IEndpoint
 {
     private readonly Random _generator = new();
 

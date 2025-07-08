@@ -4,9 +4,9 @@ using Serene.API.Common.Results;
 using Serene.API.Data.Entities;
 using Serene.API.Features.Auth;
 
-namespace Serene.API.Features.Users.Endpoints;
+namespace Serene.API.Features.Users.Endpoints.GetExisitingProfileData;
 
-public class GetExistingProfileData : IEndpoint
+public class GetExistingProfileDataEndpoint : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app) =>
         app.MapGet("/users/setup", async (HttpContext context, UserManager<User> userManager, CancellationToken token) =>

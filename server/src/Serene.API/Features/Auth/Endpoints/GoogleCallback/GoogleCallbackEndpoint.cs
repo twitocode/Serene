@@ -11,12 +11,12 @@ using Serene.API.Data;
 using Serene.API.Data.Entities;
 using Serene.API.Features.Auth.Services;
 
-namespace Serene.API.Features.Auth.Endpoints;
+namespace Serene.API.Features.Auth.Endpoints.GoogleCallback;
 
 /// <summary>
 ///     Called from the client
 /// </summary>
-public class GetGoogleCallback(ILogger<GetGoogleCallback> logger)
+public class GoogleCallbackEndpoint(ILogger<GoogleCallbackEndpoint> logger)
     : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app) =>

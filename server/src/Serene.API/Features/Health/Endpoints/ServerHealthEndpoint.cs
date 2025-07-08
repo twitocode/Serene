@@ -3,7 +3,7 @@ using Serene.API.Common.Results;
 
 namespace Serene.API.Features.Health.Endpoints;
 
-public class GetServerHealth : IEndpoint
+public class ServerHealthEndpoint : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app)
     {

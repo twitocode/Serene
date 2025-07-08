@@ -18,11 +18,14 @@ using Serene.API.Common.Services;
 using Serene.API.Data;
 using Serene.API.Data.Entities;
 using Serene.API.Features.Auth.Endpoints;
+using Serene.API.Features.Auth.Endpoints.Register;
 using Serene.API.Features.Auth.Services;
 using Serene.API.Features.Health.Endpoints;
 using Serene.API.Features.Mood.Endpoints;
 using Serene.API.Features.Users.Endpoints;
+using Serene.API.Features.Users.Endpoints.VerifyConfirmationEmail;
 using Serilog;
+using Serilog.Sinks.OpenTelemetry;
 
 namespace Serene.API;
 
@@ -30,7 +33,7 @@ public static class ConfigureServices
 {
     public static void AddServices(this WebApplicationBuilder builder)
     {
-        builder.AddSerilog();
+        builder.Logging();
         builder.AddOpenApi();
         builder.AddDatabase();
         builder.AddValidators();
@@ -109,18 +112,39 @@ public static class ConfigureServices
     private static void AddValidators(this WebApplicationBuilder builder)
     {
         //test endpoints
-        builder.Services.AddValidatorsFromAssemblyContaining<Register>();
-        builder.Services.AddValidatorsFromAssemblyContaining<GetServerHealth>();
+        builder.Services.AddValidatorsFromAssemblyContaining<RegisterEndpoint>();
+        builder.Services.AddValidatorsFromAssemblyContaining<ServerHealthEndpoint>();
         builder.Services.AddValidatorsFromAssemblyContaining<GetLastMoodCheckin>();
         builder.Services.AddValidatorsFromAssemblyContaining<VerifyConfirmationEmail>();
     }
 
-    private static void AddSerilog(this WebApplicationBuilder builder)
+    private static void Logging(this WebApplicationBuilder builder)
     {
-        builder.Host.UseSerilog((context, configuration) =>
-        {
-            configuration.ReadFrom.Configuration(context.Configuration);
-        });
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .ReadFrom.Configuration(builder.Configuration)
+            .WriteTo.Console()
+            // .WriteTo.OpenTelemetry(x =>
+            // {
+            //     //TODO: set this up later
+            //     x.Endpoint = new Uri(builder.Configuration["Logging:Seq:Endpoint"] ?? throw new ArgumentNullException("Logging:Seq:Endpoint")).ToString();
+            //     x.Protocol = OtlpProtocol.HttpProtobuf;
+            //     x.Headers = new Dictionary<string, string>()
+            //     {
+            //         {
+            //             "X-Seq-ApiKey",
+            //             builder.Configuration["Logging:Seq:ApiKey"] ??
+            //             throw new ArgumentNullException("Loggin:Seq:ApiKey")
+            //         }
+            //     };
+            // })
+            .CreateBootstrapLogger();
+        
+        builder.Services.AddSerilog((services, lc) => lc
+            .ReadFrom.Configuration(builder.Configuration)
+            .ReadFrom.Services(services)
+            .Enrich.FromLogContext()
+            .WriteTo.Console());
     }
 
     private static void AddAppCors(this WebApplicationBuilder builder)

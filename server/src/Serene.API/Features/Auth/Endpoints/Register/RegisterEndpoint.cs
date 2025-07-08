@@ -5,12 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Serene.API.Common;
 using Serene.API.Common.Extensions;
 using Serene.API.Common.Results;
-using Serene.API.Data;
 using Serene.API.Data.Entities;
 
-namespace Serene.API.Features.Auth.Endpoints;
+namespace Serene.API.Features.Auth.Endpoints.Register;
 
-public class Register : IEndpoint
+public class RegisterEndpoint : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -49,11 +48,6 @@ public class Register : IEndpoint
         return Result<string>.Success("Successfully created user");
     }
 
-    public record RegisterRequest(
-        string Email,
-        string Password
-      );
-
     public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
     {
         public RegisterRequestValidator()
@@ -67,7 +61,6 @@ public class Register : IEndpoint
             RuleFor(x => x.Password)
                 .NotEmpty().MinimumLength(6).MaximumLength(30);
         }
-        
         
         private bool BeAValidEmailAddress(string email)
         {

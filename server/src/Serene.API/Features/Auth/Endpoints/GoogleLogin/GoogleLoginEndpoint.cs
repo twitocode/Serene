@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using Serene.API.Common;
 using Serene.API.Data.Entities;
 
-namespace Serene.API.Features.Auth.Endpoints;
+namespace Serene.API.Features.Auth.Endpoints.GoogleLogin;
 
 /// <summary>
 ///     Called from the client
 /// </summary>
-public class GetGoogleLogin : IEndpoint
+public class GoogleLoginEndpoint : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app) => app.MapGet("/auth/login/google", Handle)
         .WithSummary("Logs in a user with Google").WithTags(Tags.Auth);
