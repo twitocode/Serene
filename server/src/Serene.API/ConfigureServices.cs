@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.RateLimiting;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
@@ -17,15 +18,12 @@ using Serene.API.Common.Results;
 using Serene.API.Common.Services;
 using Serene.API.Data;
 using Serene.API.Data.Entities;
-using Serene.API.Features.Auth.Endpoints;
 using Serene.API.Features.Auth.Endpoints.Register;
 using Serene.API.Features.Auth.Services;
 using Serene.API.Features.Health.Endpoints;
 using Serene.API.Features.Mood.Endpoints;
-using Serene.API.Features.Users.Endpoints;
 using Serene.API.Features.Users.Endpoints.VerifyConfirmationEmail;
 using Serilog;
-using Serilog.Sinks.OpenTelemetry;
 
 namespace Serene.API;
 
@@ -139,7 +137,7 @@ public static class ConfigureServices
             //     };
             // })
             .CreateBootstrapLogger();
-        
+
         builder.Services.AddSerilog((services, lc) => lc
             .ReadFrom.Configuration(builder.Configuration)
             .ReadFrom.Services(services)
@@ -245,7 +243,8 @@ public static class ConfigureServices
 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    IssuerSigningKey = JwtService.SecurityKey(builder.Configuration["JwtOptions:Secret"]!),
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["JwtOptions:Secret"]!)),
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,

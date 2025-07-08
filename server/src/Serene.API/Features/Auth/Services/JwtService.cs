@@ -18,7 +18,7 @@ public class JwtOptions
 
 public class JwtService(IOptions<JwtOptions> options, IHttpContextAccessor httpContextAccessor) : IJwtService
 {
-    public (string token, DateTime expirationDate) GenerateToken(User user)
+    public virtual (string token, DateTime expirationDate) GenerateToken(User user)
     {
         var key = SecurityKey(options.Value.Secret);
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -46,7 +46,7 @@ public class JwtService(IOptions<JwtOptions> options, IHttpContextAccessor httpC
         return (new JwtSecurityTokenHandler().WriteToken(token), expirationDate);
     }
 
-    public string GenerateRefreshToken()
+    public virtual string GenerateRefreshToken()
     {
         var randomNumber = new byte[64];
         var rng = RandomNumberGenerator.Create();
@@ -54,7 +54,7 @@ public class JwtService(IOptions<JwtOptions> options, IHttpContextAccessor httpC
         return Convert.ToBase64String(randomNumber);
     }
 
-    public void WriteAuthTokenAsHttpOnlyCookie(string cookieName, string token, DateTime expirationTime)
+    public virtual void WriteAuthTokenAsHttpOnlyCookie(string cookieName, string token, DateTime expirationTime)
     {
         httpContextAccessor.HttpContext?.Response.Cookies.Append(cookieName, token,
             new CookieOptions
@@ -68,5 +68,5 @@ public class JwtService(IOptions<JwtOptions> options, IHttpContextAccessor httpC
             });
     }
 
-    public static SymmetricSecurityKey SecurityKey(string key) => new(Encoding.ASCII.GetBytes(key));
+    public SymmetricSecurityKey SecurityKey(string key) => new(Encoding.ASCII.GetBytes(key));
 }

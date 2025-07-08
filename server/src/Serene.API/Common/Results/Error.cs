@@ -1,6 +1,6 @@
 ﻿namespace Serene.API.Common.Results;
 
-public class Error
+public record Error
 {
     public Error(string code, string message)
     {

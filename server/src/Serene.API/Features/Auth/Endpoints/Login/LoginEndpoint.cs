@@ -26,7 +26,7 @@ public class LoginEndpoint(ILogger<LoginEndpoint> logger) : IEndpoint
             .WithTags(Tags.Auth);
     }
 
-    private async Task<Result<string>> Handle(LoginRequest loginRequest, UserManager<User> userManager,
+    public async Task<Result<string>> Handle(LoginRequest loginRequest, UserManager<User> userManager,
         IJwtService jwtService,
         CancellationToken cancellationToken)
     {
@@ -62,6 +62,3 @@ public class LoginEndpoint(ILogger<LoginEndpoint> logger) : IEndpoint
         );
     }
 }
-
-
-
