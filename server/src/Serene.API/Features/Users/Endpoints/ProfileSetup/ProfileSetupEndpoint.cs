@@ -66,14 +66,13 @@ public class ProfileSetupEndpoint : IEndpoint
             return Result<string>.Success($"Successfully completed User {user.Email}'s profile");
         }
 
-        private Instant GetUserDateOfBirth(string dob)
+        private LocalDate GetUserDateOfBirth(string dob)
         {
-            var parsedDateTime = DateTime.ParseExact(dob,
-                "d",
+            var parsedDateTime = DateOnly.ParseExact(dob,
+                "O", //2007-04-19
                 CultureInfo.InvariantCulture,
                 DateTimeStyles.None);
 
-            var utcDateTime = DateTime.SpecifyKind(parsedDateTime, DateTimeKind.Utc);
-            return Instant.FromDateTimeUtc(utcDateTime);
+            return LocalDate.FromDateOnly(parsedDateTime);
         }
     }

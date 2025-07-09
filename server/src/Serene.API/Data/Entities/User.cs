@@ -27,8 +27,8 @@ public class User : IdentityUser<Guid>, IEntity
     public Gender Gender { get; set; } = Gender.None;
 
     //used to send age-specific content; will allow all ages don't worry
-    public Instant DateOfBirth { get; set; } //YYYY-MM-DD format
-    public Instant LastMoodCheckin { get; set; }
+    public LocalDate DateOfBirth { get; set; } //YYYY-MM-DD format
+    public LocalDate LastMoodCheckin { get; set; }
 
     public string? RefreshToken { get; set; }
     public Instant? RefreshTokenExpirationDate { get; set; }

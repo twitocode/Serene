@@ -8,8 +8,9 @@ public enum ActivityType
 
 public class Journal : IEntity, IOwnedEntity
 {
-    public required string Title { get; set; }
-    public required string Content { get; set; }
+    public string Title { get; set; }
+    public string? WhatsOnYourMind { get; set; }
+    public string? WhatAreYouGratefulForToday { get; set; }
     public List<ActivityType> Activities { get; set; } = [];
     public bool IsDraft { get; set; }
 

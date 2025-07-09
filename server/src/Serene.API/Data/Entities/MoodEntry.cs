@@ -4,19 +4,32 @@ namespace Serene.API.Data.Entities;
 
 public enum MoodType
 {
+    Anxious,
+    Sad,
+    Neutral,
     Happy,
-    Sad
+    Fantastic,
+}
+
+public enum EnergyLevelType
+{
+    Exhausted, Low, Moderate, High, Refreshed
 }
 
 public class MoodEntry : IEntity, IOwnedEntity
 {
-    public MoodType MoodType { get; set; }
-
+    public MoodType OverallMood { get; set; }
+    public EnergyLevelType EnergyLevel { get; set; }
+    
+    //Only asked in journal entries
+    public string? BestPartOfDay { get; set; } 
+    public string? WorstPartOfDay { get; set; } 
+    public bool HadPhysicalOrEmotionalDiscomfort { get; set; }
+    
+    //Db stuff ----------------------------
     public Journal? Journal { get; set; }
     public Guid? JournalId { get; set; }
-
     public User User { get; set; }
-
     public Guid Id { get; set; }
     public Instant CreatedAt { get; set; }
     public Guid UserId { get; set; }

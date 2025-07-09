@@ -2,7 +2,7 @@
 
 namespace Serene.API.Features.Auth.Endpoints.Login;
 
-public class LoginRequestValidator : AbstractValidator<Microsoft.AspNetCore.Identity.Data.LoginRequest>
+public class LoginRequestValidator : AbstractValidator<LoginRequest>
 {
     public LoginRequestValidator()
     {

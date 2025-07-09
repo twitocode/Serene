@@ -18,10 +18,12 @@ using Serene.API.Common.Results;
 using Serene.API.Common.Services;
 using Serene.API.Data;
 using Serene.API.Data.Entities;
+using Serene.API.Features.Auth.Endpoints.Login;
 using Serene.API.Features.Auth.Endpoints.Register;
 using Serene.API.Features.Auth.Services;
 using Serene.API.Features.Health.Endpoints;
-using Serene.API.Features.Mood.Endpoints;
+using Serene.API.Features.Mood.Endpoints.DetermineCheckinTime;
+using Serene.API.Features.Mood.Endpoints.SubmitMoodEntry;
 using Serene.API.Features.Users.Endpoints.VerifyConfirmationEmail;
 using Serilog;
 
@@ -110,10 +112,9 @@ public static class ConfigureServices
     private static void AddValidators(this WebApplicationBuilder builder)
     {
         //test endpoints
-        builder.Services.AddValidatorsFromAssemblyContaining<RegisterEndpoint>();
-        builder.Services.AddValidatorsFromAssemblyContaining<ServerHealthEndpoint>();
-        builder.Services.AddValidatorsFromAssemblyContaining<GetLastMoodCheckin>();
-        builder.Services.AddValidatorsFromAssemblyContaining<VerifyConfirmationEmail>();
+        builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<SubmitMoodEntryValidator>();
     }
 
     private static void Logging(this WebApplicationBuilder builder)
@@ -164,7 +165,9 @@ public static class ConfigureServices
                         .UseNodaTime()
                         .MapEnum<MoodType>("mood")
                         .MapEnum<ResourceType>("resource_type")
-                        .MapEnum<Gender>("gender"))
+                        .MapEnum<Gender>("gender")
+                        .MapEnum<EnergyLevelType>("energy_level"))
+
                 .UseSnakeCaseNamingConvention());
     }
 

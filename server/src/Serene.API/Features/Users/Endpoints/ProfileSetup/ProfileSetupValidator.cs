@@ -41,9 +41,9 @@ public class ProfileSetupValidator : AbstractValidator<ProfileSetupRequest>
             .NotEmpty();
 
         RuleFor(x => x.DateOfBirth)
-            .Must(dob => DateTime.TryParseExact(
+            .Must(dob => DateOnly.TryParseExact(
                 dob,
-                "d",
+                "O",
                 CultureInfo.InvariantCulture,
                 DateTimeStyles.None,
                 out _))
@@ -51,7 +51,7 @@ public class ProfileSetupValidator : AbstractValidator<ProfileSetupRequest>
 
         //make a custom rule for enums
         RuleFor(x => x.Gender)
-            .IsEnumName(typeof(Gender), false)
+            .IsEnumName(typeof(Gender))
             .NotEmpty();
     }
 }

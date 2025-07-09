@@ -22,6 +22,7 @@ public class AppDbContext(IConfiguration configuration, DbContextOptions options
             .MapEnum<MoodType>("mood")
             .MapEnum<ResourceType>("resource_type")
             .MapEnum<Gender>("gender")
+            .MapEnum<EnergyLevelType>("energy_level")
         ).UseSnakeCaseNamingConvention();
     }
 
@@ -66,22 +67,57 @@ public class AppDbContext(IConfiguration configuration, DbContextOptions options
         //Journal---------------------------------------
         modelBuilder.Entity<Journal>(entity =>
         {
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("now()");
+            entity.Property(e => e.Title)
+                .HasMaxLength(50)
+                .IsRequired();
+            
+            entity.Property(e => e.WhatsOnYourMind)
+                .HasMaxLength(1400)
+                .IsRequired(false);
+            
+            entity.Property(e => e.WhatAreYouGratefulForToday)
+                .HasMaxLength(1400)
+                .IsRequired(false);
+            
 
             entity.Property(e => e.Activities)
                 .HasConversion(
                     v => v.Select(x => x.ToString()).ToList(),
                     v => v.Select(Enum.Parse<ActivityType>).ToList()
                 );
+            
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()");
         });
 
 
         //Mood------------------------------------------
-        modelBuilder
-            .Entity<MoodEntry>()
-            .Property(e => e.CreatedAt)
-            .HasDefaultValueSql("now()");
+        modelBuilder.Entity<MoodEntry>(entity =>
+        {
+            entity.Property(e => e.OverallMood)
+                .HasDefaultValue(MoodType.Neutral)
+                .IsRequired();
+            
+            entity.Property(e => e.EnergyLevel)
+                .HasDefaultValue(EnergyLevelType.Moderate)
+                .IsRequired();
+
+            entity.Property(e => e.BestPartOfDay)
+                .HasMaxLength(250)
+                .IsRequired(false);
+
+            entity.Property(e => e.WorstPartOfDay)
+                .HasMaxLength(250)
+                .IsRequired(false);
+
+            entity.Property(e => e.HadPhysicalOrEmotionalDiscomfort)
+                .HasDefaultValue(false)
+                .IsRequired();
+            
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()");
+        });
+           
 
         //Resource--------------------------------------
         modelBuilder.Entity<Resource>(entity =>

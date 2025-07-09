@@ -14,5 +14,8 @@ public static class EnumExtensions
         Enum.Parse<MoodType>(str);
 
     public static ResourceType ToResourceType(this string str)  =>
-        Enum.Parse<ResourceType>(str);
+        Enum.Parse<ResourceType>(str);    
+    
+    public static EnergyLevelType ToEnergyLevel(this string str)  =>
+        Enum.Parse<EnergyLevelType>(str);
 }

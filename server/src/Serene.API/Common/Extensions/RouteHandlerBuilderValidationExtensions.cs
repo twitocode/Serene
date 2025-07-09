@@ -1,7 +1,9 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 using Serene.API.Common.Filters;
 using Serene.API.Data;
 using Serene.API.Data.Entities;
+using Serene.API.Features.Auth;
 
 namespace Serene.API.Common.Extensions;
 
@@ -13,12 +15,10 @@ public static class RouteHandlerBuilderValidationExtensions
     /// <typeparam name="TRequest"></typeparam>
     /// <param name="builder"></param>
     /// <returns>A <see cref="RouteHandlerBuilder" /> that can be used to futher customize the endpoint.</returns>
-    public static RouteHandlerBuilder WithRequestValidation<TRequest>(this RouteHandlerBuilder builder)
-    {
-        return builder
+    public static RouteHandlerBuilder WithRequestValidation<TRequest>(this RouteHandlerBuilder builder) =>
+        builder
             .AddEndpointFilter<RequestValidationFilter<TRequest>>()
             .ProducesValidationProblem();
-    }
 
     /// <summary>
     ///     Adds a request validation filter to the route handler to ensure a <typeparamref name="TEntity" /> exists with the
@@ -39,6 +39,19 @@ public static class RouteHandlerBuilderValidationExtensions
             {
                 var db = context.HttpContext.RequestServices.GetRequiredService<AppDbContext>();
                 var filter = new EnsureEntityExistsFilter<TRequest, TEntity>(db, idSelector);
+                return await filter.InvokeAsync(context, next);
+            })
+            .ProducesProblem(StatusCodes.Status404NotFound);
+    }
+
+    public static RouteHandlerBuilder WithEnsureUserExists(this RouteHandlerBuilder builder)
+    {
+        return builder
+            .AddEndpointFilterFactory((endpointFilterFactoryContext, next) => async context =>
+            {
+                var manager = context.HttpContext.RequestServices.GetRequiredService<UserManager<User>>();
+                var id = context.HttpContext.User.GetUserId();
+                var filter = new EnsureEntityUserFilter(manager, id);
                 return await filter.InvokeAsync(context, next);
             })
             .ProducesProblem(StatusCodes.Status404NotFound);
