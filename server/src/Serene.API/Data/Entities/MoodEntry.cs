@@ -27,8 +27,6 @@ public class MoodEntry : IEntity, IOwnedEntity
     public bool HadPhysicalOrEmotionalDiscomfort { get; set; }
     
     //Db stuff ----------------------------
-    public Journal? Journal { get; set; }
-    public Guid? JournalId { get; set; }
     public User User { get; set; }
     public Guid Id { get; set; }
     public Instant CreatedAt { get; set; }

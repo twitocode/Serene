@@ -25,15 +25,18 @@ public class SubmitMoodEntryEndpoint : IEndpoint
             .WithTags(Tags.Mood)
             .WithSummary("Submit a new mood entry");
 
-    private async Task<Result<SubmitMoodEntryResponse>> Handle(SubmitMoodEntryRequest request, HttpContext ctx, AppDbContext db,
+    public async Task<Result<SubmitMoodEntryResponse>> Handle(SubmitMoodEntryRequest request, HttpContext ctx, AppDbContext db,
         CancellationToken ct)
     {
         var user = ctx.GetUser();
-
+        
         var now = SystemClock.Instance.GetCurrentInstant();
         var zonedDateTimeUtc = now.InUtc();
         var todaysLocalDate = now.InUtc().Date;
-
+        
+        if (user.LastMoodCheckin.Day >= todaysLocalDate.Day) 
+            return Result<SubmitMoodEntryResponse>.BadRequest(new Error("", "You are not able to create a new mood entry yet"));
+        
         var doesTodaysEntryExist = await db.MoodEntries
             .AnyAsync(x => x.CreatedAt.InUtc().Date == todaysLocalDate && x.UserId == user.Id, ct);
 
@@ -49,7 +52,10 @@ public class SubmitMoodEntryEndpoint : IEndpoint
             HadPhysicalOrEmotionalDiscomfort = request.HadPhysicalOrEmotionalDiscomfort,
             UserId = user.Id
         };
+        
         db.MoodEntries.Add(newEntry);
+        user.LastMoodCheckin = todaysLocalDate;
+        
         await db.SaveChangesAsync(ct);
 
         var response = newEntry.ToSubmitMoodEntry();

@@ -3,7 +3,7 @@ using Serene.API.Data.Entities;
 
 namespace Serene.API.Features.Mood.Endpoints.SubmitMoodEntry;
 
-public class SubmitMoodEntryValidator : AbstractValidator<SubmitMoodEntryRequest>
+public sealed class SubmitMoodEntryValidator : AbstractValidator<SubmitMoodEntryRequest>
 {
     public SubmitMoodEntryValidator()
     {

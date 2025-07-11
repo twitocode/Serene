@@ -23,7 +23,7 @@ public class DetermineCheckinTimeEndpoint : IEndpoint
         var user = ctx.GetUser();
         var clock = SystemClock.Instance;
         var now = clock.InUtc().GetCurrentDate();
-
-        return Result<bool>.Success(now > user.LastMoodCheckin);
+        
+        return Result<bool>.Success(now.Day > user.LastMoodCheckin.Day);
     }
 }
