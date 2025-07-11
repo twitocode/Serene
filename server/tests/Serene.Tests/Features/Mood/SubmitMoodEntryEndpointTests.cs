@@ -1,8 +1,8 @@
 ﻿using Bogus;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using NodaTime;
-using NSubstitute;
 using Serene.API.Common.Results;
 using Serene.API.Data;
 using Serene.API.Data.Entities;
@@ -30,7 +30,7 @@ public class SubmitMoodEntryEndpointTests : IClassFixture<BaseEndpointTestFixtur
             .RuleFor(u => u.UserName, f => f.Internet.UserName())
             .RuleFor(u => u.Email, f => f.Internet.Email());
         
-        _fixture.HttpContext.Items["User"] = _userFaker.Generate();
+        _fixture.HttpContext.Object.Items["User"] = _userFaker.Generate();
         
         _requestFaker = new Faker<SubmitMoodEntryRequest>()
             .RuleFor(r => r.OverallMood, f => "Happy")
@@ -47,31 +47,34 @@ public class SubmitMoodEntryEndpointTests : IClassFixture<BaseEndpointTestFixtur
         var user = _userFaker.Generate();
         var request = _requestFaker.Generate();
         
-        _fixture.HttpContext.GetUser().Returns(user);
+        _fixture.HttpContext.Setup(x => x.GetUser()).Returns(user);
         
-        var dbSetMock = Substitute.For<DbSet<MoodEntry>>();
-        _fixture.Db.MoodEntries.Returns(dbSetMock);
+        var dbSetMock = new Mock<DbSet<MoodEntry>>();
+        _fixture.Db.Setup(x => x.MoodEntries).Returns(dbSetMock.Object);
         
         // Mock that no entry exists for today
-        dbSetMock.FirstOrDefaultAsync(
-            Arg.Any<System.Linq.Expressions.Expression<Func<MoodEntry, bool>>>(),
-            Arg.Any<CancellationToken>()
-        ).Returns((MoodEntry?)null);
+        dbSetMock.Setup(x => x.FirstOrDefaultAsync(
+            It.IsAny<System.Linq.Expressions.Expression<Func<MoodEntry, bool>>>(),
+            It.IsAny<CancellationToken>()
+        )).ReturnsAsync((MoodEntry?)null);
 
         // Act
-        var result = await _endpoint.Handle(request, _fixture.HttpContext, _fixture.Db, CancellationToken.None);
+        var result = await _endpoint.Handle(request, _fixture.HttpContext.Object, _fixture.Db.Object, CancellationToken.None);
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        await dbSetMock.Received(1).AddAsync(Arg.Is<MoodEntry>(m => 
-            m.UserId == user.Id &&
-            m.OverallMood.ToString() == request.OverallMood &&
-            m.EnergyLevel.ToString() == request.EnergyLevel &&
-            m.BestPartOfDay == request.BestPartOfDay &&
-            m.WorstPartOfDay == request.WorstPartOfDay &&
-            m.HadPhysicalOrEmotionalDiscomfort == request.HadPhysicalOrEmotionalDiscomfort
-        ), Arg.Any<CancellationToken>());
-        await _fixture.Db.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
+        dbSetMock.Verify(x => x.AddAsync(
+            It.Is<MoodEntry>(m =>
+                m.UserId == user.Id &&
+                m.OverallMood.ToString() == request.OverallMood &&
+                m.EnergyLevel.ToString() == request.EnergyLevel &&
+                m.BestPartOfDay == request.BestPartOfDay &&
+                m.WorstPartOfDay == request.WorstPartOfDay &&
+                m.HadPhysicalOrEmotionalDiscomfort == request.HadPhysicalOrEmotionalDiscomfort
+            ),
+            It.IsAny<CancellationToken>()
+        ), Times.Once);
+        _fixture.Db.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -88,24 +91,24 @@ public class SubmitMoodEntryEndpointTests : IClassFixture<BaseEndpointTestFixtur
             EnergyLevel = EnergyLevelType.High
         };
         
-        _fixture.HttpContext.GetUser().Returns(user);
+        _fixture.HttpContext.Setup(x => x.GetUser()).Returns(user);
         
-        var dbSetMock = Substitute.For<DbSet<MoodEntry>>();
-        _fixture.Db.MoodEntries.Returns(dbSetMock);
+        var dbSetMock = new Mock<DbSet<MoodEntry>>();
+        _fixture.Db.Setup(x => x.MoodEntries).Returns(dbSetMock.Object);
 
         // Mock that an entry exists for today
-        dbSetMock.FirstOrDefaultAsync(
-            Arg.Any<System.Linq.Expressions.Expression<Func<MoodEntry, bool>>>(),
-            Arg.Any<CancellationToken>()
-        ).Returns(existingEntry);
+        dbSetMock.Setup(x => x.FirstOrDefaultAsync(
+            It.IsAny<System.Linq.Expressions.Expression<Func<MoodEntry, bool>>>(),
+            It.IsAny<CancellationToken>()
+        )).ReturnsAsync(existingEntry);
 
         // Act
-        var result = await _endpoint.Handle(request, _fixture.HttpContext, _fixture.Db, CancellationToken.None);
+        var result = await _endpoint.Handle(request, _fixture.HttpContext.Object, _fixture.Db.Object, CancellationToken.None);
 
         // Assert
         result.IsSuccess.ShouldBeFalse();
         result.Errors.ShouldContain(e => e.Message.Contains("Mood entry already completed for today"));
-        await dbSetMock.DidNotReceive().AddAsync(Arg.Any<MoodEntry>(), Arg.Any<CancellationToken>());
-        await _fixture.Db.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+        dbSetMock.Verify(x => x.AddAsync(It.IsAny<MoodEntry>(), It.IsAny<CancellationToken>()), Times.Never);
+        _fixture.Db.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 }

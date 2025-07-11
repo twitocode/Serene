@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using NSubstitute;
+using Moq;
 using Serene.API.Data;
 using Serene.API.Data.Entities;
 using Serene.API.Features.Auth.Services;
@@ -23,32 +23,40 @@ public class BaseEndpointTestFixture : IDisposable
     public BaseEndpointTestFixture()
     {
         // Setup UserStore
-        UserStore = Substitute.For<IUserStore<User>>();
+        var userStoreMock = new Mock<IUserStore<User>>();
+        UserStore = userStoreMock.Object;
         UserManager = FakeUserManager.GetMockUserManager(UserStore);
 
         // Setup SignInManager
         SignInManager = FakeSignInManager.GetMockSignInManager(UserManager);
 
         // Setup HttpContext and related mocks
-        HttpContext = Substitute.For<HttpContext>();
-        RequestMock = Substitute.For<HttpRequest>();
-        ResponseMock = Substitute.For<HttpResponse>();
-        Headers = Substitute.For<IHeaderDictionary>();
-        Cookies = Substitute.For<IRequestCookieCollection>();
-        ResponseCookies = Substitute.For<IResponseCookies>();
+        var httpContextMock = new Mock<HttpContext>();
+        var requestMock = new Mock<HttpRequest>();
+        var responseMock = new Mock<HttpResponse>();
+        var headersMock = new Mock<IHeaderDictionary>();
+        var cookiesMock = new Mock<IRequestCookieCollection>();
+        var responseCookiesMock = new Mock<IResponseCookies>();
 
         // Setup HttpContext properties
-        HttpContext.Request.Returns(RequestMock);
-        HttpContext.Response.Returns(ResponseMock);
-        RequestMock.Headers.Returns(Headers);
-        RequestMock.Cookies.Returns(Cookies);
-        ResponseMock.Cookies.Returns(ResponseCookies);
+        httpContextMock.Setup(x => x.Request).Returns(requestMock.Object);
+        httpContextMock.Setup(x => x.Response).Returns(responseMock.Object);
+        requestMock.Setup(x => x.Headers).Returns(headersMock.Object);
+        requestMock.Setup(x => x.Cookies).Returns(cookiesMock.Object);
+        responseMock.Setup(x => x.Cookies).Returns(responseCookiesMock.Object);
 
-        // 1. Create and configure substitute for IHttpContextAccessor
-        var httpContextAccessor = Substitute.For<IHttpContextAccessor>();
-        httpContextAccessor.HttpContext.Returns(HttpContext);
+        HttpContext = httpContextMock;
+        RequestMock = requestMock.Object;
+        ResponseMock = responseMock.Object;
+        Headers = headersMock.Object;
+        Cookies = cookiesMock.Object;
+        ResponseCookies = responseCookiesMock.Object;
 
-        // 2. Create and configure substitute for IOptions<JwtOptions>
+        // Setup IHttpContextAccessor
+        var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+        httpContextAccessorMock.Setup(x => x.HttpContext).Returns(HttpContext.Object);
+
+        // Setup JwtOptions
         var jwtOptions = new JwtOptions
         {
             Secret = "a-super-secret-key-for-testing-that-is-long-enough-for-sha256",
@@ -56,37 +64,34 @@ public class BaseEndpointTestFixture : IDisposable
             Issuers = new[] { "test-issuer" },
             ExpirationTimeInMinutes = 15
         };
-        var options = Substitute.For<IOptions<JwtOptions>>();
-        options.Value.Returns(jwtOptions);
+        var optionsMock = new Mock<IOptions<JwtOptions>>();
+        optionsMock.Setup(x => x.Value).Returns(jwtOptions);
 
-        // 3. Create a partial substitute for the concrete JwtService class, providing all dependencies
-        JwtService = Substitute.ForPartsOf<JwtService>(options, httpContextAccessor);
-
+        // Create JwtService
+        JwtService = new JwtService(optionsMock.Object, httpContextAccessorMock.Object);
 
         // Setup AppDbContext
         var dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
-
         var inMemorySettings = new Dictionary<string, string>
         {
             { "TopLevelKey", "TopLevelValue" },
             { "SectionName:SomeKey", "SectionValue" }
-            //...populate as needed for the test
         };
 
         IConfiguration configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(inMemorySettings!)
             .Build();
 
-        Db = new AppDbContext(configuration, dbContextOptions);
+        Db = new Mock<AppDbContext>(configuration, dbContextOptions);
     }
 
     public IRequestCookieCollection Cookies { get; }
-    public AppDbContext Db { get; }
+    public Mock<AppDbContext> Db { get; }
     public IHeaderDictionary Headers { get; }
-    public HttpContext HttpContext { get; }
+    public Mock<HttpContext> HttpContext { get; }
     public IJwtService JwtService { get; }
     public HttpRequest RequestMock { get; }
     public IResponseCookies ResponseCookies { get; }
@@ -97,7 +102,7 @@ public class BaseEndpointTestFixture : IDisposable
 
     public void Dispose()
     {
-        Db.Dispose();
+        Db.Object.Dispose();
         UserManager.Dispose();
         UserStore.Dispose();
     }

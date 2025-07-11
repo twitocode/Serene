@@ -38,7 +38,7 @@ public class LoginEndpointTests : IClassFixture<BaseEndpointTestFixture>
     [Fact]
     public async Task Handle_Should_ReturnSuccess_WhenCredentialsAreValid()
     {
-        _fixture.ResponseCookies.ClearReceivedCalls(); // Clear calls from previous tests
+        //_fixture.ResponseCookies.ClearReceivedCalls(); // Clear calls from previous tests
 
         // Arrange
         var loginRequest = _loginRequestFaker.Generate();
@@ -81,7 +81,7 @@ public class LoginEndpointTests : IClassFixture<BaseEndpointTestFixture>
     [Fact]
     public async Task Handle_Should_ReturnBadRequest_WhenUserNotFound()
     {
-        _fixture.ResponseCookies.ClearReceivedCalls(); // Clear calls from previous tests
+        //_fixture.ResponseCookies.ClearReceivedCalls(); // Clear calls from previous tests
 
         // Arrange
         var loginRequest = _loginRequestFaker.Generate();
@@ -104,7 +104,7 @@ public class LoginEndpointTests : IClassFixture<BaseEndpointTestFixture>
     [Fact]
     public async Task Handle_Should_ReturnBadRequest_WhenPasswordIsIncorrect()
     {
-        _fixture.ResponseCookies.ClearReceivedCalls(); // Clear calls from previous tests
+//        _fixture.ResponseCookies.ClearReceivedCalls(); // Clear calls from previous tests
 
         // Arrange
         var loginRequest = _loginRequestFaker.Generate();
@@ -137,7 +137,7 @@ public class LoginEndpointTests : IClassFixture<BaseEndpointTestFixture>
     [Fact]
     public async Task Handle_Should_SetRefreshTokenCookie_WhenLoginSuccessful()
     {
-        _fixture.ResponseCookies.ClearReceivedCalls(); // Clear calls from previous tests
+       // _fixture.ResponseCookies.ClearReceivedCalls(); // Clear calls from previous tests
 
         // Arrange
         var loginRequest = _loginRequestFaker.Generate();
