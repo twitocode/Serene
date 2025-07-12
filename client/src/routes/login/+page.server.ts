@@ -17,7 +17,7 @@ export const load = async () => {
 
 export const actions = {
 	default: async ({ request }) => {
-		const form = await superValidate(request, your_adapter(schema));
+		const form = await superValidate(request, zod4(schema));
 		console.log(form);
 
 		if (!form.valid) {
