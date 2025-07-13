@@ -1,7 +1,7 @@
 <script>
-	import { Button } from '$lib/components/ui/button/index.js';
-	import Footer from '$lib/components/common/Footer.svelte';
-	import Navbar from '$lib/components/common/Navbar.svelte';
+	import Footer from "$lib/components/common/footer.svelte";
+	import Navbar from "$lib/components/common/navbar.svelte";
+	import { Button } from "$lib/components/ui/button/index.js";
 </script>
 
 <Navbar />
@@ -9,16 +9,12 @@
 	<section class="hero-content text-center md:mx-48">
 		<div class="hero flex flex-col items-center space-y-16">
 			<div class="flex flex-col items-center space-y-4">
-				<h1 class="font-noto flex-1 text-5xl font-bold">
-					Your mental wellness, made simple.
-				</h1>
+				<h1 class="font-noto flex-1 text-5xl font-bold">Your mental wellness, made simple.</h1>
 				<p>Put some random text here i dunno</p>
 			</div>
-			<div class="space-x-2 flex">
+			<div class="flex space-x-2">
 				<Button>
-					<a class="" href="/signup">
-						Sign up
-					</a>
+					<a class="" href="/signup"> Sign up </a>
 				</Button>
 				<Button href="/login">Or Login</Button>
 			</div>

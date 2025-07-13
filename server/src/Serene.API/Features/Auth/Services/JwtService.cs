@@ -64,7 +64,8 @@ public class JwtService(IOptions<JwtOptions> options, IHttpContextAccessor httpC
                 HttpOnly = true,
                 IsEssential = true,
                 //SameSite = SameSiteMode.Strict //only works for server
-                SameSite = SameSiteMode.Lax //better balance
+                //SameSite = SameSiteMode.Lax //better balance BUT not good enough
+                SameSite = SameSiteMode.None //should work
             });
     }
 
