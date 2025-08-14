@@ -31,7 +31,7 @@ public class RegisterEndpoint : IEndpoint
         var userExists = await userManager.FindByEmailAsync(registerRequest.Email) is not null;
 
         if (userExists)
-            return Result<string>.BadRequest(new Error("", "User already exists with the email"));
+            return Result<string>.BadRequest(new Error(AppErrors.UserAlreadyExists, "User already exists with the email"));
 
         var user = new User
         {
@@ -43,7 +43,7 @@ public class RegisterEndpoint : IEndpoint
         var result = await userManager.CreateAsync(user);
 
         if (!result.Succeeded)
-            return Result<string>.InternalServerError(new Error("", "Failed to create user"));
+            return Result<string>.InternalServerError(new Error(AppErrors.UserUpdateError, "Failed to create user"));
 
         return Result<string>.Success("Successfully created user");
     }

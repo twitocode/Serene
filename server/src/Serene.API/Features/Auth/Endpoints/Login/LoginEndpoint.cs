@@ -37,7 +37,7 @@ public class LoginEndpoint(ILogger<LoginEndpoint> logger) : IEndpoint
             if (string.IsNullOrEmpty(user.PasswordHash)) logger.LogWarning("User does not have a password");
             if (!await userManager.CheckPasswordAsync(user, loginRequest.Password))
                 return Result<string>.BadRequest(
-                    new Error("", "Password was invalid or registered with an external provider")
+                    new Error(AppErrors.AuthInvalidPassword, "Password was invalid or registered with an external provider")
                 );
 
             var (accessToken, expirationDate) = jwtService.GenerateToken(user);
@@ -49,7 +49,7 @@ public class LoginEndpoint(ILogger<LoginEndpoint> logger) : IEndpoint
 
             var result = await userManager.UpdateAsync(user);
             if (!result.Succeeded)
-                return Result<string>.InternalServerError(new Error("", "Failed to update user with tokens"));
+                return Result<string>.InternalServerError(new Error(AppErrors.UserUpdateError, "Failed to update user with tokens"));
 
             jwtService.WriteAuthTokenAsHttpOnlyCookie("ACCESS_TOKEN", accessToken, expirationDate);
             jwtService.WriteAuthTokenAsHttpOnlyCookie("REFRESH_TOKEN", refreshToken, refreshTokenExpirationDate);
@@ -58,7 +58,7 @@ public class LoginEndpoint(ILogger<LoginEndpoint> logger) : IEndpoint
         }
 
         return Result<string>.BadRequest(
-            new Error("", $"User not found with email {loginRequest.Email}")
+            new Error(AppErrors.UserNotFound, $"User not found with email {loginRequest.Email}")
         );
     }
 }

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
+	import { page } from "$app/stores";
 	import { loginSchema, signUpSchema, type LoginFormSchema } from "$lib/components/auth/formSchema";
 	import GoogleIcon from "$lib/components/auth/google-icon.svelte";
 	import { Button } from "$lib/components/ui/button";
@@ -10,7 +12,6 @@
 	import SuperDebug, { superForm, type SuperValidated } from "sveltekit-superforms";
 	import { zod4Client } from "sveltekit-superforms/adapters";
 	import type { Infer } from "zod/v4";
-import { page } from '$app/stores';  
 
 	type Props = WithElementRef<HTMLAttributes<HTMLDivElement>> & {
 		formProps: SuperValidated<Infer<LoginFormSchema>>;
@@ -29,15 +30,24 @@ import { page } from '$app/stores';
 	}: Props = $props();
 
 	const id = $props.id();
-
+  let loadingFormResult = $state(false);
 	// Client API:
 	const form = superForm(formProps, {
-		validators: zod4Client(isLogin ? loginSchema : signUpSchema)
+    onResult(event) {
+      loadingFormResult = false;
+      if (event.result.type === "success") {
+        goto("/login/callback");
+      }
+
+    },
+    onSubmit() {
+      loadingFormResult = true;
+    },
 	});
 
 	const { form: formData, errors, constraints, message, enhance } = form;
 
-  const origin = $page.url.origin;
+	const origin = $page.url.origin;
 </script>
 
 {#if $message}<h3>{$message}</h3>{/if}
@@ -88,7 +98,7 @@ import { page } from '$app/stores';
 					<Form.Control>
 						{#snippet children({ props }: any)}
 							<Form.Label>Password</Form.Label>
-							<Input placeholder="" {...props} bind:value={$formData.password} />
+							<Input {...props} type="password" bind:value={$formData.password} />
 						{/snippet}
 					</Form.Control>
 					<Form.Description>What you'll be using to secure your account</Form.Description>
@@ -100,8 +110,11 @@ import { page } from '$app/stores';
 					Login
 				{:else}
 					Sign Up
-				{/if}</Form.Button
-			>
+				{/if}
+        {#if loadingFormResult}
+          Loading
+        {/if}
+			</Form.Button>
 		</div>
 		<div
 			class="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t"
@@ -121,14 +134,14 @@ import { page } from '$app/stores';
 		</div>
 	</div>
 	<div
-		class="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4"
+		class="text-muted-foreground *:[a]:hover:text-primary *:[a]:underline *:[a]:underline-offset-4 text-balance text-center text-xs"
 	>
 		By clicking continue, you agree to our <a href="##">Terms of Service</a>
 		and <a href="##">Privacy Policy</a>.
 	</div>
 </form>
 {#if IS_DEVELOPMENT}
-	<SuperDebug data={form} />
+	<SuperDebug data={{formData, errors}} />
 {/if}
 
 <style>

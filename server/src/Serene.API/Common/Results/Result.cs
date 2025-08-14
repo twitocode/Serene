@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Serene.API.Common.Results;
 
@@ -9,13 +10,13 @@ public class Result<T>
         IsSuccess = isSuccess;
         Value = value;
         Errors = errors.Count > 0 ? errors : [];
-        StatusCode = statusCode;
+        Status = statusCode;
     }
 
     public bool IsSuccess { get; }
     public T Value { get; }
     public List<Error> Errors { get; }
-    public int StatusCode { get; }
+    public int Status { get; }
 
     public IResult MapTypedResult(HttpContext context)
     {
@@ -23,13 +24,13 @@ public class Result<T>
 
         return TypedResults.Problem(new ProblemDetails
         {
-            Status = StatusCode,
+            Status = Status,
             Detail = Errors.Count > 1 ? "Multiple errors occurred" : "An error occurred",
             Title = "Something went wrong with the request",
             Instance = $"{context.Request.Method} => {context.Request.Path}",
             Extensions = new Dictionary<string, object?>
             {
-                { "errors", Errors },
+                { "errors", Errors.Select(e => new { Code = e.Code.ToString(), e.Message }) },
                 { "isSuccess", false }
             }
         });

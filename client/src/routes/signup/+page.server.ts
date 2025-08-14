@@ -1,10 +1,21 @@
-﻿import { fail, message, superValidate } from 'sveltekit-superforms';
-import { zod4 } from 'sveltekit-superforms/adapters';
-import { SERVER_URL, NODE_ENV } from "$env/static/private";
-import { signUpSchema } from "$lib/components/auth/formSchema";
+﻿import { NODE_ENV, SERVER_URL } from "$env/static/private";
+import { loginSchema, signUpSchema } from "$lib/components/auth/formSchema";
+import type { ApiAppError } from "$lib/types";
+import { AppErrors } from "$lib/types/application-errors";
 import { redirect } from "@sveltejs/kit";
+import * as setCookie from "set-cookie-parser";
+import { fail, setError, superValidate } from "sveltekit-superforms";
+import { zod4 } from "sveltekit-superforms/adapters";
 
-export const load = async () => {
+export const load = async ({ cookies }) => {
+	const access_token = cookies.get("ACCESS_TOKEN");
+	if (access_token) {
+		console.log("No access token found, redirecting to login");
+		throw redirect(308, "/home");
+	}
+
+	//TODO: implement refresh token logic
+
 	const form = await superValidate(zod4(signUpSchema));
 
 	// Always return { form } in load functions
@@ -12,17 +23,83 @@ export const load = async () => {
 };
 
 export const actions = {
-	default: async ({ request }) => {
-		const form = await superValidate(request, zod4(signUpSchema));
-		console.log(form);
+	default: async ({ request, cookies }) => {
+		const form = await superValidate(request, zod4(loginSchema));
 
 		if (!form.valid) {
-			// Return { form } and things will just work.
 			return fail(400, { form });
 		}
 
 		// TODO: Do something with the validated form.data
+		let res = await fetch(`${SERVER_URL}/auth/register`, {
+			method: "POST",
+			headers: [["Content-Type", "application/json"]],
+			body: JSON.stringify({
+				email: form.data.email,
+				password: form.data.password
+			})
+		});
 
-    redirect(308, "/home");
+		if (!res.ok) {
+			const errorResponse = (await res.json()) as ApiAppError;
+
+			for (const error of errorResponse.errors) {
+				if (error.code == AppErrors.UserAlreadyExists) {
+					setError(form, "email", error.message);
+				} else if (error.code == AppErrors.UserUpdateError) {
+					setError(form, "email", error.message);
+				}
+			}
+
+			return fail(404, { form });
+		}
+
+    res = await fetch(`${SERVER_URL}/auth/login`, {
+			method: "POST",
+			headers: [["Content-Type", "application/json"]],
+			body: JSON.stringify({
+				email: form.data.email,
+				password: form.data.password
+			})
+		});
+	if (!res.ok) {
+		const errorResponse = (await res.json()) as ApiAppError;
+
+		for (const error of errorResponse.errors) {
+			if (error.code == AppErrors.UserNotFound) {
+				setError(form, "email", error.message);
+			} else if (error.code == AppErrors.AuthInvalidPassword) {
+				setError(form, "password", error.message);
+			}
+		}
+
+		return fail(404, { form });
+	}
+
+
+		const cookiesFromBackend = setCookie.parse(res.headers.get("set-cookie") ?? "", { map: true });
+
+		if (cookiesFromBackend.ACCESS_TOKEN) {
+			cookies.set("ACCESS_TOKEN", cookiesFromBackend.ACCESS_TOKEN.value, {
+				path: "/",
+				httpOnly: true,
+				secure: true,
+				sameSite: "none",
+				expires: cookiesFromBackend.ACCESS_TOKEN.expires
+			});
+		}
+
+		if (cookiesFromBackend.REFRESH_TOKEN) {
+			cookies.set("REFRESH_TOKEN", cookiesFromBackend.REFRESH_TOKEN.value, {
+				path: "/",
+				httpOnly: true,
+				secure: true,
+				sameSite: "none",
+				expires: cookiesFromBackend.REFRESH_TOKEN.expires
+			});
+		}
+
+		console.log("Register successful, redirecting to callback");
+		return redirect(308, "/home");
 	}
 };

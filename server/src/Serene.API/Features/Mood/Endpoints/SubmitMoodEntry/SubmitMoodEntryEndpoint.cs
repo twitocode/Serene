@@ -35,13 +35,13 @@ public class SubmitMoodEntryEndpoint : IEndpoint
         var todaysLocalDate = now.InUtc().Date;
         
         if (user.LastMoodCheckin.Day >= todaysLocalDate.Day) 
-            return Result<SubmitMoodEntryResponse>.BadRequest(new Error("", "You are not able to create a new mood entry yet"));
+            return Result<SubmitMoodEntryResponse>.BadRequest(new Error(AppErrors.MoodEntryNotReady, "You are not able to create a new mood entry yet"));
         
         var doesTodaysEntryExist = await db.MoodEntries
             .AnyAsync(x => x.CreatedAt.InUtc().Date == todaysLocalDate && x.UserId == user.Id, ct);
 
         if (doesTodaysEntryExist)
-            return Result<SubmitMoodEntryResponse>.BadRequest(new Error("", "Mood entry already completed for today"));
+            return Result<SubmitMoodEntryResponse>.BadRequest(new Error(AppErrors.MoodEntryCompletedAlready, "Mood entry already completed for today"));
 
         var newEntry = new MoodEntry
         {

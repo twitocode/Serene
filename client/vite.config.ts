@@ -1,18 +1,29 @@
-import devtoolsJson from 'vite-plugin-devtools-json';
-import tailwindcss from '@tailwindcss/vite';
-import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import { sveltekit } from "@sveltejs/kit/vite";
+import tailwindcss from "@tailwindcss/vite";
 import basicSsl from "@vitejs/plugin-basic-ssl";
+import { defineConfig } from "vite";
+import devtoolsJson from "vite-plugin-devtools-json";
+
+const serverConfig =
+	process.env.NODE_ENV === "development"
+		? {
+				https: false, // Enable HTTPS for Vite dev server
+				strictPort: true,
+				cors: true
+			}
+		: {
+				https: true, // Enable HTTPS for Vite dev server
+				strictPort: true,
+				cors: true
+			};
 
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit(), devtoolsJson(), basicSsl()],
-  server: {
-        port: 3000,
-        https: true, // Enable HTTPS for Vite dev server
-        host: 'localhost', // Important for the SSL cert
-        strictPort: true,
-        cors: true
-    },
+	server: {
+		port: 3000,
+		host: "localhost", // Important for the SSL cert
+		...serverConfig
+	},
 	test: {
 		projects: [
 			{

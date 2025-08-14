@@ -33,14 +33,14 @@ public class ProfileSetupEndpoint : IEndpoint
             UserManager<User> userManager, HttpContext context, CancellationToken cancellationToken)
         {
             if (context.User.GetIsSetupCompleted())
-                return Result<string>.Unauthorized(new Error("", "User has already completed their profile"));
+                return Result<string>.Unauthorized(new Error(AppErrors.UserUpdateError, "User has already completed their profile"));
 
             var id = context.User.GetUserId();
             var user = await userManager.FindByIdAsync(id.ToString());
 
-            if (user is null) return Result<string>.BadRequest(new Error("", "User was not found"));
+            if (user is null) return Result<string>.BadRequest(new Error(AppErrors.UserNotFound, "User was not found"));
             if (user.IsSetupCompleted)
-                return Result<string>.BadRequest(new Error("",
+                return Result<string>.BadRequest(new Error(AppErrors.UserUpdateError,
                     "The user is already confirmed, you should not be here"));
 
             user.FirstName = string.IsNullOrEmpty(user.FirstName) ? request.FirstName : user.FirstName;
@@ -60,7 +60,7 @@ public class ProfileSetupEndpoint : IEndpoint
 
             var result = await userManager.UpdateAsync(user);
             if (!result.Succeeded)
-                return Result<string>.InternalServerError(new Error("",
+                return Result<string>.InternalServerError(new Error(AppErrors.UserUpdateError,
                     $"Failed to update the User {user.Email}'s profile"));
 
             return Result<string>.Success($"Successfully completed User {user.Email}'s profile");

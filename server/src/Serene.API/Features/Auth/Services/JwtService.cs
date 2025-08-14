@@ -18,6 +18,8 @@ public class JwtOptions
 
 public class JwtService(IOptions<JwtOptions> options, IHttpContextAccessor httpContextAccessor) : IJwtService
 {
+    private readonly string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? string.Empty;
+
     public virtual (string token, DateTime expirationDate) GenerateToken(User user)
     {
         var key = SecurityKey(options.Value.Secret);
@@ -60,7 +62,7 @@ public class JwtService(IOptions<JwtOptions> options, IHttpContextAccessor httpC
             new CookieOptions
             {
                 Expires = expirationTime,
-                Secure = true,
+                Secure = environment != null && !environment.Equals("development", StringComparison.OrdinalIgnoreCase),
                 HttpOnly = true,
                 IsEssential = true,
                 //SameSite = SameSiteMode.Strict //only works for server

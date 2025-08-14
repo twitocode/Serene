@@ -36,10 +36,10 @@ public class RefreshTokenEndpoint() : IEndpoint
 
         var user = await GetUserByRefreshToken(refreshTokenFromCookies, db, cancellationToken);
         if (user == null)
-            return Result<string>.InternalServerError(new Error("", "Unable to retrieve user from refresh token"));
+            return Result<string>.InternalServerError(new Error(AppErrors.RefreshTokenError, "Unable to retrieve user from refresh token"));
 
         if (user.RefreshTokenExpirationDate < DateTime.UtcNow.ToInstant())
-            return Result<string>.BadRequest(new Error("", "Refresh token already expired"));
+            return Result<string>.BadRequest(new Error(AppErrors.RefreshTokenError, "Refresh token already expired"));
 
         var (accessToken, expirationDate) = jwtService.GenerateToken(user);
         var refreshToken = jwtService.GenerateRefreshToken();
@@ -50,7 +50,7 @@ public class RefreshTokenEndpoint() : IEndpoint
 
         var result = await userManager.UpdateAsync(user);
         if (!result.Succeeded)
-            return Result<string>.InternalServerError(new Error("", "Failed to update user with refresh tokens"));
+            return Result<string>.InternalServerError(new Error(AppErrors.RefreshTokenError, "Failed to update user with refresh tokens"));
 
         jwtService.WriteAuthTokenAsHttpOnlyCookie("ACCESS_TOKEN", accessToken, expirationDate);
         jwtService.WriteAuthTokenAsHttpOnlyCookie("REFRESH_TOKEN", refreshToken, refreshTokenExpirationDate);

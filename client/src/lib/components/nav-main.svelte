@@ -20,7 +20,7 @@
 </script>
 
 <Sidebar.Group>
-	<Sidebar.GroupLabel>Platform</Sidebar.GroupLabel>
+	<Sidebar.GroupLabel>Your Tools</Sidebar.GroupLabel>
 	<Sidebar.Menu>
 		{#each items as item (item.title)}
 			<Sidebar.MenuItem>

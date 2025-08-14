@@ -47,7 +47,7 @@ public class GoogleCallbackEndpoint(ILogger<GoogleCallbackEndpoint> logger)
         var updateResult = await userManager.UpdateAsync(user);
         foreach (var updateResultError in updateResult.Errors) logger.LogError(updateResultError.Description);
         if (!updateResult.Succeeded)
-            throw new ApiException(StatusCodes.Status500InternalServerError, "UpdateUserError",
+            throw new ApiException(StatusCodes.Status500InternalServerError, "UserUpdatError",
                 "Failed to update user with tokens");
 
         jwtService.WriteAuthTokenAsHttpOnlyCookie("ACCESS_TOKEN", accessToken, expirationDate);
@@ -59,11 +59,11 @@ public class GoogleCallbackEndpoint(ILogger<GoogleCallbackEndpoint> logger)
         CancellationToken cancellationToken)
     {
         if (principal.Identity is null)
-            return Result<User>.BadRequest(new Error("", "Identity is null"));
+            return Result<User>.BadRequest(new Error(AppErrors.ClaimsIdentityNotFound, "Identity is null"));
 
         var email = principal.FindFirstValue(ClaimTypes.Email);
         if (email is null)
-            return Result<User>.BadRequest(new Error("", "Email not found"));
+            return Result<User>.BadRequest(new Error(AppErrors.ClaimsEmailNotFound, "Email not found"));
 
         var user = await userManager.FindByEmailAsync(email);
         if (user is not null) return Result<User>.Success(user);
@@ -83,13 +83,13 @@ public class GoogleCallbackEndpoint(ILogger<GoogleCallbackEndpoint> logger)
 
         var result = await userManager.CreateAsync(user);
         if (!result.Succeeded)
-            Result<User>.InternalServerError(new Error("", "Failed to create user with Google"));
+            Result<User>.InternalServerError(new Error(AppErrors.AuthGoogleLoginError, "Failed to create user with Google"));
 
         var info = new UserLoginInfo("Google", principal.FindFirstValue(ClaimTypes.Email) ?? string.Empty, "Google");
         var loginResult = await userManager.AddLoginAsync(user, info);
 
         if (!loginResult.Succeeded)
-            Result<User>.InternalServerError(new Error("", "Failed to add Google login to user"));
+            Result<User>.InternalServerError(new Error(AppErrors.AuthGoogleLoginError, "Failed to add Google login to user"));
 
         return Result<User>.Success(user);
     }

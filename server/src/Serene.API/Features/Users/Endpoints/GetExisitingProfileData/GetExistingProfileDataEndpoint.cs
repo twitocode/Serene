@@ -23,9 +23,9 @@ public class GetExistingProfileDataEndpoint : IEndpoint
         var user = await userManager.FindByIdAsync(id.ToString());
 
         if (user is null)
-            return Result<User>.BadRequest(new Error("", "Could not find user by id"));
+            return Result<User>.BadRequest(new Error(AppErrors.UserNotFound, "Could not find user by id"));
         if (user.IsSetupCompleted)
-            return Result<User>.Unauthorized(new Error("", "User has already been setup"))
+            return Result<User>.Unauthorized(new Error(AppErrors.UserUpdateError, "User has already been setup"))
                 ;
         return Result<User>.Success(user);
     }

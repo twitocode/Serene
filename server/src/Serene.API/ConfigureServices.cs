@@ -151,7 +151,7 @@ public static class ConfigureServices
         builder.Services.AddCors(o =>
         {
             o.AddPolicy("CorsPolicy",
-                x => { x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000"); });
+                x => { x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000", "https://localhost:3000"); });
         });
     }
 
@@ -192,6 +192,7 @@ public static class ConfigureServices
     {
         builder.Services.AddIdentity<User, IdentityRole<Guid>>(o =>
         {
+            //TODO: should throw an error but is not???
             o.Password.RequireDigit = true;
             o.Password.RequiredLength = 6;
 

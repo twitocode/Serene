@@ -6,7 +6,7 @@
 	let { data } = $props();
 
 	// Client API:
-	const formProps = $state(data.form);
+	const formProps = data.form;
   const {SERVER_URL, IS_DEVELOPMENT } = data;
 </script>
 

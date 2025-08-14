@@ -37,6 +37,7 @@
 		"@tailwindcss/forms": "^0.5.9",
 		"@tailwindcss/typography": "^0.5.15",
 		"@tailwindcss/vite": "^4.0.0",
+		"@types/set-cookie-parser": "^2.4.10",
 		"@vitest/browser": "^3.2.3",
 		"bits-ui": "^2.8.6",
 		"clsx": "^2.1.1",
@@ -75,6 +76,7 @@
 		]
 	},
 	"dependencies": {
-		"@vitejs/plugin-basic-ssl": "^2.1.0"
+		"@vitejs/plugin-basic-ssl": "^2.1.0",
+		"set-cookie-parser": "^2.7.1"
 	}
 }
