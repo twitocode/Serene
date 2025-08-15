@@ -47,7 +47,7 @@ public class GoogleCallbackEndpoint(ILogger<GoogleCallbackEndpoint> logger)
         var updateResult = await userManager.UpdateAsync(user);
         foreach (var updateResultError in updateResult.Errors) logger.LogError(updateResultError.Description);
         if (!updateResult.Succeeded)
-            throw new ApiException(StatusCodes.Status500InternalServerError, "UserUpdatError",
+            throw new ApiException(StatusCodes.Status500InternalServerError, "UserUpdateError",
                 "Failed to update user with tokens");
 
         jwtService.WriteAuthTokenAsHttpOnlyCookie("ACCESS_TOKEN", accessToken, expirationDate);

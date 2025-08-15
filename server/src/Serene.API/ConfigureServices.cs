@@ -407,8 +407,7 @@ public static class ConfigureServices
                     }
                 };
             });
-
-
+            
         builder.Services.AddAuthorization();
 
         builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));

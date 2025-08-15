@@ -4,8 +4,10 @@
 	import FormSelect from "$lib/components/forms/form-select.svelte";
 	import * as Form from "$lib/components/ui/form";
 	import { Input } from "$lib/components/ui/input";
+	import type { User } from "$lib/types";
 	import { cn, type WithElementRef } from "$lib/utils.js";
 	import GalleryVerticalEndIcon from "@lucide/svelte/icons/gallery-vertical-end";
+	import { getContext } from "svelte";
 	import type { HTMLAttributes } from "svelte/elements";
 	import SuperDebug, { superForm, type SuperValidated } from "sveltekit-superforms";
 	import type { Infer } from "zod/v4";
@@ -18,6 +20,7 @@
 
 	let { class: className, formProps, SERVER_URL, IS_DEVELOPMENT, ...restProps }: Props = $props();
 
+  const user = getContext<User>("user")
 	const id = $props.id();
 	let loadingFormResult = $state(false);
 
@@ -174,7 +177,10 @@
 					</div>
 				</div>
 			</div>
-			<div>avatar picker</div>
+			<div>
+        
+        <img src={$formData.avatarUrl} alt="">
+      </div>
 			<Form.Button type="submit" class="w-full">Complete!</Form.Button>
 		</div>
 	</div>

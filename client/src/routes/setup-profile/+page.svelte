@@ -1,9 +1,10 @@
 <script lang="ts">
 	import LoginForm from "$lib/components/auth/login-form.svelte";
 	import ProfileSetupForm from "$lib/components/forms/profile-setup-form.svelte";
+	import type { User } from "$lib/types";
+	import { getContext, setContext } from "svelte";
 
 	let { data } = $props();
-
 	// Client API:
 	const formProps = $derived(data.form);
   const {SERVER_URL, IS_DEVELOPMENT } = data;

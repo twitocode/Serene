@@ -7,10 +7,33 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ cookies, locals }) => {
-  const form = await superValidate(zod4(setupProfileSchema));
   
+	const initialData = {
+		firstName: locals.user?.firstName,
+		lastName: locals.user?.lastName,
+		avatarUrl: locals.user?.avatarUrl,
+		country: "",
+		pronouns: "",
+		dateOfBirth: " ",
+		gender: ""
+	};
+
+  const form = await superValidate(initialData, zod4(setupProfileSchema));
+  
+
+    // const res = await fetch(`${SERVER_URL}/users/setup`, {
+    //     method: "GET",
+    //     headers: {
+    //       Cookie: `ACCESS_TOKEN=${locals.accessToken}`
+    //     }
+    //   });
+
+    // const data = await res.json();
+    // const initialFormData = data.value as User
+
 	return {
 		user: locals.user,
+    initialFormData: {},
 		form,
 		SERVER_URL,
 		IS_DEVELOPMENT: NODE_ENV == "development"

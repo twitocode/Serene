@@ -6,9 +6,6 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({cookies, url, request, locals }) => {
-  //TODO: for some reason not sending back jwt but is sending back Identity.External
-  console.log(request.headers)
-
   if (!cookies.get("ACCESS_TOKEN")) {
     console.log("No access token found, redirecting to login");
     throw redirect(302, "/login");
