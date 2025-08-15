@@ -5,7 +5,7 @@ import { fail, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async ({cookies, url, request }) => {
+export const load: PageServerLoad = async ({cookies, url, request, locals }) => {
   //TODO: for some reason not sending back jwt but is sending back Identity.External
   console.log(request.headers)
 

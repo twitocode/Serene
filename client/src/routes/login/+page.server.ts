@@ -8,15 +8,7 @@ import { fail, setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async ({ cookies }) => {
-	const access_token = cookies.get("ACCESS_TOKEN");
-	if (access_token) {
-		console.log("No access token found, redirecting to login");
-		throw redirect(308, "/home");
-	}
-
-	//TODO: implement refresh token logic
-
+export const load: PageServerLoad = async ({ cookies, locals }) => {
 	const form = await superValidate(zod4(loginSchema));
 
 	// Always return { form } in load functions
@@ -58,6 +50,7 @@ export const actions: Actions = {
 		const cookiesFromBackend = setCookie.parse(res.headers.get("set-cookie") ?? "", { map: true });
 
 		if (cookiesFromBackend.ACCESS_TOKEN) {
+			console.log("setting access_token");
 			cookies.set("ACCESS_TOKEN", cookiesFromBackend.ACCESS_TOKEN.value, {
 				path: "/",
 				httpOnly: true,
@@ -68,6 +61,7 @@ export const actions: Actions = {
 		}
 
 		if (cookiesFromBackend.REFRESH_TOKEN) {
+			console.log("setting refresh_token");
 			cookies.set("REFRESH_TOKEN", cookiesFromBackend.REFRESH_TOKEN.value, {
 				path: "/",
 				httpOnly: true,

@@ -39,6 +39,7 @@ public class RefreshTokenEndpoint() : IEndpoint
             return Result<string>.InternalServerError(new Error(AppErrors.RefreshTokenError, "Unable to retrieve user from refresh token"));
 
         if (user.RefreshTokenExpirationDate < DateTime.UtcNow.ToInstant())
+        // TODO: Make a new refresh token
             return Result<string>.BadRequest(new Error(AppErrors.RefreshTokenError, "Refresh token already expired"));
 
         var (accessToken, expirationDate) = jwtService.GenerateToken(user);
