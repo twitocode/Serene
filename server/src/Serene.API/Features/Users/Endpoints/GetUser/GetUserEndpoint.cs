@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Serene.API.Common;
 using Serene.API.Common.Results;
-using Serene.API.Data;
 using Serene.API.Data.Entities;
 using Serene.API.Features.Auth;
 
-namespace Serene.API.Features.Users.Endpoints.GetAllCountries;
+namespace Serene.API.Features.Users.Endpoints.GetUser;
 
 public class GetUserEndpoint : IEndpoint
 {
@@ -16,9 +15,9 @@ public class GetUserEndpoint : IEndpoint
             var user = await userManager.FindByIdAsync(id.ToString());
             if (user is null)
             {
-                return Result<User>.Failure(404, new Error(AppErrors.UserNotFound, "User not found with provided token"));
+                return Result<GetUserResponse>.Failure(404, new Error(AppErrors.UserNotFound, "User not found with provided token"));
             }
-            return Result<User>.Success(user);
+            return Result<GetUserResponse>.Success(user.ToGetUserResponse());
         })
         .RequireAuthorization()
             .WithTags(Tags.Users)

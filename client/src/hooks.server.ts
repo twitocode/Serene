@@ -81,6 +81,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		});
 
 		if (!res.ok) {
+      console.log(await res.json())
 			event.cookies.delete("ACCESS_TOKEN", { path: "/" });
 			event.cookies.delete("REFRESH_TOKEN", { path: "/" });
 			event.locals.user = undefined;
@@ -96,9 +97,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 		const user = data.value as User;
 		event.locals.user = user;
 
-		const allowedDuringSetup = ["/setup-profile"];
-
-		if (!user.isSetupCompleted && !allowedDuringSetup.includes(event.url.pathname)) {
+		if (!user.isSetupCompleted && event.url.pathname !== "/setup-profile") {
+      console.log("the users setup is not completed")
 			throw redirect(308, "/setup-profile");
 		}
 

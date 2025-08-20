@@ -21,16 +21,6 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
   const form = await superValidate(initialData, zod4(setupProfileSchema));
   
 
-    // const res = await fetch(`${SERVER_URL}/users/setup`, {
-    //     method: "GET",
-    //     headers: {
-    //       Cookie: `ACCESS_TOKEN=${locals.accessToken}`
-    //     }
-    //   });
-
-    // const data = await res.json();
-    // const initialFormData = data.value as User
-
 	return {
 		user: locals.user,
     initialFormData: {},
@@ -47,6 +37,8 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
+
+    console.log(form.data)
 
 		// TODO: Do something with the validated form.data
 		const res = await fetch(`${SERVER_URL}/users/setup`, {

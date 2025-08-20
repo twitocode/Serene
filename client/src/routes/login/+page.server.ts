@@ -3,12 +3,12 @@ import { loginSchema } from "$lib/components/auth/formSchema";
 import type { ApiAppError } from "$lib/types";
 import { AppErrors } from "$lib/types/application-errors";
 import { redirect, type Actions } from "@sveltejs/kit";
-import * as setCookie from "set-cookie-parser";
 import { fail, setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types";
+import { setAuthTokens } from "$lib/server/setAuthTokens";
 
-export const load: PageServerLoad = async ({ cookies, locals , fetch }) => {
+export const load: PageServerLoad = async ({ cookies, locals, fetch }) => {
 	const form = await superValidate(zod4(loginSchema));
 
 	// Always return { form } in load functions
@@ -47,29 +47,7 @@ export const actions: Actions = {
 			return fail(404, { form });
 		}
 
-		const cookiesFromBackend = setCookie.parse(res.headers.get("set-cookie") ?? "", { map: true });
-
-		if (cookiesFromBackend.ACCESS_TOKEN) {
-			console.log("setting access_token");
-			cookies.set("ACCESS_TOKEN", cookiesFromBackend.ACCESS_TOKEN.value, {
-				path: "/",
-				httpOnly: true,
-				secure: true,
-				sameSite: "none",
-				expires: cookiesFromBackend.ACCESS_TOKEN.expires
-			});
-		}
-console.log(cookiesFromBackend)
-		if (cookiesFromBackend.REFRESH_TOKEN) {
-			console.log("setting refresh_token");
-			cookies.set("REFRESH_TOKEN", cookiesFromBackend.REFRESH_TOKEN.value, {
-				path: "/",
-				httpOnly: true,
-				secure: true,
-				sameSite: "none",
-				expires: cookiesFromBackend.REFRESH_TOKEN.expires
-			});
-		}
+		setAuthTokens(cookies, res)
 
 		console.log("Login successful, redirecting to callback");
 		return redirect(308, "/home");

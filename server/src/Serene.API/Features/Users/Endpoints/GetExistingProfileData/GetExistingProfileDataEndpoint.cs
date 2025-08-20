@@ -3,8 +3,9 @@ using Serene.API.Common;
 using Serene.API.Common.Results;
 using Serene.API.Data.Entities;
 using Serene.API.Features.Auth;
+using Serene.API.Features.Users.Endpoints.GetExistingProfileData;
 
-namespace Serene.API.Features.Users.Endpoints.GetExisitingProfileData;
+namespace Serene.API.Features.Users.Endpoints.GetExistingProfileData;
 
 public class GetExistingProfileDataEndpoint : IEndpoint
 {
@@ -17,16 +18,16 @@ public class GetExistingProfileDataEndpoint : IEndpoint
             .WithSummary("Get the incomplete profile")
             .WithTags(Tags.Users);
 
-    private async Task<Result<User>> Handle(UserManager<User> userManager, HttpContext context, CancellationToken token)
+    private async Task<Result<GetExistingProfileDataResponse>> Handle(UserManager<User> userManager, HttpContext context, CancellationToken token)
     {
         var id = context.User.GetUserId();
         var user = await userManager.FindByIdAsync(id.ToString());
 
         if (user is null)
-            return Result<User>.BadRequest(new Error(AppErrors.UserNotFound, "Could not find user by id"));
+            return Result<GetExistingProfileDataResponse>.BadRequest(new Error(AppErrors.UserNotFound, "Could not find user by id"));
         if (user.IsSetupCompleted)
-            return Result<User>.Unauthorized(new Error(AppErrors.UserUpdateError, "User has already been setup"))
+            return Result<GetExistingProfileDataResponse>.Unauthorized(new Error(AppErrors.UserUpdateError, "User has already been setup"))
                 ;
-        return Result<User>.Success(user);
+        return Result<GetExistingProfileDataResponse>.Success(user.ToGetExistingProfileData());
     }
 }

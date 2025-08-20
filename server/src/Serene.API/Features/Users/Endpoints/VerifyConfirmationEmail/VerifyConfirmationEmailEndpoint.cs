@@ -11,7 +11,7 @@ using Serene.API.Features.Auth;
 
 namespace Serene.API.Features.Users.Endpoints.VerifyConfirmationEmail;
 
-public class VerifyConfirmationEmail : IEndpoint
+public class VerifyConfirmationEmailEndpoint : IEndpoint
 {
     public RouteHandlerBuilder MapEndpoint(IEndpointRouteBuilder app) =>
         app.MapPut("/users/confirmation-email", async ([FromBody] VerifyConfirmationEmailRequest verifyConfirmationEmailRequest, HttpContext httpContext,

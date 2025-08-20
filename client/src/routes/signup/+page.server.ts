@@ -1,9 +1,9 @@
 ﻿import { NODE_ENV, SERVER_URL } from "$env/static/private";
 import { loginSchema, signUpSchema } from "$lib/components/auth/formSchema";
+import { setAuthTokens } from "$lib/server/setAuthTokens";
 import type { ApiAppError } from "$lib/types";
 import { AppErrors } from "$lib/types/application-errors";
 import { redirect } from "@sveltejs/kit";
-import * as setCookie from "set-cookie-parser";
 import { fail, setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 
@@ -54,7 +54,7 @@ export const actions = {
 			return fail(404, { form });
 		}
 
-    res = await fetch(`${SERVER_URL}/auth/login`, {
+		res = await fetch(`${SERVER_URL}/auth/login`, {
 			method: "POST",
 			headers: [["Content-Type", "application/json"]],
 			body: JSON.stringify({
@@ -62,42 +62,21 @@ export const actions = {
 				password: form.data.password
 			})
 		});
-	if (!res.ok) {
-		const errorResponse = (await res.json()) as ApiAppError;
+		if (!res.ok) {
+			const errorResponse = (await res.json()) as ApiAppError;
 
-		for (const error of errorResponse.errors) {
-			if (error.code == AppErrors.UserNotFound) {
-				setError(form, "email", error.message);
-			} else if (error.code == AppErrors.AuthInvalidPassword) {
-				setError(form, "password", error.message);
+			for (const error of errorResponse.errors) {
+				if (error.code == AppErrors.UserNotFound) {
+					setError(form, "email", error.message);
+				} else if (error.code == AppErrors.AuthInvalidPassword) {
+					setError(form, "password", error.message);
+				}
 			}
+
+			return fail(404, { form });
 		}
 
-		return fail(404, { form });
-	}
-
-
-		const cookiesFromBackend = setCookie.parse(res.headers.get("set-cookie") ?? "", { map: true });
-
-		if (cookiesFromBackend.ACCESS_TOKEN) {
-			cookies.set("ACCESS_TOKEN", cookiesFromBackend.ACCESS_TOKEN.value, {
-				path: "/",
-				httpOnly: true,
-				secure: true,
-				sameSite: "none",
-				expires: cookiesFromBackend.ACCESS_TOKEN.expires
-			});
-		}
-
-		if (cookiesFromBackend.REFRESH_TOKEN) {
-			cookies.set("REFRESH_TOKEN", cookiesFromBackend.REFRESH_TOKEN.value, {
-				path: "/",
-				httpOnly: true,
-				secure: true,
-				sameSite: "none",
-				expires: cookiesFromBackend.REFRESH_TOKEN.expires
-			});
-		}
+		setAuthTokens(cookies, res);
 
 		console.log("Register successful, redirecting to callback");
 		return redirect(308, "/home");

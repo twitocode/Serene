@@ -127,7 +127,7 @@
 									<div class="flex flex-col">
 										<div class="flex flex-col gap-2">
 											<Form.Label>Date of Birth</Form.Label>
-											<Input class="hidden" {...props} bind:value={$formData.dateOfBirth} />
+											<Input class="hidden" {...props} bind:value={$formData.dateOfBirth} name="dateOfBirth"/>
 											<DatePicker bind:value={$formData.dateOfBirth} />
 											<Form.Description>Helps to determine age specific resources</Form.Description>
 										</div>
@@ -142,7 +142,7 @@
 									<div class="flex flex-col">
 										<div class="flex flex-col gap-2">
 											<Form.Label>Country</Form.Label>
-											<FormSelect bind:value={$formData.country} name="Country" items={[{ value: "canada", label: "Canada" }]} />
+											<FormSelect bind:value={$formData.country} name="country" items={[{ value: "Canada", label: "Canada" }]} />
 											<Form.Description
 												>Helps to determine country specific resources</Form.Description
 											>
@@ -158,7 +158,7 @@
 									<div class="flex flex-col">
 										<div class="flex flex-col gap-2">
 											<Form.Label>Gender</Form.Label>
-											<FormSelect bind:value={$formData.gender}  name="Gender" items={genders} />
+											<FormSelect bind:value={$formData.gender}  name="gender" items={genders} />
 										</div>
 									</div>
 								{/snippet}
@@ -171,7 +171,7 @@
 									<div class="flex flex-col">
 										<div class="flex flex-col gap-2">
 											<Form.Label>Pronouns</Form.Label>
-											<FormSelect bind:value={$formData.pronouns}  name="Pronouns" items={[{ value: "He/Him", label: "He/Him" }]} />
+											<FormSelect bind:value={$formData.pronouns}  name="pronouns" items={[{ value: "he/him", label: "He/Him" }]} />
 										</div>
 									</div>
 								{/snippet}
