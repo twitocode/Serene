@@ -23,7 +23,7 @@ export const load = async ({ cookies }) => {
 };
 
 export const actions = {
-	default: async ({ request, cookies }) => {
+	default: async ({ request, cookies, fetch }) => {
 		const form = await superValidate(request, zod4(loginSchema));
 
 		if (!form.valid) {

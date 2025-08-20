@@ -8,7 +8,7 @@ import { fail, setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async ({ cookies, locals }) => {
+export const load: PageServerLoad = async ({ cookies, locals , fetch }) => {
 	const form = await superValidate(zod4(loginSchema));
 
 	// Always return { form } in load functions
@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, cookies }) => {
+	default: async ({ request, cookies, fetch }) => {
 		const form = await superValidate(request, zod4(loginSchema));
 
 		if (!form.valid) {
@@ -59,7 +59,7 @@ export const actions: Actions = {
 				expires: cookiesFromBackend.ACCESS_TOKEN.expires
 			});
 		}
-
+console.log(cookiesFromBackend)
 		if (cookiesFromBackend.REFRESH_TOKEN) {
 			console.log("setting refresh_token");
 			cookies.set("REFRESH_TOKEN", cookiesFromBackend.REFRESH_TOKEN.value, {

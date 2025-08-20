@@ -39,7 +39,11 @@
 		{
 			value: "NonBinary",
 			label: "Non-Binary"
-		}
+		},
+    {
+      value: "None",
+      label: "Prefer Not to Say"
+    }
 	];
 </script>
 

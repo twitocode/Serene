@@ -33,6 +33,7 @@ public static class ConfigureServices
 {
     public static void AddServices(this WebApplicationBuilder builder)
     {
+    
         builder.Logging();
         builder.AddOpenApi();
         builder.AddDatabase();
@@ -47,6 +48,7 @@ public static class ConfigureServices
         builder.AddHybridCache();
         builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
         builder.AddEmailService();
+
     }
 
     private static IServiceCollection AddEndpoints(this IServiceCollection services, Assembly assembly)
@@ -407,7 +409,7 @@ public static class ConfigureServices
                     }
                 };
             });
-            
+
         builder.Services.AddAuthorization();
 
         builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));

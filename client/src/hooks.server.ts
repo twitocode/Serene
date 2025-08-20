@@ -27,7 +27,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 				}
 			}
 			//refreshtoken
-			const res = await fetch(`${SERVER_URL}/auth/refresh-token`, {
+			const res = await event.fetch(`${SERVER_URL}/auth/refresh-token`, {
 				method: "POST",
 				headers: {
 					Cookie: `REFRESH_TOKEN=${refresh_token}`
@@ -73,7 +73,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			}
 		}
 
-		const res = await fetch(`${SERVER_URL}/users`, {
+		const res = await event.fetch(`${SERVER_URL}/users`, {
 			method: "GET",
 			headers: {
 				Cookie: `ACCESS_TOKEN=${access_token}`
