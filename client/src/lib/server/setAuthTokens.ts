@@ -27,4 +27,6 @@ export function setAuthTokens(cookies: Cookies, res: Response) {
 			expires: cookiesFromBackend.REFRESH_TOKEN.expires
 		});
 	}
+
+  return cookiesFromBackend.ACCESS_TOKEN.value ?? ""
 }

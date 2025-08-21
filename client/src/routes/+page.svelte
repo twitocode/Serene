@@ -2,9 +2,12 @@
 	import Footer from "$lib/components/common/footer.svelte";
 	import Navbar from "$lib/components/common/navbar.svelte";
 	import { Button } from "$lib/components/ui/button/index.js";
+
+  const {data} = $props();
+
 </script>
 
-<Navbar />
+<Navbar user={data.user} />
 <div class="mt-12 space-y-24">
 	<section class="hero-content text-center md:mx-48">
 		<div class="hero flex flex-col items-center space-y-16">

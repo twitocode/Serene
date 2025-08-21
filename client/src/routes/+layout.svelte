@@ -1,4 +1,4 @@
-<script lang="ts">
+  <script lang="ts">
   import "@fontsource-variable/outfit";
   import "@fontsource-variable/playfair-display";
   import "@fontsource/ibm-plex-mono";

@@ -1,5 +1,5 @@
 import { SERVER_URL } from "$env/static/private";
-import { redirect } from "@sveltejs/kit";
+import { redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import type { message } from "sveltekit-superforms";
 import type { Result, User } from "$lib/types";
