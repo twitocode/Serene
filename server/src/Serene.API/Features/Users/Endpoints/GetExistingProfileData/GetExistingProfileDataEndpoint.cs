@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Serene.API.Common;
+using Serene.API.Common.Mappers;
 using Serene.API.Common.Results;
 using Serene.API.Data.Entities;
 using Serene.API.Features.Auth;

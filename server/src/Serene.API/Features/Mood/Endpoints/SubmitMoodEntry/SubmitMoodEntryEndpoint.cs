@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using NodaTime;
 using Serene.API.Common;
 using Serene.API.Common.Extensions;
+using Serene.API.Common.Mappers;
 using Serene.API.Common.Results;
 using Serene.API.Data;
 using Serene.API.Data.Entities;
@@ -29,14 +30,14 @@ public class SubmitMoodEntryEndpoint : IEndpoint
         CancellationToken ct)
     {
         var user = ctx.GetUser();
-        
+
         var now = SystemClock.Instance.GetCurrentInstant();
         var zonedDateTimeUtc = now.InUtc();
         var todaysLocalDate = now.InUtc().Date;
-        
-        if (user.LastMoodCheckin.Day >= todaysLocalDate.Day) 
+
+        if (user.LastMoodCheckin.Day >= todaysLocalDate.Day)
             return Result<SubmitMoodEntryResponse>.BadRequest(new Error(AppErrors.MoodEntryNotReady, "You are not able to create a new mood entry yet"));
-        
+
         var doesTodaysEntryExist = await db.MoodEntries
             .AnyAsync(x => x.CreatedAt.InUtc().Date == todaysLocalDate && x.UserId == user.Id, ct);
 
@@ -52,10 +53,10 @@ public class SubmitMoodEntryEndpoint : IEndpoint
             HadPhysicalOrEmotionalDiscomfort = request.HadPhysicalOrEmotionalDiscomfort,
             UserId = user.Id
         };
-        
+
         db.MoodEntries.Add(newEntry);
         user.LastMoodCheckin = todaysLocalDate;
-        
+
         await db.SaveChangesAsync(ct);
 
         var response = newEntry.ToSubmitMoodEntry();

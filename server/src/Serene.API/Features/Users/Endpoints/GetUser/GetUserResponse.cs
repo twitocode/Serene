@@ -2,6 +2,9 @@
 namespace Serene.API.Features.Users.Endpoints.GetUser;
 
 public record GetUserResponse(
+    string Id,
+    string UserName,
+    string Email,
     string FirstName,
     string LastName,
     string Country,

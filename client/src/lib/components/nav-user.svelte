@@ -3,15 +3,18 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	import { useSidebar } from "$lib/components/ui/sidebar/index.js";
+	import type { User } from "$lib/types";
 	import BadgeCheckIcon from "@lucide/svelte/icons/badge-check";
 	import BellIcon from "@lucide/svelte/icons/bell";
 	import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
 	import CreditCardIcon from "@lucide/svelte/icons/credit-card";
 	import LogOutIcon from "@lucide/svelte/icons/log-out";
 	import SparklesIcon from "@lucide/svelte/icons/sparkles";
+	import { getContext } from "svelte";
 
-	let { user }: { user: { name: string; email: string; avatar: string } } = $props();
+  const user = getContext<User>("user")
 	const sidebar = useSidebar();
+  const fullname = $derived(user.firstName + " " + user.lastName)
 </script>
 
 <Sidebar.Menu >
@@ -25,11 +28,11 @@
 						{...props}
 					>
 						<Avatar.Root class="size-8 rounded-lg">
-							<Avatar.Image src={user.avatar} alt={user.name} />
+							<Avatar.Image src={user.avatarUrl} alt={fullname} />
 							<Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-left text-sm leading-tight">
-							<span class="truncate font-medium">{user.name}</span>
+								<span class="truncate font-medium">{fullname}</span>
 							<span class="truncate text-xs">{user.email}</span>
 						</div>
 						<ChevronsUpDownIcon class="ml-auto size-4" />
@@ -46,11 +49,11 @@
 				<DropdownMenu.Label class="p-0 font-normal">
 					<div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 						<Avatar.Root class="size-8 rounded-lg">
-							<Avatar.Image src={user.avatar} alt={user.name} />
+							<Avatar.Image src={user.avatarUrl} alt={fullname} />
 							<Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-left text-sm leading-tight">
-							<span class="truncate font-medium">{user.name}</span>
+							<span class="truncate font-medium">{fullname}</span>
 							<span class="truncate text-xs">{user.email}</span>
 						</div>
 					</div>

@@ -10,23 +10,23 @@
 		navMain: [
 			{
 				title: "Reflect",
-				url: "#",
+				url: "/home/reflect",
 				icon: Pencil,
 				isActive: true
 			},
 			{
 				title: "Ambience",
-				url: "#",
+				url: "/home/ambience",
 				icon: ListMusic
 			},
 			{
 				title: "Trends",
-				url: "#",
+				url: "/home/trends",
 				icon: TrendingUp
 			},
 			{
 				title: "Content Library",
-				url: "#",
+				url: "/home/library",
 				icon: Library
 			}
 		]
@@ -34,28 +34,31 @@
 </script>
 
 <script lang="ts">
+  
+
+
+
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	import type { ComponentProps } from "svelte";
 	import NavMain from "./nav-main.svelte";
 	import NavUser from "./nav-user.svelte";
-	import TeamSwitcher from "./team-switcher.svelte";
+	import SidebarHeader from "./sidebar-header.svelte";
 
 	let {
 		ref = $bindable(null),
 		collapsible = "icon",
 		...restProps
-	}: ComponentProps<typeof Sidebar.Root> = $props();
+	}: ComponentProps<typeof Sidebar.Root>  = $props();
 </script>
 
-<Sidebar.Root {collapsible} {...restProps}>
+<Sidebar.Root {collapsible} {...restProps} class="border-sidebar-primary">
 	<Sidebar.Header>
-		<TeamSwitcher />
+		<SidebarHeader />
 	</Sidebar.Header>
-	<Sidebar.Content>
+	<Sidebar.Content class="flex flex-col h-full justify-center">
 		<NavMain items={data.navMain} />
 	</Sidebar.Content>
 	<Sidebar.Footer>
-		<NavUser user={data.user} />
+		<NavUser />
 	</Sidebar.Footer>
-	<Sidebar.Rail />
 </Sidebar.Root>

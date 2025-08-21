@@ -63,43 +63,34 @@ async function getAuthenticatedUser(event: RequestEvent, token: string): Promise
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
-	const publicRoutes = ["/", "/login", "/login/callback"];
+	const publicRoutes = ["/", "/login", "/signup"];
 
-  if (pathname === "/logout") {
-    reset(event);
-    throw redirect(308, "/")
-  }
+	if (pathname === "/logout") {
+		reset(event);
+		throw redirect(308, "/");
+	} else if (pathname === "/login/callback") {
+		return await resolve(event);
+	}
 
 	// Public routes
 	if (publicRoutes.includes(pathname)) {
-		if (pathname === "/login") {
-			// If already authenticated, redirect away from login
-			let token = event.cookies.get("ACCESS_TOKEN") ?? null;
-			if (!token) token = await refreshAccessToken(event);
+		// If already authenticated, redirect away
+		let token = event.cookies.get("ACCESS_TOKEN") ?? null;
+		if (!token) token = await refreshAccessToken(event);
 
-			if (token) {
-				const user = await getAuthenticatedUser(event, token);
-				if (user) {
-					event.locals.user = user;
-					if (!user.isSetupCompleted) {
-						throw redirect(308, "/setup-profile");
-					} else {
-						throw redirect(308, "/");
-					}
-				}
-			}
-		} else if (pathname === "/") {
-			let token = event.cookies.get("ACCESS_TOKEN") ?? null;
-			if (!token) token = await refreshAccessToken(event);
-
-			if (token) {
-				const user = await getAuthenticatedUser(event, token);
-				if (user) {
-					event.locals.user = user;
+		if (token) {
+			const user = await getAuthenticatedUser(event, token);
+			if (user) {
+				event.locals.user = user;
+				if (!user.isSetupCompleted) {
+					throw redirect(308, "/setup-profile");
+				} else {
+					throw redirect(308, "/home");
 				}
 			}
 		}
-		return resolve(event);
+
+		return await resolve(event);
 	}
 
 	// Protected routes (everything else)
@@ -140,5 +131,5 @@ export const handle: Handle = async ({ event, resolve }) => {
 		throw redirect(308, "/home");
 	}
 
-	return resolve(event);
+	return await resolve(event);
 };

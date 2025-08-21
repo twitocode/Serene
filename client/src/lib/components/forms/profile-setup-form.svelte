@@ -4,6 +4,7 @@
 	import FormSelect from "$lib/components/forms/form-select.svelte";
 	import * as Form from "$lib/components/ui/form";
 	import { Input } from "$lib/components/ui/input";
+	import { constants } from "$lib/constants";
 	import type { User } from "$lib/types";
 	import { cn, type WithElementRef } from "$lib/utils.js";
 	import GalleryVerticalEndIcon from "@lucide/svelte/icons/gallery-vertical-end";
@@ -27,24 +28,7 @@
 	const form = superForm(formProps, {});
 	const { form: formData, errors, constraints, message, enhance } = form;
 
-	const genders = [
-		{
-			value: "Male",
-			label: "Male"
-		},
-		{
-			value: "Female",
-			label: "Female"
-		},
-		{
-			value: "NonBinary",
-			label: "Non-Binary"
-		},
-    {
-      value: "None",
-      label: "Prefer Not to Say"
-    }
-	];
+
 </script>
 
 {#if $message}<h3>{$message}</h3>{/if}
@@ -142,7 +126,7 @@
 									<div class="flex flex-col">
 										<div class="flex flex-col gap-2">
 											<Form.Label>Country</Form.Label>
-											<FormSelect bind:value={$formData.country} name="country" items={[{ value: "Canada", label: "Canada" }]} />
+											<FormSelect bind:value={$formData.country} name="country" items={constants.countries} />
 											<Form.Description
 												>Helps to determine country specific resources</Form.Description
 											>
@@ -158,7 +142,7 @@
 									<div class="flex flex-col">
 										<div class="flex flex-col gap-2">
 											<Form.Label>Gender</Form.Label>
-											<FormSelect bind:value={$formData.gender}  name="gender" items={genders} />
+											<FormSelect bind:value={$formData.gender}  name="gender" items={constants.genders} />
 										</div>
 									</div>
 								{/snippet}
@@ -171,7 +155,7 @@
 									<div class="flex flex-col">
 										<div class="flex flex-col gap-2">
 											<Form.Label>Pronouns</Form.Label>
-											<FormSelect bind:value={$formData.pronouns}  name="pronouns" items={[{ value: "he/him", label: "He/Him" }]} />
+											<FormSelect bind:value={$formData.pronouns}  name="pronouns" items={constants.pronouns} />
 										</div>
 									</div>
 								{/snippet}

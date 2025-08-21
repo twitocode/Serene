@@ -20,29 +20,19 @@
 </script>
 
 <Sidebar.Group>
-	<Sidebar.GroupLabel>Your Tools</Sidebar.GroupLabel>
 	<Sidebar.Menu>
 		{#each items as item (item.title)}
 			<Sidebar.MenuItem>
 				<Sidebar.MenuButton tooltipContent={item.title}>
-					{#if item.icon}
-						<item.icon />
-					{/if}
-					<span>{item.title}</span>
+					{#snippet child({ props })}
+						<a href={item.url} {...props}>
+							{#if item.icon}
+								<item.icon />
+							{/if}
+							<span>{item.title}</span>
+						</a>
+					{/snippet}
 				</Sidebar.MenuButton>
-				<Sidebar.MenuSub>
-					{#each item.items ?? [] as subItem (subItem.title)}
-						<Sidebar.MenuSubItem>
-							<Sidebar.MenuSubButton>
-								{#snippet child({ props })}
-									<a href={subItem.url} {...props}>
-										<span>{subItem.title}</span>
-									</a>
-								{/snippet}
-							</Sidebar.MenuSubButton>
-						</Sidebar.MenuSubItem>
-					{/each}
-				</Sidebar.MenuSub>
 			</Sidebar.MenuItem>
 		{/each}
 	</Sidebar.Menu>

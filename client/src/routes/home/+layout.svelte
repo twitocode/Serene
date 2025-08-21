@@ -1,10 +1,25 @@
 <script lang="ts">
+	import AppSidebar from "$lib/components/app-sidebar.svelte";
+	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	import type { User } from "$lib/types";
-	import { setContext } from 'svelte'
+	import { setContext, type Snippet } from "svelte";
+	import type { LayoutProps } from "./$types";
 
-	let { user: data, children } = $props<{ user: User }>()
-	let user = $state(data)
+	let { children, data }: LayoutProps   = $props();
 
-	setContext('user', user)
+	setContext('user', data.user)
 </script>
-{@render children()}
+
+<Sidebar.Provider>
+	<AppSidebar />
+	<Sidebar.Inset>
+		<header
+			class="group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear"
+		>
+			<div class="flex items-center gap-2 px-4">
+				<Sidebar.Trigger class="-ml-1" />
+				{@render children()}
+			</div>
+		</header>
+	</Sidebar.Inset>
+</Sidebar.Provider>
