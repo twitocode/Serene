@@ -14,13 +14,8 @@
 	<Sidebar.MenuItem >
 		<Sidebar.MenuButton size="lg">
 			{#snippet child({ props })}
-				<a href="##" {...props}>
-					<div
-						class="text-sidebar-primary flex aspect-square items-center justify-center rounded-lg"
-					>
-						<Ribbon  />
-					</div>
-          <span class="font-medium">Serene</span>
+				<a href="/home" {...props}>
+					<SereneLogo />
 				</a>
 			{/snippet}
 		</Sidebar.MenuButton>

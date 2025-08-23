@@ -18,8 +18,11 @@
 		>
 			<div class="flex items-center gap-2 px-4">
 				<Sidebar.Trigger class="-ml-1" />
-				{@render children()}
 			</div>
 		</header>
+    <div class="flex flex-1 flex-col gap-4 pt-4 px-40">
+      {@render children()}  
+    </div>
+    
 	</Sidebar.Inset>
 </Sidebar.Provider>

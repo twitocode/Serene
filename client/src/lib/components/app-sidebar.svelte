@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import { Library, ListMusic, Pencil, TrendingUp } from "@lucide/svelte/icons";
+	import { Home, Library, ListMusic, Pencil, TrendingUp } from "@lucide/svelte/icons";
 
 	const data = $derived({
 		user: {
@@ -8,6 +8,11 @@
 			avatar: "/avatars/shadcn.jpg"
 		},
 		navMain: [
+      {
+        title: "Home",
+        url: "/home",
+        icon: Home
+      },
 			{
 				title: "Reflect",
 				url: "/home/reflect",

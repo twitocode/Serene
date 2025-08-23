@@ -241,7 +241,106 @@ const countries: Select[] = [
 	{ label: "Zimbabwe", value: "Zimbabwe" }
 ];
 
+const dailyAffirmations = [
+	// Self-Love & Self-Worth
+	"I am enough just as I am.",
+	"My worth is not determined by others' opinions.",
+	"I deserve love, care, and respect.",
+	"I accept myself fully and unconditionally.",
+	"My flaws make me unique and human.",
+	"I am constantly growing and evolving.",
+	"I honor my needs and set healthy boundaries.",
+	"I let go of self-judgment and embrace compassion.",
+	"I am proud of how far I’ve come.",
+	"My presence makes the world better.",
+
+	// Confidence & Empowerment
+	"I trust in my ability to overcome challenges.",
+	"Confidence flows through me naturally.",
+	"I am capable of achieving great things.",
+	"I choose to show up fully and authentically.",
+	"I am powerful, resilient, and brave.",
+	"I release fear and step into courage.",
+	"I am worthy of success and happiness.",
+	"I learn from setbacks and grow stronger each time.",
+	"I deserve to take up space.",
+	"My voice matters, and I speak with confidence.",
+
+	// Stress & Anxiety Relief
+	"I release what I cannot control.",
+	"Peace begins with my breath.",
+	"I choose calm over chaos.",
+	"I am safe, here and now.",
+	"I let go of unnecessary worries.",
+	"Each exhale releases tension from my body.",
+	"I give myself permission to rest.",
+	"I welcome stillness into my day.",
+	"I trust that things will work out in time.",
+	"My mind is a place of peace and clarity.",
+
+	// Motivation & Productivity
+	"Today, I take steps toward my goals.",
+	"Small actions create big change over time.",
+	"I am focused, capable, and determined.",
+	"I use my time wisely and with purpose.",
+	"Progress matters more than perfection.",
+	"I can handle the tasks ahead of me.",
+	"My energy goes toward what truly matters.",
+	"I am disciplined and motivated.",
+	"Each day is a new chance to move forward.",
+	"I finish what I start.",
+
+	// Relationships & Compassion
+	"I nurture healthy and supportive connections.",
+	"I choose kindness, even in challenging moments.",
+	"I am open to love in all its forms.",
+	"My relationships are built on mutual respect.",
+	"I express my needs with honesty and care.",
+	"I am patient with others’ growth, as they are with mine.",
+	"I release grudges and choose forgiveness.",
+	"I attract people who align with my values.",
+	"Love flows easily and abundantly into my life.",
+	"I am a source of warmth and understanding.",
+
+	// Healing & Resilience
+	"I allow myself to heal at my own pace.",
+	"My past does not define my future.",
+	"I am stronger than my struggles.",
+	"I turn pain into wisdom and growth.",
+	"I release what no longer serves me.",
+	"Healing is not linear, and that’s okay.",
+	"I am gentle with myself as I recover.",
+	"I trust the process of renewal.",
+	"Every scar tells a story of resilience.",
+	"My challenges shape me, not break me.",
+
+	// Gratitude & Positivity
+	"I am grateful for this new day.",
+	"I find joy in small moments.",
+	"My life is full of blessings I choose to notice.",
+	"I focus on what’s good and expanding.",
+	"I welcome abundance into my life.",
+	"Gratitude transforms my perspective.",
+	"I appreciate the people who uplift me.",
+	"I celebrate the progress I’ve made.",
+	"Positivity is a choice I make daily.",
+	"I find reasons to smile every day.",
+
+	// Health & Well-Being
+	"My body deserves nourishment and care.",
+	"I honor my need for rest and movement.",
+	"I am grateful for my body’s strength and resilience.",
+	"I make choices that support my health.",
+	"My mind and body are in balance.",
+	"Healing energy flows through me.",
+	"I listen to my body’s signals with respect.",
+	"I prioritize self-care without guilt.",
+	"Each day, I grow stronger and healthier.",
+	"I am in tune with my well-being."
+];
+
+
 
 export const constants = {
-  countries, genders, pronouns
+  countries, genders, pronouns, dailyAffirmations
 }
