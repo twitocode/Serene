@@ -48,6 +48,7 @@ public class LoginEndpoint(ILogger<LoginEndpoint> logger) : IEndpoint
             user.RefreshTokenExpirationDate = refreshTokenExpirationDate.ToInstant();
 
             var result = await userManager.UpdateAsync(user);
+
             if (!result.Succeeded)
                 return Result<string>.InternalServerError(new Error(AppErrors.UserUpdateError, "Failed to update user with tokens"));
 

@@ -1,3 +1,7 @@
+<script>
+	import { Ribbon } from "@lucide/svelte";
+
+</script>
 <div
 						class="text-sidebar-primary flex aspect-square items-center justify-center rounded-lg"
 					>
