@@ -43,7 +43,7 @@
 
 
 
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+	import * as Sidebar from "@/lib/components/ui/sidebar/index.js";
 	import type { ComponentProps } from "svelte";
 	import NavMain from "./nav-main.svelte";
 	import NavUser from "./nav-user.svelte";

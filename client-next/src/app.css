@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@import "tw-animate-css";
+@import  "./shadcn.css";
+:root {
+	--font-sans: "Outfit Variable", sans-serif;
+	--font-serif: "Playfair Display Variable", serif;
+	--font-mono: "IBM Plex Mono", monospace;
+}

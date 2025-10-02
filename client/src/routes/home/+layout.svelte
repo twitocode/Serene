@@ -1,7 +1,7 @@
 <script lang="ts">
-	import AppSidebar from "$lib/components/app-sidebar.svelte";
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import type { User } from "$lib/types";
+	import AppSidebar from "@/lib/components/app-sidebar.svelte";
+	import * as Sidebar from "@/lib/components/ui/sidebar/index.js";
+	import type { User } from "@/lib/types";
 	import { setContext, type Snippet } from "svelte";
 	import type { LayoutProps } from "./$types";
 

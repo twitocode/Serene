@@ -1,9 +1,9 @@
 <script lang="ts">
-	import * as Avatar from "$lib/components/ui/avatar/index.js";
-	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import { useSidebar } from "$lib/components/ui/sidebar/index.js";
-	import type { User } from "$lib/types";
+	import * as Avatar from "@/lib/components/ui/avatar/index.js";
+	import * as DropdownMenu from "@/lib/components/ui/dropdown-menu/index.js";
+	import * as Sidebar from "@/lib/components/ui/sidebar/index.js";
+	import { useSidebar } from "@/lib/components/ui/sidebar/index.js";
+	import type { User } from "@/lib/types";
 	import BadgeCheckIcon from "@lucide/svelte/icons/badge-check";
 	import BellIcon from "@lucide/svelte/icons/bell";
 	import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";

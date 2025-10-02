@@ -1,7 +1,7 @@
 <script lang="ts">
-	import DailyAffirmation from "$lib/components/home/daily-affirmation.svelte";
-	import { Button } from "$lib/components/ui/button";
-	import type { User } from "$lib/types";
+	import DailyAffirmation from "@/lib/components/home/daily-affirmation.svelte";
+	import { Button } from "@/lib/components/ui/button";
+	import type { User } from "@/lib/types";
 	import { ArrowRight } from "@lucide/svelte";
 	import { getContext } from "svelte";
 

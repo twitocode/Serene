@@ -1,6 +1,6 @@
 <script lang="ts">
 	import GalleryVerticalEndIcon from "@lucide/svelte/icons/gallery-vertical-end";
-	import LoginForm from "$lib/components/auth/login-form.svelte";
+	import LoginForm from "@/lib/components/auth/login-form.svelte";
 	import SuperDebug, { superForm } from "sveltekit-superforms";
 
 	let { data } = $props();

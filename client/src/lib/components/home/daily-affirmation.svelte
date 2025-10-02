@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { constants } from "$lib/constants";
+	import { constants } from "@/lib/constants";
 
   const affirmations = constants.dailyAffirmations;
   const randomIndex = Math.floor(Math.random() * affirmations.length);

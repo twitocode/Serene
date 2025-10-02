@@ -1,0 +1,54 @@
+"use client";
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+} from "@/lib/components/ui/sidebar";
+import { Home, Library, ListMusic, Pencil, TrendingUp } from "lucide-react";
+import * as React from "react";
+
+import NavMain from "./NavMain";
+import {NavUser} from "./NavUser";
+import AppSidebarHeader from "./SidebarHeader";
+
+const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
+  navMain: [
+    { title: "Home", url: "/home", icon: Home },
+    { title: "Reflect", url: "/home/reflect", icon: Pencil, isActive: true },
+    { title: "Ambience", url: "/home/ambience", icon: ListMusic },
+    { title: "Trends", url: "/home/trends", icon: TrendingUp },
+    { title: "Content Library", url: "/home/library", icon: Library },
+  ],
+};
+
+type SidebarLayoutProps = React.ComponentProps<typeof Sidebar>;
+
+export default function SidebarLayout({
+  collapsible = "icon",
+  ...props
+}: SidebarLayoutProps) {
+  return (
+    <Sidebar
+      collapsible={collapsible}
+      {...props}
+      className="border-sidebar-primary"
+    >
+      <SidebarHeader>
+        <AppSidebarHeader />
+      </SidebarHeader>
+      <SidebarContent className="flex flex-col h-full justify-center">
+        <NavMain items={data.navMain} />
+      </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={data.user} />
+      </SidebarFooter>
+    </Sidebar>
+  );
+}

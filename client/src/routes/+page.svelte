@@ -1,7 +1,7 @@
 <script>
-	import Footer from "$lib/components/common/footer.svelte";
-	import Navbar from "$lib/components/common/navbar.svelte";
-	import { Button } from "$lib/components/ui/button/index.js";
+	import Footer from "@/lib/components/common/footer.svelte";
+	import Navbar from "@/lib/components/common/navbar.svelte";
+	import { Button } from "@/lib/components/ui/button/index.js";
 
   const {data} = $props();
 

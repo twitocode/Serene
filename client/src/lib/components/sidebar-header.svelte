@@ -1,8 +1,8 @@
 <script lang="ts">
-	import SereneLogo from "$lib/components/common/serene-logo.svelte";
-	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import { useSidebar } from "$lib/components/ui/sidebar/index.js";
+	import SereneLogo from "@/lib/components/common/serene-logo.svelte";
+	import * as DropdownMenu from "@/lib/components/ui/dropdown-menu/index.js";
+	import * as Sidebar from "@/lib/components/ui/sidebar/index.js";
+	import { useSidebar } from "@/lib/components/ui/sidebar/index.js";
 	import { Ribbon } from "@lucide/svelte";
 	import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
 	import GalleryVerticalEndIcon from "@lucide/svelte/icons/gallery-vertical-end";
