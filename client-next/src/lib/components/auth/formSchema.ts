@@ -25,7 +25,7 @@ export const setupProfileSchema = z.object({
   country: z.string(),
   avatarUrl: z.string(),
   pronouns: z.string(),
-  dateOfBirth: z.string(),
+  dateOfBirth: z.coerce.date(),
   gender: z.string(),
 });
 

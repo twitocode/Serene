@@ -23,7 +23,7 @@ type Props = {
   onChange?: (value: string) => void;
 };
 
-export function AppSelect({ name, value, items, onChange }: Props) {
+export default function FormSelect({ name, value, items, onChange }: Props) {
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger className="w-full">
