@@ -11,7 +11,7 @@ export interface LoginFormError {
   fieldErrors: Record<string, string>;
 }
 
-export async function submitLoginForm(formData: FormData): Promise<LoginFormError> {
+export async function submitSignUpForm(formData: FormData): Promise<LoginFormError> {
   const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,

@@ -1,6 +1,7 @@
 "use client";
 
 import { submitLoginForm } from "@/lib/actions/submitLoginForm";
+import { submitSignUpForm } from "@/lib/actions/submitSignUpForm";
 import { LoginFormSchema, loginSchema } from "@/lib/components/auth/formSchema";
 import GoogleIcon from "@/lib/components/auth/GoogleIcon";
 import { Button } from "@/lib/components/ui/button";
@@ -44,7 +45,8 @@ export default function LoginForm({ isLogin, SERVER_URL, className }: Props) {
     formData.append("email", data.email);
     formData.append("password", data.password);
 
-    const result = await submitLoginForm(formData);
+    const formResolver = isLogin ? submitLoginForm : submitSignUpForm;
+    const result = await formResolver(formData);
 
     if (!result?.success) {
       if (result?.fieldErrors) {

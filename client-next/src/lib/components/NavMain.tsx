@@ -4,6 +4,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/lib/components/ui/sidebar";
+import Link from "next/link";
 
 export default function NavMain(props: any) {
   const {
@@ -27,14 +28,14 @@ export default function NavMain(props: any) {
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => (
-          <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton tooltip={item.title} asChild>
-              <a href={item.url} {...props}>
+              <Link href={item.url}>
+          <SidebarMenuItem>
+            <SidebarMenuButton tooltip={item.title}>
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
-              </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
+              </Link>
         ))}
       </SidebarMenu>
     </SidebarGroup>

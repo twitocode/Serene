@@ -17,8 +17,10 @@ import {
 import {
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem
+  SidebarMenuItem,
+  useSidebar
 } from "@/lib/components/ui/sidebar";
+import { User } from "@/lib/types";
 
 import {
   BadgeCheck,
@@ -29,20 +31,14 @@ import {
   Sparkles,
 } from "lucide-react";
 
-type User = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  avatarUrl: string;
-};
-
 type NavUserProps = {
   user: User;
   isMobile?: boolean;
 };
 
-export function NavUser({ user, isMobile = false }: NavUserProps) {
+export function NavUser({ user }: NavUserProps) {
   const fullname = `${user.firstName} ${user.lastName}`;
+  const sidebar = useSidebar();
 
   return (
     <SidebarMenu>
@@ -67,7 +63,7 @@ export function NavUser({ user, isMobile = false }: NavUserProps) {
 
           <DropdownMenuContent
             className="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-lg font-sans"
-            side={isMobile ? "bottom" : "right"}
+            side={sidebar.isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
           >

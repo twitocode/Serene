@@ -1,13 +1,12 @@
-import type { Result } from "@/lib/types";
-
+import { Result, User } from "@/lib/types";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export async function GET(request: Request) {
+export async function getUser() {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("ACCESS_TOKEN")?.value;
 
-  const res = await fetch(`${process.env.SERVER_URL}/mood/check-in`, {
+  const res = await fetch(`${process.env.SERVER_URL}/users`, {
     method: "GET",
     headers: {
       Cookie: `ACCESS_TOKEN=${accessToken}`,
@@ -15,12 +14,9 @@ export async function GET(request: Request) {
   });
 
   if (!res.ok) {
-    console.log(await res.json());
+    redirect("/login");
   }
 
-  const item = (await res.json()) as Result<boolean>;
-
-  return {
-    hasMoodCheckIn: item.value,
-  };
+  const data = (await res.json()) as Result<User>; //TODO: handle errors
+  return data.value;
 }
