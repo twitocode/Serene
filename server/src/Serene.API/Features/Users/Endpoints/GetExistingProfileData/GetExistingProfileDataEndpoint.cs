@@ -4,7 +4,6 @@ using Serene.API.Common.Mappers;
 using Serene.API.Common.Results;
 using Serene.API.Data.Entities;
 using Serene.API.Features.Auth;
-using Serene.API.Features.Users.Endpoints.GetExistingProfileData;
 
 namespace Serene.API.Features.Users.Endpoints.GetExistingProfileData;
 

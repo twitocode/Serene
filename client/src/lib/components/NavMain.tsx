@@ -28,14 +28,14 @@ export default function NavMain(props: any) {
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => (
-              <Link href={item.url}>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip={item.title}>
+          <Link href={item.url} key={item.title}>
+            <SidebarMenuItem>
+              <SidebarMenuButton tooltip={item.title}>
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-              </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </Link>
         ))}
       </SidebarMenu>
     </SidebarGroup>

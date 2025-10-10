@@ -52,7 +52,7 @@ export enum Theme {
 export interface Preference {
 	theme: Theme;
 	pageLock: string | null;
-	user: User;
+	user?: User;
 	createdAt: Date;
 	userId: string;
 }

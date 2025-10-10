@@ -11,10 +11,9 @@ const publicRoutes = ["/", "/login", "/signup"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-
   // logout
   if (pathname === "/logout") {
-    resetAuth();
+    await resetAuth();
     return NextResponse.redirect(new URL("/", req.url));
   }
 
@@ -41,6 +40,7 @@ export async function middleware(req: NextRequest) {
 
   // Public route logic
   if (publicRoutes.includes(pathname)) {
+    console.log(`trying to redirect to ${pathname}`)
     if (token) {
       const user = await getAuthenticatedUser(token);
       if (user) {
@@ -50,6 +50,8 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL("/home", req.url));
       }
     }
+
+    console.log(`going to ${pathname}`)
     return NextResponse.next();
   }
 

@@ -1,13 +1,15 @@
 import Footer from "@/lib/components/common/Footer";
 import Navbar from "@/lib/components/common/Navbar";
 import { Button } from "@/lib/components/ui/button";
+import { getUser } from "@/lib/server/getUser";
 import Link from "next/link";
 
-export default function Landing() {
-  const data:any = {user: {}}
+export default async function Landing() {
+  const user = await getUser()
+
   return (
     <>
-      <Navbar user={data.user} />
+      <Navbar user={user} />
       <div className="mt-12 space-y-24">
         <section className="hero-content text-center md:mx-48">
           <div className="hero flex flex-col items-center space-y-16">

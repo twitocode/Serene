@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Outfit, Playfair_Display } from "next/font/google";
+import { IBM_Plex_Mono, Lisu_Bosa, Outfit, Playfair_Display, Inter } from "next/font/google";
 import "./app.css";
-import { BackgroundGradientAnimation } from "@/lib/components/ui/background-gradient-animation";
+
 const outfit = Outfit({
+  variable: "--font-sans",
+  subsets: ["latin"],
+});
+
+const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
 });
@@ -15,6 +20,12 @@ const ibmPlexMono = IBM_Plex_Mono({
 const playfairDisplay = Playfair_Display({
   variable: "--font-serif",
   subsets: ["latin"],
+});
+
+
+const lisuBosa = Lisu_Bosa({
+  variable: "--font-serif",
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -30,7 +41,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${ibmPlexMono.variable} antialiased`}
+        className={`${inter.variable} ${ibmPlexMono.variable} ${lisuBosa.variable} antialiased`}
       >
         {children}
       </body>
