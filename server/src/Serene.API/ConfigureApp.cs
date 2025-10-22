@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serene.API.Common;
 using Serene.API.Data;
@@ -13,6 +14,12 @@ public static class ConfigureApp
         app.UseSerilogRequestLogging();
         app.UseCors("CorsPolicy");
 
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+            KnownNetworks = { },
+            KnownProxies = { }
+        });
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();

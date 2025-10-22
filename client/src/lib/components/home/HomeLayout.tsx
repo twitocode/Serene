@@ -1,5 +1,6 @@
 "use client";
 import AppSidebar from "@/lib/components/AppSidebar";
+import SongPlayer from "@/lib/components/music/SongPlayer";
 import { Button } from "@/lib/components/ui/button";
 import {
   SidebarInset,
@@ -31,11 +32,12 @@ export default function HomeLayout({
             <SidebarTrigger className="-ml-1" />
             <div className="">
               <Toaster />
-              <Button className="hover:bg-red-300"
-              variant="outline"
+              <Button
+                className="hover:bg-red-300"
+                variant="outline"
                 onClick={() => {
                   toast("See you later...");
-                  preferences.setLockState(true)
+                  preferences.setLockState(true);
                 }}
               >
                 <Lock /> Lock Page
@@ -43,7 +45,8 @@ export default function HomeLayout({
             </div>
           </div>
         </header>
-        <div className="">{children}</div>
+        <div className="px-4">{children}</div>
+        <SongPlayer />
       </SidebarInset>
     </SidebarProvider>
   ) : (

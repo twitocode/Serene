@@ -26,7 +26,7 @@ export default function page() {
     <main className="flex flex-col gap-8">
       <section className="flex flex-col items-center justify-center">
         <DailyAffirmation />
-        <h1 className="text-center font-serif text-5xl font-light">
+        <h1 className="text-center font-serif text-8xl font-light">
           Good {getGreetingTime()}
           {user.firstName}
         </h1>

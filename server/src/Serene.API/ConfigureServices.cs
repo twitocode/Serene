@@ -33,7 +33,7 @@ public static class ConfigureServices
 {
     public static void AddServices(this WebApplicationBuilder builder)
     {
-    
+
         builder.Logging();
         builder.AddOpenApi();
         builder.AddDatabase();
@@ -150,11 +150,21 @@ public static class ConfigureServices
 
     private static void AddAppCors(this WebApplicationBuilder builder)
     {
-        builder.Services.AddCors(o =>
-        {
-            o.AddPolicy("CorsPolicy",
-                x => { x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000", "https://localhost:3000"); });
-        });
+        builder.Services.AddCors(o => {
+        o.AddPolicy("CorsPolicy",
+            x =>
+            {
+                x.AllowAnyHeader()
+                 .AllowAnyMethod()
+                 .AllowCredentials()
+                 .WithOrigins(
+                    "http://localhost:3000",
+                    "https://localhost:3000",
+                    "http://localhost:5050",  // <-- Add this
+                    "https://localhost:5051"  // <-- Add this
+                 );
+            });
+    });
     }
 
     private static void AddDatabase(this WebApplicationBuilder builder)
