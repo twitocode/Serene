@@ -1,23 +1,17 @@
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Docker Compose reference guide at
-# https://docs.docker.com/go/compose-spec-reference/
-
-# Here the instructions define your application as a service called "server".
-# This service is built from the Dockerfile in the current directory.
-# You can add other services your application may depend on here, such as a
-# database or a cache. For examples, see the Awesome Compose repository:
-# https://github.com/docker/awesome-compose
 services:
   server:
     build:
       context: .
-      target: final
+      target: development
     ports:
-      - 5050:8080   # HTTP
-      - 5051:8081   # HTTPS
+      - 5050:8080 # HTTP
+      - 5051:8081 # HTTPS
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:8081;http://+:8080
+      - DOTNET_USE_POLLING_FILE_WATCHER=true
+      - DOTNET_WATCH_SUPPRESS_LAUNCH_BROWSER=true
+      - DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
       - ConnectionStrings__Postgres=${POSTGRES_CONNECTION}
       - ConnectionStrings__Redis=${REDIS_CONNECTION}
       - Authentication__Google__ClientSecret=${GOOGLE_CLIENT_SECRET}
@@ -35,39 +29,63 @@ services:
         condition: service_healthy
     volumes:
       - ${HOME}/.aspnet/https:/https:ro
+      # Mount source code for hot reload
+      - ./src:/source/src
+      - ./db:/source/db
+      # Exclude build artifacts with anonymous volumes
+      - /source/src/Serene.API/bin/
+      - /source/src/Serene.API/obj/
+      - /root/.nuget/packages
+    develop:
+      watch:
+        # Rebuild on any C# file change
+        - path: ./src/**/*.cs
+          action: rebuild
+          
+        # Rebuild when any .csproj changes
+        - path: ./src/**/*.csproj
+          action: rebuild
+          
+        # Rebuild when appsettings changes
+        - path: ./src/**/appsettings*.json
+          action: rebuild
+          
+        # Rebuild when Dockerfile changes
+        - path: ./Dockerfile
+          action: rebuild
 
   postgres-db:
-    image: postgres
+    image: postgres:16-alpine
     restart: always
-    user: postgres
     volumes:
       - postgres-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=serene
+      - PGDATA=/var/lib/postgresql/data/pgdata
     expose:
       - 5432
     healthcheck:
-      test: [ "CMD", "pg_isready" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis-db:
-    image: redis:latest
+    image: redis:7-alpine
     restart: always
     ports:
-      - "6379:6379" 
+      - "6379:6379"
     volumes:
       - redis-data:/data
-    command: redis-server --appendonly yes 
+    command: redis-server --appendonly yes
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
+
 volumes:
   postgres-data:
   redis-data:
-
