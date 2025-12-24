@@ -5,7 +5,11 @@ import { redirect } from "next/navigation";
 export async function getUser() {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("ACCESS_TOKEN")?.value;
-  console.log(process.env.SERVER_URL)
+  console.log(process.env.SERVER_URL);
+
+  if (!accessToken) {
+    redirect("/login");
+  }
   const res = await fetch(`${process.env.SERVER_URL}/users`, {
     method: "GET",
     headers: {

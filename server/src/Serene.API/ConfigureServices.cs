@@ -45,7 +45,7 @@ public static class ConfigureServices
         builder.AddAppCors();
         builder.AddIdentityOptions();
         builder.AddAuthentication();
-        builder.AddHybridCache();
+        builder.AddRedis();
         builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
         builder.AddEmailService();
 
@@ -88,13 +88,10 @@ public static class ConfigureServices
         builder.Services.AddScoped<IEmailService, ResendEmailService>();
     }
 
-    private static void AddHybridCache(this WebApplicationBuilder builder)
+    private static void AddRedis(this WebApplicationBuilder builder)
     {
-        builder.Services.AddStackExchangeRedisCache(options =>
-        {
-            options.Configuration = builder.Configuration.GetConnectionString("Redis");
-        });
-
+        builder.AddRedisClient(builder.Configuration.GetConnectionString("cache"));
+        builder.AddRedisDistributedCache("cache");
 
         builder.Services.AddHybridCache(options =>
         {
@@ -150,37 +147,55 @@ public static class ConfigureServices
 
     private static void AddAppCors(this WebApplicationBuilder builder)
     {
-        builder.Services.AddCors(o => {
-        o.AddPolicy("CorsPolicy",
-            x =>
-            {
-                x.AllowAnyHeader()
-                 .AllowAnyMethod()
-                 .AllowCredentials()
-                 .WithOrigins(
-                    "http://localhost:3000",
-                    "https://localhost:3000",
-                    "http://localhost:5050",  // <-- Add this
-                    "https://localhost:5051"  // <-- Add this
-                 );
-            });
-    });
+        builder.Services.AddCors(o =>
+        {
+            o.AddPolicy("CorsPolicy",
+                x =>
+                {
+                    x.AllowAnyHeader()
+                     .AllowAnyMethod()
+                     .AllowCredentials()
+                     .WithOrigins(
+                        "http://localhost:3000",
+                        "https://localhost:3000",
+                        "http://localhost:5050",  // <-- Add this
+                        "https://localhost:5051"  // <-- Add this
+                     );
+                });
+        });
     }
 
     private static void AddDatabase(this WebApplicationBuilder builder)
     {
-        builder.Services.AddDbContextPool<AppDbContext>(opt =>
-            opt.UseNpgsql(
-                    builder.Configuration.GetConnectionString(MagicStrings.DatabaseConnectionStringName),
-                    o => o
-                        .SetPostgresVersion(15, 12)
-                        .UseNodaTime()
-                        .MapEnum<MoodType>("mood")
-                        .MapEnum<ResourceType>("resource_type")
-                        .MapEnum<Gender>("gender")
-                        .MapEnum<EnergyLevelType>("energy_level"))
+        var connectionString = builder.Configuration.GetConnectionString(MagicStrings.DatabaseConnectionStringName);
 
-                .UseSnakeCaseNamingConvention());
+        // 2. Add a fail-fast check
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new InvalidOperationException($"Database connection string '{MagicStrings.DatabaseConnectionStringName}' was not found in configuration. " +
+                                                "Ensure it's in your appsettings.Development.json.");
+        }
+
+        //aspire code add back after updating packages
+        builder.AddNpgsqlDbContext<AppDbContext>(MagicStrings.DatabaseConnectionStringName,
+        configureSettings: settings =>
+        {
+            // This ensures health checks work properly
+            settings.DisableHealthChecks = false;
+        },
+        configureDbContextOptions: opt =>
+        {
+            opt.UseNpgsql(npgsqlOptions =>
+            {
+                npgsqlOptions.SetPostgresVersion(17, 6)
+                    .UseNodaTime()
+                    .MapEnum<MoodType>("mood")
+                    .MapEnum<ResourceType>("resource_type")
+                    .MapEnum<Gender>("gender")
+                    .MapEnum<EnergyLevelType>("energy_level");
+            })
+            .UseSnakeCaseNamingConvention();
+        });
     }
 
     public static void AddRateLimiting(this WebApplicationBuilder builder)

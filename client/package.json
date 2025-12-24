@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 next dev --turbopack",
+    "dev": "next dev --turbopack",
+    "dev-https": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint"

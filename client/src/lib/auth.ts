@@ -1,5 +1,4 @@
 import { cookies } from "next/headers";
-import { jwtDecode } from "jwt-decode";
 
 export async function resetAuth() {
   const c = await cookies();
@@ -51,18 +50,23 @@ export async function refreshAccessToken(): Promise<string | null> {
 }
 
 export async function getAuthenticatedUser(token: string) {
-  const res = await fetch(`${process.env.SERVER_URL}/users`, {
-    headers: {
-      Cookie: `ACCESS_TOKEN=${token}`,
-    },
-    credentials: "include",
-  });
+  console.log(process.env.SERVER_URL);
+  try {
+    const res = await fetch(`${process.env.SERVER_URL}/users`, {
+      headers: {
+        Cookie: `ACCESS_TOKEN=${token}`,
+      },
+      credentials: "include",
+    });
 
-  if (!res.ok) {
-    resetAuth();
-    return null;
+    if (!res.ok) {
+      resetAuth();
+      return null;
+    }
+
+    const data = await res.json();
+    return data.value;
+  } catch (error) {
+    console.log(error);
   }
-
-  const data = await res.json();
-  return data.value;
 }

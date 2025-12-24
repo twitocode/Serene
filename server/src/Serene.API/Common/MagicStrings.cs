@@ -2,5 +2,5 @@
 
 public static class MagicStrings
 {
-    public static readonly string DatabaseConnectionStringName = "Postgres";
+    public static readonly string DatabaseConnectionStringName = "serene-db";
 }
