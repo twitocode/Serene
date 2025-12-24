@@ -1,1 +1,1 @@
-This is a mental health platform for somebody (will decide later)
+This is a mental health platform for Students
