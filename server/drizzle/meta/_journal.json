@@ -29,6 +29,27 @@
       "when": 1766617404491,
       "tag": "0003_minor_shadowcat",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1766888646760,
+      "tag": "0004_fixed_chimera",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1766888813584,
+      "tag": "0005_happy_kylun",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1767047467597,
+      "tag": "0006_mighty_cassandra_nova",
+      "breakpoints": true
     }
   ]
 }

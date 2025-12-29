@@ -1,18 +1,22 @@
 import { relations, sql } from "drizzle-orm";
 import {
   boolean,
+  date,
   integer,
   jsonb,
+  pgEnum,
   pgTable,
   primaryKey,
   text,
   timestamp,
+  varchar,
 } from "drizzle-orm/pg-core";
-import { session, account } from "./auth-schema";
-import { checkin } from "./checkin-schema";
-import { post } from "./community-schema";
+import { accountsTable, sessionsTable } from "./auth-schema";
+import { checkinsTable } from "./checkin-schema";
+import { postsTable } from "./community-schema";
 
-export const user = pgTable("user", {
+//TODO: Add preferences
+export const usersTable = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
@@ -25,13 +29,33 @@ export const user = pgTable("user", {
     .notNull(),
 });
 
-export const profile = pgTable("profile", {
+// Add this alias for Better Auth
+// DO NOT DELETE
+export const user = usersTable;
+
+export const genderEnum = pgEnum("gender", [
+  "Male",
+  "Female",
+  "Non-Binary",
+  "Prefer not to say",
+]);
+
+export const profilesTable = pgTable("profile", {
   id: text("id").primaryKey(),
-  koalaName: text("koala_name").notNull(), // Your Panda is now a Koala!
-  koalaColor: text("koala_color").default("#5EEAD4"), // Added for customization
-  currentStreak: integer("current_streak").default(0),
-  longestStreak: integer("longest_streak").default(0),
-  userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+  koalaName: text("koala_name").notNull(),
+  koalaColor: text("koala_color").default("#5EEAD4").notNull(),
+  currentStreak: integer("current_streak").default(0).notNull(),
+  longestStreak: integer("longest_streak").default(0).notNull(),
+  gender: genderEnum("gender").notNull(),
+  pronouns: varchar("pronouns", { length: 50 }).notNull(),
+  dateOfBirth: date("dob").notNull(),
+  schoolId: text("school_id").references(() => schoolsTable.id, {
+    onDelete: "set null",
+  }),
+  userId: text("user_id").references(() => usersTable.id, {
+    onDelete: "cascade",
+  }),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -39,14 +63,17 @@ export const profile = pgTable("profile", {
     .notNull(),
 });
 
-export const safetyPlan = pgTable("safety-plan", {
+export const safetyPlansTable = pgTable("safety_plan", {
+  // Fixed table name
   id: text("id").primaryKey(),
-  professionalResources: jsonb("pro-resources"),
-  safeContacts: jsonb("safe-contacts"),
+  professionalResources: jsonb("professional_resources"),
+  safeContacts: jsonb("safe_contacts"),
   copingStrategies: text("coping_strategies")
     .array()
     .default(sql`ARRAY[]::text[]`),
-  userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+  userId: text("user_id").references(() => usersTable.id, {
+    onDelete: "cascade",
+  }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -54,53 +81,72 @@ export const safetyPlan = pgTable("safety-plan", {
     .notNull(),
 });
 
+//TODO: add american schools
+export const schoolsTable = pgTable("school", {
+  id: text("id").primaryKey(),
+  name: text("name"),
+});
+
 // --- THE MASTER RELATIONSHIP DEFINITION ---
-export const userRelations = relations(user, ({ one, many }) => ({
+export const userRelations = relations(usersTable, ({ one, many }) => ({
   // Auth Relationships
-  sessions: many(session),
-  accounts: many(account),
+  sessions: many(sessionsTable),
+  accounts: many(accountsTable),
 
   // App Relationships
-  profile: one(profile, {
-    fields: [user.id],
-    references: [profile.userId],
+  profile: one(profilesTable, {
+    fields: [usersTable.id],
+    references: [profilesTable.userId],
   }),
-  safetyPlan: one(safetyPlan, {
-    fields: [user.id],
-    references: [safetyPlan.userId],
+  safetyPlan: one(safetyPlansTable, {
+    fields: [usersTable.id],
+    references: [safetyPlansTable.userId],
   }),
-  posts: many(post),
-  checkins: many(checkin),
-  userAchievements: many(userAchievements),
+  posts: many(postsTable),
+  checkins: many(checkinsTable),
+  userAchievements: many(userAchievementsTable),
 }));
 
-// --- Inverse Relationships ---
-
-export const profileRelations = relations(profile, ({ one }) => ({
-  user: one(user, { fields: [profile.userId], references: [user.id] }),
-}));
-
-export const safetyPlanRelations = relations(safetyPlan, ({ one }) => ({
-  user: one(user, { fields: [safetyPlan.userId], references: [user.id] }),
-}));
-
-// Keep your Achievements & userAchievements tables here as well...
-export const achievements = pgTable("achievements", {
+export const achievementsTable = pgTable("achievements", {
   id: text("id").primaryKey(),
   slug: text("slug").notNull().unique(),
   title: text("title").notNull(),
   points: integer("points").default(0),
 });
 
-export const userAchievements = pgTable(
+// --- Inverse Relationships ---
+
+export const profileRelations = relations(profilesTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [profilesTable.userId],
+    references: [usersTable.id],
+  }),
+  school: one(schoolsTable, {
+    fields: [profilesTable.schoolId],
+    references: [schoolsTable.id],
+  }),
+}));
+
+export const safetyPlanRelations = relations(safetyPlansTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [safetyPlansTable.userId],
+    references: [usersTable.id],
+  }),
+}));
+
+export const schoolRelations = relations(schoolsTable, ({ many }) => ({
+  profiles: many(profilesTable),
+}));
+
+export const userAchievementsTable = pgTable(
   "user_achievements",
   {
     userId: text("user_id")
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => usersTable.id, { onDelete: "cascade" }),
     achievementId: text("achievement_id")
       .notNull()
-      .references(() => achievements.id, { onDelete: "cascade" }),
+      .references(() => achievementsTable.id, { onDelete: "cascade" }),
     unlockedAt: timestamp("unlocked_at").defaultNow().notNull(),
   },
   (table) => ({

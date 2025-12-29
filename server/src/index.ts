@@ -6,6 +6,7 @@ import { poweredBy } from "hono/powered-by";
 import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { rateLimiter } from "hono-rate-limiter";
+import { cors } from "hono/cors";
 
 const app = new Hono<{
   Variables: {
@@ -13,6 +14,18 @@ const app = new Hono<{
     session: typeof auth.$Infer.Session.session | null;
   };
 }>();
+
+app.use(
+  "*",
+  cors({
+    origin: ["http://localhost:3000"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["POST", "GET", "OPTIONS"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+    credentials: true,
+  })
+);
 
 app.use(
   rateLimiter({
@@ -35,6 +48,7 @@ app.use("*", async (c, next) => {
 app.get("/", (c) => {
   return c.json({})
 });
+
 
 app.route("/auth", authRouter);
 app.route("/users", usersRouter);

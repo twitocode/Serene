@@ -1,24 +1,28 @@
+import { eq } from "drizzle-orm";
 import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { HTTPException } from "hono/http-exception";
+import { db } from "../../db/db";
+import { usersTable } from "../../db/schema/users-schema";
 import type { AuthType } from "../auth/auth";
 
 const app = new Hono<{
   Variables: AuthType;
 }>();
 
-app.get("/", (c) => {
-  return c.json("Hey there");
+
+
+app.get("/exists/:email", async (c) => {
+  const email = c.req.param("email");
+  if (!email) {
+    throw new HTTPException(403, { message: "User ID not provided" });
+  }
+
+  const result = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, email));
+
+  return c.json({ exists: result.length > 0 });
 });
-
-app.get("/session", (c) => {
-  const session = c.get("session");
-  const user = c.get("user");
-
-  if (!user) return c.body(null, 401);
-
-  return c.json({
-    session,
-    user,
-  });
-});
-
 export default app;

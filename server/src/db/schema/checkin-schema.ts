@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { integer, jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { user } from "./users-schema";
+import { usersTable } from "./users-schema";
 
 // Define what a single "feeling" looks like on the grid
 export type GridPoint = {
@@ -13,13 +13,13 @@ export type GridPoint = {
 // Example: { "chest": { x: 20, y: 80 }, "head": { x: 50, y: 50 } }
 export type SomaticMap = Record<string, GridPoint>;
 
-export const checkin = pgTable("checkins", {
+export const checkinsTable = pgTable("checkins", {
   id: text("id").primaryKey(),
 
   // FIXED: Added user relationship column
   userId: text("user_id")
     .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+    .references(() => usersTable.id, { onDelete: "cascade" }),
 
   moodLabel: text("mood_label").notNull(),
   moodSeverity: integer("mood_severity").notNull().default(5),
@@ -35,9 +35,9 @@ export const checkin = pgTable("checkins", {
     .notNull(),
 });
 
-export const checkinRelations = relations(checkin, ({ one }) => ({
-  user: one(user, {
-    fields: [checkin.userId],
-    references: [user.id],
+export const checkinRelations = relations(checkinsTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [checkinsTable.userId],
+    references: [usersTable.id],
   }),
 }));

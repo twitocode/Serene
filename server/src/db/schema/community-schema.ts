@@ -1,8 +1,8 @@
 import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { user } from "./users-schema";
+import { usersTable } from "./users-schema";
 
-export const questionOfTheDay = pgTable("community-qotd", {
+export const questionsOfTheDayTable = pgTable("community-qotd", {
   id: text("id").primaryKey(),
   question: text("question").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -12,12 +12,14 @@ export const questionOfTheDay = pgTable("community-qotd", {
     .notNull(),
 });
 
-export const post = pgTable("post", {
+export const postsTable = pgTable("post", {
   id: text("id").primaryKey(),
   answer: text("answer").notNull(),
 
-  userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
-  qotdID: text("qotd_id").references(() => questionOfTheDay.id, {
+  userId: text("user_id").references(() => usersTable.id, {
+    onDelete: "cascade",
+  }),
+  qotdID: text("qotd_id").references(() => questionsOfTheDayTable.id, {
     onDelete: "cascade",
   }),
 
@@ -28,14 +30,17 @@ export const post = pgTable("post", {
     .notNull(),
 });
 
-export const postRelations = relations(post, ({ one }) => ({
-  user: one(user, { fields: [post.userId], references: [user.id] }),
-  qotd: one(questionOfTheDay, {
-    fields: [post.qotdID],
-    references: [questionOfTheDay.id],
+export const postRelations = relations(postsTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [postsTable.userId],
+    references: [usersTable.id],
+  }),
+  qotd: one(questionsOfTheDayTable, {
+    fields: [postsTable.qotdID],
+    references: [questionsOfTheDayTable.id],
   }),
 }));
 
-export const QOTDRelations = relations(post, ({ many }) => ({
-  posts: many(post),
+export const QOTDRelations = relations(postsTable, ({ many }) => ({
+  posts: many(postsTable),
 }));
