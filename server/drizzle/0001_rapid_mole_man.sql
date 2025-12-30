@@ -1,0 +1,1 @@
+ALTER TABLE "user" ALTER COLUMN "gender" SET DEFAULT 'Prefer not to say';

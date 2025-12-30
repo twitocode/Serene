@@ -1,6 +1,6 @@
 {
-  "id": "30dedb0e-86b2-4fe7-8c36-1d2713f350bd",
-  "prevId": "542165ae-a58e-4cf9-a805-365148360ad9",
+  "id": "4c9a7f8e-963f-408a-95cd-9672dc82fdb8",
+  "prevId": "c61c879d-a7e5-4e65-837e-f44d4fcd2b61",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -50,6 +50,24 @@
           "primaryKey": false,
           "notNull": false
         },
+        "access_token_expires_at": {
+          "name": "access_token_expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "refresh_token_expires_at": {
+          "name": "refresh_token_expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scope": {
+          "name": "scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "password": {
           "name": "password",
           "type": "text",
@@ -67,12 +85,13 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {
-        "account_userId_idx": {
-          "name": "account_userId_idx",
+        "account_user_id_idx": {
+          "name": "account_user_id_idx",
           "columns": [
             {
               "expression": "user_id",
@@ -141,7 +160,8 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         },
         "ip_address": {
           "name": "ip_address",
@@ -163,8 +183,8 @@
         }
       },
       "indexes": {
-        "session_userId_idx": {
-          "name": "session_userId_idx",
+        "session_user_id_idx": {
+          "name": "session_user_id_idx",
           "columns": [
             {
               "expression": "user_id",
@@ -247,7 +267,8 @@
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {
@@ -328,6 +349,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -346,6 +374,123 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.post": {
+      "name": "post",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "answer": {
+          "name": "answer",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "qotd_id": {
+          "name": "qotd_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "post_user_id_user_id_fk": {
+          "name": "post_user_id_user_id_fk",
+          "tableFrom": "post",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "post_qotd_id_community-qotd_id_fk": {
+          "name": "post_qotd_id_community-qotd_id_fk",
+          "tableFrom": "post",
+          "tableTo": "community-qotd",
+          "columnsFrom": [
+            "qotd_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.community-qotd": {
+      "name": "community-qotd",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "question": {
+          "name": "question",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -418,28 +563,41 @@
           "name": "koala_color",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "'#5EEAD4'"
         },
         "current_streak": {
           "name": "current_streak",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": 0
         },
         "longest_streak": {
           "name": "longest_streak",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": 0
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "user_id": {
           "name": "user_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
@@ -451,6 +609,19 @@
       },
       "indexes": {},
       "foreignKeys": {
+        "profile_school_id_school_id_fk": {
+          "name": "profile_school_id_school_id_fk",
+          "tableFrom": "profile",
+          "tableTo": "school",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
         "profile_user_id_user_id_fk": {
           "name": "profile_user_id_user_id_fk",
           "tableFrom": "profile",
@@ -471,8 +642,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.safety-plan": {
-      "name": "safety-plan",
+    "public.safety_plan": {
+      "name": "safety_plan",
       "schema": "",
       "columns": {
         "id": {
@@ -481,14 +652,14 @@
           "primaryKey": true,
           "notNull": true
         },
-        "pro-resources": {
-          "name": "pro-resources",
+        "professional_resources": {
+          "name": "professional_resources",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false
         },
-        "safe-contacts": {
-          "name": "safe-contacts",
+        "safe_contacts": {
+          "name": "safe_contacts",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false
@@ -505,13 +676,27 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "safety-plan_user_id_user_id_fk": {
-          "name": "safety-plan_user_id_user_id_fk",
-          "tableFrom": "safety-plan",
+        "safety_plan_user_id_user_id_fk": {
+          "name": "safety_plan_user_id_user_id_fk",
+          "tableFrom": "safety_plan",
           "tableTo": "user",
           "columnsFrom": [
             "user_id"
@@ -523,6 +708,31 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.school": {
+      "name": "school",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -563,6 +773,28 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "age": {
+          "name": "age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "gender": {
+          "name": "gender",
+          "type": "gender",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Prefer not to say'"
+        },
+        "pronouns": {
+          "name": "pronouns",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'They/Them'"
         },
         "created_at": {
           "name": "created_at",
@@ -663,7 +895,18 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.gender": {
+      "name": "gender",
+      "schema": "public",
+      "values": [
+        "Male",
+        "Female",
+        "Non-Binary",
+        "Prefer not to say"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},

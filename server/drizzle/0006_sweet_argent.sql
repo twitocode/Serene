@@ -1,0 +1,1 @@
+ALTER TABLE "profile" ADD COLUMN "koala_pronouns" varchar(50) DEFAULT 'They/Them';

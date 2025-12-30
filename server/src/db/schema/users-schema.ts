@@ -1,7 +1,6 @@
-import { relations, sql } from "drizzle-orm";
+import { InferSelectModel, relations, sql } from "drizzle-orm";
 import {
   boolean,
-  date,
   integer,
   jsonb,
   pgEnum,
@@ -15,6 +14,15 @@ import { accountsTable, sessionsTable } from "./auth-schema";
 import { checkinsTable } from "./checkin-schema";
 import { postsTable } from "./community-schema";
 
+export const genderEnum = pgEnum("gender", [
+  "Male",
+  "Female",
+  "Non-Binary",
+  "Prefer not to say",
+]);
+
+export const themeEnum = pgEnum("theme", ["Dark", "Light"]);
+
 //TODO: Add preferences
 export const usersTable = pgTable("user", {
   id: text("id").primaryKey(),
@@ -22,6 +30,15 @@ export const usersTable = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
+
+  age: integer("age").default(0),
+  gender: genderEnum("gender").default("Prefer not to say"),
+  pronouns: varchar("pronouns", { length: 50 }).default("They/Them"),
+  countryCode: varchar("country_code", { length: 2 }),
+
+  onboardingCompleted: boolean("onboarding_completed").default(false).notNull(),
+  onboardingStep: integer("onboarding_step").default(1).notNull(),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -33,22 +50,14 @@ export const usersTable = pgTable("user", {
 // DO NOT DELETE
 export const user = usersTable;
 
-export const genderEnum = pgEnum("gender", [
-  "Male",
-  "Female",
-  "Non-Binary",
-  "Prefer not to say",
-]);
-
 export const profilesTable = pgTable("profile", {
   id: text("id").primaryKey(),
   koalaName: text("koala_name").notNull(),
-  koalaColor: text("koala_color").default("#5EEAD4").notNull(),
+  koalaColour: text("koala_color").default("#5EEAD4").notNull(),
+  koalaPronouns: varchar("koala_pronouns", { length: 50 }).default("They/Them"),
   currentStreak: integer("current_streak").default(0).notNull(),
   longestStreak: integer("longest_streak").default(0).notNull(),
-  gender: genderEnum("gender").notNull(),
-  pronouns: varchar("pronouns", { length: 50 }).notNull(),
-  dateOfBirth: date("dob").notNull(),
+
   schoolId: text("school_id").references(() => schoolsTable.id, {
     onDelete: "set null",
   }),
@@ -81,10 +90,27 @@ export const safetyPlansTable = pgTable("safety_plan", {
     .notNull(),
 });
 
+export const preferencesTable = pgTable("preferences", {
+  id: text("id").primaryKey(),
+  passwordLock: varchar("password_lock", { length: 50 }),
+  theme: themeEnum("theme").default("Light"),
+
+  userId: text("user_id").references(() => usersTable.id, {
+    onDelete: "cascade",
+  }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
 //TODO: add american schools
 export const schoolsTable = pgTable("school", {
   id: text("id").primaryKey(),
   name: text("name"),
+  countryCode: varchar("country_code", { length: 2 }).notNull(),
+  regionCode: varchar("region_code", { length: 2 }), // Province or State
+  city: text("city"),
 });
 
 // --- THE MASTER RELATIONSHIP DEFINITION ---
@@ -97,6 +123,10 @@ export const userRelations = relations(usersTable, ({ one, many }) => ({
   profile: one(profilesTable, {
     fields: [usersTable.id],
     references: [profilesTable.userId],
+  }),
+  preferences: one(preferencesTable, {
+    fields: [usersTable.id],
+    references: [preferencesTable.userId],
   }),
   safetyPlan: one(safetyPlansTable, {
     fields: [usersTable.id],
@@ -127,6 +157,13 @@ export const profileRelations = relations(profilesTable, ({ one }) => ({
   }),
 }));
 
+export const preferenceRelations = relations(preferencesTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [preferencesTable.userId],
+    references: [usersTable.id],
+  }),
+}));
+
 export const safetyPlanRelations = relations(safetyPlansTable, ({ one }) => ({
   user: one(usersTable, {
     fields: [safetyPlansTable.userId],
@@ -153,3 +190,9 @@ export const userAchievementsTable = pgTable(
     pk: primaryKey({ columns: [table.userId, table.achievementId] }),
   })
 );
+
+export type User = InferSelectModel<typeof usersTable>;
+export type Profile = InferSelectModel<typeof profilesTable>;
+export type Achievement = InferSelectModel<typeof achievementsTable>;
+export type UserAchievement = InferSelectModel<typeof userAchievementsTable>;
+export type School = InferSelectModel<typeof schoolsTable>;

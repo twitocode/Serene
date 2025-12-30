@@ -59,12 +59,16 @@ export function LoginForm({
           password: value.password,
         });
 
+        console.log("Full result:", result);
+        console.log("Response headers:", result); // Check if there are any headers
+
         if (result.error) {
           setLoginError(result.error.message || "Invalid email or password");
         } else {
+          // Wait a tiny bit for cookie to be set
+          await new Promise((resolve) => setTimeout(resolve, 100));
           console.log("Login successful:", result.data);
-          // Redirect to dashboard or home page
-          window.location.href = "/dashboard";
+          window.location.href = "/home";
         }
       } catch (error) {
         setLoginError("Login failed. Please try again.");
@@ -89,6 +93,10 @@ export function LoginForm({
       if (data.exists) {
         setEmail(emailValue);
         setStep(2);
+      } else {
+        setLoginError(
+          "No accounts associated with this email, maybe try signing up?"
+        );
       }
     }
   };
@@ -152,6 +160,11 @@ export function LoginForm({
               )}
             </form.Field>
 
+            {loginError && (
+              <div className="text-sm text-red-600 text-center">
+                {loginError}
+              </div>
+            )}
             <Button type="submit" className="w-full">
               Continue
             </Button>

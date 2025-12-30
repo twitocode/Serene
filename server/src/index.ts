@@ -1,12 +1,14 @@
 import { Hono } from "hono";
-import { auth } from "./features/auth/auth";
-import authRouter from "./features/auth/auth-router";
-import usersRouter from "./features/users/users-router";
-import { poweredBy } from "hono/powered-by";
-import { logger } from "hono/logger";
-import { prettyJSON } from "hono/pretty-json";
 import { rateLimiter } from "hono-rate-limiter";
 import { cors } from "hono/cors";
+import { HTTPException } from "hono/http-exception";
+import { logger } from "hono/logger";
+import { poweredBy } from "hono/powered-by";
+import { prettyJSON } from "hono/pretty-json";
+import { auth } from "./features/auth/auth";
+import authRouter from "./features/auth/auth-router";
+import onboardingRouter from "./features/users/onboarding-router";
+import usersRouter from "./features/users/users-router";
 
 const app = new Hono<{
   Variables: {
@@ -15,17 +17,44 @@ const app = new Hono<{
   };
 }>();
 
+app.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    return c.json(
+      {
+        error: err.message,
+        status: err.status,
+      },
+      err.status
+    );
+  }
+
+  console.error("Unexpected error:", err);
+  return c.json(
+    {
+      error: "Internal server error",
+      message: process.env.NODE_ENV === "development" ? err.message : undefined,
+    },
+    500
+  );
+});
+
+
+
 app.use(
   "*",
   cors({
     origin: ["http://localhost:3000"],
     allowHeaders: ["Content-Type", "Authorization"],
-    allowMethods: ["POST", "GET", "OPTIONS"],
+    allowMethods: ["POST", "GET", "OPTIONS", "PATCH", "PUT", "DELETE"],
     exposeHeaders: ["Content-Length"],
     maxAge: 600,
     credentials: true,
   })
 );
+
+app.on(["POST", "GET"], "/auth/**", (c) => {
+  return auth.handler(c.req.raw);
+});
 
 app.use(
   rateLimiter({
@@ -36,7 +65,7 @@ app.use(
 );
 app.use(logger());
 app.use(poweredBy());
-app.use(prettyJSON())
+app.use(prettyJSON());
 // Run auth middleware on ALL routes
 app.use("*", async (c, next) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
@@ -46,12 +75,13 @@ app.use("*", async (c, next) => {
 });
 
 app.get("/", (c) => {
-  return c.json({})
+  return c.json({});
 });
 
-
-app.route("/auth", authRouter);
+//DONT NEED THIS FOR BETTER AUTH
+// app.route("/auth", authRouter);
 app.route("/users", usersRouter);
+app.route("/users/onboarding", onboardingRouter);
 
 export default {
   port: 8000,

@@ -17,7 +17,8 @@ export const auth = betterAuth({
       sameSite: "lax", // Add this for better cookie handling
     },
   },
-  trustedOrigins: ["http://localhost:3000"],
+  trustedOrigins: ["http://localhost:3000"], // Your Next.js URL
+  baseURL: "http://localhost:8000", // Your Hono server URL
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,

@@ -1,94 +1,52 @@
-interface IdentityUser<TKey> {
-  id: TKey;
-  userName: string | null;
-  normalizedUserName: string | null;
-  email: string | null;
-  normalizedEmail: string | null;
-  emailConfirmed: boolean;
-  passwordHash: string | null;
-  securityStamp: string | null;
-  concurrencyStamp: string | null;
-  phoneNumber: string | null;
-  phoneNumberConfirmed: boolean;
-  twoFactorEnabled: boolean;
-  lockoutEnd: string | null;
-  lockoutEnabled: boolean;
-  accessFailedCount: number;
-}
+export type Gender = "Male" | "Female" | "Non-Binary" | "Prefer not to say";
 
-export interface User extends IdentityUser<string> {
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  isSetupCompleted: boolean;
-  country: string;
-  avatarUrl: string;
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  image: string;
+  age: number;
+  gender: Gender; //TODO: change to enum
   pronouns: string;
-  gender: Gender;
-  dateOfBirth: Date;
-  lastMoodCheckin: Date;
-  refreshToken: string | null;
-  refreshTokenExpirationDate: Date | null;
-  userPreferences: Preference;
-  moods: MoodEntry[];
-  journals: Journal[];
-  savedResources: Resource[];
   createdAt: Date;
+  updatedAt: Date;
+  preferences: Preference
 }
 
-export enum Theme {
-  Light,
-  Dark,
+export interface School {
+  id: string;
+  name: string;
 }
 
-export interface Preference {
-  theme: Theme;
-  pageLock: string | null;
+export interface Profile {
+  id: string;
+  koalaName: string;
+  koalaColour: string;
+  longestStreak: number;
+  currentStreak: number;
+
+  schoolId: string | null;
+  userId: string | null;
+
+  school?: School;
   user?: User;
+
   createdAt: Date;
-  userId: string;
+  updatedAt: Date;
 }
 
-export enum MoodType {
-  Anxious,
-  Sad,
-  Neutral,
-  Happy,
-  Fantastic,
-}
-
-export enum EnergyLevelType {
-  Exhausted,
-  Low,
-  Moderate,
-  High,
-  Refreshed,
-}
-
-export interface MoodEntry {
-  overallMood: MoodType;
-  energyLevel: EnergyLevelType;
-  bestPartOfDay: string | null;
-  worstPartOfDay: string | null;
-  hadPhysicalOrEmotionalDiscomfort: boolean;
-  user: User;
+export interface Achievement {
   id: string;
-  createdAt: Date;
-  userId: string;
-}
-
-export enum ActivityType {}
-
-export interface Journal {
+  slug: string;
   title: string;
-  whatsOnYourMind: string | null;
-  whatAreYouGratefulForToday: string | null;
-  activities: ActivityType[];
-  isDraft: boolean;
-  user: User;
-  id: string;
-  createdAt: Date;
+  points: number;
+}
+
+export interface UserAchievement {
   userId: string;
+  achievementId: string;
+  unlockedAt: Date;
 }
 
 export enum ResourceType {
@@ -106,4 +64,15 @@ export interface Resource {
   users: User[];
   id: string;
   createdAt: Date;
+}
+
+
+export enum Theme {
+  Light,
+  Dark,
+}
+
+export interface Preference {
+  theme: Theme;
+  pageLock: string | null;
 }
