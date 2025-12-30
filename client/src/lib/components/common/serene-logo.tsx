@@ -11,7 +11,7 @@ export default function SereneLogo({
   return (
     <div
       className={`${
-        !sidebar && "1w-full"
+        !sidebar && "w-full"
       } flex items-center space-x-2 text-xl ${className}`}
     >
       {!noLogo && (

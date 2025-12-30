@@ -1,11 +1,15 @@
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
+import { v4 } from "uuid";
 import { db } from "../../db/db";
-import { profilesTable, usersTable } from "../../db/schema/users-schema";
+import {
+  profilesTable,
+  schoolsTable,
+  usersTable,
+} from "../../db/schema/users-schema";
 import { authMiddleware } from "../../middleware/auth-middleware";
 import { type AuthType } from "../auth/auth";
-
 const app = new Hono<{
   Variables: AuthType;
 }>();
@@ -78,9 +82,56 @@ app.post("/step3", authMiddleware, async (c) => {
   return c.json({ success: true });
 });
 
+
+
 app.post("/step4", authMiddleware, async (c) => {
   const sessionUser = c.get("user")!;
   const body = await c.req.json();
+
+  await db.transaction(async (tx) => {
+    let school = await tx.query.schoolsTable.findFirst({
+      where: eq(schoolsTable.name, body.schoolName),
+    });
+    if (!school) {
+      const [newSchool] = await tx
+        .insert(schoolsTable)
+        .values({
+          id: v4(),
+          name: body.schoolName,
+          countryCode: body.countryCode,
+          city: body.city,
+          regionCode: body.regionCode,
+        })
+        .returning();
+      school = newSchool;
+    }
+
+    await tx
+      .update(profilesTable)
+      .set({ schoolId: school.id })
+      .where(eq(profilesTable.userId, sessionUser.id));
+
+    await tx
+      .update(usersTable)
+      .set({
+        onboardingStep: 5,
+      })
+      .where(eq(usersTable.id, sessionUser.id));
+  });
+
+  return c.json({ success: true });
+});
+
+app.post("/step5", authMiddleware, async (c) => {
+  const sessionUser = c.get("user")!;
+  const body = await c.req.json();
+
+  await db
+    .update(usersTable)
+    .set({
+      onboardingStep: 6,
+    })
+    .where(eq(usersTable.id, sessionUser.id));
 
   await db
     .update(profilesTable)

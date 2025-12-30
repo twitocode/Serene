@@ -17,6 +17,9 @@ export interface User {
 export interface School {
   id: string;
   name: string;
+  countryCode: string;
+  regionCode: string;
+  city: string;
 }
 
 export interface Profile {

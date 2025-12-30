@@ -1,38 +1,23 @@
-import { serverFetch } from "@/lib/helpers/fetch";
-
-// Onboarding API functions
-export async function checkOnboarding(): Promise<{
-  step: number;
-  completed: boolean;
-}> {
-  try {
-    const res = await serverFetch("/users/onboarding");
-    return await res.json();
-  } catch (error) {
-    console.error("Check onboarding error:", error);
-    return {
-      step: -1,
-      completed: false,
-    };
-  }
-}
+import { clientFetch } from "@/lib/helpers/fetch-client";
 
 export async function completeOnboardingStep(
   step: number,
   data: Record<string, unknown>
 ): Promise<{ success: boolean }> {
-  const res = await serverFetch(`/users/onboarding/step${step}`, {
+  const res = await clientFetch(`/users/onboarding/step${step}`, {
     method: "POST",
     body: JSON.stringify(data),
   });
   return res.json();
 }
 
-export async function goToStepTwo(name: string): Promise<{ success: boolean }> {
+export async function completeStep1(
+  name: string
+): Promise<{ success: boolean }> {
   return completeOnboardingStep(1, { name });
 }
 
-export async function goToStepThree(
+export async function completeStep2(
   age: number,
   gender: string,
   pronouns: string
@@ -40,13 +25,32 @@ export async function goToStepThree(
   return completeOnboardingStep(2, { age, gender, pronouns });
 }
 
-export async function goToStepFour(
+export async function completeStep3(
   countryCode: string
 ): Promise<{ success: boolean }> {
   return completeOnboardingStep(3, { countryCode });
 }
 
-export async function goToLastStep(
+export async function completeStep4({
+  schoolName,
+  city,
+  countryCode,
+  regionCode,
+}: {
+  schoolName: string;
+  city: string;
+  countryCode: string;
+  regionCode: string;
+}): Promise<{ success: boolean }> {
+  return completeOnboardingStep(4, {
+    schoolName,
+    city,
+    countryCode,
+    regionCode,
+  });
+}
+
+export async function completeStep5(
   koalaName: string,
   koalaPronouns: string,
   koalaColour: string
@@ -59,7 +63,7 @@ export async function goToLastStep(
 }
 
 export async function completeOnboarding(): Promise<{ success: boolean }> {
-  const res = await serverFetch("/users/onboarding/complete", {
+  const res = await clientFetch("/users/onboarding/complete", {
     method: "POST",
   });
   return res.json();

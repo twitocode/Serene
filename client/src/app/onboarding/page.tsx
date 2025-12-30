@@ -1,5 +1,7 @@
+import { OnBoardingNavbar } from "@/lib/components/common/onboarding-navbar";
+import { OnboardingFlow } from "@/lib/components/onboarding/onboarding-flow";
 import { getSession } from "@/lib/get-session";
-import { checkOnboarding } from "@/lib/server/onboarding";
+import { checkOnboarding } from "@/lib/server/onboarding-server";
 import { redirect } from "next/navigation";
 import { PropsWithChildren } from "react";
 
@@ -14,5 +16,10 @@ export default async function page({ children, data }: PropsWithChildren<any>) {
     redirect("/home");
   }
 
-  return children;
+  return (
+    <div className=" mx-40 mt-5">
+      <OnBoardingNavbar />
+      <OnboardingFlow />
+    </div>
+  );
 }
