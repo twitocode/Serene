@@ -38,6 +38,7 @@ export const usersTable = pgTable("user", {
 
   onboardingCompleted: boolean("onboarding_completed").default(false).notNull(),
   onboardingStep: integer("onboarding_step").default(1).notNull(),
+  onboardingStarted: boolean("onboarding_started").default(false).notNull(),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")

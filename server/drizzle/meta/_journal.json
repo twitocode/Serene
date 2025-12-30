@@ -50,6 +50,13 @@
       "when": 1767118889385,
       "tag": "0006_sweet_argent",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1767131004869,
+      "tag": "0007_shallow_cerebro",
+      "breakpoints": true
     }
   ]
 }

@@ -13,6 +13,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { IntermediateStepOne } from "./intermediate-step-1";
 import { IntermediateStepTwo } from "./intermediate-step-2";
+import { ReturningStep } from "./returning-step";
 import { StepOne } from "./step-1";
 import { StepTwo } from "./step-2";
 import { StepThree } from "./step-3";
@@ -50,11 +51,26 @@ const getVariants = (type: TransitionType) => {
 };
 
 interface Props {
-  initialStep: number
+  initialStep: number;
+  hasStarted: boolean;
 }
+
 export function OnboardingFlow(props: Props) {
+  // Convert database step to UI step
+  const getInitialUIStep = (dbStep: number, hasStarted: boolean): number => {
+    // If user has started before, show returning step first
+    if (hasStarted) {
+      return 0; // Returning step
+    }
+
+    // If user has not started at all, show intermediate step 1 first
+    return 1; // Intermediate step 1
+  };
+
   const [onboardingStep, setOnBoardingStep] = useState(props.initialStep);
-  const [uiStep, setUIStep] = useState(1);
+  const [uiStep, setUIStep] = useState(
+    getInitialUIStep(props.initialStep, props.hasStarted)
+  );
   const [direction, setDirection] = useState(0);
   const [name, setName] = useState("");
   const [age, setAge] = useState(0);
@@ -67,25 +83,69 @@ export function OnboardingFlow(props: Props) {
   const [koalaPronouns, setKoalaPronouns] = useState("");
   const transitionType: TransitionType = "slide"; // Change to "fade" or "scale"
 
+  // Map UI steps (0-7) to progress steps (1-5) for display
+  const getProgressStep = (currentUIStep: number): number => {
+    switch (currentUIStep) {
+      case 0:
+        return 1; // ReturningStep -> shows Step 1 progress
+      case 1:
+        return 1; // IntermediateStepOne -> shows Step 1 progress
+      case 2:
+        return 1; // StepOne -> Step 1 progress
+      case 3:
+        return 2; // IntermediateStepTwo -> shows Step 2 progress
+      case 4:
+        return 2; // StepTwo -> Step 2 progress
+      case 5:
+        return 3; // StepThree -> Step 3 progress
+      case 6:
+        return 4; // StepFour -> Step 4 progress
+      case 7:
+        return 5; // StepFive -> Step 5 progress
+      default:
+        return 1;
+    }
+  };
+
   const goNext = () => {
     setDirection(1);
-    setUIStep((prev) => prev + 1);
+    setUIStep((prev) => {
+      // If coming from returning step (0), jump to correct step based on onboardingStep
+      if (prev === 0) {
+        switch (onboardingStep) {
+          case 1:
+            return 2; // StepOne
+          case 2:
+            return 4; // StepTwo
+          case 3:
+            return 5; // StepThree
+          case 4:
+            return 6; // StepFour
+          case 5:
+            return 7; // StepFive
+          default:
+            return 1; // IntermediateStepOne for new users
+        }
+      }
+      return prev + 1;
+    });
   };
 
   const goNextAPI = async () => {
     goNext();
     setOnBoardingStep((prev) => prev + 1);
-    if (onboardingStep === 1) await completeStep1(name);
-    if (onboardingStep === 2) await completeStep2(age, gender, pronouns);
-    if (onboardingStep === 3) await completeStep3(country);
-    if (onboardingStep === 4) {
+    const currentStep = onboardingStep;
+    if (currentStep === 1) await completeStep1(name);
+    if (currentStep === 2) await completeStep2(age, gender, pronouns);
+    if (currentStep === 3) await completeStep3(country);
+    if (currentStep === 4) {
       const schoolObj = schools.find((s) => s.name === school)!;
       await completeStep4({
         ...schoolObj,
         schoolName: school,
       });
     }
-    if (onboardingStep === 5)
+    if (currentStep === 5)
       await completeStep5(koalaName, koalaPronouns, koalaColor);
   };
 
@@ -113,6 +173,7 @@ export function OnboardingFlow(props: Props) {
             }}
             className="h-full flex items-center justify-center p-8"
           >
+            {uiStep === 0 && <ReturningStep onNext={goNext} />}
             {uiStep === 1 && <IntermediateStepOne onNext={goNext} />}
             {uiStep === 2 && (
               <StepOne name={name} setName={setName} onNext={goNextAPI} />
@@ -165,13 +226,14 @@ export function OnboardingFlow(props: Props) {
 
         {/* Progress dots */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
-          {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+          {[1, 2, 3, 4, 5].map((i) => (
             <motion.div
               key={i}
               initial={false}
               animate={{
-                scale: i === uiStep ? 1.2 : 1,
-                backgroundColor: i === uiStep ? "#000" : "#d1d5db",
+                scale: i === getProgressStep(uiStep) ? 1.2 : 1,
+                backgroundColor:
+                  i === getProgressStep(uiStep) ? "#000" : "#d1d5db",
               }}
               transition={{ duration: 0.2 }}
               className="w-2 h-2 rounded-full"

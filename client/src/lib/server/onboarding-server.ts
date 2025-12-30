@@ -4,6 +4,7 @@ import { serverFetch } from "@/lib/helpers/fetch-server";
 export async function checkOnboarding(): Promise<{
   step: number;
   completed: boolean;
+  started: boolean;
 }> {
   try {
     const res = await serverFetch("/users/onboarding");
@@ -13,6 +14,7 @@ export async function checkOnboarding(): Promise<{
     return {
       step: -1,
       completed: false,
+      started: false
     };
   }
 }

@@ -21,6 +21,7 @@ app.get("/", authMiddleware, async (c) => {
     columns: {
       onboardingCompleted: true,
       onboardingStep: true,
+      onboardingStarted: true
     },
   });
   if (!user) {
@@ -32,6 +33,7 @@ app.get("/", authMiddleware, async (c) => {
   return c.json({
     step: user.onboardingStep,
     completed: user.onboardingCompleted,
+    started: user.onboardingStarted
   });
 });
 
@@ -44,6 +46,7 @@ app.post("/step1", authMiddleware, async (c) => {
     .set({
       name: body.name,
       onboardingStep: 2,
+      onboardingStarted: true
     })
     .where(eq(usersTable.id, sessionUser.id));
 

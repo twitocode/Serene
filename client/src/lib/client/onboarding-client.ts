@@ -55,7 +55,7 @@ export async function completeStep5(
   koalaPronouns: string,
   koalaColour: string
 ): Promise<{ success: boolean }> {
-  return completeOnboardingStep(4, {
+  return completeOnboardingStep(5, {
     koalaName,
     koalaPronouns,
     koalaColour,

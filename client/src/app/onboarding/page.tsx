@@ -3,12 +3,11 @@ import { OnboardingFlow } from "@/lib/components/onboarding/onboarding-flow";
 import { getSession } from "@/lib/get-session";
 import { checkOnboarding } from "@/lib/server/onboarding-server";
 import { redirect } from "next/navigation";
-import { PropsWithChildren } from "react";
 
-export default async function page({ children, data }: PropsWithChildren<any>) {
+export default async function OnboardingPage() {
   const session = await getSession();
-  const { step, completed } = await checkOnboarding();
-
+  const { step, completed ,started} = await checkOnboarding();
+  
   if (!session?.user) {
     redirect("/login");
   }
@@ -19,7 +18,7 @@ export default async function page({ children, data }: PropsWithChildren<any>) {
   return (
     <div className=" mx-40 mt-5">
       <OnBoardingNavbar />
-      <OnboardingFlow />
+      <OnboardingFlow initialStep={step} hasStarted={started}/>
     </div>
   );
 }

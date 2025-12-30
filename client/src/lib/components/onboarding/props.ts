@@ -1,5 +1,3 @@
-import { School } from "@/lib/types";
-
 export interface OnboardingStepProps {
   step: number;
   name: string;
