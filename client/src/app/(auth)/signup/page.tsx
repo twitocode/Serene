@@ -9,7 +9,7 @@ export default async function SignupPage() {
     redirect("/home");
   }
 
-  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+  const serverUrl = env.NEXT_PUBLIC_SERVER_URL;
   if (!serverUrl) return null;
 
   return (

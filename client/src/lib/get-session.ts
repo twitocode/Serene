@@ -1,8 +1,8 @@
-import { serverFetch } from "@/lib/helpers/fetch-server";
+import { apiFetch } from "@/lib/helpers/api-fetch";
 
 export async function getSession() {
   try {
-    const response = await serverFetch(`/auth/get-session`);
+    const response = await apiFetch(`/auth/get-session`);
 
     if (!response.ok) {
       return null;

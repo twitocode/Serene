@@ -1,4 +1,4 @@
-import { serverFetch } from "@/lib/helpers/fetch-server";
+import { apiFetch } from "@/lib/helpers/api-fetch";
 
 // Onboarding API functions
 export async function checkOnboarding(): Promise<{
@@ -7,7 +7,7 @@ export async function checkOnboarding(): Promise<{
   started: boolean;
 }> {
   try {
-    const res = await serverFetch("/users/onboarding");
+    const res = await apiFetch("/users/onboarding");
     if (!res.ok) {
       console.error("Server error:", res.status);
       throw new Error(`Server error: ${res.status}`);
@@ -15,6 +15,6 @@ export async function checkOnboarding(): Promise<{
     return await res.json();
   } catch (error) {
     console.error("Check onboarding error:", error);
-    throw error
+    throw error;
   }
 }

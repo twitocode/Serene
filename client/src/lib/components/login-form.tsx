@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/lib/components/ui/form";
 import { Input } from "@/lib/components/ui/input";
-import { clientFetch } from "@/lib/helpers/fetch-client";
+import { apiFetch } from "@/lib/helpers/api-fetch";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { z } from "zod";
@@ -62,9 +62,9 @@ export function LoginForm({
         if (result.error) {
           setLoginError(result.error.message || "Invalid email or password");
         } else {
-          const onboarding = await clientFetch(
-            `/users/onboarding`
-          ).then((r) => r.json());
+          const onboarding = await apiFetch(`/users/onboarding`).then((r) =>
+            r.json()
+          );
 
           if (onboarding.completed) {
             window.location.href = "/home";
@@ -93,7 +93,7 @@ export function LoginForm({
         setEmail(emailValue);
         setStep(2);
       } else {
-        console.error(data)
+        console.error(data);
         setLoginError(
           "No accounts associated with this email, maybe try signing up?"
         );

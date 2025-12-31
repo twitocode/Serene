@@ -5,9 +5,9 @@ import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 import { poweredBy } from "hono/powered-by";
 import { prettyJSON } from "hono/pretty-json";
-import { auth } from "./features/auth/auth";
-import onboardingRouter from "./features/users/onboarding-router";
-import usersRouter from "./features/users/users-router";
+import { auth } from "./lib/auth";
+import onboardingRouter from "./modules/onboarding/onboarding.router";
+import usersRouter from "./modules/users/users.router";
 
 const app = new Hono<{
   Variables: {

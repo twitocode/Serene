@@ -13,18 +13,15 @@ import { PropsWithChildren } from "react";
 import { toast, Toaster } from "sonner";
 
 interface Props {
-  user: User | undefined;
 }
 
-export default function HomeLayout({
-  user,
-  children,
+export default function HomeLayout({  children,
 }: PropsWithChildren<Props>) {
   const preferences = usePreferencesStore();
 
   return !preferences.isLocked ? (
     <SidebarProvider>
-      <AppSidebar user={user!} />
+      <AppSidebar />
       <SidebarInset>
         <header className="group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear">
           <div className="flex items-center gap-2 px-4 justify-between w-full">

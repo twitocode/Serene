@@ -1,4 +1,5 @@
 import { LoginForm } from "@/lib/components/login-form";
+import { env } from "@/lib/env";
 import { getSession } from "@/lib/get-session";
 import { checkOnboarding } from "@/lib/server/onboarding-server";
 import { redirect } from "next/navigation";
@@ -15,7 +16,7 @@ export default async function LoginPage() {
     }
   }
 
-  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+  const serverUrl = env.NEXT_PUBLIC_SERVER_URL;
   if (!serverUrl) return null;
 
   return (

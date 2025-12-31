@@ -1,10 +1,10 @@
-import { clientFetch } from "@/lib/helpers/fetch-client";
+import { apiFetch } from "@/lib/helpers/api-fetch";
 
 export async function completeOnboardingStep(
   step: number,
   data: Record<string, unknown>
 ): Promise<{ success: boolean }> {
-  const res = await clientFetch(`/users/onboarding/step${step}`, {
+  const res = await apiFetch(`/users/onboarding/step${step}`, {
     method: "POST",
     body: JSON.stringify(data),
     cache: "no-store",
@@ -69,7 +69,7 @@ export async function completeStep5(
 }
 
 export async function completeOnboarding(): Promise<{ success: boolean }> {
-  const res = await clientFetch("/users/onboarding/complete", {
+  const res = await apiFetch("/users/onboarding/complete", {
     method: "POST",
   });
   return res.json();

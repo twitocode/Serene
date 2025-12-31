@@ -30,10 +30,9 @@ const data = {
 };
 
 type SidebarLayoutProps = React.ComponentProps<typeof Sidebar> & {
-  user: User;
 };
 
-export default function AppSidebar({ user, ...props }: SidebarLayoutProps) {
+export default function AppSidebar({ ...props }: SidebarLayoutProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -43,7 +42,7 @@ export default function AppSidebar({ user, ...props }: SidebarLayoutProps) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <NavUser/>
       </SidebarFooter>
     </Sidebar>
   );

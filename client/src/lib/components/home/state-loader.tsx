@@ -1,19 +1,15 @@
 "use client";
 
-import { Toaster } from "@/lib/components/ui/sonner";
+import { getUser } from "@/lib/server/get-user";
 import { usePreferencesStore } from "@/lib/stores/preferences-store";
-import { User } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
 import { PropsWithChildren, useEffect } from "react";
-import { toast } from "sonner";
 
-interface Props {
-  user: User | undefined;
-}
+interface Props {}
 
-export default function StateLoader({
-  children,
-  user,
-}: PropsWithChildren<Props>) {
+export default function StateLoader({ children }: PropsWithChildren<Props>) {
+  const { data: user } = useQuery({ queryKey: ["user"], queryFn: getUser });
+
   const {
     lockInterval,
     tick,
