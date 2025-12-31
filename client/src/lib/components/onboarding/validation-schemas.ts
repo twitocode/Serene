@@ -44,7 +44,7 @@ export const stepFiveSchema = z.object({
       /^[a-zA-Z\s'-]+$/,
       "Koala name can only contain letters, spaces, hyphens, and apostrophes"
     ),
-  koalaColor: z.enum(["Gray", "Brown", "White", "Black", "Cream", "Tan"], {
+  koalaColour: z.enum(["Gray", "Brown", "White", "Black", "Cream", "Tan"], {
     message: "Please select a color for your koala",
   }),
   koalaPronouns: z

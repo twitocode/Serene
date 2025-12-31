@@ -64,7 +64,6 @@ export const verification = pgTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)]
 );
 
-// Keep old exports for backwards compatibility with your app
 export const sessionsTable = session;
 export const accountsTable = account;
 export const verificationsTable = verification;

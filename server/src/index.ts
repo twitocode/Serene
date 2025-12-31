@@ -1,12 +1,11 @@
 import { Hono } from "hono";
+import { PinoLogger, pinoLogger } from "hono-pino";
 import { rateLimiter } from "hono-rate-limiter";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
-import { logger } from "hono/logger";
 import { poweredBy } from "hono/powered-by";
 import { prettyJSON } from "hono/pretty-json";
 import { auth } from "./features/auth/auth";
-import authRouter from "./features/auth/auth-router";
 import onboardingRouter from "./features/users/onboarding-router";
 import usersRouter from "./features/users/users-router";
 
@@ -14,31 +13,45 @@ const app = new Hono<{
   Variables: {
     user: typeof auth.$Infer.Session.user | null;
     session: typeof auth.$Infer.Session.session | null;
+    logger: PinoLogger;
   };
 }>();
 
+const transport = process.stdout.isTTY
+  ? { transport: { target: "pino-pretty", options: { colorize: true } } }
+  : {};
+
+app.use(
+  pinoLogger({
+    pino: {
+      ...transport,
+      level: "debug",
+    },
+  })
+);
+
 app.onError((err, c) => {
+  const logger = c.get("logger");
+
   if (err instanceof HTTPException) {
-    return c.json(
-      {
-        error: err.message,
-        status: err.status,
-      },
-      err.status
-    );
+    if (err.status === 422) {
+      logger.warn(
+        {
+          path: c.req.path,
+          errors: err.cause,
+        },
+        "Validation Error"
+      );
+
+      return c.json({ error: err.message, details: err.cause }, 422);
+    }
+    return err.getResponse();
   }
 
-  console.error("Unexpected error:", err);
-  return c.json(
-    {
-      error: "Internal server error",
-      message: process.env.NODE_ENV === "development" ? err.message : undefined,
-    },
-    500
-  );
+  // Handle actual server crashes
+  logger.error(err, "Server Crash");
+  return c.json({ error: "Internal Server Error" }, 500);
 });
-
-
 
 app.use(
   "*",
@@ -67,16 +80,16 @@ app.use(
         return Math.random().toString();
       }
       return ip;
-    }
+    },
   })
 );
-app.use(logger());
+
 app.use(poweredBy());
 app.use(prettyJSON());
 
 app.use("*", async (c, next) => {
   const path = c.req.path;
-  
+
   if (path.startsWith("/auth")) {
     return next();
   }
@@ -84,15 +97,15 @@ app.use("*", async (c, next) => {
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
   c.set("user", session?.user ?? null);
   c.set("session", session?.session ?? null);
+
+  c.var.logger.debug(`UserId: ${session?.user.id ?? "User not signed in"}`);
   await next();
 });
 
 app.get("/", (c) => {
-  return c.json({});
+  return c.text("You should not be here");
 });
 
-//DONT NEED THIS FOR BETTER AUTH
-// app.route("/auth", authRouter);
 app.route("/users", usersRouter);
 app.route("/users/onboarding", onboardingRouter);
 

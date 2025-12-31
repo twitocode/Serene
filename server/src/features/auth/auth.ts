@@ -7,18 +7,18 @@ import * as schema from "../../db/schema";
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
-    schema: schema, // Pass the entire schema object
-    usePlural: false, // Better-auth expects singular table names
+    schema: schema, 
+    usePlural: false, 
   }),
   basePath: "/auth",
   advanced: {
     defaultCookieAttributes: {
-      secure: process.env.NODE_ENV === "production", // Fix: was "PRODUCTION"
-      sameSite: "lax", // Add this for better cookie handling
+      secure: process.env.NODE_ENV === "production", 
+      sameSite: "lax", 
     },
   },
-  trustedOrigins: ["http://localhost:3000"], // Your Next.js URL
-  baseURL: "http://localhost:8000", // Your Hono server URL
+  trustedOrigins: ["http://localhost:3000"], 
+  baseURL: "http://localhost:8000",
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
@@ -26,7 +26,3 @@ export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET,
 });
 
-export type AuthType = {
-  user: typeof auth.$Infer.Session.user | null;
-  session: typeof auth.$Infer.Session.session | null;
-};

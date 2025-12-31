@@ -27,7 +27,7 @@ const koalaColors = ["Gray", "Brown", "White", "Black", "Cream", "Tan"];
 export function StepFive({
   koalaName,
   setKoalaName,
-  koalaColor,
+  koalaColour,
   setKoalaColor,
   koalaPronouns,
   setKoalaPronouns,
@@ -37,7 +37,7 @@ export function StepFive({
   OnboardingStepProps,
   | "koalaName"
   | "setKoalaName"
-  | "koalaColor"
+  | "koalaColour"
   | "setKoalaColor"
   | "koalaPronouns"
   | "setKoalaPronouns"
@@ -47,12 +47,12 @@ export function StepFive({
   const form = useForm({
     defaultValues: {
       koalaName: koalaName || "",
-      koalaColor: koalaColor || "",
+      koalaColour: koalaColour || "",
       koalaPronouns: koalaPronouns || "",
     },
     onSubmit: async ({ value }) => {
       setKoalaName(value.koalaName);
-      setKoalaColor(value.koalaColor);
+      setKoalaColor(value.koalaColour);
       setKoalaPronouns(value.koalaPronouns);
       onNext();
     },
@@ -111,10 +111,11 @@ export function StepFive({
           </form.Field>
 
           <form.Field
-            name="koalaColor"
+            name="koalaColour"
             validators={{
               onChange: ({ value }) => {
-                const result = stepFiveSchema.shape.koalaColor.safeParse(value);
+                const result =
+                  stepFiveSchema.shape.koalaColour.safeParse(value);
                 if (!result.success) {
                   return result.error.issues[0]?.message || "Invalid color";
                 }

@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
-import { Inter, IBM_Plex_Mono } from "next/font/google";
+import { Inter, IBM_Plex_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
-  variable: "--font-insanster",
+  variable: "--font-sans",
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-mono",
+  weight: "400"
+});
+
+const playfairDisplay = Playfair_Display({
+  variable: "--font-serif",
   weight: "400"
 });
 
@@ -24,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${ibmPlexMono.variable} antialiased`}
+        className={`${inter.variable} ${ibmPlexMono.variable} ${playfairDisplay.variable} antialiased`}
       >
         {children}
       </body>

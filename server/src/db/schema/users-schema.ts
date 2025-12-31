@@ -26,7 +26,7 @@ export const themeEnum = pgEnum("theme", ["Dark", "Light"]);
 //TODO: Add preferences
 export const usersTable = pgTable("user", {
   id: text("id").primaryKey(),
-  name: text("name").notNull().unique(),
+  name: text("name").unique(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
@@ -74,7 +74,6 @@ export const profilesTable = pgTable("profile", {
 });
 
 export const safetyPlansTable = pgTable("safety_plan", {
-  // Fixed table name
   id: text("id").primaryKey(),
   professionalResources: jsonb("professional_resources"),
   safeContacts: jsonb("safe_contacts"),
@@ -105,6 +104,7 @@ export const preferencesTable = pgTable("preferences", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+
 //TODO: add american schools
 export const schoolsTable = pgTable("school", {
   id: text("id").primaryKey(),
@@ -114,13 +114,10 @@ export const schoolsTable = pgTable("school", {
   city: text("city"),
 });
 
-// --- THE MASTER RELATIONSHIP DEFINITION ---
 export const userRelations = relations(usersTable, ({ one, many }) => ({
-  // Auth Relationships
   sessions: many(sessionsTable),
   accounts: many(accountsTable),
 
-  // App Relationships
   profile: one(profilesTable, {
     fields: [usersTable.id],
     references: [profilesTable.userId],
@@ -145,7 +142,6 @@ export const achievementsTable = pgTable("achievements", {
   points: integer("points").default(0),
 });
 
-// --- Inverse Relationships ---
 
 export const profileRelations = relations(profilesTable, ({ one }) => ({
   user: one(usersTable, {

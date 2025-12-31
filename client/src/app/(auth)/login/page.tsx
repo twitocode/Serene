@@ -5,17 +5,12 @@ import { redirect } from "next/navigation";
 
 export default async function LoginPage() {
   const session = await getSession();
-  console.log("From login page:", session);
   if (session?.user) {
-    // Check onboarding status
     const { completed } = await checkOnboarding();
-    console.log("From login page, Completed?:", completed)
 
     if (completed) {
-      console.log("From login page: does not need onboarding")
       redirect("/home");
     } else {
-      console.log("From login page: still needs onboarding")
       redirect("/onboarding");
     }
   }

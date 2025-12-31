@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@/lib/auth";
 import {
   Avatar,
   AvatarFallback,
@@ -30,7 +31,6 @@ import {
   LogOut,
   Sparkles,
 } from "lucide-react";
-import Link from "next/link";
 
 type NavUserProps = {
   user: User;
@@ -38,7 +38,6 @@ type NavUserProps = {
 };
 
 export function NavUser({ user }: NavUserProps) {
-  const fullname = `${user.firstName} ${user.lastName}`;
   const sidebar = useSidebar();
 
   return (
@@ -51,11 +50,11 @@ export function NavUser({ user }: NavUserProps) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="size-8 rounded-lg">
-                <AvatarImage src={user.avatarUrl} alt={fullname} />
+                <AvatarImage src={user.image} alt={`${user.name}'s image`} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{fullname}</span>
+                <span className="truncate font-medium">{user.name}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -71,11 +70,11 @@ export function NavUser({ user }: NavUserProps) {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="size-8 rounded-lg">
-                  <AvatarImage src={user.avatarUrl} alt={fullname} />
+                  <AvatarImage src={user.image} alt={`${user.name}'s image`} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{fullname}</span>
+                  <span className="truncate font-medium">{user.name}</span>
                   <span className="truncate text-xs">{user.email}</span>
                 </div>
               </div>
@@ -109,12 +108,28 @@ export function NavUser({ user }: NavUserProps) {
 
             <DropdownMenuSeparator />
 
-            <Link href="/logout">
+            <div
+              onClick={() => {
+                authClient.signOut({
+                  fetchOptions: {
+                    onRequest: () => {
+                      //TODO: add a loading spinner
+                    },
+                    onSuccess: () => {
+                      window.location.href = "/";
+                    },
+                    onError: () => {
+                      //TODO: add alert
+                    },
+                  },
+                });
+              }}
+            >
               <DropdownMenuItem>
                 <LogOut className="mr-2 h-4 w-4" />
                 Log out
               </DropdownMenuItem>
-            </Link>
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

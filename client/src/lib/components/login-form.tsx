@@ -59,17 +59,9 @@ export function LoginForm({
           email: email,
           password: value.password,
         });
-
-        console.log("Full result:", result);
-        console.log("Response headers:", result); // Check if there are any headers
-
         if (result.error) {
           setLoginError(result.error.message || "Invalid email or password");
         } else {
-          // Wait a tiny bit for cookie to be set
-          await new Promise((resolve) => setTimeout(resolve, 100));
-          console.log("Login successful:", result.data);
-
           const onboarding = await clientFetch(
             `/users/onboarding`
           ).then((r) => r.json());
@@ -97,13 +89,11 @@ export function LoginForm({
       );
       const data = await res.json();
 
-      //email exists
-      console.log(data);
-
       if (data.exists) {
         setEmail(emailValue);
         setStep(2);
       } else {
+        console.error(data)
         setLoginError(
           "No accounts associated with this email, maybe try signing up?"
         );

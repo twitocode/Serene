@@ -1,27 +1,8 @@
-import { cookies } from "next/headers";
+import { serverFetch } from "@/lib/helpers/fetch-server";
 
 export async function getSession() {
   try {
-    const cookieStore = await cookies();
-
-    // Get all cookies and format them for the request
-    const cookieHeader = cookieStore
-      .getAll()
-      .map((cookie) => `${cookie.name}=${cookie.value}`)
-      .join("; ");
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/get-session`,
-      {
-        method: "GET",
-        headers: {
-          Cookie: cookieHeader,
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        cache: "no-store",
-      }
-    );
+    const response = await serverFetch(`/auth/get-session`);
 
     if (!response.ok) {
       return null;

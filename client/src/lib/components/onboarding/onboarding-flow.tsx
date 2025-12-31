@@ -1,6 +1,5 @@
 "use client";
 
-//TODO: add back functionality
 import {
   completeStep1,
   completeStep2,
@@ -79,11 +78,10 @@ export function OnboardingFlow(props: Props) {
   const [country, setCountry] = useState("");
   const [school, setSchool] = useState("");
   const [koalaName, setKoalaName] = useState("");
-  const [koalaColor, setKoalaColor] = useState("");
+  const [koalaColour, setKoalaColor] = useState("");
   const [koalaPronouns, setKoalaPronouns] = useState("");
-  const transitionType: TransitionType = "scale"; // Change to "fade" or "scale"
+  const transitionType: TransitionType = "scale";
 
-  // Map UI steps (0-7) to progress steps (1-5) for display
   const getProgressStep = (currentUIStep: number): number => {
     switch (currentUIStep) {
       case 0:
@@ -142,7 +140,7 @@ export function OnboardingFlow(props: Props) {
         await completeStep4(schoolObj);
       }
       if (onboardingStep === 5) {
-        await completeStep5(koalaName, koalaPronouns, koalaColor);
+        await completeStep5(koalaName, koalaPronouns, koalaColour);
         window.location.href = "/home";
         return;
       }
@@ -225,7 +223,7 @@ export function OnboardingFlow(props: Props) {
               <StepFive
                 koalaName={koalaName}
                 setKoalaName={setKoalaName}
-                koalaColor={koalaColor}
+                koalaColour={koalaColour}
                 setKoalaColor={setKoalaColor}
                 koalaPronouns={koalaPronouns}
                 setKoalaPronouns={setKoalaPronouns}

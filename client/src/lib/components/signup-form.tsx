@@ -64,14 +64,12 @@ export function SignupForm({
         const result = await authClient.signUp.email({
           email: email,
           password: value.password,
-          name: email.split("@")[0], // Use email prefix as name
+          name: email.split("@")[0],
         });
 
         if (result.error) {
           setSignupError(result.error.message || "Signup failed");
         } else {
-          console.log("Signup successful:", result.data);
-          // Redirect to home page
           window.location.href = "/";
         }
       } catch (error) {

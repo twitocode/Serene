@@ -30,7 +30,6 @@ export const postsTable = pgTable("post", {
     .notNull(),
 });
 
-// Relations for postsTable
 export const postRelations = relations(postsTable, ({ one }) => ({
   user: one(usersTable, {
     fields: [postsTable.userId],
@@ -42,7 +41,6 @@ export const postRelations = relations(postsTable, ({ one }) => ({
   }),
 }));
 
-// Relations for questionsOfTheDayTable (not postsTable!)
 export const qotdRelations = relations(questionsOfTheDayTable, ({ many }) => ({
-  posts: many(postsTable), // One question has many posts
+  posts: many(postsTable), 
 }));

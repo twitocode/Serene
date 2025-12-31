@@ -14,8 +14,8 @@ export interface OnboardingStepProps {
   setSchool: (school: string) => void;
   koalaName: string;
   setKoalaName: (koalaName: string) => void;
-  koalaColor: string;
-  setKoalaColor: (koalaColor: string) => void;
+  koalaColour: string;
+  setKoalaColor: (koalaColour: string) => void;
   koalaPronouns: string;
   setKoalaPronouns: (koalaPronouns: string) => void;
   onNext: () => void;

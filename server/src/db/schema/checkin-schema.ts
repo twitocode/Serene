@@ -16,7 +16,6 @@ export type SomaticMap = Record<string, GridPoint>;
 export const checkinsTable = pgTable("checkins", {
   id: text("id").primaryKey(),
 
-  // FIXED: Added user relationship column
   userId: text("user_id")
     .notNull()
     .references(() => usersTable.id, { onDelete: "cascade" }),
