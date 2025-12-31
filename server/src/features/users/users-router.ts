@@ -1,6 +1,5 @@
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
-import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 import { db } from "../../db/db";
 import { usersTable } from "../../db/schema/users-schema";
@@ -10,7 +9,16 @@ const app = new Hono<{
   Variables: AuthType;
 }>();
 
+app.get("/me", (c) => {
+  const session = c.get("session");
+  const user = c.get("user");
 
+  console.log(session, user)
+  return c.json({
+    session,
+    user,
+  });
+});
 
 app.get("/exists/:email", async (c) => {
   const email = c.req.param("email");

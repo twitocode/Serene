@@ -4,7 +4,6 @@ import StateLoader from "@/lib/components/home/state-loader";
 import { getSession } from "@/lib/get-session";
 import { getUser } from "@/lib/server/get-user";
 import { checkOnboarding } from "@/lib/server/onboarding-server";
-import { redirect } from "next/navigation";
 import { PropsWithChildren } from "react";
 
 export default async function layout({
@@ -12,14 +11,21 @@ export default async function layout({
   data,
 }: PropsWithChildren<any>) {
   const session = await getSession();
+  console.log("From home page: ", session);
   if (!session || !session.user) {
-    redirect("/login");
+    console.log("From home page: session does not exist");
+    setTimeout(() => {
+      //redirect("/login");
+    }, 2000);
   }
 
   const { completed } = await checkOnboarding();
 
   if (!completed) {
-    redirect("/onboarding");
+    console.log("From home page, user still needs to onboard");
+    setTimeout(() => {
+      // redirect("/onboarding");
+    }, 2000);
   }
   const user = await getUser();
   return (

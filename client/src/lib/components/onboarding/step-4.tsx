@@ -22,7 +22,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
-import { colleges, schools } from "@/lib/data";
+import { colleges, schools, universities } from "@/lib/data";
 import { useForm } from "@tanstack/react-form";
 import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
@@ -105,7 +105,7 @@ export function StepFour({
                             <SelectValue placeholder="Select School" />
                           </SelectTrigger>
                           <SelectContent>
-                            {schools.map(({ name }) => (
+                            {universities.map(({ name }) => (
                               <SelectItem key={name} value={name}>
                                 {name}
                               </SelectItem>

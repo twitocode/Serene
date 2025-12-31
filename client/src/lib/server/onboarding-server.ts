@@ -15,10 +15,6 @@ export async function checkOnboarding(): Promise<{
     return await res.json();
   } catch (error) {
     console.error("Check onboarding error:", error);
-    return {
-      step: -1,
-      completed: false,
-      started: false,
-    };
+    throw error
   }
 }

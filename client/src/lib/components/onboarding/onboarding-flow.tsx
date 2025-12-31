@@ -139,10 +139,7 @@ export function OnboardingFlow(props: Props) {
       if (onboardingStep === 3) await completeStep3(country);
       if (onboardingStep === 4) {
         const schoolObj = schools.find((s) => s.name === school)!;
-        await completeStep4({
-          ...schoolObj,
-          schoolName: school,
-        });
+        await completeStep4(schoolObj);
       }
       if (onboardingStep === 5) {
         await completeStep5(koalaName, koalaPronouns, koalaColor);

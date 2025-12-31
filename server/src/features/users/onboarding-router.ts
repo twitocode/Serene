@@ -107,10 +107,10 @@ app.post("/step4", authMiddleware, async (c) => {
   const body = await c.req.json();
   await validateStep(sessionUser.id, 4);
 
-  console.log(body)
+  console.log(body);
   await db.transaction(async (tx) => {
     let school = await tx.query.schoolsTable.findFirst({
-      where: eq(schoolsTable.name, body.schoolName),
+      where: eq(schoolsTable.name, body.name),
     });
 
     if (!school) {
@@ -118,7 +118,7 @@ app.post("/step4", authMiddleware, async (c) => {
         .insert(schoolsTable)
         .values({
           id: v4(),
-          name: body.schoolName,
+          name: body.name,
           countryCode: body.countryCode,
           city: body.city,
           regionCode: body.regionCode,

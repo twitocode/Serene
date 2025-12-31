@@ -7,7 +7,7 @@ export async function completeOnboardingStep(
   const res = await clientFetch(`/users/onboarding/step${step}`, {
     method: "POST",
     body: JSON.stringify(data),
-    cache: "no-store"
+    cache: "no-store",
   });
 
   if (!res.ok) {
@@ -38,18 +38,18 @@ export async function completeStep3(
 }
 
 export async function completeStep4({
-  schoolName,
+  name,
   city,
   countryCode,
   regionCode,
 }: {
-  schoolName: string;
+  name: string;
   city: string;
   countryCode: string;
   regionCode: string;
 }): Promise<{ success: boolean }> {
   return completeOnboardingStep(4, {
-    schoolName,
+    name,
     city,
     countryCode,
     regionCode,
