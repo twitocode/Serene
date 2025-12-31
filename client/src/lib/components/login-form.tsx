@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/lib/components/ui/form";
 import { Input } from "@/lib/components/ui/input";
+import { clientFetch } from "@/lib/helpers/fetch-client";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { z } from "zod";
@@ -68,7 +69,16 @@ export function LoginForm({
           // Wait a tiny bit for cookie to be set
           await new Promise((resolve) => setTimeout(resolve, 100));
           console.log("Login successful:", result.data);
-          window.location.href = "/home";
+
+          const onboarding = await clientFetch(
+            `/users/onboarding`
+          ).then((r) => r.json());
+
+          if (onboarding.completed) {
+            window.location.href = "/home";
+          } else {
+            window.location.href = "/onboarding";
+          }
         }
       } catch (error) {
         setLoginError("Login failed. Please try again.");

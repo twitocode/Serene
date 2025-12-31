@@ -1,5 +1,22 @@
 import { School } from "@/lib/types";
 
+// Get a list of countries sorted by the user's local language
+const getCountryList = (locale = window.navigator.language) => {
+  const regionNames = new Intl.DisplayNames([locale], { type: "region" });
+
+  //TODO: add more countries
+  const codes = ["CA"];
+
+  return codes
+    .map((code) => ({
+      code: code,
+      name: regionNames.of(code),
+    }))
+    .sort((a, b) => a.name!.localeCompare(b.name!)); // Alphabetical sort
+};
+
+export const countries = getCountryList("en")
+
 export const universities: Omit<School, "id">[] = [
   {
     name: "Algoma University",
@@ -139,7 +156,12 @@ export const universities: Omit<School, "id">[] = [
     regionCode: "ON",
     city: "Waterloo",
   },
-  { name: "York University", countryCode: "CA", regionCode: "ON", city: "Toronto" },
+  {
+    name: "York University",
+    countryCode: "CA",
+    regionCode: "ON",
+    city: "Toronto",
+  },
 ];
 
 export const colleges: Omit<School, "id">[] = [
@@ -180,8 +202,18 @@ export const colleges: Omit<School, "id">[] = [
     regionCode: "ON",
     city: "Thunder Bay",
   },
-  { name: "Durham College", countryCode: "CA", regionCode: "ON", city: "Oshawa" },
-  { name: "Fanshawe College", countryCode: "CA", regionCode: "ON", city: "London" },
+  {
+    name: "Durham College",
+    countryCode: "CA",
+    regionCode: "ON",
+    city: "Oshawa",
+  },
+  {
+    name: "Fanshawe College",
+    countryCode: "CA",
+    regionCode: "ON",
+    city: "London",
+  },
   {
     name: "Fleming College",
     countryCode: "CA",
@@ -194,15 +226,30 @@ export const colleges: Omit<School, "id">[] = [
     regionCode: "ON",
     city: "Toronto",
   },
-  { name: "Georgian College", countryCode: "CA", regionCode: "ON", city: "Barrie" },
-  { name: "Humber College", countryCode: "CA", regionCode: "ON", city: "Toronto" },
+  {
+    name: "Georgian College",
+    countryCode: "CA",
+    regionCode: "ON",
+    city: "Barrie",
+  },
+  {
+    name: "Humber College",
+    countryCode: "CA",
+    regionCode: "ON",
+    city: "Toronto",
+  },
   {
     name: "La Cité Collégiale",
     countryCode: "CA",
     regionCode: "ON",
     city: "Ottawa",
   },
-  { name: "Lambton College", countryCode: "CA", regionCode: "ON", city: "Sarnia" },
+  {
+    name: "Lambton College",
+    countryCode: "CA",
+    regionCode: "ON",
+    city: "Sarnia",
+  },
   {
     name: "Loyalist College",
     countryCode: "CA",
@@ -215,8 +262,18 @@ export const colleges: Omit<School, "id">[] = [
     regionCode: "ON",
     city: "Toronto",
   },
-  { name: "Mohawk College", countryCode: "CA", regionCode: "ON", city: "Hamilton" },
-  { name: "Niagara College", countryCode: "CA", regionCode: "ON", city: "Welland" },
+  {
+    name: "Mohawk College",
+    countryCode: "CA",
+    regionCode: "ON",
+    city: "Hamilton",
+  },
+  {
+    name: "Niagara College",
+    countryCode: "CA",
+    regionCode: "ON",
+    city: "Welland",
+  },
   {
     name: "Niagara Parks School of Horticulture",
     countryCode: "CA",

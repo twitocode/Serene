@@ -5,57 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1767111659229,
-      "tag": "0000_blushing_harry_osborn",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1767112172002,
-      "tag": "0001_rapid_mole_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1767112222140,
-      "tag": "0002_thick_wasp",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1767112702239,
-      "tag": "0003_lowly_forgotten_one",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1767117588544,
-      "tag": "0004_lethal_caretaker",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1767118706792,
-      "tag": "0005_known_zemo",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1767118889385,
-      "tag": "0006_sweet_argent",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1767131004869,
-      "tag": "0007_shallow_cerebro",
+      "when": 1767140098596,
+      "tag": "0000_mature_makkari",
       "breakpoints": true
     }
   ]

@@ -7,7 +7,13 @@ export async function completeOnboardingStep(
   const res = await clientFetch(`/users/onboarding/step${step}`, {
     method: "POST",
     body: JSON.stringify(data),
+    cache: "no-store"
   });
+
+  if (!res.ok) {
+    throw new Error(`Step ${step} failed`);
+  }
+
   return res.json();
 }
 

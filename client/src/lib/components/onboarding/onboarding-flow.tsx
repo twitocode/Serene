@@ -81,7 +81,7 @@ export function OnboardingFlow(props: Props) {
   const [koalaName, setKoalaName] = useState("");
   const [koalaColor, setKoalaColor] = useState("");
   const [koalaPronouns, setKoalaPronouns] = useState("");
-  const transitionType: TransitionType = "slide"; // Change to "fade" or "scale"
+  const transitionType: TransitionType = "scale"; // Change to "fade" or "scale"
 
   // Map UI steps (0-7) to progress steps (1-5) for display
   const getProgressStep = (currentUIStep: number): number => {
@@ -132,32 +132,47 @@ export function OnboardingFlow(props: Props) {
   };
 
   const goNextAPI = async () => {
-    goNext();
-    setOnBoardingStep((prev) => prev + 1);
-    const currentStep = onboardingStep;
-    if (currentStep === 1) await completeStep1(name);
-    if (currentStep === 2) await completeStep2(age, gender, pronouns);
-    if (currentStep === 3) await completeStep3(country);
-    if (currentStep === 4) {
-      const schoolObj = schools.find((s) => s.name === school)!;
-      await completeStep4({
-        ...schoolObj,
-        schoolName: school,
-      });
+    try {
+      if (onboardingStep === 1) await completeStep1(name);
+      if (onboardingStep === 2)
+        await completeStep2(age, gender, pronouns.replace("-", " "));
+      if (onboardingStep === 3) await completeStep3(country);
+      if (onboardingStep === 4) {
+        const schoolObj = schools.find((s) => s.name === school)!;
+        await completeStep4({
+          ...schoolObj,
+          schoolName: school,
+        });
+      }
+      if (onboardingStep === 5) {
+        await completeStep5(koalaName, koalaPronouns, koalaColor);
+        window.location.href = "/home";
+        return;
+      }
+
+      goNext();
+      setOnBoardingStep((prev) => prev + 1);
+    } catch (error) {
+      console.error(error);
     }
-    if (currentStep === 5)
-      await completeStep5(koalaName, koalaPronouns, koalaColor);
   };
 
   const goBack = () => {
     setDirection(-1);
-    setUIStep((prev) => prev - 1);
+    setOnBoardingStep((prev) => prev - 1);
+
+    setUIStep((prev) => {
+      // Skip intermediate steps when going back
+      if (prev === 4) return 2; // From StepTwo -> skip IntermediateStepTwo -> go to StepOne
+      if (prev === 2 && !props.hasStarted) return 1; // From StepOne -> go to IntermediateStepOne (only for new users)
+      return prev - 1;
+    });
   };
 
   const variants = getVariants(transitionType);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4  w-full">
       <div className="w-full max-w-2xl h-[600px] bg-white rounded-lg overflow-hidden relative">
         <AnimatePresence initial={false} mode="wait" custom={direction}>
           <motion.div

@@ -60,14 +60,27 @@ app.use(
   rateLimiter({
     windowMs: 15 * 60 * 1000, // 15 minutes
     limit: 100, // Limit each client to 100 requests per window
-    keyGenerator: (c) => c.req.header("x-forwarded-for") ?? "", // Use IP address as key
+    keyGenerator: (c) => {
+      const ip = c.req.header("x-forwarded-for") ?? "127.0.0.1";
+      // Allow internal traffic to bypass the limit
+      if (ip === "::1" || ip === "127.0.0.1" || ip.includes("localhost")) {
+        return Math.random().toString();
+      }
+      return ip;
+    }
   })
 );
 app.use(logger());
 app.use(poweredBy());
 app.use(prettyJSON());
-// Run auth middleware on ALL routes
+
 app.use("*", async (c, next) => {
+  const path = c.req.path;
+  
+  if (path.startsWith("/auth")) {
+    return next();
+  }
+
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
   c.set("user", session?.user ?? null);
   c.set("session", session?.session ?? null);

@@ -26,7 +26,7 @@ export const themeEnum = pgEnum("theme", ["Dark", "Light"]);
 //TODO: Add preferences
 export const usersTable = pgTable("user", {
   id: text("id").primaryKey(),
-  name: text("name").notNull(),
+  name: text("name").notNull().unique(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
@@ -189,6 +189,27 @@ export const userAchievementsTable = pgTable(
   },
   (table) => ({
     pk: primaryKey({ columns: [table.userId, table.achievementId] }),
+  })
+);
+
+export const userAchievementsRelations = relations(
+  userAchievementsTable,
+  ({ one }) => ({
+    user: one(usersTable, {
+      fields: [userAchievementsTable.userId],
+      references: [usersTable.id],
+    }),
+    achievement: one(achievementsTable, {
+      fields: [userAchievementsTable.achievementId],
+      references: [achievementsTable.id],
+    }),
+  })
+);
+
+export const achievementsRelations = relations(
+  achievementsTable,
+  ({ many }) => ({
+    userAchievements: many(userAchievementsTable),
   })
 );
 

@@ -8,13 +8,17 @@ export async function checkOnboarding(): Promise<{
 }> {
   try {
     const res = await serverFetch("/users/onboarding");
+    if (!res.ok) {
+      console.error("Server error:", res.status);
+      throw new Error(`Server error: ${res.status}`);
+    }
     return await res.json();
   } catch (error) {
     console.error("Check onboarding error:", error);
     return {
       step: -1,
       completed: false,
-      started: false
+      started: false,
     };
   }
 }

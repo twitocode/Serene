@@ -6,10 +6,10 @@ import { redirect } from "next/navigation";
 
 export default async function OnboardingPage() {
   const session = await getSession();
-  const { step, completed ,started} = await checkOnboarding();
-  
+  const { step, completed, started } = await checkOnboarding();
+
   if (!session?.user) {
-    redirect("/login");
+    redirect("/");
   }
   if (completed) {
     redirect("/home");
@@ -17,8 +17,8 @@ export default async function OnboardingPage() {
 
   return (
     <div className=" mx-40 mt-5">
-      <OnBoardingNavbar />
-      <OnboardingFlow initialStep={step} hasStarted={started}/>
+      <OnBoardingNavbar user={session.user} />
+      <OnboardingFlow initialStep={step} hasStarted={started} />
     </div>
   );
 }

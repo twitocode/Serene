@@ -1,3 +1,6 @@
+"use client";
+
+import { useForm } from "@tanstack/react-form";
 import { OnboardingStepProps } from "@/lib/components/onboarding/props";
 import { Button } from "@/lib/components/ui/button";
 import {
@@ -7,9 +10,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/lib/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/lib/components/ui/tanstack-form";
 import { ChevronLeft } from "lucide-react";
+import { stepThreeSchema } from "./validation-schemas";
+import { countries } from "@/lib/data";
 
-const countries = ["United States", "Canada"];
 
 export function StepThree({
   country,
@@ -17,6 +22,16 @@ export function StepThree({
   onNext,
   onBack,
 }: Pick<OnboardingStepProps, "country" | "setCountry" | "onNext" | "onBack">) {
+  const form = useForm({
+    defaultValues: {
+      country: country || "",
+    },
+    onSubmit: async ({ value }) => {
+      setCountry(value.country);
+      onNext();
+    },
+  });
+
   return (
     <div className="text-center space-y-6 max-w-md w-full">
       <div className="space-y-2">
@@ -26,32 +41,81 @@ export function StepThree({
         </p>
       </div>
 
-      <Select value={country} onValueChange={setCountry}>
-        <SelectTrigger className="bg-gray-100 border-0">
-          <SelectValue placeholder="Select your country" />
-        </SelectTrigger>
-        <SelectContent>
-          {countries.map((country) => (
-            <SelectItem key={country} value={country}>
-              {country}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <div className="flex gap-4">
-        <Button onClick={onBack} variant="outline" className="flex-1">
-          <ChevronLeft className="w-4 h-4 mr-2" />
-          Back
-        </Button>
-        <Button
-          onClick={onNext}
-          className="bg-black hover:bg-gray-800 flex-1"
-          disabled={!country}
+      <Form>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+          className="space-y-4"
         >
-          Continue
-        </Button>
-      </div>
+          <form.Field
+            name="country"
+            validators={{
+              onChange: ({ value }) => {
+                const result = stepThreeSchema.shape.country.safeParse(value);
+                if (!result.success) {
+                  return result.error.issues[0]?.message || "Invalid country";
+                }
+                return undefined;
+              },
+            }}
+          >
+            {(field) => (
+              <FormField field={field}>
+                <FormItem>
+                  <FormControl>
+                    <Select
+                      value={field.state.value}
+                      onValueChange={(value) => field.handleChange(value)}
+                      onOpenChange={(open) => {
+                        if (!open) field.handleBlur();
+                      }}
+                    >
+                      <SelectTrigger className="bg-gray-100 border-0 w-full">
+                        <SelectValue placeholder="Select your country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {countries.map((country) => (
+                          <SelectItem key={country.code} value={country.code}>
+                            {country.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+            )}
+          </form.Field>
+
+          <div className="flex gap-4">
+            <Button
+              onClick={onBack}
+              variant="outline"
+              className="flex-1"
+              type="button"
+            >
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+            >
+              {([canSubmit, isSubmitting]) => (
+                <Button
+                  type="submit"
+                  className="bg-black hover:bg-gray-800 flex-1"
+                  disabled={!canSubmit || isSubmitting}
+                >
+                  {isSubmitting ? "Validating..." : "Continue"}
+                </Button>
+              )}
+            </form.Subscribe>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }

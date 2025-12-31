@@ -1,26 +1,50 @@
+"use client";
+
 import { OnboardingStepProps } from "@/lib/components/onboarding/props";
 import { Button } from "@/lib/components/ui/button";
-import { Input } from "@/lib/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/lib/components/ui/select";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/lib/components/ui/tabs";
-import { colleges, universities } from "@/lib/data";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/lib/components/ui/tanstack-form";
+import { colleges, schools } from "@/lib/data";
+import { useForm } from "@tanstack/react-form";
 import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
+import { stepFourSchema } from "./validation-schemas";
 
 export function StepFour({
   school,
   setSchool,
   onNext,
   onBack,
-}: Pick<
-  OnboardingStepProps,
-  "school" | "setSchool" | "onNext" | "onBack"
->) {
+}: Pick<OnboardingStepProps, "school" | "setSchool" | "onNext" | "onBack">) {
   const [activeTab, setActiveTab] = useState("universities");
+
+  const form = useForm({
+    defaultValues: {
+      school: school || "",
+    },
+    onSubmit: async ({ value }) => {
+      setSchool(value.school);
+      onNext();
+    },
+  });
 
   return (
     <div className="text-center space-y-6 max-w-md w-full">
@@ -31,56 +55,121 @@ export function StepFour({
         </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="universities">Universities</TabsTrigger>
-          <TabsTrigger value="colleges">Colleges</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="universities" className="space-y-4">
-          <Input
-            value={school}
-            onChange={(e) => setSchool(e.target.value)}
-            placeholder="Type your university name..."
-            className="bg-gray-100 border-0"
-            list="universities-list"
-          />
-          <datalist id="universities-list">
-            {universities.map((university) => (
-              <option key={university.name} value={university.name} />
-            ))}
-          </datalist>
-        </TabsContent>
-
-        <TabsContent value="colleges" className="space-y-4">
-          <Input
-            value={school}
-            onChange={(e) => setSchool(e.target.value)}
-            placeholder="Type your college name..."
-            className="bg-gray-100 border-0"
-            list="colleges-list"
-          />
-          <datalist id="colleges-list">
-            {colleges.map((college) => (
-              <option key={college.name} value={college.name} />
-            ))}
-          </datalist>
-        </TabsContent>
-      </Tabs>
-
-      <div className="flex gap-4">
-        <Button onClick={onBack} variant="outline" className="flex-1">
-          <ChevronLeft className="w-4 h-4 mr-2" />
-          Back
-        </Button>
-        <Button
-          onClick={onNext}
-          className="bg-black hover:bg-gray-800 flex-1"
-          disabled={!school}
+      <Form>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+          className="space-y-4"
         >
-          Continue
-        </Button>
-      </div>
+          <form.Field
+            name="school"
+            validators={{
+              onChange: ({ value }) => {
+                const result = stepFourSchema.shape.school.safeParse(value);
+                if (!result.success) {
+                  return (
+                    result.error.issues[0]?.message || "Invalid school name"
+                  );
+                }
+                return undefined;
+              },
+            }}
+          >
+            {(field) => (
+              <FormField field={field}>
+                <FormItem>
+                  <Tabs
+                    value={activeTab}
+                    onValueChange={setActiveTab}
+                    className="w-full"
+                  >
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="universities">
+                        Universities
+                      </TabsTrigger>
+                      <TabsTrigger value="colleges">Colleges</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="universities" className="space-y-4">
+                      <FormControl>
+                        <Select
+                          value={field.state.value}
+                          onValueChange={(value) => field.handleChange(value)}
+                          onOpenChange={(open) => {
+                            if (!open) field.handleBlur();
+                          }}
+                        >
+                          <SelectTrigger className="bg-gray-100 border-0 w-full">
+                            <SelectValue placeholder="Select School" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {schools.map(({ name }) => (
+                              <SelectItem key={name} value={name}>
+                                {name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                    </TabsContent>
+
+                    <TabsContent value="colleges" className="space-y-4">
+                      <FormControl>
+                        <Select
+                          value={field.state.value}
+                          onValueChange={(value) => field.handleChange(value)}
+                          onOpenChange={(open) => {
+                            if (!open) field.handleBlur();
+                          }}
+                        >
+                          <SelectTrigger className="bg-gray-100 border-0 w-full">
+                            <SelectValue placeholder="Select College" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {colleges.map(({ name }) => (
+                              <SelectItem key={name} value={name}>
+                                {name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                    </TabsContent>
+                  </Tabs>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+            )}
+          </form.Field>
+
+          <div className="flex gap-4">
+            <Button
+              onClick={onBack}
+              variant="outline"
+              className="flex-1"
+              type="button"
+            >
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+            >
+              {([canSubmit, isSubmitting]) => (
+                <Button
+                  type="submit"
+                  className="bg-black hover:bg-gray-800 flex-1"
+                  disabled={!canSubmit || isSubmitting}
+                >
+                  {isSubmitting ? "Validating..." : "Continue"}
+                </Button>
+              )}
+            </form.Subscribe>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }

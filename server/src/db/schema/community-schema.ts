@@ -19,7 +19,7 @@ export const postsTable = pgTable("post", {
   userId: text("user_id").references(() => usersTable.id, {
     onDelete: "cascade",
   }),
-  qotdID: text("qotd_id").references(() => questionsOfTheDayTable.id, {
+  qotdId: text("qotd_id").references(() => questionsOfTheDayTable.id, {
     onDelete: "cascade",
   }),
 
@@ -30,17 +30,19 @@ export const postsTable = pgTable("post", {
     .notNull(),
 });
 
+// Relations for postsTable
 export const postRelations = relations(postsTable, ({ one }) => ({
   user: one(usersTable, {
     fields: [postsTable.userId],
     references: [usersTable.id],
   }),
   qotd: one(questionsOfTheDayTable, {
-    fields: [postsTable.qotdID],
+    fields: [postsTable.qotdId],
     references: [questionsOfTheDayTable.id],
   }),
 }));
 
-export const QOTDRelations = relations(postsTable, ({ many }) => ({
-  posts: many(postsTable),
+// Relations for questionsOfTheDayTable (not postsTable!)
+export const qotdRelations = relations(questionsOfTheDayTable, ({ many }) => ({
+  posts: many(postsTable), // One question has many posts
 }));

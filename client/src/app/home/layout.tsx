@@ -12,15 +12,15 @@ export default async function layout({
   data,
 }: PropsWithChildren<any>) {
   const session = await getSession();
-  const { completed } = await checkOnboarding();
-
-  if (!session) {
+  if (!session || !session.user) {
     redirect("/login");
   }
+
+  const { completed } = await checkOnboarding();
+
   if (!completed) {
     redirect("/onboarding");
   }
-
   const user = await getUser();
   return (
     <StateLoader user={user}>

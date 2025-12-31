@@ -1,3 +1,5 @@
+"use client";
+
 import { OnboardingStepProps } from "@/lib/components/onboarding/props";
 import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
@@ -8,7 +10,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/lib/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/lib/components/ui/tanstack-form";
+import { useForm } from "@tanstack/react-form";
 import { ChevronLeft } from "lucide-react";
+import { stepTwoSchema } from "./validation-schemas";
 
 export function StepTwo({
   age,
@@ -30,6 +42,20 @@ export function StepTwo({
   | "onNext"
   | "onBack"
 >) {
+  const form = useForm({
+    defaultValues: {
+      age: age || 0,
+      gender: gender || "",
+      pronouns: pronouns || "",
+    },
+    onSubmit: async ({ value }) => {
+      setAge(value.age);
+      setGender(value.gender);
+      setPronouns(value.pronouns);
+      onNext();
+    },
+  });
+
   return (
     <div className="text-center space-y-6 max-w-md w-full">
       <div className="space-y-2">
@@ -39,49 +65,167 @@ export function StepTwo({
         </p>
       </div>
 
-      <div className="space-y-4">
-        <Input
-          placeholder="Age"
-          value={age}
-          onChange={(e) => setAge(Number(e.target.value))}
-          className="bg-gray-100 border-0"
-          type="number"
-        />
-
-        <Select value={gender} onValueChange={setGender}>
-          <SelectTrigger className="bg-gray-100 border-0">
-            <SelectValue placeholder="Select gender" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="male">Male</SelectItem>
-            <SelectItem value="female">Female</SelectItem>
-            <SelectItem value="non-binary">Non-binary</SelectItem>
-            <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
-            <SelectItem value="other">Other</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Input
-          placeholder="Pronouns (e.g., he/him, she/her, they/them)"
-          value={pronouns}
-          onChange={(e) => setPronouns(e.target.value)}
-          className="bg-gray-100 border-0"
-        />
-      </div>
-
-      <div className="flex gap-4">
-        <Button onClick={onBack} variant="outline" className="flex-1">
-          <ChevronLeft className="w-4 h-4 mr-2" />
-          Back
-        </Button>
-        <Button
-          onClick={onNext}
-          className="bg-black hover:bg-gray-800 flex-1"
-          disabled={!age || !gender}
+      <Form>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+          className="space-y-4"
         >
-          Continue
-        </Button>
-      </div>
+          <form.Field
+            name="age"
+            validators={{
+              onChange: ({ value }) => {
+                const result = stepTwoSchema.shape.age.safeParse(value);
+                if (!result.success) {
+                  return result.error.issues[0]?.message || "Invalid age";
+                }
+                return undefined;
+              },
+            }}
+          >
+            {(field) => (
+              <FormField field={field}>
+                <FormItem>
+                  <FormLabel>Age</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Age"
+                      value={field.state.value}
+                      onChange={(e) =>
+                        field.handleChange(Number(e.target.value))
+                      }
+                      className="bg-gray-100 border-0"
+                      type="number"
+                      onBlur={field.handleBlur}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+            )}
+          </form.Field>
+          <div className="grid grid-cols-2 gap-4">
+            <form.Field
+              name="gender"
+              validators={{
+                onChange: ({ value }) => {
+                  const result = stepTwoSchema.shape.gender.safeParse(value);
+                  if (!result.success) {
+                    return result.error.issues[0]?.message || "Invalid gender";
+                  }
+                  return undefined;
+                },
+              }}
+            >
+              {(field) => (
+                <FormField field={field}>
+                  <FormItem>
+                    <FormLabel>Gender</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.state.value}
+                        onValueChange={(value) => field.handleChange(value)}
+                        onOpenChange={(open) => {
+                          if (!open) field.handleBlur();
+                        }}
+                      >
+                        <SelectTrigger className="bg-gray-100 border-0 w-full">
+                          <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Male">Male</SelectItem>
+                          <SelectItem value="Female">Female</SelectItem>
+                          <SelectItem value="Non-Binary">Non-binary</SelectItem>
+                          <SelectItem value="Prefer-not-to-say">
+                            Prefer-not-to-say
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage className="text-left" />
+                  </FormItem>
+                </FormField>
+              )}
+            </form.Field>
+
+            <form.Field
+              name="pronouns"
+              validators={{
+                onChange: ({ value }) => {
+                  if (value) {
+                    const result =
+                      stepTwoSchema.shape.pronouns.safeParse(value);
+                    if (!result.success) {
+                      return (
+                        result.error.issues[0]?.message || "Invalid pronouns"
+                      );
+                    }
+                  }
+                  return undefined;
+                },
+              }}
+            >
+              {(field) => (
+                <FormField field={field}>
+                  <FormItem>
+                    <FormLabel>Pronouns</FormLabel>
+
+                    <FormControl>
+                      <Select
+                        value={field.state.value}
+                        onValueChange={(value) => field.handleChange(value)}
+                        onOpenChange={(open) => {
+                          if (!open) field.handleBlur();
+                        }}
+                      >
+                        <SelectTrigger className="bg-gray-100 border-0  w-full">
+                          <SelectValue placeholder="Select Pronouns" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="He/Him">He/Him</SelectItem>
+                          <SelectItem value="She/Her">She/Her</SelectItem>
+                          <SelectItem value="They/Them">They/Them</SelectItem>
+                          <SelectItem value="Prefer not to say">
+                            Prefer not to say
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage className="text-left" />
+                  </FormItem>
+                </FormField>
+              )}
+            </form.Field>
+          </div>
+
+          <div className="flex gap-4">
+            <Button
+              onClick={onBack}
+              variant="outline"
+              className="flex-1"
+              type="button"
+            >
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+            >
+              {([canSubmit, isSubmitting]) => (
+                <Button
+                  type="submit"
+                  className="bg-black hover:bg-gray-800 flex-1"
+                  disabled={!canSubmit || isSubmitting}
+                >
+                  {isSubmitting ? "Validating..." : "Continue"}
+                </Button>
+              )}
+            </form.Subscribe>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 }
