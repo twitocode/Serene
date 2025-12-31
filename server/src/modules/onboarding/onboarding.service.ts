@@ -4,7 +4,12 @@ import { PinoLogger } from "hono-pino";
 import { HTTPException } from "hono/http-exception";
 import { v4 } from "uuid";
 import { db } from "../../db/db";
-import { profilesTable, schoolsTable, usersTable } from "../../db/schema";
+import {
+  preferencesTable,
+  profilesTable,
+  schoolsTable,
+  usersTable,
+} from "../../db/schema";
 import {
   StepFiveSchema,
   StepFourSchema,
@@ -118,5 +123,11 @@ export async function submitStep5(sessionUser: User, body: StepFiveSchema) {
         koalaColour: body.koalaColour,
       })
       .where(eq(profilesTable.userId, sessionUser.id));
+
+    await tx.insert(preferencesTable).values({
+      id: v4(),
+      userId: sessionUser.id,
+      theme: "Light",
+    });
   });
 }

@@ -1,20 +1,81 @@
+import React from "react";
 import { Input } from "@/lib/components/ui/input";
 import { usePreferencesStore } from "@/lib/stores/preferences-store";
-import { Lock } from "lucide-react";
+import { Lock, LockOpen } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 
 export default function PasswordLock() {
   const { setLockState, pageLock } = usePreferencesStore();
+  const [isUnlocking, setIsUnlocking] = React.useState(false);
+
+  const handleUnlock = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value === pageLock && !isUnlocking) {
+      setIsUnlocking(true);
+      
+      // Trigger unlock animation sequence
+      setTimeout(() => {
+        setLockState(false);
+      }, 600); // Wait for animation to complete
+    }
+  };
 
   return (
-    <span className="flex items-center space-x-4">
-      <Lock />
-      <Input
-        type="password"
-        className="font-bold text-9xl bg-secondary"
-        onChange={(e) => {
-          if (e.target.value == pageLock) setLockState(false);
-        }}
-      />
-    </span>
+    <motion.span 
+      className="flex items-center space-x-4"
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ 
+        opacity: isUnlocking ? 0 : 1, 
+        scale: isUnlocking ? 1.2 : 1 
+      }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+    >
+      <AnimatePresence mode="wait">
+        {!isUnlocking ? (
+          <motion.div
+            key="lock"
+            initial={{ rotate: 0 }}
+            animate={{ rotate: [0, -5, 5, 0] }}
+            exit={{ rotate: 360, scale: 0 }}
+            transition={{ 
+              duration: 0.5, 
+              repeat: Infinity, 
+              repeatDelay: 3 
+            }}
+          >
+            <Lock size={32} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="unlock"
+            initial={{ rotate: -360, scale: 0 }}
+            animate={{ rotate: 0, scale: 1 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            <LockOpen size={32} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {!isUnlocking && (
+        <motion.div
+          initial={{ width: 0, opacity: 0 }}
+          animate={{ width: "auto", opacity: 1 }}
+          exit={{ width: 0, opacity: 0 }}
+          transition={{ delay: 0.1, duration: 0.3 }}
+          whileFocus={{ scale: 1.02 }}
+        >
+          <Input
+            type="password"
+            className="font-bold text-9xl bg-secondary"
+            onChange={handleUnlock}
+            onFocus={(e) => {
+              e.target.parentElement?.classList.add("scale-105");
+            }}
+            onBlur={(e) => {
+              e.target.parentElement?.classList.remove("scale-105");
+            }}
+          />
+        </motion.div>
+      )}
+    </motion.span>
   );
 }

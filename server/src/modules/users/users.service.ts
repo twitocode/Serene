@@ -31,10 +31,16 @@ export async function getUserProfile(
           currentStreak: true,
         },
       },
+      preferences: {
+        columns: {
+          passwordLock: true,
+          theme: true,
+        },
+      },
     },
   });
 
-  return userData
+  return userData;
 }
 
 export async function doesUserExist(email: string) {
@@ -43,5 +49,5 @@ export async function doesUserExist(email: string) {
     .from(usersTable)
     .where(eq(usersTable.email, email));
 
-    return result.length >0 
+  return result.length > 0;
 }
