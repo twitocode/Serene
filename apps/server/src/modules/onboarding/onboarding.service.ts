@@ -1,7 +1,14 @@
+import { AppError } from "@serene/shared";
+import {
+  StepFiveSchema,
+  StepFourSchema,
+  StepOneSchema,
+  StepThreeSchema,
+  StepTwoSchema,
+} from "@serene/shared/validation";
 import { User } from "better-auth";
 import { eq } from "drizzle-orm";
 import { PinoLogger } from "hono-pino";
-import { HTTPException } from "hono/http-exception";
 import { v4 } from "uuid";
 import { db } from "../../db/db";
 import {
@@ -10,13 +17,6 @@ import {
   schoolsTable,
   usersTable,
 } from "../../db/schema";
-import {
-  StepFiveSchema,
-  StepFourSchema,
-  StepOneSchema,
-  StepThreeSchema,
-  StepTwoSchema,
-} from "@serene/shared/validation/onboarding.schema";
 
 export async function validateStep(userId: string, requiredStep: number) {
   const user = await db.query.usersTable.findFirst({
@@ -24,22 +24,51 @@ export async function validateStep(userId: string, requiredStep: number) {
     columns: { onboardingStep: true },
   });
 
-  if (!user || user.onboardingStep < requiredStep) {
-    throw new HTTPException(400, {
-      message: "You must complete previous steps first.",
-    });
+  if (!user) {
+    throw new AppError(404, "User profile not found", "USER_NOT_FOUND");
+  }
+
+  if (user.onboardingStep < requiredStep) {
+    throw new AppError(
+      400,
+      "You must complete previous steps first.",
+      "INVALID_STEP_ORDER"
+    );
   }
 }
 
 export async function submitStep1(body: StepOneSchema, sessionUser: User) {
-  await db
-    .update(usersTable)
-    .set({
-      name: body.name,
-      onboardingStep: 2,
-      onboardingStarted: true,
-    })
-    .where(eq(usersTable.id, sessionUser.id));
+  try {
+    const result = await db
+      .update(usersTable)
+      .set({
+        name: body.name,
+        onboardingStep: 2,
+        onboardingStarted: true,
+      })
+      .where(eq(usersTable.id, sessionUser.id))
+      .returning({ updatedId: usersTable.id });
+
+    if (result.length === 0) {
+      throw new AppError(404, "User not found during update", "USER_MISSING");
+    }
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+
+    // '23505' is the Postgres code for Unique Constraint Violation
+    if ((error as any).code === "23505") {
+      throw new AppError(409, "This value is already taken", "DUPLICATE_ENTRY");
+    }
+
+    console.error("Database Error in submitStep1:", error);
+    throw new AppError(
+      500,
+      "Failed to save progress. Please try again.",
+      "DB_ERROR"
+    );
+  }
 }
 
 export async function submitStep2(body: StepTwoSchema, sessionUser: User) {
@@ -55,8 +84,6 @@ export async function submitStep2(body: StepTwoSchema, sessionUser: User) {
 }
 
 export async function submitStep3(body: StepThreeSchema, sessionUser: User) {
-  await validateStep(sessionUser.id, 3);
-
   await db
     .update(usersTable)
     .set({

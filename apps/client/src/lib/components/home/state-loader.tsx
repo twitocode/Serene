@@ -1,6 +1,6 @@
 "use client";
 
-import { getUser } from "@/lib/server/get-user";
+import { fetchUser } from "@/lib/server/get-user";
 import { usePreferencesStore } from "@/lib/stores/preferences-store";
 import { useQuery } from "@tanstack/react-query";
 import { PropsWithChildren, useEffect } from "react";
@@ -8,7 +8,7 @@ import { PropsWithChildren, useEffect } from "react";
 interface Props {}
 
 export default function StateLoader({ children }: PropsWithChildren<Props>) {
-  const { data: user } = useQuery({ queryKey: ["user"], queryFn: getUser });
+  const { data: user } = useQuery({ queryKey: ["user"], queryFn: fetchUser });
 
   const {
     lockInterval,

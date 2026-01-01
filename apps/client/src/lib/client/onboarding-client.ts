@@ -1,20 +1,34 @@
-import { apiFetch } from "@/lib/helpers/api-fetch";
+import { ApiError, apiFetch } from "@/lib/helpers/api-fetch";
+import { toast } from "sonner";
 
 export async function completeOnboardingStep(
   step: number,
   data: Record<string, unknown>
 ): Promise<{ success: boolean }> {
-  const res = await apiFetch(`/users/onboarding/step${step}`, {
-    method: "POST",
-    body: JSON.stringify(data),
-    cache: "no-store",
-  });
+  try {
+    return await apiFetch<{ success: boolean }>(
+      `/users/onboarding/step${step}`,
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+        cache: "no-store",
+      }
+    );
+  } catch (error: unknown) {
+    // 1. Must be 'unknown' or 'any'
 
-  if (!res.ok) {
-    throw new Error(`Step ${step} failed`);
+    // 2. Handle Known API Errors (400, 401, 404, 500)
+    if (error instanceof ApiError) {
+      if (error.data?.code === "INVALID_STEP_ORDER") {
+        throw error;
+      }
+      toast.error(error.message);
+    } else {
+      // 3. Handle Network/Unknown Errors (Offline, etc.)
+      toast.error("Something went wrong. Please check your connection.");
+    }
+    throw error;
   }
-
-  return res.json();
 }
 
 export async function completeStep1(
@@ -66,11 +80,4 @@ export async function completeStep5(
     koalaPronouns,
     koalaColour,
   });
-}
-
-export async function completeOnboarding(): Promise<{ success: boolean }> {
-  const res = await apiFetch("/users/onboarding/complete", {
-    method: "POST",
-  });
-  return res.json();
 }

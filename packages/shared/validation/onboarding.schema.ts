@@ -1,5 +1,5 @@
-import {z} from "zod";
 import { SUPPORTED_COUNTRY_CODES } from "@serene/shared";
+import { z } from "zod";
 
 export const stepOneSchema = z.object({
   name: z
@@ -62,11 +62,12 @@ export const stepFiveSchema = z.object({
     .optional(),
 });
 
-export const onboardingFormSchema = stepOneSchema
-  .extend(stepTwoSchema)
-  .extend(stepThreeSchema)
-  .extend(stepFourSchema)
-  .extend(stepFiveSchema);
+export const onboardingFormSchema = z.object({
+  ...stepTwoSchema.shape,
+  ...stepThreeSchema.shape,
+  ...stepFourSchema.shape,
+  ...stepFiveSchema.shape,
+});
 
 export type StepOneSchema = z.infer<typeof stepOneSchema>;
 export type StepTwoSchema = z.infer<typeof stepTwoSchema>;

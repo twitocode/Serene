@@ -2,7 +2,7 @@ import HomeLayout from "@/lib/components/home/home-layout";
 import HomeLock from "@/lib/components/home/home-lock";
 import StateLoader from "@/lib/components/home/state-loader";
 import { getSession } from "@/lib/get-session";
-import { getUser } from "@/lib/server/get-user";
+import { fetchUser } from "@/lib/server/get-user";
 import { checkOnboarding } from "@/lib/server/onboarding-server";
 import {
   HydrationBoundary,
@@ -29,13 +29,13 @@ export default async function layout({
 
   await queryClient.prefetchQuery({
     queryKey: ["user"],
-    queryFn: getUser
+    queryFn: fetchUser,
   });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <StateLoader>
-        <HomeLayout children={children}/>
+        <HomeLayout children={children} />
         <HomeLock />
       </StateLoader>
     </HydrationBoundary>

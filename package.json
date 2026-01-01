@@ -6,8 +6,8 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint"
   },
-  "dependencies": {},
   "devDependencies": {
+    "quansync": "^1.0.0",
     "turbo": "^2.7.2"
   },
   "packageManager": "bun@1.2.0",

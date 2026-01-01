@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/lib/components/ui/form";
 import { Input } from "@/lib/components/ui/input";
-import { apiFetch } from "@/lib/helpers/api-fetch";
+import { checkOnboarding } from "@/lib/server/onboarding-server";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { z } from "zod";
@@ -62,10 +62,7 @@ export function LoginForm({
         if (result.error) {
           setLoginError(result.error.message || "Invalid email or password");
         } else {
-          const onboarding = await apiFetch(`/users/onboarding`).then((r) =>
-            r.json()
-          );
-
+          const onboarding = await checkOnboarding();
           if (onboarding.completed) {
             window.location.href = "/home";
           } else {
@@ -73,6 +70,7 @@ export function LoginForm({
           }
         }
       } catch (error) {
+        console.error(error);
         setLoginError("Login failed. Please try again.");
       }
     },

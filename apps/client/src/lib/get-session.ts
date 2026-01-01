@@ -1,17 +1,13 @@
 import { apiFetch } from "@/lib/helpers/api-fetch";
+import { Session, User } from "better-auth";
 
 export async function getSession() {
   try {
-    const response = await apiFetch(`/auth/get-session`);
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const data = await response.json();
-    return data;
+    const response = await apiFetch<{session: Session, user: User}>(`/auth/get-session`);
+    return response
   } catch (error) {
+
     console.error("Failed to get session:", error);
-    return null;
+    throw error;
   }
 }

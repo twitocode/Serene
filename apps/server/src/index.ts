@@ -8,6 +8,8 @@ import { prettyJSON } from "hono/pretty-json";
 import { auth } from "./lib/auth";
 import onboardingRouter from "./modules/onboarding/onboarding.router";
 import usersRouter from "./modules/users/users.router";
+import  {AppError} from "@serene/shared"
+import z, { ZodError } from "zod";
 
 const app = new Hono<{
   Variables: {
@@ -31,26 +33,51 @@ app.use(
 );
 
 app.onError((err, c) => {
-  const logger = c.get("logger");
-
-  if (err instanceof HTTPException) {
-    if (err.status === 422) {
-      logger.warn(
-        {
-          path: c.req.path,
-          errors: err.cause,
-        },
-        "Validation Error"
-      );
-
-      return c.json({ error: err.message, details: err.cause }, 422);
-    }
-    return err.getResponse();
+  // 1. Handle our custom Application Errors
+  if (err instanceof AppError) {
+    return c.json(
+      {
+        success: false,
+        message: err.message,
+        code: err.code,
+      },
+      err.status
+    );
   }
 
-  // Handle actual server crashes
-  logger.error(err, "Server Crash");
-  return c.json({ error: "Internal Server Error" }, 500);
+  if (err instanceof ZodError) {
+    return c.json(
+      {
+        success: false,
+        message: "Validation failed",
+        code: "VALIDATION_ERROR",
+        issues: z.treeifyError(err),
+      },
+      400
+    );
+  }
+
+  if (err instanceof HTTPException) {
+    return c.json(
+      {
+        success: false,
+        message: err.message,
+        code: "HTTP_ERROR",
+      },
+      err.status
+    );
+  }
+
+  // 4. Handle unexpected crashes (500)
+  console.error("Unhandled Error:", err);
+  return c.json(
+    {
+      success: false,
+      message: "Internal Server Error",
+      code: "SERVER_ERROR",
+    },
+    500
+  );
 });
 
 app.use(

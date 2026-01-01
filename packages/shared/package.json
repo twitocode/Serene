@@ -5,7 +5,8 @@
   "type": "module",
   "main": "./index.ts",
   "dependencies": {
-    "zod": "^4.3.2"
+    "zod": "^4.3.2",
+    "hono": "^4.11.1"
   },
   "exports": {
     ".": {
@@ -13,6 +14,7 @@
     },
     "./validation": "./validation/index.ts",
     "./types": "./types/index.ts",
+    "./errors": "./errors.ts",
     "./package.json": "./package.json"
   }
 }
