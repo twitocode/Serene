@@ -1,0 +1,18 @@
+{
+  "name": "@serene/shared",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "dependencies": {
+    "zod": "^4.3.2"
+  },
+  "exports": {
+    ".": {
+      "default": "./index.ts"
+    },
+    "./validation": "./validation/index.ts",
+    "./types": "./types/index.ts",
+    "./package.json": "./package.json"
+  }
+}
