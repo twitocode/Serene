@@ -4,9 +4,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@serene/shared": ["./packages/shared/*"],
-      "@serene/client": ["./apps/client/*"],
-      "@serene/server": ["./apps/server/*"]
+      "@serene/shared": ["./packages/shared/index.ts"],
+      "@serene/shared/*": ["./packages/shared/*"]
     }
   }
 }
