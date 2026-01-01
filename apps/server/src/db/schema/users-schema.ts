@@ -114,63 +114,12 @@ export const schoolsTable = pgTable("school", {
   city: text("city"),
 });
 
-export const userRelations = relations(usersTable, ({ one, many }) => ({
-  sessions: many(sessionsTable),
-  accounts: many(accountsTable),
-
-  profile: one(profilesTable, {
-    fields: [usersTable.id],
-    references: [profilesTable.userId],
-  }),
-  preferences: one(preferencesTable, {
-    fields: [usersTable.id],
-    references: [preferencesTable.userId],
-  }),
-  safetyPlan: one(safetyPlansTable, {
-    fields: [usersTable.id],
-    references: [safetyPlansTable.userId],
-  }),
-  posts: many(postsTable),
-  checkins: many(checkinsTable),
-  userAchievements: many(userAchievementsTable),
-}));
-
 export const achievementsTable = pgTable("achievements", {
   id: text("id").primaryKey(),
   slug: text("slug").notNull().unique(),
   title: text("title").notNull(),
   points: integer("points").default(0),
 });
-
-
-export const profileRelations = relations(profilesTable, ({ one }) => ({
-  user: one(usersTable, {
-    fields: [profilesTable.userId],
-    references: [usersTable.id],
-  }),
-  school: one(schoolsTable, {
-    fields: [profilesTable.schoolId],
-    references: [schoolsTable.id],
-  }),
-}));
-
-export const preferenceRelations = relations(preferencesTable, ({ one }) => ({
-  user: one(usersTable, {
-    fields: [preferencesTable.userId],
-    references: [usersTable.id],
-  }),
-}));
-
-export const safetyPlanRelations = relations(safetyPlansTable, ({ one }) => ({
-  user: one(usersTable, {
-    fields: [safetyPlansTable.userId],
-    references: [usersTable.id],
-  }),
-}));
-
-export const schoolRelations = relations(schoolsTable, ({ many }) => ({
-  profiles: many(profilesTable),
-}));
 
 export const userAchievementsTable = pgTable(
   "user_achievements",
@@ -188,26 +137,6 @@ export const userAchievementsTable = pgTable(
   })
 );
 
-export const userAchievementsRelations = relations(
-  userAchievementsTable,
-  ({ one }) => ({
-    user: one(usersTable, {
-      fields: [userAchievementsTable.userId],
-      references: [usersTable.id],
-    }),
-    achievement: one(achievementsTable, {
-      fields: [userAchievementsTable.achievementId],
-      references: [achievementsTable.id],
-    }),
-  })
-);
-
-export const achievementsRelations = relations(
-  achievementsTable,
-  ({ many }) => ({
-    userAchievements: many(userAchievementsTable),
-  })
-);
 
 export type User = InferSelectModel<typeof usersTable>;
 export type Profile = InferSelectModel<typeof profilesTable>;

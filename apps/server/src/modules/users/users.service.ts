@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../db/db";
 import { user, usersTable } from "../../db/schema";
+import { AppError } from "../../lib/errors";
 
 export async function getUserProfile(
   session: {
@@ -14,8 +15,12 @@ export async function getUserProfile(
     userAgent?: string | null | undefined;
   } | null
 ) {
-  const userData = await db.query.user.findFirst({
-    where: eq(user.id, session!.userId),
+  if (!session) {
+    throw new AppError(401, "Unauthorized", "UNAUTHORIZED");
+  }
+
+  const userData = await db.query.usersTable.findFirst({
+    where: eq(usersTable.id, session.userId),
     columns: {
       email: true,
       image: true,
@@ -39,6 +44,10 @@ export async function getUserProfile(
       },
     },
   });
+
+  if (!userData) {
+    throw new AppError(404, "User profile not found", "USER_NOT_FOUND");
+  }
 
   return userData;
 }

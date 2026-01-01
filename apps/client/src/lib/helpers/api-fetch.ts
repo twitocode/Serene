@@ -76,7 +76,7 @@ export async function apiFetch<T = unknown>(
   const json = await response.json();
 
   // 4. "Magic" Unwrap
-  if (!skipUnwrap) {
+  if (!skipUnwrap && json && typeof json === "object" && !Array.isArray(json)) {
     const keys = Object.keys(json);
     if (keys.length === 1) {
       return json[keys[0]];

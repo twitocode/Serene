@@ -1,4 +1,4 @@
-import { AppError } from "@serene/shared";
+import { AppError } from "../../lib/errors";
 import {
   StepFiveSchema,
   StepFourSchema,
@@ -72,25 +72,61 @@ export async function submitStep1(body: StepOneSchema, sessionUser: User) {
 }
 
 export async function submitStep2(body: StepTwoSchema, sessionUser: User) {
-  await db
-    .update(usersTable)
-    .set({
-      age: body.age,
-      gender: body.gender,
-      pronouns: body.pronouns,
-      onboardingStep: 3,
-    })
-    .where(eq(usersTable.id, sessionUser.id));
+  try {
+    const result = await db
+      .update(usersTable)
+      .set({
+        age: body.age,
+        gender: body.gender,
+        pronouns: body.pronouns,
+        onboardingStep: 3,
+      })
+      .where(eq(usersTable.id, sessionUser.id))
+      .returning({ updatedId: usersTable.id });
+
+    if (result.length === 0) {
+      throw new AppError(404, "User not found during update", "USER_MISSING");
+    }
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+
+    console.error("Database Error in submitStep2:", error);
+    throw new AppError(
+      500,
+      "Failed to save progress. Please try again.",
+      "DB_ERROR"
+    );
+  }
 }
 
 export async function submitStep3(body: StepThreeSchema, sessionUser: User) {
-  await db
-    .update(usersTable)
-    .set({
-      countryCode: body.countryCode,
-      onboardingStep: 4,
-    })
-    .where(eq(usersTable.id, sessionUser.id));
+  try {
+    const result = await db
+      .update(usersTable)
+      .set({
+        countryCode: body.countryCode,
+        onboardingStep: 4,
+      })
+      .where(eq(usersTable.id, sessionUser.id))
+      .returning({ updatedId: usersTable.id });
+
+    if (result.length === 0) {
+      throw new AppError(404, "User not found during update", "USER_MISSING");
+    }
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+
+    console.error("Database Error in submitStep3:", error);
+    throw new AppError(
+      500,
+      "Failed to save progress. Please try again.",
+      "DB_ERROR"
+    );
+  }
 }
 
 export async function submitStep4(
@@ -98,63 +134,99 @@ export async function submitStep4(
   logger: PinoLogger,
   sessionUser: User
 ) {
-  await db.transaction(async (tx) => {
-    let school = await tx.query.schoolsTable.findFirst({
-      where: eq(schoolsTable.name, body.name),
-    });
+  try {
+    await db.transaction(async (tx) => {
+      let school = await tx.query.schoolsTable.findFirst({
+        where: eq(schoolsTable.name, body.name),
+      });
 
-    if (!school) {
-      logger.info(`Adding School Record: ${body.name}`);
-      const [newSchool] = await tx
-        .insert(schoolsTable)
-        .values({
-          id: v4(),
-          name: body.name,
-          countryCode: body.countryCode,
-          city: body.city,
-          regionCode: body.regionCode,
+      if (!school) {
+        logger.info(`Adding School Record: ${body.name}`);
+        const [newSchool] = await tx
+          .insert(schoolsTable)
+          .values({
+            id: v4(),
+            name: body.name,
+            countryCode: body.countryCode,
+            city: body.city,
+            regionCode: body.regionCode,
+          })
+          .returning();
+        school = newSchool;
+      }
+
+      await tx
+        .update(profilesTable)
+        .set({ schoolId: school.id })
+        .where(eq(profilesTable.userId, sessionUser.id));
+
+      const result = await tx
+        .update(usersTable)
+        .set({
+          onboardingStep: 5,
         })
-        .returning();
-      school = newSchool;
+        .where(eq(usersTable.id, sessionUser.id))
+        .returning({ updatedId: usersTable.id });
+
+      if (result.length === 0) {
+        throw new AppError(404, "User not found during update", "USER_MISSING");
+      }
+    });
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
     }
 
-    await tx
-      .update(profilesTable)
-      .set({ schoolId: school.id })
-      .where(eq(profilesTable.userId, sessionUser.id));
-
-    await tx
-      .update(usersTable)
-      .set({
-        onboardingStep: 5,
-      })
-      .where(eq(usersTable.id, sessionUser.id));
-  });
+    console.error("Database Error in submitStep4:", error);
+    throw new AppError(
+      500,
+      "Failed to save progress. Please try again.",
+      "DB_ERROR"
+    );
+  }
 }
 
 export async function submitStep5(sessionUser: User, body: StepFiveSchema) {
-  await db.transaction(async (tx) => {
-    await tx
-      .update(usersTable)
-      .set({
-        onboardingCompleted: true,
-        onboardingStep: -1,
-      })
-      .where(eq(usersTable.id, sessionUser.id));
+  try {
+    await db.transaction(async (tx) => {
+      const result = await tx
+        .update(usersTable)
+        .set({
+          onboardingCompleted: true,
+          onboardingStep: -1,
+        })
+        .where(eq(usersTable.id, sessionUser.id))
+        .returning({ updatedId: usersTable.id });
 
-    await tx
-      .update(profilesTable)
-      .set({
-        koalaName: body.koalaName,
-        koalaPronouns: body.koalaPronouns,
-        koalaColour: body.koalaColour,
-      })
-      .where(eq(profilesTable.userId, sessionUser.id));
+      if (result.length === 0) {
+        throw new AppError(404, "User not found during update", "USER_MISSING");
+      }
 
-    await tx.insert(preferencesTable).values({
-      id: v4(),
-      userId: sessionUser.id,
-      theme: "Light",
+      await tx
+        .update(profilesTable)
+        .set({
+          koalaName: body.koalaName,
+          koalaPronouns: body.koalaPronouns,
+          koalaColour: body.koalaColour,
+        })
+        .where(eq(profilesTable.userId, sessionUser.id));
+
+      await tx.insert(preferencesTable).values({
+        id: v4(),
+        userId: sessionUser.id,
+        theme: "Light",
+      });
     });
-  });
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+
+    console.error("Database Error in submitStep5:", error);
+    throw new AppError(
+      500,
+      "Failed to save progress. Please try again.",
+      "DB_ERROR"
+    );
+  }
 }

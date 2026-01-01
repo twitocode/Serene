@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/lib/components/ui/form";
 import { Input } from "@/lib/components/ui/input";
+import { ApiError, apiFetch } from "@/lib/helpers/api-fetch";
 import { checkOnboarding } from "@/lib/server/onboarding-server";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -70,8 +71,11 @@ export function LoginForm({
           }
         }
       } catch (error) {
-        console.error(error);
-        setLoginError("Login failed. Please try again.");
+        if (error instanceof ApiError) {
+          setLoginError(error.message);
+        } else {
+          setLoginError("Login failed. Please try again.");
+        }
       }
     },
   });
@@ -82,19 +86,25 @@ export function LoginForm({
     const emailValidation = emailSchema.safeParse({ email: emailValue });
 
     if (emailValidation.success) {
-      const res = await fetch(
-        `${serverUrl}/users/exists/${encodeURIComponent(emailValue)}`
-      );
-      const data = await res.json();
-
-      if (data.exists) {
-        setEmail(emailValue);
-        setStep(2);
-      } else {
-        console.error(data);
-        setLoginError(
-          "No accounts associated with this email, maybe try signing up?"
+      try {
+        const exists = await apiFetch<boolean>(
+          `/users/exists/${encodeURIComponent(emailValue)}`
         );
+
+        if (exists) {
+          setEmail(emailValue);
+          setStep(2);
+        } else {
+          setLoginError(
+            "No accounts associated with this email, maybe try signing up?"
+          );
+        }
+      } catch (error) {
+        if (error instanceof ApiError) {
+          setLoginError(error.message);
+        } else {
+          setLoginError("Failed to verify email. Please try again.");
+        }
       }
     }
   };

@@ -4,11 +4,13 @@
 import { ApiError } from "@/lib/helpers/api-fetch";
 import {
   isServer,
+  MutationCache,
   QueryCache,
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { toast } from "sonner";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -20,10 +22,30 @@ function makeQueryClient() {
     },
     queryCache: new QueryCache({
       onError: (error) => {
-        if (error instanceof ApiError && error.status === 401) {
-          console.error("User is not logged in ");
-          if (typeof window !== "undefined") {
-            window.location.href = "/login";
+        if (error instanceof ApiError) {
+          if (error.status === 401) {
+            if (typeof window !== "undefined") {
+              window.location.href = "/login";
+            }
+          } else if (error.status >= 500) {
+            toast.error("Server Error", {
+              description: "Something went wrong on our end.",
+            });
+          }
+        }
+      },
+    }),
+    mutationCache: new MutationCache({
+      onError: (error) => {
+        if (error instanceof ApiError) {
+          if (error.status === 401) {
+            if (typeof window !== "undefined") {
+              window.location.href = "/login";
+            }
+          } else if (error.status >= 500) {
+            toast.error("Server Error", {
+              description: "Something went wrong on our end.",
+            });
           }
         }
       },

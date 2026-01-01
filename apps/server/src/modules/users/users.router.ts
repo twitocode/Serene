@@ -1,6 +1,6 @@
 import { emailExistsSchema } from "@serene/shared/validation";
 import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
+import { AppError } from "../../lib/errors";
 import { zodValidator } from "../../middleware/zod.validator";
 import { RouterVariables } from "../../types";
 import { doesUserExist, getUserProfile } from "./users.service";
@@ -24,7 +24,7 @@ app.get(
     const email = c.req.param("email");
     if (!email) {
       c.var.logger.info(`User does not exist with email ${email}`);
-      throw new HTTPException(403, { message: "User ID not provided" });
+      throw new AppError(400, "User ID not provided", "MISSING_PARAM");
     }
 
     const exists = await doesUserExist(email);

@@ -33,10 +33,3 @@ export const checkinsTable = pgTable("checkins", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
-
-export const checkinRelations = relations(checkinsTable, ({ one }) => ({
-  user: one(usersTable, {
-    fields: [checkinsTable.userId],
-    references: [usersTable.id],
-  }),
-}));

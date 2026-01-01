@@ -11,13 +11,14 @@ import {
   NavigationMenuList,
 } from "@/lib/components/ui/navigation-menu";
 import { useIsMobile } from "@/lib/hooks/use-mobile";
-import { User } from "@serene/shared/types";
 
-interface Props{
-  user: User
+interface Props {
+  user: {
+    name: string;
+  };
 }
 
-export function OnBoardingNavbar({user} :Props) {
+export function OnBoardingNavbar({ user }: Props) {
   const isMobile = useIsMobile();
 
   const logout = () => {

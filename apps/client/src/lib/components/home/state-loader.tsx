@@ -1,14 +1,19 @@
 "use client";
 
+import { ApiError } from "@/lib/helpers/api-fetch";
 import { fetchUser } from "@/lib/server/get-user";
 import { usePreferencesStore } from "@/lib/stores/preferences-store";
+import { User } from "@serene/shared/types";
 import { useQuery } from "@tanstack/react-query";
 import { PropsWithChildren, useEffect } from "react";
 
 interface Props {}
 
 export default function StateLoader({ children }: PropsWithChildren<Props>) {
-  const { data: user } = useQuery({ queryKey: ["user"], queryFn: fetchUser });
+  const { data: user } = useQuery<User, ApiError>({
+    queryKey: ["user"],
+    queryFn: fetchUser,
+  });
 
   const {
     lockInterval,

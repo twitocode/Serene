@@ -14,7 +14,6 @@
     },
     "./validation": "./validation/index.ts",
     "./types": "./types/index.ts",
-    "./errors": "./errors.ts",
     "./package.json": "./package.json"
   }
 }

@@ -14,7 +14,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+} from "@/lib/components/ui/form";
 import { Input } from "@/lib/components/ui/input";
+import { ApiError, apiFetch } from "@/lib/helpers/api-fetch";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { z } from "zod";
@@ -83,19 +85,24 @@ export function SignupForm({
     const emailValidation = emailSchema.safeParse({ email: emailValue });
 
     if (emailValidation.success) {
-      const res = await fetch(
-        `${serverUrl}/users/exists/${encodeURIComponent(emailValue)}`
-      );
-      const data = await res.json();
+      try {
+        const data = await apiFetch<{ exists: boolean }>(
+          `/users/exists/${encodeURIComponent(emailValue)}`
+        );
 
-      console.log(data);
-
-      // Email should NOT exist for signup
-      if (!data.exists) {
-        setEmail(emailValue);
-        setStep(2);
-      } else {
-        setSignupError("Account already exists. Please log in instead.");
+        // Email should NOT exist for signup
+        if (!data.exists) {
+          setEmail(emailValue);
+          setStep(2);
+        } else {
+          setSignupError("Account already exists. Please log in instead.");
+        }
+      } catch (error) {
+        if (error instanceof ApiError) {
+          setSignupError(error.message);
+        } else {
+          setSignupError("Failed to verify email. Please try again.");
+        }
       }
     }
   };

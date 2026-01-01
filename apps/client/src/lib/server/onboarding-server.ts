@@ -1,4 +1,5 @@
-import { apiFetch } from "@/lib/helpers/api-fetch";
+import { ApiError, apiFetch } from "@/lib/helpers/api-fetch";
+import { redirect } from "next/navigation";
 
 // Onboarding API functions
 export async function checkOnboarding(): Promise<{
@@ -6,5 +7,12 @@ export async function checkOnboarding(): Promise<{
   completed: boolean;
   started: boolean;
 }> {
-  return await apiFetch("/users/onboarding");
+  try {
+    return await apiFetch("/users/onboarding");
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      redirect("/login");
+    }
+    throw error;
+  }
 }

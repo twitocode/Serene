@@ -29,18 +29,3 @@ export const postsTable = pgTable("post", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
-
-export const postRelations = relations(postsTable, ({ one }) => ({
-  user: one(usersTable, {
-    fields: [postsTable.userId],
-    references: [usersTable.id],
-  }),
-  qotd: one(questionsOfTheDayTable, {
-    fields: [postsTable.qotdId],
-    references: [questionsOfTheDayTable.id],
-  }),
-}));
-
-export const qotdRelations = relations(questionsOfTheDayTable, ({ many }) => ({
-  posts: many(postsTable), 
-}));

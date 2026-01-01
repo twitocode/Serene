@@ -21,7 +21,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/lib/components/ui/sidebar";
+import { ApiError } from "@/lib/helpers/api-fetch";
 import { fetchUser } from "@/lib/server/get-user";
+import { User } from "@serene/shared/types";
 import { useQuery } from "@tanstack/react-query";
 
 import {
@@ -39,7 +41,10 @@ type NavUserProps = {
 
 export function NavUser({}: NavUserProps) {
   const sidebar = useSidebar();
-  const { data: user } = useQuery({ queryKey: ["user"], queryFn: fetchUser });
+  const { data: user } = useQuery<User, ApiError>({
+    queryKey: ["user"],
+    queryFn: fetchUser,
+  });
 
   return (
     <SidebarMenu>

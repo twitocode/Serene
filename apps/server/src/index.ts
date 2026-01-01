@@ -8,7 +8,7 @@ import { prettyJSON } from "hono/pretty-json";
 import { auth } from "./lib/auth";
 import onboardingRouter from "./modules/onboarding/onboarding.router";
 import usersRouter from "./modules/users/users.router";
-import  {AppError} from "@serene/shared"
+import { AppError } from "./lib/errors";
 import z, { ZodError } from "zod";
 
 const app = new Hono<{
@@ -45,6 +45,7 @@ app.onError((err, c) => {
     );
   }
 
+  // 2. Handle Zod Validation Errors
   if (err instanceof ZodError) {
     return c.json(
       {
@@ -57,6 +58,7 @@ app.onError((err, c) => {
     );
   }
 
+  // 3. Handle Standard Hono Errors
   if (err instanceof HTTPException) {
     return c.json(
       {

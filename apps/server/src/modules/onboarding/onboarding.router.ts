@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
+import { AppError } from "../../lib/errors";
 import { db } from "../../db/db";
-import { usersTable } from "../../db/schema/users-schema";
+import { usersTable } from "../../db/schema";
 import { authMiddleware } from "../../middleware/auth.middleware";
 import { zodValidator } from "../../middleware/zod.validator";
 import { RouterVariables } from "../../types";
@@ -39,7 +39,7 @@ app.get("/", authMiddleware, async (c) => {
   });
   if (!user) {
     c.var.logger.error(`User ${sessionUser.email} should exist but does not`);
-    throw new HTTPException(500, { message: "User should exist but does not" });
+    throw new AppError(500, "User should exist but does not", "SERVER_ERROR");
   }
 
   return c.json({
