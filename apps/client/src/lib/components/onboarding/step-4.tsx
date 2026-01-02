@@ -42,7 +42,11 @@ export function StepFour({
     },
     onSubmit: async ({ value }) => {
       setSchool(value.school);
-      onNext();
+      try {
+        await onNext();
+      } catch (error) {
+        // Error is handled by global toast
+      }
     },
   });
 

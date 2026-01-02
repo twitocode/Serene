@@ -6,6 +6,8 @@ export async function completeOnboardingStep(
   data: Record<string, unknown>
 ): Promise<{ success: boolean }> {
   try {
+    console.log(`trying to submit step ${step}`)
+    
     return await apiFetch<{ success: boolean }>(
       `/users/onboarding/step${step}`,
       {
@@ -14,10 +16,9 @@ export async function completeOnboardingStep(
         cache: "no-store",
       }
     );
-  } catch (error: unknown) {
-    // 1. Must be 'unknown' or 'any'
-
-    // 2. Handle Known API Errors (400, 401, 404, 500)
+  } catch (error) {
+    
+    console.error((error as ApiError).data)
     if (error instanceof ApiError) {
       if (error.data?.code === "INVALID_STEP_ORDER") {
         throw error;

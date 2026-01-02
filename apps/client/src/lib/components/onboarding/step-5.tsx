@@ -54,7 +54,11 @@ export function StepFive({
       setKoalaName(value.koalaName);
       setKoalaColor(value.koalaColour);
       setKoalaPronouns(value.koalaPronouns);
-      onNext();
+      try {
+        await onNext();
+      } catch (error) {
+        // Error is handled by global toast
+      }
     },
   });
 

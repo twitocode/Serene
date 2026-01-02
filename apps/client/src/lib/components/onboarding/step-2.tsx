@@ -52,7 +52,11 @@ export function StepTwo({
       setAge(value.age);
       setGender(value.gender);
       setPronouns(value.pronouns);
-      onNext();
+      try {
+        await onNext();
+      } catch (error) {
+        // General error handling if needed, or let it be handled by global toast
+      }
     },
   });
 

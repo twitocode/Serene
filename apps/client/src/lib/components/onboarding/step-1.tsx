@@ -6,6 +6,15 @@ import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/lib/components/ui/tanstack-form";
 import { stepOneSchema } from "@serene/shared/validation";
+import { ApiError } from "@/lib/helpers/api-fetch";
+
+const validateName = ({ value }: { value: string }) => {
+  const result = stepOneSchema.shape.name.safeParse(value);
+  if (!result.success) {
+    return result.error.issues[0]?.message || "Invalid name";
+  }
+  return undefined;
+};
 
 export function StepOne({
   name,
@@ -18,7 +27,18 @@ export function StepOne({
     },
     onSubmit: async ({ value }) => {
       setName(value.name);
-      onNext();
+
+      try {
+        await onNext();
+      } catch (error) {
+        if (error instanceof ApiError && error.data?.code === "DB_ERROR") {
+          console.log(error)
+          form.setFieldMeta("name", (prev) => ({
+            ...prev,
+            errors: ["This name is already taken"],
+          }));
+        }
+      }
     },
   });
 
@@ -61,6 +81,7 @@ export function StepOne({
                       onChange={(e) => field.handleChange(e.target.value)}
                       className="bg-gray-100 border-0"
                       autoFocus
+                      autoComplete="username"
                       onBlur={field.handleBlur}
                     />
                   </FormControl>

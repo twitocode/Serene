@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "quansync": "^1.0.0",
+    "server": "workspace:*",
     "turbo": "^2.7.2"
   },
   "packageManager": "bun@1.2.0",

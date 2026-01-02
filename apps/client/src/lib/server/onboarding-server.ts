@@ -8,7 +8,13 @@ export async function checkOnboarding(): Promise<{
   started: boolean;
 }> {
   try {
-    return await apiFetch("/users/onboarding");
+    const response = await apiFetch<{
+      step: number;
+      completed: boolean;
+      started: boolean;
+    }>("/users/onboarding");
+    console.log(response);
+    return response;
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {
       redirect("/login");

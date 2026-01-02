@@ -150,6 +150,7 @@ export function OnboardingFlow(props: Props) {
       setOnBoardingStep((prev) => prev + 1);
     } catch (error) {
       console.error(error);
+      throw error;
     }
   };
 

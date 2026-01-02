@@ -5,11 +5,11 @@ import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 import { poweredBy } from "hono/powered-by";
 import { prettyJSON } from "hono/pretty-json";
+import z, { ZodError } from "zod";
 import { auth } from "./lib/auth";
+import { AppError } from "./lib/errors";
 import onboardingRouter from "./modules/onboarding/onboarding.router";
 import usersRouter from "./modules/users/users.router";
-import { AppError } from "./lib/errors";
-import z, { ZodError } from "zod";
 
 const app = new Hono<{
   Variables: {
@@ -27,7 +27,10 @@ app.use(
   pinoLogger({
     pino: {
       ...transport,
-      level: "debug",
+      serializers: {
+        req: (req) => ({ method: req.method, url: req.url, cookie: req.cookies }),
+        res: (res) => ({ status: res.status }),
+      },
     },
   })
 );
@@ -35,6 +38,7 @@ app.use(
 app.onError((err, c) => {
   // 1. Handle our custom Application Errors
   if (err instanceof AppError) {
+    console.log(err);
     return c.json(
       {
         success: false,

@@ -84,12 +84,12 @@ function FormLabel({
   className,
   ...props
 }: React.ComponentProps<typeof Label>) {
-  const { error, formItemId } = useTanStackFormField();
+  const { error, formItemId, isTouched } = useTanStackFormField();
 
   return (
     <Label
       data-slot="form-label"
-      data-error={!!error}
+      data-error={isTouched && !!error}
       className={cn("data-[error=true]:text-destructive", className)}
       htmlFor={formItemId}
       {...props}
@@ -98,7 +98,7 @@ function FormLabel({
 }
 
 function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
-  const { error, formItemId, formDescriptionId, formMessageId } =
+  const { error, formItemId, formDescriptionId, formMessageId, isTouched } =
     useTanStackFormField();
 
   return (
@@ -106,11 +106,11 @@ function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
       data-slot="form-control"
       id={formItemId}
       aria-describedby={
-        !error
+        !(isTouched && error)
           ? `${formDescriptionId}`
           : `${formDescriptionId} ${formMessageId}`
       }
-      aria-invalid={!!error}
+      aria-invalid={isTouched && !!error}
       {...props}
     />
   );
@@ -130,7 +130,7 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
 }
 
 function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
-  const { error, formMessageId, isValidating } = useTanStackFormField();
+  const { error, formMessageId, isValidating, isTouched } = useTanStackFormField();
   
   if (isValidating) {
     return (
@@ -144,7 +144,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
     );
   }
 
-  if (!error) {
+  if (!isTouched || !error) {
     return null;
   }
 

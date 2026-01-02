@@ -28,7 +28,11 @@ export function StepThree({
     },
     onSubmit: async ({ value }) => {
       setCountry(value.country);
-      onNext();
+      try {
+        await onNext();
+      } catch (error) {
+        // Error is handled by global toast
+      }
     },
   });
 

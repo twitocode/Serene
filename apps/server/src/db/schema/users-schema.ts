@@ -1,4 +1,4 @@
-import { InferSelectModel, relations, sql } from "drizzle-orm";
+import { InferSelectModel, sql } from "drizzle-orm";
 import {
   boolean,
   integer,
@@ -10,9 +10,6 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
-import { accountsTable, sessionsTable } from "./auth-schema";
-import { checkinsTable } from "./checkin-schema";
-import { postsTable } from "./community-schema";
 
 export const genderEnum = pgEnum("gender", [
   "Male",
@@ -136,7 +133,6 @@ export const userAchievementsTable = pgTable(
     pk: primaryKey({ columns: [table.userId, table.achievementId] }),
   })
 );
-
 
 export type User = InferSelectModel<typeof usersTable>;
 export type Profile = InferSelectModel<typeof profilesTable>;

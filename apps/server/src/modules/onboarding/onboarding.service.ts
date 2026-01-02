@@ -1,4 +1,5 @@
 import { AppError } from "../../lib/errors";
+import { getDbErrorMessage } from "../../db/db-error-utils";
 import {
   StepFiveSchema,
   StepFourSchema,
@@ -53,21 +54,23 @@ export async function submitStep1(body: StepOneSchema, sessionUser: User) {
       throw new AppError(404, "User not found during update", "USER_MISSING");
     }
   } catch (error) {
+    console.error(error)
     if (error instanceof AppError) {
       throw error;
     }
 
-    // '23505' is the Postgres code for Unique Constraint Violation
-    if ((error as any).code === "23505") {
-      throw new AppError(409, "This value is already taken", "DUPLICATE_ENTRY");
+    const { message, constraint } = getDbErrorMessage(error);
+    console.error("Database operation failed:", {
+      message,
+      constraint,
+      originalError: error,
+    });
+
+    if (constraint?.includes("duplicate")) {
+      throw new AppError(409, message, "USERNAME_TAKEN");
     }
 
-    console.error("Database Error in submitStep1:", error);
-    throw new AppError(
-      500,
-      "Failed to save progress. Please try again.",
-      "DB_ERROR"
-    );
+    throw new AppError(500, message, "DB_ERROR");
   }
 }
 
@@ -92,12 +95,13 @@ export async function submitStep2(body: StepTwoSchema, sessionUser: User) {
       throw error;
     }
 
-    console.error("Database Error in submitStep2:", error);
-    throw new AppError(
-      500,
-      "Failed to save progress. Please try again.",
-      "DB_ERROR"
-    );
+    const { message, constraint } = getDbErrorMessage(error);
+    console.error("Database operation failed:", {
+      message,
+      constraint,
+      originalError: error,
+    });
+    throw new AppError(500, message, "DB_ERROR");
   }
 }
 
@@ -120,12 +124,13 @@ export async function submitStep3(body: StepThreeSchema, sessionUser: User) {
       throw error;
     }
 
-    console.error("Database Error in submitStep3:", error);
-    throw new AppError(
-      500,
-      "Failed to save progress. Please try again.",
-      "DB_ERROR"
-    );
+    const { message, constraint } = getDbErrorMessage(error);
+    console.error("Database operation failed:", {
+      message,
+      constraint,
+      originalError: error,
+    });
+    throw new AppError(500, message, "DB_ERROR");
   }
 }
 
@@ -177,12 +182,13 @@ export async function submitStep4(
       throw error;
     }
 
-    console.error("Database Error in submitStep4:", error);
-    throw new AppError(
-      500,
-      "Failed to save progress. Please try again.",
-      "DB_ERROR"
-    );
+    const { message, constraint } = getDbErrorMessage(error);
+    console.error("Database operation failed:", {
+      message,
+      constraint,
+      originalError: error,
+    });
+    throw new AppError(500, message, "DB_ERROR");
   }
 }
 
@@ -222,11 +228,12 @@ export async function submitStep5(sessionUser: User, body: StepFiveSchema) {
       throw error;
     }
 
-    console.error("Database Error in submitStep5:", error);
-    throw new AppError(
-      500,
-      "Failed to save progress. Please try again.",
-      "DB_ERROR"
-    );
+    const { message, constraint } = getDbErrorMessage(error);
+    console.error("Database operation failed:", {
+      message,
+      constraint,
+      originalError: error,
+    });
+    throw new AppError(500, message, "DB_ERROR");
   }
 }
