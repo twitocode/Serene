@@ -164,6 +164,10 @@ try
 }
 catch (Exception ex)
 {
+    if (ex.GetType().Name is "HostAbortedException")
+    {
+        throw;
+    }
     Log.Fatal(ex, "Application terminated unexpectedly");
 }
 finally

@@ -1,10 +1,10 @@
 "use client";
-import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
+import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 import { motion } from "motion/react";
 import { useEffect } from "react";
 
 export function IntermediateStepTwo() {
-  const { name, goNext } = useOnboardingStore();
+  const { name, goNext } = useOnboardingStore(state => state);
   useEffect(() => {
     const timer = setTimeout(() => {
       goNext();

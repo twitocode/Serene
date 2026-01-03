@@ -2,6 +2,7 @@
 
 import { completeStep4 } from "@/lib/client/onboarding-client";
 import FormError from "@/lib/components/common/forms/form-error";
+import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import {
   Select,
@@ -24,29 +25,49 @@ import {
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
 import { colleges, schools, universities } from "@/lib/data";
-import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
-import { StepFourSchema, stepFourSchema } from "@/lib/validation";
+import {
+  StepFourSchema,
+  stepFourSchema,
+  StepFourValues,
+} from "@/lib/validation";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
 
 export function StepFour() {
-  const { school, setSchool, completeServerStep, goBack } =
-    useOnboardingStore();
+
+  const { school, setSchool, completeServerStep, goBack, hasStarted } =
+
+    useOnboardingStore((state) => state);
+
   const [activeTab, setActiveTab] = useState("universities");
+
   const [serverError, setServerError] = useState("");
 
+
+
   const mutation = useMutation({
+
     mutationFn: completeStep4,
+
   });
 
+
+
   const defaultValues: StepFourSchema = {
-    name: school,
+
+    name: hasStarted && school ? school : "",
+
     countryCode: "CA",
+
     regionCode: "",
+
     city: "",
+
   };
+
+
 
   const form = useForm({
     defaultValues,
@@ -66,15 +87,11 @@ export function StepFour() {
 
       if (result.errorCode === "VALIDATION_ERROR") {
         Object.keys(result.errors!).forEach((key) => {
-          const fieldName = key.toLowerCase() as
-            | "name"
-            | "countryCode"
-            | "regionCode"
-            | "city";
+          const fieldName = key.toLowerCase() as StepFourValues;
           form.setFieldMeta(fieldName, (prev) => ({
             ...prev,
             errorMap: {
-              onChange: [result.errors![key]],
+              onSubmit: [result.errors![key]],
             },
           }));
         });
@@ -123,7 +140,18 @@ export function StepFour() {
                       <FormControl>
                         <Select
                           value={field.state.value}
-                          onValueChange={(value) => field.handleChange(value)}
+                          onValueChange={(value) => {
+                            field.handleChange(value);
+                            if (field.state.meta.errorMap.onSubmit) {
+                              field.setMeta((prev) => ({
+                                ...prev,
+                                errorMap: {
+                                  ...prev.errorMap,
+                                  onSubmit: undefined,
+                                },
+                              }));
+                            }
+                          }}
                           onOpenChange={(open) => {
                             if (!open) field.handleBlur();
                           }}
@@ -146,7 +174,18 @@ export function StepFour() {
                       <FormControl>
                         <Select
                           value={field.state.value}
-                          onValueChange={(value) => field.handleChange(value)}
+                          onValueChange={(value) => {
+                            field.handleChange(value);
+                            if (field.state.meta.errorMap.onSubmit) {
+                              field.setMeta((prev) => ({
+                                ...prev,
+                                errorMap: {
+                                  ...prev.errorMap,
+                                  onSubmit: undefined,
+                                },
+                              }));
+                            }
+                          }}
                           onOpenChange={(open) => {
                             if (!open) field.handleBlur();
                           }}

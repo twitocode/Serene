@@ -1,9 +1,9 @@
 "use client";
+import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
-import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
 
 export function IntermediateStepOne() {
-  const { goNext } = useOnboardingStore();
+  const { goNext } = useOnboardingStore(state => state);
   return (
     <div className="text-center space-y-8">
       <h1 className="text-3xl font-semibold">

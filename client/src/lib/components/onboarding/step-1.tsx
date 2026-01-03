@@ -2,6 +2,7 @@
 
 import { completeStep1 } from "@/lib/client/onboarding-client";
 import FormError from "@/lib/components/common/forms/form-error";
+import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import {
@@ -12,28 +13,38 @@ import {
   FormLabel,
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
-import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
-import { stepOneSchema } from "@/lib/validation";
+import { stepOneSchema, StepOneValues } from "@/lib/validation";
 import { useForm } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 export function StepOne() {
-  const { name, setName, completeServerStep } = useOnboardingStore();
+  const { name, initialName, setName, completeServerStep, hasStarted } =
+    useOnboardingStore((state) => state);
   const [serverError, setServerError] = useState("");
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: completeStep1,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
   });
 
   const form = useForm({
     defaultValues: {
-      name: name || "",
+      name: hasStarted && name ? name : "",
     },
     validators: {
-      onChange: stepOneSchema,
+      onSubmit: stepOneSchema,
     },
     onSubmit: async ({ value }) => {
+      // If user hasn't changed the name and they already have one, skip server validation
+      if (initialName && value.name === initialName) {
+        completeServerStep();
+        return;
+      }
+
       setName(value.name);
       const result = await mutation.mutateAsync(value.name);
 
@@ -44,11 +55,11 @@ export function StepOne() {
 
       if (result.errorCode === "VALIDATION_ERROR") {
         Object.keys(result.errors!).forEach((key) => {
-          const fieldName = key.toLowerCase() as "name";
+          const fieldName = key.toLowerCase() as StepOneValues;
           form.setFieldMeta(fieldName, (prev) => ({
             ...prev,
             errorMap: {
-              onChange: [result.errors![key]],
+              onSubmit: [result.errors![key]],
             },
           }));
         });
@@ -56,7 +67,7 @@ export function StepOne() {
         form.setFieldMeta("name", (prev) => ({
           ...prev,
           errorMap: {
-            onChange: [result.message],
+            onSubmit: [result.message],
           },
         }));
       } else {
@@ -92,7 +103,18 @@ export function StepOne() {
                     <Input
                       placeholder="Name"
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => {
+                        field.handleChange(e.target.value);
+                        if (field.state.meta.errorMap.onSubmit) {
+                          field.setMeta((prev) => ({
+                            ...prev,
+                            errorMap: {
+                              ...prev.errorMap,
+                              onSubmit: undefined,
+                            },
+                          }));
+                        }
+                      }}
                       className="bg-gray-100 border-0"
                       autoFocus
                       autoComplete="username"

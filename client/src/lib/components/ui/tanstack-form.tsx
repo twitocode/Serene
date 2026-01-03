@@ -37,9 +37,23 @@ const useTanStackFormField = () => {
   }
 
   const { field } = context;
-  const error = field.state.meta.errors[0];
+  const firstError = field.state.meta.errors[0];
   const isTouched = field.state.meta.isTouched;
   const isValidating = field.state.meta.isValidating;
+
+  const error = React.useMemo(() => {
+    if (!firstError) return undefined;
+    
+    if (typeof firstError === 'string') return firstError;
+    
+    if (Array.isArray(firstError)) return String(firstError[0]);
+
+    if (typeof firstError === 'object' && firstError !== null) {
+      return (firstError as any).message || String(firstError);
+    }
+    
+    return String(firstError);
+  }, [firstError]);
 
   return {
     field,
@@ -48,7 +62,7 @@ const useTanStackFormField = () => {
     formItemId: `${field.name}-form-item`,
     formDescriptionId: `${field.name}-form-item-description`,
     formMessageId: `${field.name}-form-item-message`,
-    error: error ? String(error) : undefined,
+    error,
     isTouched,
     isValidating,
   };

@@ -1,6 +1,5 @@
 "use client";
 
-import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect } from "react";
 import { IntermediateStepOne } from "./intermediate-step-1";
@@ -11,6 +10,7 @@ import { StepTwo } from "./step-2";
 import { StepThree } from "./step-3";
 import { StepFour } from "./step-4";
 import { StepFive } from "./step-5";
+import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 
 type TransitionType = "slide" | "fade" | "scale";
 
@@ -43,17 +43,8 @@ const getVariants = (type: TransitionType) => {
   }
 };
 
-interface Props {
-  initialStep: number;
-  hasStarted: boolean;
-}
-
-export function OnboardingFlow({ initialStep, hasStarted }: Props) {
-  const { uiStep, direction, initialize } = useOnboardingStore();
-
-  useEffect(() => {
-    initialize(initialStep, hasStarted);
-  }, []);
+export function OnboardingFlow() {
+  const { uiStep, direction } = useOnboardingStore((state) => state);
 
   const transitionType: TransitionType = "scale";
   const variants = getVariants(transitionType);

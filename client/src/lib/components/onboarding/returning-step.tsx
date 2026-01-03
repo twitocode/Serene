@@ -1,9 +1,9 @@
 "use client";
-import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
+import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 import { useEffect } from "react";
 
 export function ReturningStep() {
-  const { goNext } = useOnboardingStore();
+  const { goNext } = useOnboardingStore(state =>state);
   useEffect(() => {
     const timer = setTimeout(() => {
       goNext();

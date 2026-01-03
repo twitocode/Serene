@@ -5,7 +5,7 @@ import {
   ColorPickerFormat,
   ColorPickerHue,
   ColorPickerSelection,
-} from '@/components/ui/shadcn-io/color-picker';
+} from '@/lib/components/ui/shadcn-io/color-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '@/lib/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';

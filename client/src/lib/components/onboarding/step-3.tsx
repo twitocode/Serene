@@ -2,6 +2,7 @@
 
 import { completeStep3 } from "@/lib/client/onboarding-client";
 import FormError from "@/lib/components/common/forms/form-error";
+import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import {
   Select,
@@ -18,8 +19,7 @@ import {
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
 import { countries } from "@/lib/data";
-import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
-import { StepThreeSchema, stepThreeSchema } from "@/lib/validation";
+import { StepThreeSchema, stepThreeSchema, StepThreeValues } from "@/lib/validation";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
@@ -31,7 +31,8 @@ export function StepThree() {
     setCountryCode: setCountry,
     completeServerStep,
     goBack,
-  } = useOnboardingStore();
+    hasStarted,
+  } = useOnboardingStore((state) => state);
   const [serverError, setServerError] = useState("");
 
   const mutation = useMutation({
@@ -39,7 +40,7 @@ export function StepThree() {
   });
 
   const defaultValues: StepThreeSchema = {
-    countryCode: country || "",
+    countryCode: hasStarted && country ? country : "",
   };
   const form = useForm({
     defaultValues,
@@ -57,11 +58,11 @@ export function StepThree() {
 
       if (result.errorCode === "VALIDATION_ERROR") {
         Object.keys(result.errors!).forEach((key) => {
-          const fieldName = key.toLowerCase() as "countryCode";
+          const fieldName = key.toLowerCase() as StepThreeValues;
           form.setFieldMeta(fieldName, (prev) => ({
             ...prev,
             errorMap: {
-              onChange: [result.errors![key]],
+              onSubmit: [result.errors![key]],
             },
           }));
         });
@@ -92,16 +93,6 @@ export function StepThree() {
         >
           <form.Field
             name="countryCode"
-            validators={{
-              onChange: ({ value }) => {
-                const result =
-                  stepThreeSchema.shape.countryCode.safeParse(value);
-                if (!result.success) {
-                  return result.error.issues[0]?.message || "Invalid country";
-                }
-                return undefined;
-              },
-            }}
           >
             {(field) => (
               <FormField field={field}>
@@ -109,7 +100,15 @@ export function StepThree() {
                   <FormControl>
                     <Select
                       value={field.state.value}
-                      onValueChange={(value) => field.handleChange(value)}
+                      onValueChange={(value) => {
+                        field.handleChange(value);
+                        if (field.state.meta.errorMap.onSubmit) {
+                          field.setMeta((prev) => ({
+                            ...prev,
+                            errorMap: { ...prev.errorMap, onSubmit: undefined },
+                          }));
+                        }
+                      }}
                       onOpenChange={(open) => {
                         if (!open) field.handleBlur();
                       }}

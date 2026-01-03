@@ -2,6 +2,7 @@
 
 import { completeStep2 } from "@/lib/client/onboarding-client";
 import FormError from "@/lib/components/common/forms/form-error";
+import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import {
@@ -19,8 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
-import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
-import { StepTwoSchema, stepTwoSchema } from "@/lib/validation";
+import { StepTwoSchema, stepTwoSchema, StepTwoValues } from "@/lib/validation";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
@@ -36,7 +36,8 @@ export function StepTwo() {
     setPronouns,
     completeServerStep,
     goBack,
-  } = useOnboardingStore();
+    hasStarted,
+  } = useOnboardingStore((state) => state);
   const [serverError, setServerError] = useState("");
 
   const mutation = useMutation({
@@ -45,9 +46,9 @@ export function StepTwo() {
   });
 
   const defaultValues: StepTwoSchema = {
-    age: age ?? 0,
-    gender: "Prefer not to say",
-    pronouns: pronouns ?? ""
+    age: hasStarted ? age : 0,
+    gender: hasStarted && gender ? (gender as any) : "Prefer not to say",
+    pronouns: hasStarted && pronouns ? pronouns : "",
   };
 
   const form = useForm({
@@ -63,7 +64,7 @@ export function StepTwo() {
       const result = await mutation.mutateAsync({
         age: value.age,
         gender: value.gender,
-        pronouns: value.pronouns.replace("-", " "),
+        pronouns: value.pronouns,
       });
 
       if (result.isSuccess) {
@@ -71,13 +72,14 @@ export function StepTwo() {
         return;
       }
 
+      console.log(result)
       if (result.errorCode === "VALIDATION_ERROR") {
         Object.keys(result.errors!).forEach((key) => {
-          const fieldName = key.toLowerCase() as "age" | "gender" | "pronouns";
+          const fieldName = key.toLowerCase() as StepTwoValues;
           form.setFieldMeta(fieldName, (prev) => ({
             ...prev,
             errorMap: {
-              onChange: [result.errors![key]],
+              onSubmit: [result.errors![key]],
             },
           }));
         });
@@ -106,9 +108,7 @@ export function StepTwo() {
           }}
           className="space-y-4"
         >
-          <form.Field
-            name="age"
-          >
+          <form.Field name="age">
             {(field) => (
               <FormField field={field}>
                 <FormItem>
@@ -117,9 +117,15 @@ export function StepTwo() {
                     <Input
                       placeholder="Age"
                       value={field.state.value}
-                      onChange={(e) =>
-                        field.handleChange(Number(e.target.value))
-                      }
+                      onChange={(e) => {
+                        field.handleChange(Number(e.target.value));
+                        if (field.state.meta.errorMap.onSubmit) {
+                          field.setMeta((prev) => ({
+                            ...prev,
+                            errorMap: { ...prev.errorMap, onSubmit: undefined },
+                          }));
+                        }
+                      }}
                       className="bg-gray-100 border-0"
                       type="number"
                       onBlur={field.handleBlur}
@@ -131,9 +137,7 @@ export function StepTwo() {
             )}
           </form.Field>
           <div className="grid grid-cols-2 gap-4">
-            <form.Field
-              name="gender"
-            >
+            <form.Field name="gender">
               {(field) => (
                 <FormField field={field}>
                   <FormItem>
@@ -141,7 +145,18 @@ export function StepTwo() {
                     <FormControl>
                       <Select
                         value={field.state.value}
-                        onValueChange={(value) => field.handleChange(value as any)}
+                        onValueChange={(value) => {
+                          field.handleChange(value as any);
+                          if (field.state.meta.errorMap.onSubmit) {
+                            field.setMeta((prev) => ({
+                              ...prev,
+                              errorMap: {
+                                ...prev.errorMap,
+                                onSubmit: undefined,
+                              },
+                            }));
+                          }
+                        }}
                         onOpenChange={(open) => {
                           if (!open) field.handleBlur();
                         }}
@@ -153,8 +168,8 @@ export function StepTwo() {
                           <SelectItem value="Male">Male</SelectItem>
                           <SelectItem value="Female">Female</SelectItem>
                           <SelectItem value="Non-Binary">Non-binary</SelectItem>
-                          <SelectItem value="Prefer-not-to-say">
-                            Prefer-not-to-say
+                          <SelectItem value="Prefer not to say">
+                            Prefer not to say
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -165,10 +180,7 @@ export function StepTwo() {
               )}
             </form.Field>
 
-            <form.Field
-              name="pronouns"
-
-            >
+            <form.Field name="pronouns">
               {(field) => (
                 <FormField field={field}>
                   <FormItem>
@@ -177,7 +189,18 @@ export function StepTwo() {
                     <FormControl>
                       <Select
                         value={field.state.value}
-                        onValueChange={(value) => field.handleChange(value)}
+                        onValueChange={(value) => {
+                          field.handleChange(value);
+                          if (field.state.meta.errorMap.onSubmit) {
+                            field.setMeta((prev) => ({
+                              ...prev,
+                              errorMap: {
+                                ...prev.errorMap,
+                                onSubmit: undefined,
+                              },
+                            }));
+                          }
+                        }}
                         onOpenChange={(open) => {
                           if (!open) field.handleBlur();
                         }}

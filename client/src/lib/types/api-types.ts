@@ -30,6 +30,15 @@ export interface OnboardingStatusDto {
   step: number;
   completed: boolean;
   started: boolean;
+  name?: string | null;
+  age?: number;
+  gender?: string | null;
+  pronouns?: string | null;
+  countryCode?: string | null;
+  schoolName?: string | null;
+  koalaName?: string | null;
+  koalaColour?: string | null;
+  koalaPronouns?: string | null;
 }
 
 export interface AuthResponseDto {

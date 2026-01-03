@@ -1,6 +1,22 @@
-import { create } from "zustand";
+import { createStore } from "zustand/vanilla";
 
-interface OnboardingState {
+// 1. Define the props that might come from the Server (DB)
+export interface OnboardingProps {
+  initialStep?: number;
+  initialHasStarted?: boolean;
+  initialName?: string;
+  initialAge?: number;
+  initialGender?: string;
+  initialPronouns?: string;
+  initialCountryCode?: string;
+  initialSchool?: string;
+  initialKoalaName?: string;
+  initialKoalaColour?: string;
+  initialKoalaPronouns?: string;
+}
+
+export interface OnboardingState {
+  // Current values
   name: string;
   age: number;
   gender: string;
@@ -11,9 +27,21 @@ interface OnboardingState {
   koalaColour: string;
   koalaPronouns: string;
 
+  // Initial values from server (to check if already set)
+  initialName: string;
+  initialAge: number;
+  initialGender: string;
+  initialPronouns: string;
+  initialCountryCode: string;
+  initialSchool: string;
+  initialKoalaName: string;
+  initialKoalaColour: string;
+  initialKoalaPronouns: string;
+
   // Flow Control
   step: number; // Server step
   uiStep: number; // Visual step
+  hasStarted: boolean;
   direction: number;
 
   setName: (name: string) => void;
@@ -29,87 +57,105 @@ interface OnboardingState {
   goNext: () => void;
   goBack: () => void;
   completeServerStep: () => void;
-  initialize: (initialStep: number, hasStarted: boolean) => void;
 }
 
-export const useOnboardingStore = create<OnboardingState>((set, get) => ({
-  name: "",
-  age: 0,
-  gender: "",
-  pronouns: "",
-  countryCode: "",
-  school: "",
-  koalaName: "",
-  koalaColour: "#5EEAD4",
-  koalaPronouns: "",
-  step: 1,
-  uiStep: 1,
-  direction: 0,
+export type OnboardingStore = ReturnType<typeof createOnboardingStore>;
 
-  setName: (name) => set({ name }),
-  setAge: (age) => set({ age }),
-  setGender: (gender) => set({ gender }),
-  setPronouns: (pronouns) => set({ pronouns }),
-  setCountryCode: (country) => set({ countryCode: country }),
-  setSchool: (school) => set({ school }),
-  setKoalaName: (koalaName) => set({ koalaName }),
-  setKoalaColor: (koalaColour) => set({ koalaColour }),
-  setKoalaPronouns: (koalaPronouns) => set({ koalaPronouns }),
+// 2. The Factory Function
+export const createOnboardingStore = (initProps?: OnboardingProps) => {
+  const initialStep = initProps?.initialStep || 1;
+  const hasStarted = initProps?.initialHasStarted || false;
+  const initialUiStep = hasStarted ? 0 : 1;
 
-  initialize: (initialStep, hasStarted) => {
-    set({
-      step: initialStep,
-      uiStep: hasStarted ? 0 : 1, // 0 = Returning, 1 = Intermediate Step 1
-    });
-  },
+  return createStore<OnboardingState>((set, get) => ({
+    // Current State (initialized with initial values)
+    name: initProps?.initialName || "",
+    age: initProps?.initialAge || 0,
+    gender: initProps?.initialGender || "",
+    pronouns: initProps?.initialPronouns || "",
+    countryCode: initProps?.initialCountryCode || "",
+    school: initProps?.initialSchool || "",
+    koalaName: initProps?.initialKoalaName || "",
+    koalaColour: initProps?.initialKoalaColour || "#5EEAD4",
+    koalaPronouns: initProps?.initialKoalaPronouns || "",
 
-  goNext: () => {
-    const { step, uiStep } = get();
-    set({ direction: 1 });
+    // Initial State (preserved for comparison)
+    initialName: initProps?.initialName || "",
+    initialAge: initProps?.initialAge || 0,
+    initialGender: initProps?.initialGender || "",
+    initialPronouns: initProps?.initialPronouns || "",
+    initialCountryCode: initProps?.initialCountryCode || "",
+    initialSchool: initProps?.initialSchool || "",
+    initialKoalaName: initProps?.initialKoalaName || "",
+    initialKoalaColour: initProps?.initialKoalaColour || "#5EEAD4",
+    initialKoalaPronouns: initProps?.initialKoalaPronouns || "",
 
-    // Logic for returning users jumping to correct step
-    if (uiStep === 0) {
-      let nextUiStep = 1;
-      switch (step) {
-        case 1:
-          nextUiStep = 2;
-          break; // StepOne
-        case 2:
-          nextUiStep = 4;
-          break; // StepTwo
-        case 3:
-          nextUiStep = 5;
-          break; // StepThree
-        case 4:
-          nextUiStep = 6;
-          break; // StepFour
-        case 5:
-          nextUiStep = 7;
-          break; // StepFive
-        default:
-          nextUiStep = 1; // IntermediateStepOne
+    direction: 0,
+    step: initialStep,
+    uiStep: initialUiStep,
+    hasStarted,
+
+    // Actions
+    setName: (name) => set({ name }),
+    setAge: (age) => set({ age }),
+    setGender: (gender) => set({ gender }),
+    setPronouns: (pronouns) => set({ pronouns }),
+    setCountryCode: (countryCode) => set({ countryCode }),
+    setSchool: (school) => set({ school }),
+    setKoalaName: (koalaName) => set({ koalaName }),
+    setKoalaColor: (koalaColour) => set({ koalaColour }),
+    setKoalaPronouns: (koalaPronouns) => set({ koalaPronouns }),
+
+    goNext: () => {
+      const { step, uiStep, initialName } = get();
+      set({ direction: 1 });
+
+      if (uiStep === 0) {
+        let nextUiStep = 1;
+        switch (step) {
+          case 1:
+            nextUiStep = 2;
+            break;
+          case 2:
+            nextUiStep = 4;
+            break;
+          case 3:
+            nextUiStep = 5;
+            break;
+          case 4:
+            nextUiStep = 6;
+            break;
+          case 5:
+            nextUiStep = 7;
+            break;
+          default:
+            nextUiStep = 1;
+        }
+        set({ uiStep: nextUiStep });
+        return;
       }
-      set({ uiStep: nextUiStep });
-      return;
-    }
 
-    set((state) => ({ uiStep: state.uiStep + 1 }));
-  },
+      // Skip "Hello, {name}" (uiStep 3) if moving from StepOne (uiStep 2) and name was already claimed
+      if (uiStep === 2 && initialName) {
+        set({ uiStep: 4 });
+        return;
+      }
 
-  goBack: () => {
-    const { uiStep } = get();
-    set({ direction: -1 });
+      set((state) => ({ uiStep: state.uiStep + 1 }));
+    },
 
-    let prevUiStep = uiStep - 1;
-    // Skip intermediate steps when going back logic
-    if (uiStep === 4) prevUiStep = 2;
-    if (uiStep === 2) prevUiStep = 1;
+    goBack: () => {
+      const { uiStep } = get();
+      set({ direction: -1 });
+      let prevUiStep = uiStep - 1;
+      if (uiStep === 4) prevUiStep = 2;
+      if (uiStep === 2) prevUiStep = 1;
+      set({ uiStep: prevUiStep });
+    },
 
-    set({ uiStep: prevUiStep });
-  },
-
-  completeServerStep: () => {
-    set((s) => ({ step: s.step + 1 }));
-    get().goNext();
-  },
-}));
+    completeServerStep: () => {
+      set((s) => ({ step: s.step + 1 }));
+      get().goNext();
+    },
+  }));
+};

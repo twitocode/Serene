@@ -10,15 +10,12 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "@/lib/components/ui/navigation-menu";
+import { useUser } from "@/lib/hooks/queries/use-user";
 import { useIsMobile } from "@/lib/hooks/use-mobile";
-import { User } from "@/lib/types/index";
 
-interface Props {
-  user: User;
-}
-
-export function OnBoardingNavbar({ user }: Props) {
+export function OnBoardingNavbar() {
   const isMobile = useIsMobile();
+  const { data: user } = useUser();
 
   const logout = async () => {
     await auth.signOut();
@@ -36,7 +33,7 @@ export function OnBoardingNavbar({ user }: Props) {
       <NavigationMenu viewport={isMobile}>
         <NavigationMenuList>
           <NavigationMenuItem className="space-x-4">
-            <span>Signed in as {user.name}</span>
+            <span>Signed in as {user?.name}</span>
             <Button onClick={logout}>Logout</Button>
           </NavigationMenuItem>
         </NavigationMenuList>

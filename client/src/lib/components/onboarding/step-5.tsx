@@ -2,6 +2,7 @@
 
 import { completeStep5 } from "@/lib/client/onboarding-client";
 import FormError from "@/lib/components/common/forms/form-error";
+import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import {
@@ -19,8 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
-import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
-import { stepFiveSchema } from "@/lib/validation";
+import { stepFiveSchema, StepFiveValues } from "@/lib/validation";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
@@ -36,7 +36,8 @@ export function StepFive() {
     koalaPronouns,
     setKoalaPronouns,
     goBack,
-  } = useOnboardingStore();
+    hasStarted,
+  } = useOnboardingStore((state) => state);
   const [serverError, setServerError] = useState("");
 
   const mutation = useMutation({
@@ -44,12 +45,11 @@ export function StepFive() {
       completeStep5(values.name, values.pronouns, values.color),
   });
 
-
   const form = useForm({
     defaultValues: {
-      koalaColour: koalaColour || "#5EEAD4",
-      koalaName: koalaName ?? "",
-      koalaPronouns: koalaPronouns ?? ""
+      koalaColour: hasStarted && koalaColour ? koalaColour : "#5EEAD4",
+      koalaName: hasStarted && koalaName ? koalaName : "",
+      koalaPronouns: hasStarted && koalaPronouns ? koalaPronouns : "",
     },
     validators: {
       onSubmit: stepFiveSchema,
@@ -66,18 +66,16 @@ export function StepFive() {
       });
       if (result.isSuccess) {
         window.location.href = "/home";
+        return;
       }
 
       if (result.errorCode === "VALIDATION_ERROR") {
         Object.keys(result.errors!).forEach((key) => {
-          const fieldName = key.toLowerCase() as
-            | "koalaName"
-            | "koalaColour"
-            | "koalaPronouns";
+          const fieldName = key.toLowerCase() as StepFiveValues;
           form.setFieldMeta(fieldName, (prev) => ({
             ...prev,
             errorMap: {
-              onChange: [result.errors![key]],
+              onSubmit: [result.errors![key]],
             },
           }));
         });
@@ -92,9 +90,7 @@ export function StepFive() {
   return (
     <div className="text-center space-y-6 max-w-md w-full">
       <div className="space-y-2">
-        <h2 className="text-2xl font-semibold">
-          Meet your koala companion!
-        </h2>
+        <h2 className="text-2xl font-semibold">Meet your koala companion!</h2>
         <p className="text-gray-500 text-sm">
           Let&apos;s personalize your koala friend
         </p>
@@ -117,7 +113,15 @@ export function StepFive() {
                     <Input
                       placeholder="Koala's name"
                       value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => {
+                        field.handleChange(e.target.value);
+                        if (field.state.meta.errorMap.onSubmit) {
+                          field.setMeta((prev) => ({
+                            ...prev,
+                            errorMap: { ...prev.errorMap, onSubmit: undefined },
+                          }));
+                        }
+                      }}
                       className="bg-gray-100 border-0"
                       onBlur={field.handleBlur}
                     />
@@ -137,7 +141,15 @@ export function StepFive() {
                   <FormControl>
                     <KoalaColorPicker
                       value={field.state.value}
-                      onChange={(value) => field.handleChange(value)}
+                      onChange={(value) => {
+                        field.handleChange(value);
+                        if (field.state.meta.errorMap.onSubmit) {
+                          field.setMeta((prev) => ({
+                            ...prev,
+                            errorMap: { ...prev.errorMap, onSubmit: undefined },
+                          }));
+                        }
+                      }}
                       className="bg-gray-100 border-0"
                     />
                   </FormControl>
@@ -156,7 +168,15 @@ export function StepFive() {
                   <FormControl>
                     <Select
                       value={field.state.value}
-                      onValueChange={(value) => field.handleChange(value)}
+                      onValueChange={(value) => {
+                        field.handleChange(value);
+                        if (field.state.meta.errorMap.onSubmit) {
+                          field.setMeta((prev) => ({
+                            ...prev,
+                            errorMap: { ...prev.errorMap, onSubmit: undefined },
+                          }));
+                        }
+                      }}
                       onOpenChange={(open) => {
                         if (!open) field.handleBlur();
                       }}

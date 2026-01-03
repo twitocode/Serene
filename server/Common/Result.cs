@@ -7,7 +7,7 @@ public class Result
     [JsonPropertyName("isSuccess")]
     public bool IsSuccess { get; set; }
 
-    [JsonPropertyName("messsage")]
+    [JsonPropertyName("message")]
     public string? Message { get; set; }
 
     [JsonPropertyName("errorCode")]

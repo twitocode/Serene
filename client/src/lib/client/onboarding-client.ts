@@ -1,5 +1,7 @@
 import { apiFetch } from "@/lib/helpers/api-fetch";
-import { Result, School } from "@/lib/types/api-types";
+import { Result } from "@/lib/types/api-types";
+import { School } from "@/lib/types/index";
+
 
 export async function completeOnboardingStep<T>(
   step: number,

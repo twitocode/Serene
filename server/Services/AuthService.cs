@@ -19,12 +19,13 @@ public class AuthService : IAuthService
     private readonly UserManager<User> _userManager;
     private readonly TokenService _tokenService;
     private readonly ILogger<AuthService> _logger;
-
-    public AuthService(UserManager<User> userManager, TokenService tokenService, ILogger<AuthService> logger)
+    private readonly ApplicationDbContext _context;
+    public AuthService(UserManager<User> userManager, TokenService tokenService, ILogger<AuthService> logger, ApplicationDbContext context)
     {
         _userManager = userManager;
         _tokenService = tokenService;
         _logger = logger;
+        _context = context;
     }
 
     public async Task<CheckEmailResponseDto> CheckEmailAsync(string email)
@@ -83,6 +84,14 @@ public class AuthService : IAuthService
             throw new Exception("Sign up failed: " + errors);
         }
 
+        var profile = new Profile
+        {
+            UserId = user.Id,
+        };
+
+        _context.Profiles.Add(profile);
+        await _context.SaveChangesAsync();
+
         _logger.LogInformation("User {Email} signed up successfully", dto.Email);
         var token = _tokenService.GenerateToken(user);
 
@@ -121,7 +130,7 @@ public class AuthService : IAuthService
         {
             var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
             _logger.LogInformation("Google token validated for email: {Email}", payload.Email);
-            
+
             var user = await _userManager.FindByEmailAsync(payload.Email);
 
             if (user == null)
@@ -142,6 +151,14 @@ public class AuthService : IAuthService
                     _logger.LogError("Failed to create user from Google: {Errors}", string.Join(", ", createResult.Errors.Select(e => e.Description)));
                     throw new Exception("Failed to create user: " + string.Join(", ", createResult.Errors.Select(e => e.Description)));
                 }
+
+                // Ensure profile exists for new Google users
+                var profile = new Profile
+                {
+                    UserId = user.Id,
+                };
+                _context.Profiles.Add(profile);
+                await _context.SaveChangesAsync();
             }
 
             var logins = await _userManager.GetLoginsAsync(user);

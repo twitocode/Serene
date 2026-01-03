@@ -8,7 +8,7 @@ namespace Serene.Services;
 
 public interface IOnboardingService
 {
-    Task<object> GetStatusAsync(string userId);
+    Task<OnboardingStatusDto> GetStatusAsync(string userId);
     Task CompleteStep1Async(string userId, StepOneDto dto);
     Task CompleteStep2Async(string userId, StepTwoDto dto);
     Task CompleteStep3Async(string userId, StepThreeDto dto);
@@ -48,24 +48,31 @@ public class OnboardingService : IOnboardingService
         }
     }
 
-    public async Task<object> GetStatusAsync(string userId)
+    public async Task<OnboardingStatusDto> GetStatusAsync(string userId)
     {
         _logger.LogInformation("Getting onboarding status for user: {UserId}", userId);
         var user = await _context.Users
             .Where(u => u.Id == userId)
-            .Select(u => new
+            .Include(u => u.Profile)
+                .ThenInclude(p => p!.School)
+            .Select(u => new OnboardingStatusDto
             {
-                u.OnboardingStep,
-                u.OnboardingCompleted,
-                u.OnboardingStarted
+                Step = u.OnboardingStep,
+                Completed = u.OnboardingCompleted,
+                Started = u.OnboardingStarted,
+                Name = u.Name,
+                Age = u.Age,
+                Gender = u.Gender,
+                Pronouns = u.Pronouns,
+                CountryCode = u.CountryCode,
+                SchoolName = u.Profile != null && u.Profile.School != null ? u.Profile.School.Name : null,
+                KoalaName = u.Profile != null ? u.Profile.KoalaName : null,
+                KoalaColour = u.Profile != null ? u.Profile.KoalaColour : null,
+                KoalaPronouns = u.Profile != null ? u.Profile.KoalaPronouns : null,
             })
             .FirstOrDefaultAsync() ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
-        return new
-        {
-            Step = user.OnboardingStep,
-            Completed = user.OnboardingCompleted,
-            Started = user.OnboardingStarted
-        };
+
+        return user;
     }
 
     public async Task CompleteStep1Async(string userId, StepOneDto dto)

@@ -53,10 +53,15 @@ export const stepFiveSchema = z.object({
       /^[a-zA-Z\s'-]+$/,
       "Koala name can only contain letters, spaces, hyphens, and apostrophes"
     ),
-  koalaColour: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Please select a valid color for your koala"),
+  koalaColour: z
+    .string()
+    .regex(
+      /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
+      "Please select a valid color for your koala"
+    ),
   koalaPronouns: z
     .string()
-    .max(50, "Koala pronouns must be less than 50 characters")
+    .regex(pronounsRegex, "Koala's pronouns were not provided")
 });
 
 export const onboardingFormSchema = z.object({
@@ -73,3 +78,10 @@ export type StepThreeSchema = z.infer<typeof stepThreeSchema>;
 export type StepFourSchema = z.infer<typeof stepFourSchema>;
 export type StepFiveSchema = z.infer<typeof stepFiveSchema>;
 export type OnboardingSchema = z.infer<typeof onboardingFormSchema>;
+
+export type StepOneValues = keyof z.infer<typeof stepOneSchema>;
+export type StepTwoValues = keyof z.infer<typeof stepTwoSchema>;
+export type StepThreeValues = keyof z.infer<typeof stepThreeSchema>;
+export type StepFourValues = keyof z.infer<typeof stepFourSchema>;
+export type StepFiveValues = keyof z.infer<typeof stepFiveSchema>;
+export type OnboardingValues = keyof z.infer<typeof onboardingFormSchema>;

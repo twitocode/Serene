@@ -32,10 +32,10 @@ public class User : IdentityUser
     public int Age { get; set; } = 0;
 
     [Column("gender")]
-    public string Gender { get; set; } = "Prefer not to say";
+    public string Gender { get; set; } = string.Empty;
 
     [Column("pronouns")]
-    public string Pronouns { get; set; } = "They/Them";
+    public string Pronouns { get; set; } = string.Empty;
 
     [Column("country_code")]
     [MaxLength(2)]
