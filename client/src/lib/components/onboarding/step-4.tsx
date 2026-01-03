@@ -1,6 +1,5 @@
 "use client";
 
-import { OnboardingStepProps } from "@/lib/components/onboarding/props";
 import { Button } from "@/lib/components/ui/button";
 import {
   Select,
@@ -22,19 +21,16 @@ import {
   FormItem,
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
-import { universities, colleges } from "@/lib/data";
+import { colleges, universities } from "@/lib/data";
+import { ApiError } from "@/lib/helpers/api-fetch";
+import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
 import { stepFourSchema } from "@/lib/validation";
 import { useForm } from "@tanstack/react-form";
 import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
-import { ApiError } from "@/lib/helpers/api-fetch";
 
-export function StepFour({
-  school,
-  setSchool,
-  onNext,
-  onBack,
-}: Pick<OnboardingStepProps, "school" | "setSchool" | "onNext" | "onBack">) {
+export function StepFour() {
+  const { school, setSchool, submitStep, goBack } = useOnboardingStore();
   const [activeTab, setActiveTab] = useState("universities");
 
   const form = useForm({
@@ -44,13 +40,22 @@ export function StepFour({
     onSubmit: async ({ value }) => {
       setSchool(value.school);
       try {
-        await onNext();
+        await submitStep();
       } catch (error) {
-        if (error instanceof ApiError && error.status === 400 && error.data?.errors) {
+        if (
+          error instanceof ApiError &&
+          error.status === 400 &&
+          error.data?.errors
+        ) {
           const errors = error.data.errors;
           Object.keys(errors).forEach((key) => {
             // Map server fields to form field "school"
-            if (key === "Name" || key === "CountryCode" || key === "City" || key === "RegionCode") {
+            if (
+              key === "Name" ||
+              key === "CountryCode" ||
+              key === "City" ||
+              key === "RegionCode"
+            ) {
               form.setFieldMeta("school", (prev) => ({
                 ...prev,
                 errors: errors[key],
@@ -122,7 +127,7 @@ export function StepFour({
                           </SelectTrigger>
                           <SelectContent>
                             {universities.map(({ name }) => (
-                              <SelectItem key={name} value={name}>
+                              <SelectItem key={name} value={name!}>
                                 {name}
                               </SelectItem>
                             ))}
@@ -145,7 +150,7 @@ export function StepFour({
                           </SelectTrigger>
                           <SelectContent>
                             {colleges.map(({ name }) => (
-                              <SelectItem key={name} value={name}>
+                              <SelectItem key={name} value={name!}>
                                 {name}
                               </SelectItem>
                             ))}
@@ -162,7 +167,7 @@ export function StepFour({
 
           <div className="flex gap-4">
             <Button
-              onClick={onBack}
+              onClick={goBack}
               variant="outline"
               className="flex-1"
               type="button"

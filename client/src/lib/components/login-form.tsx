@@ -107,6 +107,7 @@ export function LoginForm({
 
   const handleBack = () => {
     setStep(1);
+    setLoginError;("")
   };
 
   return (

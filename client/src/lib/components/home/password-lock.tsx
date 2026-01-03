@@ -1,17 +1,19 @@
-import React from "react";
 import { Input } from "@/lib/components/ui/input";
-import { usePreferencesStore } from "@/lib/stores/preferences-store";
+import { usePreferences } from "@/lib/hooks/queries/use-preferences";
+import { usePasswordLockStore } from "@/lib/hooks/stores/lock-store";
 import { Lock, LockOpen } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+import React from "react";
 
 export default function PasswordLock() {
-  const { setLockState, pageLock } = usePreferencesStore();
+  const { setLockState } = usePasswordLockStore();
   const [isUnlocking, setIsUnlocking] = React.useState(false);
+  const { data: prefs } = usePreferences();
 
   const handleUnlock = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value === pageLock && !isUnlocking) {
+    if (e.target.value === prefs?.passwordLock && !isUnlocking) {
       setIsUnlocking(true);
-      
+
       // Trigger unlock animation sequence
       setTimeout(() => {
         setLockState(false);
@@ -20,12 +22,12 @@ export default function PasswordLock() {
   };
 
   return (
-    <motion.span 
+    <motion.span
       className="flex items-center space-x-4"
       initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ 
-        opacity: isUnlocking ? 0 : 1, 
-        scale: isUnlocking ? 1.2 : 1 
+      animate={{
+        opacity: isUnlocking ? 0 : 1,
+        scale: isUnlocking ? 1.2 : 1,
       }}
       transition={{ duration: 0.5, ease: "easeInOut" }}
     >
@@ -36,10 +38,10 @@ export default function PasswordLock() {
             initial={{ rotate: 0 }}
             animate={{ rotate: [0, -5, 5, 0] }}
             exit={{ rotate: 360, scale: 0 }}
-            transition={{ 
-              duration: 0.5, 
-              repeat: Infinity, 
-              repeatDelay: 3 
+            transition={{
+              duration: 0.5,
+              repeat: Infinity,
+              repeatDelay: 3,
             }}
           >
             <Lock size={32} />

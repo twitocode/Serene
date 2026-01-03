@@ -32,7 +32,7 @@ public class GlobalExceptionHandler : IExceptionHandler
         var response = new
         {
             Success = false,
-            Message = _env.IsProduction() ? exception.Message : "An unhandled exception has occurred", 
+            Message = _env.IsDevelopment() ? exception.Message : "An unhandled exception has occurred", 
             Code = exception.GetType().Name
         };
 

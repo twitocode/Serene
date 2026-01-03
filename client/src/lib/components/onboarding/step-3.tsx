@@ -1,7 +1,5 @@
 "use client";
 
-import { useForm } from "@tanstack/react-form";
-import { OnboardingStepProps } from "@/lib/components/onboarding/props";
 import { Button } from "@/lib/components/ui/button";
 import {
   Select,
@@ -10,18 +8,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/lib/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/lib/components/ui/tanstack-form";
-import { ChevronLeft } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/lib/components/ui/tanstack-form";
 import { countries } from "@/lib/data";
-import { stepThreeSchema } from "@/lib/validation";
 import { ApiError } from "@/lib/helpers/api-fetch";
+import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
+import { stepThreeSchema } from "@/lib/validation";
+import { useForm } from "@tanstack/react-form";
+import { ChevronLeft } from "lucide-react";
 
-export function StepThree({
-  country,
-  setCountry,
-  onNext,
-  onBack,
-}: Pick<OnboardingStepProps, "country" | "setCountry" | "onNext" | "onBack">) {
+export function StepThree() {
+  const { country, setCountry, submitStep, goBack } = useOnboardingStore();
   const form = useForm({
     defaultValues: {
       country: country || "",
@@ -29,12 +31,15 @@ export function StepThree({
     onSubmit: async ({ value }) => {
       setCountry(value.country);
       try {
-        await onNext();
+        await submitStep();
       } catch (error) {
-        if (error instanceof ApiError && error.status === 400 && error.data?.errors) {
+        if (
+          error instanceof ApiError &&
+          error.status === 400 &&
+          error.data?.errors
+        ) {
           const errors = error.data.errors;
           Object.keys(errors).forEach((key) => {
-            // Map server field "CountryCode" to form field "country"
             if (key === "CountryCode") {
               form.setFieldMeta("country", (prev) => ({
                 ...prev,
@@ -68,7 +73,8 @@ export function StepThree({
             name="country"
             validators={{
               onChange: ({ value }) => {
-                const result = stepThreeSchema.shape.countryCode.safeParse(value);
+                const result =
+                  stepThreeSchema.shape.countryCode.safeParse(value);
                 if (!result.success) {
                   return result.error.issues[0]?.message || "Invalid country";
                 }
@@ -107,7 +113,7 @@ export function StepThree({
 
           <div className="flex gap-4">
             <Button
-              onClick={onBack}
+              onClick={goBack}
               variant="outline"
               className="flex-1"
               type="button"

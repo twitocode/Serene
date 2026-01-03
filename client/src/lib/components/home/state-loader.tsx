@@ -1,8 +1,8 @@
 "use client";
 
 import { ApiError } from "@/lib/helpers/api-fetch";
+import { usePasswordLockStore } from "@/lib/hooks/stores/lock-store";
 import { fetchUser } from "@/lib/server/get-user";
-import { usePreferencesStore } from "@/lib/stores/preferences-store";
 import { User } from "@/lib/types/index";
 import { useQuery } from "@tanstack/react-query";
 import { PropsWithChildren, useEffect } from "react";
@@ -22,12 +22,12 @@ export default function StateLoader({ children }: PropsWithChildren<Props>) {
     isLocked,
     startInterval,
     stopInterval,
-  } = usePreferencesStore();
+  } = usePasswordLockStore();
 
   const timeout = 1000 * 60 * 60;
 
   useEffect(() => {
-    usePreferencesStore.persist.rehydrate();
+    usePasswordLockStore.persist.rehydrate();
 
     if (!lockInterval.isRunning && user?.preferences?.passwordLock) {
       startInterval();
@@ -43,11 +43,11 @@ export default function StateLoader({ children }: PropsWithChildren<Props>) {
       console.log("Interval tick!");
 
       // Get the latest state value
-      const currentLocked = usePreferencesStore.getState().isLocked;
+      const currentLocked = usePasswordLockStore.getState().isLocked;
       setLockState(!currentLocked);
     }, timeout);
 
-    usePreferencesStore.setState({
+    usePasswordLockStore.setState({
       lockInterval: { ...lockInterval, intervalId: intervalId as any },
     });
 

@@ -12,7 +12,17 @@ public class UserDto
     public Instant CreatedAt { get; set; }
     public Instant UpdatedAt { get; set; }
     
-    // public ProfileDto? Profile { get; set; }
+    public PreferencesDto? Preferences { get; set; }
+}
+
+public class PreferencesDto
+{
+    public string Id { get; set; } = string.Empty;
+    public string? Theme { get; set; }
+    public string? PasswordLock { get; set; }
+    public string UserId { get; set; } = string.Empty;
+    public Instant? CreatedAt { get; set; }
+    public Instant? UpdatedAt { get; set; }
 }
 
 public class AuthResponseDto

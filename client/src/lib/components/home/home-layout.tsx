@@ -6,38 +6,40 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/lib/components/ui/sidebar";
-import { usePreferencesStore } from "@/lib/stores/preferences-store";
+import { usePreferences } from "@/lib/hooks/queries/use-preferences";
+import { usePasswordLockStore } from "@/lib/hooks/stores/lock-store";
 import { Lock } from "lucide-react";
 import { PropsWithChildren } from "react";
-import { toast, Toaster } from "sonner";
+import { Toaster } from "sonner";
 
-interface Props {
-}
+interface Props {}
 
-export default function HomeLayout({  children,
-}: PropsWithChildren<Props>) {
-  const preferences = usePreferencesStore();
+export default function HomeLayout({ children }: PropsWithChildren<Props>) {
+  const { setLockState, isLocked } = usePasswordLockStore();
+  const { data: prefs } = usePreferences();
 
-  return !preferences.isLocked ? (
+  return !isLocked ? (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
         <header className="group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear">
           <div className="flex items-center gap-2 px-4 justify-between w-full">
             <SidebarTrigger className="-ml-1" />
-            <div className="">
-              <Toaster />
-              <Button
-                className="hover:bg-red-300"
-                variant="outline"
-                onClick={() => {
-                  toast("See you later...");
-                  preferences.setLockState(true);
-                }}
-              >
-                <Lock /> Lock Page
-              </Button>
-            </div>
+
+            {prefs?.passwordLock != null && (
+              <div className="">
+                <Toaster />
+                <Button
+                  className="hover:bg-red-300"
+                  variant="outline"
+                  onClick={() => {
+                    setLockState(true);
+                  }}
+                >
+                  <Lock /> Lock Page
+                </Button>
+              </div>
+          )}
           </div>
         </header>
         <div className="px-4">{children}</div>

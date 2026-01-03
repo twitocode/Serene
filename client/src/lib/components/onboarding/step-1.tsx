@@ -1,6 +1,5 @@
 "use client";
 
-import { OnboardingStepProps } from "@/lib/components/onboarding/props";
 import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import {
@@ -12,24 +11,23 @@ import {
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
 import { ApiError } from "@/lib/helpers/api-fetch";
+import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
 import { stepOneSchema } from "@/lib/validation";
-import { useForm } from "@tanstack/react-form";
+import { useForm, useStore } from "@tanstack/react-form";
 
-export function StepOne({
-  name,
-  setName,
-  onNext,
-}: Pick<OnboardingStepProps, "name" | "setName" | "onNext">) {
+export function StepOne() {
+  const { name, setName, submitStep } = useOnboardingStore();
+
   const form = useForm({
     defaultValues: {
       name: name || "",
     },
     validators: {
-      onSubmitAsync: async ({ formApi, value, signal }) => {
+      onSubmitAsync: async ({ value }) => {
         setName(value.name);
 
         try {
-          await onNext();
+          await submitStep();
         } catch (error) {
           if (
             error instanceof ApiError &&
@@ -48,19 +46,19 @@ export function StepOne({
             });
           }
 
-          if (error instanceof ApiError && error.data?.code === "DB_ERROR") {
-            console.log(error);
-            form.setFieldMeta("name", (prev) => ({
-              ...prev,
-              errors: ["This name is already taken"],
-            }));
+          if (
+            error instanceof ApiError &&
+            error.data?.code === "ArgumentException"
+          ) {
+            return { fields: { name: "This name is already taken" } };
           }
-          return { name: "not a proper name idiot" };
         }
       },
     },
-    onSubmit: async ({ value }) => {},
+    onSubmit: async () => {},
   });
+
+  const formErrorMap = useStore(form.store, (formState) => formState.errorMap);
 
   return (
     <div className="text-center space-y-6 max-w-md w-full">
@@ -110,6 +108,11 @@ export function StepOne({
               </FormField>
             )}
           </form.Field>
+          {formErrorMap.onChange ? (
+            <div>
+              <em>There was an error on the form: {formErrorMap.onChange}</em>
+            </div>
+          ) : null}
 
           <form.Subscribe
             selector={(state) => [state.canSubmit, state.isSubmitting]}

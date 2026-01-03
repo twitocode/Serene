@@ -1,6 +1,5 @@
 "use client";
 
-import { OnboardingStepProps } from "@/lib/components/onboarding/props";
 import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import {
@@ -18,33 +17,26 @@ import {
   FormLabel,
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
+import { ApiError } from "@/lib/helpers/api-fetch";
+import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
 import { stepFiveSchema } from "@/lib/validation";
 import { useForm } from "@tanstack/react-form";
 import { ChevronLeft } from "lucide-react";
-import { ApiError } from "@/lib/helpers/api-fetch";
 
 const koalaColors = ["Gray", "Brown", "White", "Black", "Cream", "Tan"];
 
-export function StepFive({
-  koalaName,
-  setKoalaName,
-  koalaColour,
-  setKoalaColor,
-  koalaPronouns,
-  setKoalaPronouns,
-  onNext,
-  onBack,
-}: Pick<
-  OnboardingStepProps,
-  | "koalaName"
-  | "setKoalaName"
-  | "koalaColour"
-  | "setKoalaColor"
-  | "koalaPronouns"
-  | "setKoalaPronouns"
-  | "onNext"
-  | "onBack"
->) {
+export function StepFive() {
+  const {
+    koalaName,
+    setKoalaName,
+    koalaColour,
+    setKoalaColor,
+    koalaPronouns,
+    setKoalaPronouns,
+    submitStep,
+    goBack,
+  } = useOnboardingStore();
+
   const form = useForm({
     defaultValues: {
       koalaName: koalaName || "",
@@ -56,9 +48,13 @@ export function StepFive({
       setKoalaColor(value.koalaColour);
       setKoalaPronouns(value.koalaPronouns);
       try {
-        await onNext();
+        await submitStep();
       } catch (error) {
-        if (error instanceof ApiError && error.status === 400 && error.data?.errors) {
+        if (
+          error instanceof ApiError &&
+          error.status === 400 &&
+          error.data?.errors
+        ) {
           const errors = error.data.errors;
           Object.keys(errors).forEach((key) => {
             if (key === "KoalaName") {
@@ -232,7 +228,7 @@ export function StepFive({
 
           <div className="flex gap-4">
             <Button
-              onClick={onBack}
+              onClick={goBack}
               variant="outline"
               className="flex-1"
               type="button"

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,12 @@ namespace Serene.Modules.Users;
 public class UserProfileResponseDto
 {
     public UserDto User { get; set; } = new();
+}
+
+public class UpdatePreferencesDto
+{
+    public string? Theme { get; set; }
+    public string? PasswordLock { get; set; }
 }
 
 [ApiController]
@@ -49,8 +56,16 @@ public class UsersController : ControllerBase
                 Image = u.Image,
                 EmailConfirmed = u.EmailConfirmed,
                 CreatedAt = u.CreatedAt,
-                UpdatedAt = u.UpdatedAt
-                // Populate Profile/Preferences here if added to UserDto
+                UpdatedAt = u.UpdatedAt,
+                Preferences = u.Preferences != null ? new PreferencesDto 
+                {
+                    Id = u.Preferences.Id,
+                    Theme = u.Preferences.Theme,
+                    PasswordLock = u.Preferences.PasswordLock,
+                    UserId = u.Preferences.UserId,
+                    CreatedAt = u.Preferences.CreatedAt,
+                    UpdatedAt = u.Preferences.UpdatedAt
+                } : null
             })
             .FirstOrDefaultAsync();
 
@@ -60,6 +75,41 @@ public class UsersController : ControllerBase
         }
 
         return Ok(new UserProfileResponseDto { User = user });
+    }
+
+    [HttpPut("preferences")]
+    [Authorize]
+    public async Task<ActionResult<PreferencesDto>> UpdatePreferences([FromBody] UpdatePreferencesDto dto)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        var user = await _context.Users
+            .Include(u => u.Preferences)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null) return NotFound();
+
+        if (user.Preferences == null)
+        {
+            user.Preferences = new Preferences { UserId = userId };
+            _context.Preferences.Add(user.Preferences);
+        }
+
+        if (dto.Theme != null) user.Preferences.Theme = dto.Theme;
+        if (dto.PasswordLock != null) user.Preferences.PasswordLock = dto.PasswordLock;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new PreferencesDto
+        {
+            Id = user.Preferences.Id,
+            Theme = user.Preferences.Theme,
+            PasswordLock = user.Preferences.PasswordLock,
+            UserId = user.Preferences.UserId,
+            CreatedAt = user.Preferences.CreatedAt,
+            UpdatedAt = user.Preferences.UpdatedAt
+        });
     }
 
     [HttpGet("exists/{email}")]

@@ -1,6 +1,5 @@
 "use client";
 
-import { OnboardingStepProps } from "@/lib/components/onboarding/props";
 import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import {
@@ -19,30 +18,23 @@ import {
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
 import { ApiError } from "@/lib/helpers/api-fetch";
+import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
 import { stepTwoSchema } from "@/lib/validation";
 import { useForm } from "@tanstack/react-form";
 import { ChevronLeft } from "lucide-react";
 
-export function StepTwo({
-  age,
-  setAge,
-  gender,
-  setGender,
-  pronouns,
-  setPronouns,
-  onNext,
-  onBack,
-}: Pick<
-  OnboardingStepProps,
-  | "age"
-  | "setAge"
-  | "gender"
-  | "setGender"
-  | "pronouns"
-  | "setPronouns"
-  | "onNext"
-  | "onBack"
->) {
+export function StepTwo() {
+  const {
+    age,
+    setAge,
+    gender,
+    setGender,
+    pronouns,
+    setPronouns,
+    submitStep,
+    goBack,
+  } = useOnboardingStore();
+
   const form = useForm({
     defaultValues: {
       age: age || 0,
@@ -54,9 +46,13 @@ export function StepTwo({
       setGender(value.gender);
       setPronouns(value.pronouns);
       try {
-        await onNext();
+        await submitStep();
       } catch (error) {
-        if (error instanceof ApiError && error.status === 400 && error.data?.errors) {
+        if (
+          error instanceof ApiError &&
+          error.status === 400 &&
+          error.data?.errors
+        ) {
           const errors = error.data.errors;
           Object.keys(errors).forEach((key) => {
             const fieldName = key.charAt(0).toLowerCase() + key.slice(1);
@@ -231,7 +227,7 @@ export function StepTwo({
 
           <div className="flex gap-4">
             <Button
-              onClick={onBack}
+              onClick={goBack}
               variant="outline"
               className="flex-1"
               type="button"

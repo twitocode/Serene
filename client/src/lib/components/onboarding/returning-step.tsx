@@ -1,15 +1,16 @@
 "use client";
-import { OnboardingStepProps } from "@/lib/components/onboarding/props";
+import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
 import { useEffect } from "react";
 
-export function ReturningStep({ onNext }: Pick<OnboardingStepProps, "onNext">) {
+export function ReturningStep() {
+  const { goNext } = useOnboardingStore();
   useEffect(() => {
     const timer = setTimeout(() => {
-      onNext();
+      goNext();
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [onNext]);
+  }, [goNext]);
 
   return (
     <div className="text-center space-y-8">

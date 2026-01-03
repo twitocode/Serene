@@ -38,6 +38,7 @@ export const auth = {
   },
 
   signOut: async () => {
+    document.cookie = "session_token=; max-age=0; path=/;";
     return apiFetch<{ success: boolean; message: string }>("/auth/sign-out", {
       method: "POST",
     });

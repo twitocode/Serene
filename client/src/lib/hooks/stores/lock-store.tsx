@@ -1,8 +1,7 @@
-import { Preferences, Theme } from "@/lib/types/index";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-type PreferenceState = Omit<Preferences, "user" | "createdAt" | "userId" | "id" | "updatedAt"> & {
+interface ClientLockState {
   isLocked: boolean;
   lockInterval: {
     isRunning: boolean;
@@ -14,14 +13,21 @@ type PreferenceState = Omit<Preferences, "user" | "createdAt" | "userId" | "id" 
   startInterval: () => void;
   stopInterval: () => void;
   tick: () => void;
-};
+}
 
-export const usePreferencesStore = create(
-  persist<PreferenceState>(
+interface PersistedState {
+  isLocked: boolean;
+  lockInterval: {
+    isRunning: boolean;
+    count: number;
+    lastTick: number | null;
+  };
+}
+
+export const usePasswordLockStore = create<ClientLockState>()(
+  persist(
     (set, get) => ({
-      passwordLock: "40",
       isLocked: false,
-      theme: "Light",
       lockInterval: {
         isRunning: false,
         intervalId: null,
@@ -30,6 +36,7 @@ export const usePreferencesStore = create(
       },
 
       setLockState: (newLockState) => set({ isLocked: newLockState }),
+
       startInterval: () => {
         set((state) => ({
           lockInterval: {
@@ -58,7 +65,7 @@ export const usePreferencesStore = create(
         set((state) => ({
           lockInterval: {
             ...state.lockInterval,
-            count: state.lockInterval.count! + 1,
+            count: state.lockInterval.count + 1,
             lastTick: Date.now(),
           },
         })),
@@ -67,7 +74,8 @@ export const usePreferencesStore = create(
       name: "interval-storage",
       storage: createJSONStorage(() => localStorage),
       skipHydration: true,
-      partialize: (state): any => ({
+      // Mapping the state to the PersistedState interface
+      partialize: (state): PersistedState => ({
         isLocked: state.isLocked,
         lockInterval: {
           isRunning: state.lockInterval.isRunning,

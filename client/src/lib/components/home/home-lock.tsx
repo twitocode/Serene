@@ -1,30 +1,30 @@
 "use client";
 import SereneLogo from "@/lib/components/common/serene-logo";
+import { usePasswordLockStore } from "@/lib/hooks/stores/lock-store";
+import { AnimatePresence, motion } from "motion/react";
 import PasswordLock from "./password-lock";
-import { usePreferencesStore } from "@/lib/stores/preferences-store";
-import { motion, AnimatePresence } from "motion/react";
 
 export default function HomeLock() {
-  const preferences = usePreferencesStore();
-  
+  const preferences = usePasswordLockStore();
+
   return (
     <AnimatePresence>
       {preferences.isLocked && (
-        <motion.div 
+        <motion.div
           className="fixed inset-0 z-50 grid grid-rows-3 h-screen py-20 px-20 bg-background"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          exit={{ 
+          exit={{
             opacity: 0,
             scale: 1.05,
-            filter: "blur(10px)"
+            filter: "blur(10px)",
           }}
-          transition={{ 
-            duration: 0.6, 
-            ease: "easeInOut"
+          transition={{
+            duration: 0.6,
+            ease: "easeInOut",
           }}
         >
-          <motion.section 
+          <motion.section
             className="flex justify-center items-start"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -33,14 +33,14 @@ export default function HomeLock() {
           >
             <SereneLogo iconSize={40} textSize="4xl" />
           </motion.section>
-          <motion.section 
+          <motion.section
             className="flex items-center flex-col justify-center space-y-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 30, filter: "blur(5px)" }}
             transition={{ delay: 0.5, duration: 0.4 }}
           >
-            <motion.h2 
+            <motion.h2
               className="font-medium font-sans text-5xl"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -51,7 +51,7 @@ export default function HomeLock() {
             </motion.h2>
             <PasswordLock />
           </motion.section>
-          <motion.section 
+          <motion.section
             className="flex items-end"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

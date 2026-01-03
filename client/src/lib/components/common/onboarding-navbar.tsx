@@ -11,18 +11,17 @@ import {
   NavigationMenuList,
 } from "@/lib/components/ui/navigation-menu";
 import { useIsMobile } from "@/lib/hooks/use-mobile";
+import { User } from "@/lib/types/index";
 
 interface Props {
-  user: {
-    name: string;
-  };
+  user: User;
 }
 
 export function OnBoardingNavbar({ user }: Props) {
   const isMobile = useIsMobile();
 
-  const logout = () => {
-    // authClient.signOut();
+  const logout = async () => {
+    await auth.signOut();
     //TODO: add a loading spinner
     window.location.href = "/";
   };
@@ -37,7 +36,7 @@ export function OnBoardingNavbar({ user }: Props) {
       <NavigationMenu viewport={isMobile}>
         <NavigationMenuList>
           <NavigationMenuItem className="space-x-4">
-            <span>Signed in as {user.name}</span> 
+            <span>Signed in as {user.name}</span>
             <Button onClick={logout}>Logout</Button>
           </NavigationMenuItem>
         </NavigationMenuList>

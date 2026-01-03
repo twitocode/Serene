@@ -1,18 +1,17 @@
-import { OnboardingStepProps } from "@/lib/components/onboarding/props";
+"use client";
+import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
 import { motion } from "motion/react";
 import { useEffect } from "react";
 
-export function IntermediateStepTwo({
-  name,
-  onNext,
-}: Pick<OnboardingStepProps, "name" | "onNext">) {
+export function IntermediateStepTwo() {
+  const { name, goNext } = useOnboardingStore();
   useEffect(() => {
     const timer = setTimeout(() => {
-      onNext();
+      goNext();
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [onNext]);
+  }, [goNext]);
 
   return (
     <div className="text-center space-y-8">
