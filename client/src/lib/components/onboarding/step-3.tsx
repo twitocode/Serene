@@ -1,5 +1,7 @@
 "use client";
 
+import { completeStep3 } from "@/lib/client/onboarding-client";
+import FormError from "@/lib/components/common/forms/form-error";
 import { Button } from "@/lib/components/ui/button";
 import {
   Select,
@@ -16,38 +18,57 @@ import {
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
 import { countries } from "@/lib/data";
-import { ApiError } from "@/lib/helpers/api-fetch";
 import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
-import { stepThreeSchema } from "@/lib/validation";
+import { StepThreeSchema, stepThreeSchema } from "@/lib/validation";
 import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
+import { useState } from "react";
 
 export function StepThree() {
-  const { country, setCountry, submitStep, goBack } = useOnboardingStore();
+  const {
+    countryCode: country,
+    setCountryCode: setCountry,
+    completeServerStep,
+    goBack,
+  } = useOnboardingStore();
+  const [serverError, setServerError] = useState("");
+
+  const mutation = useMutation({
+    mutationFn: completeStep3,
+  });
+
+  const defaultValues: StepThreeSchema = {
+    countryCode: country || "",
+  };
   const form = useForm({
-    defaultValues: {
-      country: country || "",
+    defaultValues,
+    validators: {
+      onSubmit: stepThreeSchema,
     },
     onSubmit: async ({ value }) => {
-      setCountry(value.country);
-      try {
-        await submitStep();
-      } catch (error) {
-        if (
-          error instanceof ApiError &&
-          error.status === 400 &&
-          error.data?.errors
-        ) {
-          const errors = error.data.errors;
-          Object.keys(errors).forEach((key) => {
-            if (key === "CountryCode") {
-              form.setFieldMeta("country", (prev) => ({
-                ...prev,
-                errors: errors[key],
-              }));
-            }
-          });
-        }
+      setCountry(value.countryCode);
+      const result = await mutation.mutateAsync(value.countryCode);
+
+      if (result.isSuccess) {
+        completeServerStep();
+        return;
+      }
+
+      if (result.errorCode === "VALIDATION_ERROR") {
+        Object.keys(result.errors!).forEach((key) => {
+          const fieldName = key.toLowerCase() as "countryCode";
+          form.setFieldMeta(fieldName, (prev) => ({
+            ...prev,
+            errorMap: {
+              onChange: [result.errors![key]],
+            },
+          }));
+        });
+      } else {
+        setServerError(
+          result.message ?? "Something weird happened on the server"
+        );
       }
     },
   });
@@ -70,7 +91,7 @@ export function StepThree() {
           className="space-y-4"
         >
           <form.Field
-            name="country"
+            name="countryCode"
             validators={{
               onChange: ({ value }) => {
                 const result =
@@ -110,6 +131,7 @@ export function StepThree() {
               </FormField>
             )}
           </form.Field>
+          <FormError error={serverError} />
 
           <div className="flex gap-4">
             <Button
@@ -128,9 +150,9 @@ export function StepThree() {
                 <Button
                   type="submit"
                   className="bg-black hover:bg-gray-800 flex-1"
-                  disabled={!canSubmit || isSubmitting}
+                  disabled={!canSubmit || isSubmitting || mutation.isPending}
                 >
-                  {isSubmitting ? "Validating..." : "Continue"}
+                  {mutation.isPending ? "Validating..." : "Continue"}
                 </Button>
               )}
             </form.Subscribe>

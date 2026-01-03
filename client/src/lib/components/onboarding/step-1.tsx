@@ -1,5 +1,7 @@
 "use client";
 
+import { completeStep1 } from "@/lib/client/onboarding-client";
+import FormError from "@/lib/components/common/forms/form-error";
 import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import {
@@ -10,55 +12,60 @@ import {
   FormLabel,
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
-import { ApiError } from "@/lib/helpers/api-fetch";
 import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
 import { stepOneSchema } from "@/lib/validation";
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 
 export function StepOne() {
-  const { name, setName, submitStep } = useOnboardingStore();
+  const { name, setName, completeServerStep } = useOnboardingStore();
+  const [serverError, setServerError] = useState("");
+
+  const mutation = useMutation({
+    mutationFn: completeStep1,
+  });
 
   const form = useForm({
     defaultValues: {
       name: name || "",
     },
     validators: {
-      onSubmitAsync: async ({ value }) => {
-        setName(value.name);
-
-        try {
-          await submitStep();
-        } catch (error) {
-          if (
-            error instanceof ApiError &&
-            error.status === 400 &&
-            error.data?.errors
-          ) {
-            const errors = error.data.errors;
-            Object.keys(errors).forEach((key) => {
-              const fieldName = key.charAt(0).toLowerCase() + key.slice(1);
-              if (fieldName === "name") {
-                form.setFieldMeta("name", (prev) => ({
-                  ...prev,
-                  errors: errors[key],
-                }));
-              }
-            });
-          }
-
-          if (
-            error instanceof ApiError &&
-            error.data?.code === "ArgumentException"
-          ) {
-            return { fields: { name: "This name is already taken" } };
-          }
-        }
-      },
+      onChange: stepOneSchema,
     },
-    onSubmit: async () => {},
-  });
+    onSubmit: async ({ value }) => {
+      setName(value.name);
+      const result = await mutation.mutateAsync(value.name);
 
-  const formErrorMap = useStore(form.store, (formState) => formState.errorMap);
+      if (result.isSuccess) {
+        completeServerStep();
+        return;
+      }
+
+      if (result.errorCode === "VALIDATION_ERROR") {
+        Object.keys(result.errors!).forEach((key) => {
+          const fieldName = key.toLowerCase() as "name";
+          form.setFieldMeta(fieldName, (prev) => ({
+            ...prev,
+            errorMap: {
+              onChange: [result.errors![key]],
+            },
+          }));
+        });
+      } else if (result.errorCode === "USERNAME_TAKEN") {
+        form.setFieldMeta("name", (prev) => ({
+          ...prev,
+          errorMap: {
+            onChange: [result.message],
+          },
+        }));
+      } else {
+        setServerError(
+          result.message ?? "Something weird happened on the server"
+        );
+      }
+    },
+  });
 
   return (
     <div className="text-center space-y-6 max-w-md w-full">
@@ -75,18 +82,7 @@ export function StepOne() {
           }}
           className="space-y-4"
         >
-          <form.Field
-            name="name"
-            validators={{
-              onChange: ({ value }) => {
-                const result = stepOneSchema.shape.name.safeParse(value);
-                if (!result.success) {
-                  return result.error.issues[0]?.message || "Invalid name";
-                }
-                return undefined;
-              },
-            }}
-          >
+          <form.Field name="name">
             {(field) => (
               <FormField field={field}>
                 <FormItem>
@@ -108,12 +104,7 @@ export function StepOne() {
               </FormField>
             )}
           </form.Field>
-          {formErrorMap.onChange ? (
-            <div>
-              <em>There was an error on the form: {formErrorMap.onChange}</em>
-            </div>
-          ) : null}
-
+          <FormError error={serverError} />
           <form.Subscribe
             selector={(state) => [state.canSubmit, state.isSubmitting]}
           >
@@ -121,9 +112,9 @@ export function StepOne() {
               <Button
                 type="submit"
                 className="bg-black hover:bg-gray-800 w-full"
-                disabled={!canSubmit || isSubmitting}
+                disabled={!canSubmit || isSubmitting || mutation.isPending}
               >
-                {isSubmitting ? "Validating..." : "Continue"}
+                {mutation.isPending ? "Validating..." : "Continue"}
               </Button>
             )}
           </form.Subscribe>

@@ -20,8 +20,6 @@ export async function getSession() {
     if (error instanceof ApiError && (error.status === 401 || error.status === 404)) {
       return null;
     }
-
-    console.error("Failed to get session:", error);
     return null;
   }
 }

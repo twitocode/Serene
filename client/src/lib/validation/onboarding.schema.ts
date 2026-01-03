@@ -21,7 +21,7 @@ export const stepTwoSchema = z.object({
   gender: z.enum(["Male", "Female", "Non-Binary", "Prefer not to say"], {
     message: "Please select a gender",
   }),
-  pronouns: z.string().regex(pronounsRegex, "Invalid pronouns").optional(),
+  pronouns: z.string().regex(pronounsRegex, "Invalid pronouns")
 });
 
 export const stepThreeSchema = z.object({
@@ -30,17 +30,17 @@ export const stepThreeSchema = z.object({
 
 export const stepFourSchema = z.object({
   name: z
-    .string()
-    .min(1, "School is required")
-    .min(2, "School name must be at least 2 characters")
-    .max(100, "School name must be less than 100 characters"),
+    .string(),
+    // .min(1, "School is required")
+    // .min(2, "School name must be at least 2 characters")
+    // .max(100, "School name must be less than 100 characters"),
   countryCode: z.enum(SUPPORTED_COUNTRY_CODES, {
     error: () => ({ message: "Please select a supported country" }),
   }),
   city: z.string("City not provided"),
   regionCode: z
     .string("Region code not provided")
-    .length(3, "Not a region code"),
+    // .length(3, "Not a region code"),
 });
 
 export const stepFiveSchema = z.object({
@@ -53,16 +53,14 @@ export const stepFiveSchema = z.object({
       /^[a-zA-Z\s'-]+$/,
       "Koala name can only contain letters, spaces, hyphens, and apostrophes"
     ),
-  koalaColour: z.enum(["Gray", "Brown", "White", "Black", "Cream", "Tan"], {
-    message: "Please select a color for your koala",
-  }),
+  koalaColour: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Please select a valid color for your koala"),
   koalaPronouns: z
     .string()
     .max(50, "Koala pronouns must be less than 50 characters")
-    .optional(),
 });
 
 export const onboardingFormSchema = z.object({
+  ...stepOneSchema.shape,
   ...stepTwoSchema.shape,
   ...stepThreeSchema.shape,
   ...stepFourSchema.shape,

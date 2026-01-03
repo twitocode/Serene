@@ -1,3 +1,11 @@
+export interface Result<T = void> {
+  isSuccess: boolean;
+  data: T | null;
+  message?: string | null;
+  errorCode?: string | null;
+  errors?: Record<string, string[]> | null;
+}
+
 export interface UserDto {
   id: string;
   email?: string | null;
@@ -6,7 +14,18 @@ export interface UserDto {
   emailConfirmed: boolean;
   createdAt: string;
   updatedAt: string;
+  preferences?: PreferencesDto | null;
 }
+
+export interface PreferencesDto {
+  id: string;
+  theme?: string | null;
+  passwordLock?: string | null;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface OnboardingStatusDto {
   step: number;
   completed: boolean;

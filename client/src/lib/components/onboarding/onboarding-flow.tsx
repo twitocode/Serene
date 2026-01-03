@@ -53,7 +53,6 @@ export function OnboardingFlow({ initialStep, hasStarted }: Props) {
 
   useEffect(() => {
     initialize(initialStep, hasStarted);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const transitionType: TransitionType = "scale";

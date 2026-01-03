@@ -1,25 +1,20 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serene.DTOs;
 using Serene.Services;
 
-namespace Serene.Modules.Onboarding;
+namespace Serene.Controllers;
 
 [ApiController]
 [Route("users/onboarding")]
-public class OnboardingController : ControllerBase
+public class OnboardingController : BaseApiController
 {
     private readonly IOnboardingService _onboardingService;
-    private readonly ILogger<OnboardingController> _logger;
 
-    public OnboardingController(IOnboardingService onboardingService, ILogger<OnboardingController> logger)
+    public OnboardingController(IOnboardingService onboardingService, ILogger<OnboardingController> logger) : base(logger)
     {
         _onboardingService = onboardingService;
-        _logger = logger;
     }
-
-    private string? GetUserId() => User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
     [HttpGet]
     [Authorize]
@@ -28,8 +23,7 @@ public class OnboardingController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return Unauthorized();
 
-        var status = await _onboardingService.GetStatusAsync(userId);
-        return Ok(status);
+        return await ExecuteWithResult(() => _onboardingService.GetStatusAsync(userId));
     }
 
     [HttpPost("step1")]
@@ -39,8 +33,7 @@ public class OnboardingController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return Unauthorized();
 
-        await _onboardingService.CompleteStep1Async(userId, body);
-        return Ok(new { Success = true });
+        return await ExecuteWithResult(() => _onboardingService.CompleteStep1Async(userId, body));
     }
 
     [HttpPost("step2")]
@@ -50,8 +43,7 @@ public class OnboardingController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return Unauthorized();
 
-        await _onboardingService.CompleteStep2Async(userId, body);
-        return Ok(new { Success = true });
+        return await ExecuteWithResult(() => _onboardingService.CompleteStep2Async(userId, body));
     }
 
     [HttpPost("step3")]
@@ -61,8 +53,7 @@ public class OnboardingController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return Unauthorized();
 
-        await _onboardingService.CompleteStep3Async(userId, body);
-        return Ok(new { Success = true });
+        return await ExecuteWithResult(() => _onboardingService.CompleteStep3Async(userId, body));
     }
 
     [HttpPost("step4")]
@@ -72,8 +63,7 @@ public class OnboardingController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return Unauthorized();
 
-        await _onboardingService.CompleteStep4Async(userId, body);
-        return Ok(new { Success = true });
+        return await ExecuteWithResult(() => _onboardingService.CompleteStep4Async(userId, body));
     }
 
     [HttpPost("step5")]
@@ -83,7 +73,6 @@ public class OnboardingController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return Unauthorized();
 
-        await _onboardingService.CompleteStep5Async(userId, body);
-        return Ok(new { Success = true });
+        return await ExecuteWithResult(() => _onboardingService.CompleteStep5Async(userId, body));
     }
 }

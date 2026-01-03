@@ -1,10 +1,12 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
 import { GalleryVerticalEnd } from "lucide-react";
 import { useState } from "react";
 
 import { auth } from "@/lib/auth";
+import FormError from "@/lib/components/common/forms/form-error";
 import { Button } from "@/lib/components/ui/button";
 import {
   Form,
@@ -16,25 +18,9 @@ import {
   FormMessage,
 } from "@/lib/components/ui/form";
 import { Input } from "@/lib/components/ui/input";
-import { ApiError } from "@/lib/helpers/api-fetch";
 import { cn } from "@/lib/utils";
+import { emailSchema, signupSchema } from "@/lib/validation";
 import Link from "next/link";
-import { z } from "zod";
-
-const emailSchema = z.object({
-  email: z.email(),
-});
-
-const signupSchema = z
-  .object({
-    email: z.email("Please enter a valid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
 
 interface Props {
   serverUrl: string;
@@ -49,6 +35,34 @@ export function SignupForm({
   const [email, setEmail] = useState("");
   const [signupError, setSignupError] = useState("");
 
+  const checkEmailMutation = useMutation({
+    mutationFn: auth.checkEmail,
+    onSuccess: (result) => {
+      if (result.isSuccess && result.data) {
+        if (!result.data.exists) {
+          setEmail(form.getFieldValue("email"));
+          setStep(2);
+          setSignupError("");
+        } else {
+          setSignupError("Account already exists. Please log in instead.");
+        }
+      } else {
+        setSignupError(result.message || "Failed to verify email.");
+      }
+    },
+  });
+
+  const signUpMutation = useMutation({
+    mutationFn: auth.signUp,
+    onSuccess: (result) => {
+      if (result.isSuccess) {
+        window.location.href = "/onboarding";
+      } else {
+        setSignupError(result.message || "Signup failed. Please try again.");
+      }
+    },
+  });
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -58,25 +72,13 @@ export function SignupForm({
     validators: {
       onChange: signupSchema,
     },
-
     onSubmit: async ({ value }) => {
       setSignupError("");
-      try {
-        await auth.signUp({
-          email: email,
-          password: value.password,
-          name: email.split("@")[0],
-        });
-
-        // Signup successful, redirect to onboarding or home
-        window.location.href = "/onboarding";
-      } catch (error) {
-        if (error instanceof ApiError) {
-          setSignupError(error.message);
-        } else {
-          setSignupError("Signup failed. Please try again.");
-        }
-      }
+      await signUpMutation.mutateAsync({
+        email: email,
+        password: value.password,
+        name: email.split("@")[0],
+      });
     },
   });
 
@@ -86,24 +88,8 @@ export function SignupForm({
     const emailValidation = emailSchema.safeParse({ email: emailValue });
 
     if (emailValidation.success) {
-      try {
-        const result = await auth.checkEmail(emailValue);
-
-        // Email should NOT exist for signup
-        if (!result.exists) {
-          setEmail(emailValue);
-          setStep(2);
-          setSignupError("")
-        } else {
-          setSignupError("Account already exists. Please log in instead.");
-        }
-      } catch (error) {
-        if (error instanceof ApiError) {
-          setSignupError(error.message);
-        } else {
-          setSignupError("Failed to verify email. Please try again.");
-        }
-      }
+      setSignupError("");
+      checkEmailMutation.mutate(emailValue);
     }
   };
 
@@ -167,14 +153,14 @@ export function SignupForm({
               )}
             </form.Field>
 
-            {signupError && (
-              <div className="text-sm text-red-600 text-center">
-                {signupError}
-              </div>
-            )}
+            <FormError error={signupError} />
 
-            <Button type="submit" className="w-full">
-              Continue
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={checkEmailMutation.isPending}
+            >
+              {checkEmailMutation.isPending ? "Checking..." : "Continue"}
             </Button>
           </form>
         ) : (
@@ -241,11 +227,7 @@ export function SignupForm({
               )}
             </form.Field>
 
-            {signupError && (
-              <div className="text-sm text-red-600 text-center">
-                {signupError}
-              </div>
-            )}
+            <FormError error={signupError} />
 
             <div className="flex gap-2">
               <Button
@@ -256,17 +238,14 @@ export function SignupForm({
               >
                 Back
               </Button>
-              <form.Subscribe selector={(state) => state.isSubmitting}>
-                {(isSubmitting) => (
-                  <Button
-                    type="submit"
-                    className="flex-1"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Creating..." : "Sign Up"}
-                  </Button>
-                )}
-              </form.Subscribe>
+
+              <Button
+                type="submit"
+                className="flex-1"
+                disabled={signUpMutation.isPending}
+              >
+                {signUpMutation.isPending ? "Creating..." : "Sign Up"}
+              </Button>
             </div>
           </form>
         )}

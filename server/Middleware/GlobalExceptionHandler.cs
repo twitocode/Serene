@@ -1,6 +1,6 @@
 using System.Net;
-using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
+using Serene.Common;
 
 namespace Serene.Middleware;
 
@@ -29,17 +29,15 @@ public class GlobalExceptionHandler : IExceptionHandler
             _ => (int)HttpStatusCode.InternalServerError
         };
 
-        var response = new
-        {
-            Success = false,
-            Message = _env.IsDevelopment() ? exception.Message : "An unhandled exception has occurred", 
-            Code = exception.GetType().Name
-        };
+        var message = _env.IsDevelopment() ? exception.Message : "An unexpected error occurred.";
+        var errorCode = exception.GetType().Name;
+
+        var result = Result.Failure(message, errorCode);
 
         httpContext.Response.ContentType = "application/json";
         httpContext.Response.StatusCode = statusCode;
 
-        await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(result, cancellationToken);
         return true;
     }
 }

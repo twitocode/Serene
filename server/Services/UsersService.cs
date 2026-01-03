@@ -1,0 +1,115 @@
+using Microsoft.EntityFrameworkCore;
+using Serene.Data;
+using Serene.DTOs;
+using Serene.Entities;
+using Serene.Controllers;
+
+namespace Serene.Services;
+
+public interface IUsersService
+{
+    Task<UserDto> GetUserProfileAsync(string userId);
+    Task<PreferencesDto> UpdatePreferencesAsync(string userId, UpdatePreferencesDto dto);
+    Task<bool> DoesUserExistAsync(string email);
+}
+
+public class UsersService : IUsersService
+{
+    private readonly ApplicationDbContext _context;
+    private readonly ILogger<UsersService> _logger;
+
+    public UsersService(ApplicationDbContext context, ILogger<UsersService> logger)
+    {
+        _context = context;
+        _logger = logger;
+    }
+
+    public async Task<UserDto> GetUserProfileAsync(string userId)
+    {
+        _logger.LogInformation("Fetching profile for user: {UserId}", userId);
+        var user = await _context.Users
+            .AsNoTracking()
+            .Include(u => u.Profile)
+            .Include(u => u.Preferences)
+            .Where(u => u.Id == userId)
+            .Select(u => new UserDto
+            {
+                Id = u.Id,
+                Email = u.Email,
+                Name = u.Name,
+                Image = u.Image,
+                EmailConfirmed = u.EmailConfirmed,
+                CreatedAt = u.CreatedAt,
+                UpdatedAt = u.UpdatedAt,
+                Preferences = u.Preferences != null ? new PreferencesDto
+                {
+                    Id = u.Preferences.Id,
+                    Theme = u.Preferences.Theme,
+                    PasswordLock = u.Preferences.PasswordLock,
+                    UserId = u.Preferences.UserId,
+                    CreatedAt = u.Preferences.CreatedAt,
+                    UpdatedAt = u.Preferences.UpdatedAt
+                } : null
+            })
+            .FirstOrDefaultAsync();
+
+        if (user == null)
+        {
+            _logger.LogWarning("User profile not found for ID: {UserId}", userId);
+            throw new KeyNotFoundException("User profile not found");
+        }
+
+        return user;
+    }
+
+    public async Task<PreferencesDto> UpdatePreferencesAsync(string userId, UpdatePreferencesDto dto)
+    {
+        _logger.LogInformation("Updating preferences for user: {UserId}", userId);
+        var user = await _context.Users
+            .Include(u => u.Preferences)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null)
+        {
+            _logger.LogWarning("Preference update failed: User {UserId} not found", userId);
+            throw new KeyNotFoundException("User not found");
+        }
+
+        if (user.Preferences == null)
+        {
+            _logger.LogInformation("Creating new preferences record for user: {UserId}", userId);
+            user.Preferences = new Preferences { UserId = userId };
+            _context.Preferences.Add(user.Preferences);
+        }
+
+        if (dto.Theme != null)
+        {
+            _logger.LogInformation("User {UserId} changed theme to {Theme}", userId, dto.Theme);
+            user.Preferences.Theme = dto.Theme;
+        }
+        
+        if (dto.PasswordLock != null)
+        {
+            _logger.LogInformation("User {UserId} updated password lock setting", userId);
+            user.Preferences.PasswordLock = dto.PasswordLock;
+        }
+
+        await _context.SaveChangesAsync();
+
+        return new PreferencesDto
+        {
+            Id = user.Preferences.Id,
+            Theme = user.Preferences.Theme,
+            PasswordLock = user.Preferences.PasswordLock,
+            UserId = user.Preferences.UserId,
+            CreatedAt = user.Preferences.CreatedAt,
+            UpdatedAt = user.Preferences.UpdatedAt
+        };
+    }
+
+    public async Task<bool> DoesUserExistAsync(string email)
+    {
+        _logger.LogInformation("Checking if user exists with email: {Email}", email);
+        return await _context.Users.AnyAsync(u => u.Email == email);
+    }
+}

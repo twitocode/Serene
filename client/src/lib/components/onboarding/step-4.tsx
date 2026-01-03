@@ -1,5 +1,7 @@
 "use client";
 
+import { completeStep4 } from "@/lib/client/onboarding-client";
+import FormError from "@/lib/components/common/forms/form-error";
 import { Button } from "@/lib/components/ui/button";
 import {
   Select,
@@ -21,48 +23,65 @@ import {
   FormItem,
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
-import { colleges, universities } from "@/lib/data";
-import { ApiError } from "@/lib/helpers/api-fetch";
+import { colleges, schools, universities } from "@/lib/data";
 import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
-import { stepFourSchema } from "@/lib/validation";
+import { StepFourSchema, stepFourSchema } from "@/lib/validation";
 import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
 
 export function StepFour() {
-  const { school, setSchool, submitStep, goBack } = useOnboardingStore();
+  const { school, setSchool, completeServerStep, goBack } =
+    useOnboardingStore();
   const [activeTab, setActiveTab] = useState("universities");
+  const [serverError, setServerError] = useState("");
+
+  const mutation = useMutation({
+    mutationFn: completeStep4,
+  });
+
+  const defaultValues: StepFourSchema = {
+    name: school,
+    countryCode: "CA",
+    regionCode: "",
+    city: "",
+  };
 
   const form = useForm({
-    defaultValues: {
-      school: school || "",
+    defaultValues,
+    validators: {
+      onSubmit: stepFourSchema,
     },
     onSubmit: async ({ value }) => {
-      setSchool(value.school);
-      try {
-        await submitStep();
-      } catch (error) {
-        if (
-          error instanceof ApiError &&
-          error.status === 400 &&
-          error.data?.errors
-        ) {
-          const errors = error.data.errors;
-          Object.keys(errors).forEach((key) => {
-            // Map server fields to form field "school"
-            if (
-              key === "Name" ||
-              key === "CountryCode" ||
-              key === "City" ||
-              key === "RegionCode"
-            ) {
-              form.setFieldMeta("school", (prev) => ({
-                ...prev,
-                errors: errors[key],
-              }));
-            }
-          });
-        }
+      const schoolObj = schools.find((s) => s.name === value.name);
+      if (!schoolObj) return;
+      setSchool(value.name);
+
+      const result = await mutation.mutateAsync(schoolObj);
+      if (result.isSuccess) {
+        completeServerStep();
+        return;
+      }
+
+      if (result.errorCode === "VALIDATION_ERROR") {
+        Object.keys(result.errors!).forEach((key) => {
+          const fieldName = key.toLowerCase() as
+            | "name"
+            | "countryCode"
+            | "regionCode"
+            | "city";
+          form.setFieldMeta(fieldName, (prev) => ({
+            ...prev,
+            errorMap: {
+              onChange: [result.errors![key]],
+            },
+          }));
+        });
+      } else {
+        setServerError(
+          result.message ?? "Something weird happened on the server"
+        );
       }
     },
   });
@@ -84,20 +103,7 @@ export function StepFour() {
           }}
           className="space-y-4"
         >
-          <form.Field
-            name="school"
-            validators={{
-              onChange: ({ value }) => {
-                const result = stepFourSchema.shape.name.safeParse(value);
-                if (!result.success) {
-                  return (
-                    result.error.issues[0]?.message || "Invalid school name"
-                  );
-                }
-                return undefined;
-              },
-            }}
-          >
+          <form.Field name="name">
             {(field) => (
               <FormField field={field}>
                 <FormItem>
@@ -164,6 +170,7 @@ export function StepFour() {
               </FormField>
             )}
           </form.Field>
+          <FormError error={serverError} />
 
           <div className="flex gap-4">
             <Button
@@ -182,9 +189,9 @@ export function StepFour() {
                 <Button
                   type="submit"
                   className="bg-black hover:bg-gray-800 flex-1"
-                  disabled={!canSubmit || isSubmitting}
+                  disabled={!canSubmit || isSubmitting || mutation.isPending}
                 >
-                  {isSubmitting ? "Validating..." : "Continue"}
+                  {mutation.isPending ? "Validating..." : "Continue"}
                 </Button>
               )}
             </form.Subscribe>

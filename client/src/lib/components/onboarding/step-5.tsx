@@ -1,5 +1,7 @@
 "use client";
 
+import { completeStep5 } from "@/lib/client/onboarding-client";
+import FormError from "@/lib/components/common/forms/form-error";
 import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import {
@@ -17,13 +19,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
-import { ApiError } from "@/lib/helpers/api-fetch";
 import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
 import { stepFiveSchema } from "@/lib/validation";
 import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
-
-const koalaColors = ["Gray", "Brown", "White", "Black", "Cream", "Tan"];
+import { useState } from "react";
+import { KoalaColorPicker } from "./koala-color-picker";
 
 export function StepFive() {
   const {
@@ -33,50 +35,56 @@ export function StepFive() {
     setKoalaColor,
     koalaPronouns,
     setKoalaPronouns,
-    submitStep,
     goBack,
   } = useOnboardingStore();
+  const [serverError, setServerError] = useState("");
+
+  const mutation = useMutation({
+    mutationFn: (values: { name: string; pronouns: string; color: string }) =>
+      completeStep5(values.name, values.pronouns, values.color),
+  });
+
 
   const form = useForm({
     defaultValues: {
-      koalaName: koalaName || "",
-      koalaColour: koalaColour || "",
-      koalaPronouns: koalaPronouns || "",
+      koalaColour: koalaColour || "#5EEAD4",
+      koalaName: koalaName ?? "",
+      koalaPronouns: koalaPronouns ?? ""
+    },
+    validators: {
+      onSubmit: stepFiveSchema,
     },
     onSubmit: async ({ value }) => {
       setKoalaName(value.koalaName);
       setKoalaColor(value.koalaColour);
       setKoalaPronouns(value.koalaPronouns);
-      try {
-        await submitStep();
-      } catch (error) {
-        if (
-          error instanceof ApiError &&
-          error.status === 400 &&
-          error.data?.errors
-        ) {
-          const errors = error.data.errors;
-          Object.keys(errors).forEach((key) => {
-            if (key === "KoalaName") {
-              form.setFieldMeta("koalaName", (prev) => ({
-                ...prev,
-                errors: errors[key],
-              }));
-            }
-            if (key === "KoalaColour") {
-              form.setFieldMeta("koalaColour", (prev) => ({
-                ...prev,
-                errors: errors[key],
-              }));
-            }
-            if (key === "KoalaPronouns") {
-              form.setFieldMeta("koalaPronouns", (prev) => ({
-                ...prev,
-                errors: errors[key],
-              }));
-            }
-          });
-        }
+
+      const result = await mutation.mutateAsync({
+        name: value.koalaName,
+        pronouns: value.koalaPronouns || "They/Them",
+        color: value.koalaColour,
+      });
+      if (result.isSuccess) {
+        window.location.href = "/home";
+      }
+
+      if (result.errorCode === "VALIDATION_ERROR") {
+        Object.keys(result.errors!).forEach((key) => {
+          const fieldName = key.toLowerCase() as
+            | "koalaName"
+            | "koalaColour"
+            | "koalaPronouns";
+          form.setFieldMeta(fieldName, (prev) => ({
+            ...prev,
+            errorMap: {
+              onChange: [result.errors![key]],
+            },
+          }));
+        });
+      } else {
+        setServerError(
+          result.message ?? "Something weird happened on the server"
+        );
       }
     },
   });
@@ -85,7 +93,7 @@ export function StepFive() {
     <div className="text-center space-y-6 max-w-md w-full">
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold">
-          Meet your koala companion! 🐨
+          Meet your koala companion!
         </h2>
         <p className="text-gray-500 text-sm">
           Let&apos;s personalize your koala friend
@@ -100,20 +108,7 @@ export function StepFive() {
           }}
           className="space-y-4"
         >
-          <form.Field
-            name="koalaName"
-            validators={{
-              onChange: ({ value }) => {
-                const result = stepFiveSchema.shape.koalaName.safeParse(value);
-                if (!result.success) {
-                  return (
-                    result.error.issues[0]?.message || "Invalid koala name"
-                  );
-                }
-                return undefined;
-              },
-            }}
-          >
+          <form.Field name="koalaName">
             {(field) => (
               <FormField field={field}>
                 <FormItem>
@@ -133,43 +128,18 @@ export function StepFive() {
             )}
           </form.Field>
 
-          <form.Field
-            name="koalaColour"
-            validators={{
-              onChange: ({ value }) => {
-                const result =
-                  stepFiveSchema.shape.koalaColour.safeParse(value);
-                if (!result.success) {
-                  return result.error.issues[0]?.message || "Invalid color";
-                }
-                return undefined;
-              },
-            }}
-          >
+          <form.Field name="koalaColour">
             {(field) => (
               <FormField field={field}>
                 <FormItem>
                   <FormLabel>Colour</FormLabel>
 
                   <FormControl>
-                    <Select
+                    <KoalaColorPicker
                       value={field.state.value}
-                      onValueChange={(value) => field.handleChange(value)}
-                      onOpenChange={(open) => {
-                        if (!open) field.handleBlur();
-                      }}
-                    >
-                      <SelectTrigger className="bg-gray-100 border-0">
-                        <SelectValue placeholder="Select koala's color" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {koalaColors.map((color) => (
-                          <SelectItem key={color} value={color}>
-                            {color}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      onChange={(value) => field.handleChange(value)}
+                      className="bg-gray-100 border-0"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -177,23 +147,7 @@ export function StepFive() {
             )}
           </form.Field>
 
-          <form.Field
-            name="koalaPronouns"
-            validators={{
-              onChange: ({ value }) => {
-                if (value) {
-                  const result =
-                    stepFiveSchema.shape.koalaPronouns.safeParse(value);
-                  if (!result.success) {
-                    return (
-                      result.error.issues[0]?.message || "Invalid pronouns"
-                    );
-                  }
-                }
-                return undefined;
-              },
-            }}
-          >
+          <form.Field name="koalaPronouns">
             {(field) => (
               <FormField field={field}>
                 <FormItem>
@@ -225,6 +179,7 @@ export function StepFive() {
               </FormField>
             )}
           </form.Field>
+          <FormError error={serverError} />
 
           <div className="flex gap-4">
             <Button
@@ -243,9 +198,9 @@ export function StepFive() {
                 <Button
                   type="submit"
                   className="bg-black hover:bg-gray-800 flex-1"
-                  disabled={!canSubmit || isSubmitting}
+                  disabled={!canSubmit || isSubmitting || mutation.isPending}
                 >
-                  {isSubmitting ? "Validating..." : "Complete"}
+                  {mutation.isPending ? "Validating..." : "Complete"}
                 </Button>
               )}
             </form.Subscribe>

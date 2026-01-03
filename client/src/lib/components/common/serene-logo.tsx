@@ -16,11 +16,12 @@ export default function SereneLogo({
     >
       {!noLogo && (
         <div className="text-sidebar-primary flex aspect-square items-center justify-center rounded-lg">
-          <Ribbon size={iconSize} />
+          {/* <Ribbon size={iconSize} /> */}
+          <img src="/logo.png" className="h-10" />
         </div>
       )}
       {!noText && (
-        <span className={`font-medium font-serif text-${textSize}`}>
+        <span className={`font-bold font-serif text-${textSize} `}>
           Serene
         </span>
       )}

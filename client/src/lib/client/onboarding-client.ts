@@ -1,56 +1,37 @@
-import { ApiError, apiFetch } from "@/lib/helpers/api-fetch";
-import { School } from "@/lib/types/index";
-import { toast } from "sonner";
+import { apiFetch } from "@/lib/helpers/api-fetch";
+import { Result, School } from "@/lib/types/api-types";
 
-export async function completeOnboardingStep(
+export async function completeOnboardingStep<T>(
   step: number,
   data: Record<string, unknown>
-): Promise<{ success: boolean }> {
-  try {
-    console.log(`trying to submit step ${step}`)
-    
-    return await apiFetch<{ success: boolean }>(
-      `/users/onboarding/step${step}`,
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-        cache: "no-store",
-      }
-    );
-  } catch (error) {
-    
-    console.error((error as ApiError).data)
-    if (error instanceof ApiError) {
-      if (error.data?.code === "INVALID_STEP_ORDER") {
-        throw error;
-      }
-      toast.error(error.message);
-    } else {
-      // 3. Handle Network/Unknown Errors (Offline, etc.)
-      toast.error("Something went wrong. Please check your connection.");
-    }
-    throw error;
-  }
+): Promise<Result<T>> {
+  console.log(`trying to submit step ${step}`);
+
+  return await apiFetch<T>(`/users/onboarding/step${step}`, {
+    method: "POST",
+    body: JSON.stringify(data),
+    cache: "no-store",
+  });
 }
 
 export async function completeStep1(
   name: string
-): Promise<{ success: boolean }> {
-  return completeOnboardingStep(1, { name });
+): Promise<Result<{ success: boolean }>> {
+  return completeOnboardingStep<{ success: boolean }>(1, { name });
 }
 
 export async function completeStep2(
   age: number,
   gender: string,
   pronouns: string
-): Promise<{ success: boolean }> {
-  return completeOnboardingStep(2, { age, gender, pronouns });
+): Promise<Result<{ success: boolean }>> {
+  return completeOnboardingStep<{ success: boolean }>(2, { age, gender, pronouns });
 }
 
 export async function completeStep3(
   countryCode: string
-): Promise<{ success: boolean }> {
-  return completeOnboardingStep(3, { countryCode });
+): Promise<Result<{ success: boolean }>> {
+  return completeOnboardingStep<{ success: boolean }>(3, { countryCode });
 }
 
 export async function completeStep4({
@@ -58,8 +39,8 @@ export async function completeStep4({
   city,
   countryCode,
   regionCode,
-}: Omit<School, "id">): Promise<{ success: boolean }> {
-  return completeOnboardingStep(4, {
+}: Omit<School, "id">): Promise<Result<{ success: boolean }>> {
+  return completeOnboardingStep<{ success: boolean }>(4, {
     name,
     city,
     countryCode,
@@ -71,8 +52,8 @@ export async function completeStep5(
   koalaName: string,
   koalaPronouns: string,
   koalaColour: string
-): Promise<{ success: boolean }> {
-  return completeOnboardingStep(5, {
+): Promise<Result<{ success: boolean }>> {
+  return completeOnboardingStep<{ success: boolean }>(5, {
     koalaName,
     koalaPronouns,
     koalaColour,

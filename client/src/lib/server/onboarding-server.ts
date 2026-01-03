@@ -4,14 +4,25 @@ import { redirect } from "next/navigation";
 
 // Onboarding API functions
 export async function checkOnboarding(): Promise<OnboardingStatusDto> {
-  try {
-    const response = await apiFetch<OnboardingStatusDto>("/users/onboarding");
-    console.log(response);
-    return response;
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 401) {
+  const result = await apiFetch<OnboardingStatusDto>("/users/onboarding");
+
+  if (!result.isSuccess) {
+    if (
+      result.errorCode?.includes("401") ||
+      result.errorCode === "UNAUTHORIZED"
+    ) {
       redirect("/login");
     }
-    throw error;
+    throw new ApiError(
+      result.message || "Failed to check onboarding",
+      500,
+      result
+    );
   }
+
+  if (!result.data) {
+    throw new Error("Onboarding data is missing");
+  }
+
+  return result.data;
 }

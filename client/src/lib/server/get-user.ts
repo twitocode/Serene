@@ -3,15 +3,25 @@ import { User } from "@/lib/types/index";
 import { redirect } from "next/navigation";
 
 export async function getAuthUser(): Promise<User> {
-try {
-  return await fetchUser();
-} catch (error) {
-  if (error instanceof ApiError && error.status === 401) {
+  const user = await fetchUser();
+  if (!user) {
     redirect("/login");
   }
-  throw error;
-}}
+  return user;
+}
 
-export async function fetchUser() {
-  return await apiFetch<User>("/users/me");
+export async function fetchUser(): Promise<User | null> {
+  const result = await apiFetch<User>("/users/me");
+
+  if (!result.isSuccess) {
+    if (
+      result.errorCode?.includes("401") ||
+      result.errorCode === "UNAUTHORIZED"
+    ) {
+      return null;
+    }
+    throw new ApiError(result.message || "Failed to fetch user", 500, result);
+  }
+
+  return result.data;
 }

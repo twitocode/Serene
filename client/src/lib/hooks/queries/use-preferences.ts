@@ -11,8 +11,9 @@ export function usePreferences() {
   return useQuery<Preferences>({
     queryKey: ["preferences"],
     queryFn: async () => {
-      const prefs = await apiFetch<Preferences>("/preferences");
-      return prefs;
+      // apiFetch automatically unwraps the 'data' property from the Result envelope.
+      const res = await apiFetch<Preferences>("/preferences");
+      return res.data!;
     },
   });
 }

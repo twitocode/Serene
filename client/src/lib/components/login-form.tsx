@@ -1,10 +1,12 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
 import { GalleryVerticalEnd } from "lucide-react";
 import { useState } from "react";
 
 import { auth } from "@/lib/auth";
+import FormError from "@/lib/components/common/forms/form-error";
 import { Button } from "@/lib/components/ui/button";
 import {
   Form,
@@ -16,7 +18,6 @@ import {
   FormMessage,
 } from "@/lib/components/ui/form";
 import { Input } from "@/lib/components/ui/input";
-import { ApiError } from "@/lib/helpers/api-fetch";
 import { checkOnboarding } from "@/lib/server/onboarding-server";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -44,6 +45,45 @@ export function LoginForm({
   const [email, setEmail] = useState("");
   const [loginError, setLoginError] = useState("");
 
+  const checkEmailMutation = useMutation({
+    mutationFn: auth.checkEmail,
+    onSuccess: (result) => {
+      if (result.isSuccess && result.data) {
+        if (result.data.exists) {
+          setEmail(form.getFieldValue("email"));
+          setStep(2);
+          setLoginError("");
+        } else {
+          setLoginError(
+            "No accounts associated with this email, maybe try signing up?"
+          );
+        }
+      } else {
+        setLoginError(result.message || "Failed to verify email.");
+      }
+    },
+  });
+
+  const signInMutation = useMutation({
+    mutationFn: auth.signIn,
+    onSuccess: async (result) => {
+      if (result.isSuccess) {
+        try {
+          const onboarding = await checkOnboarding();
+          if (onboarding.completed) {
+            window.location.href = "/home";
+          } else {
+            window.location.href = "/onboarding";
+          }
+        } catch (e) {
+          window.location.href = "/home";
+        }
+      } else {
+        setLoginError(result.message || "Login failed. Please try again.");
+      }
+    },
+  });
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -52,29 +92,12 @@ export function LoginForm({
     validators: {
       onChange: authSchema,
     },
-
     onSubmit: async ({ value }) => {
       setLoginError("");
-      try {
-        await auth.signIn({
-          email: email,
-          password: value.password,
-        });
-
-        // Login success, check onboarding
-        const onboarding = await checkOnboarding();
-        if (onboarding.completed) {
-          window.location.href = "/home";
-        } else {
-          window.location.href = "/onboarding";
-        }
-      } catch (error) {
-        if (error instanceof ApiError) {
-          setLoginError(error.message);
-        } else {
-          setLoginError("Login failed. Please try again.");
-        }
-      }
+      await signInMutation.mutateAsync({
+        email: email,
+        password: value.password,
+      });
     },
   });
 
@@ -84,30 +107,14 @@ export function LoginForm({
     const emailValidation = emailSchema.safeParse({ email: emailValue });
 
     if (emailValidation.success) {
-      try {
-        const result = await auth.checkEmail(emailValue);
-
-        if (result.exists) {
-          setEmail(emailValue);
-          setStep(2);
-        } else {
-          setLoginError(
-            "No accounts associated with this email, maybe try signing up?"
-          );
-        }
-      } catch (error) {
-        if (error instanceof ApiError) {
-          setLoginError(error.message);
-        } else {
-          setLoginError("Failed to verify email. Please try again.");
-        }
-      }
+      setLoginError("");
+      checkEmailMutation.mutate(emailValue);
     }
   };
 
   const handleBack = () => {
     setStep(1);
-    setLoginError;("")
+    setLoginError("");
   };
 
   return (
@@ -164,14 +171,14 @@ export function LoginForm({
                 </FormField>
               )}
             </form.Field>
+            <FormError error={loginError} />
 
-            {loginError && (
-              <div className="text-sm text-red-600 text-center">
-                {loginError}
-              </div>
-            )}
-            <Button type="submit" className="w-full">
-              Continue
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={checkEmailMutation.isPending}
+            >
+              {checkEmailMutation.isPending ? "Checking..." : "Continue"}
             </Button>
           </form>
         ) : (
@@ -210,11 +217,7 @@ export function LoginForm({
               )}
             </form.Field>
 
-            {loginError && (
-              <div className="text-sm text-red-600 text-center">
-                {loginError}
-              </div>
-            )}
+            <FormError error={loginError} />
 
             <div className="flex gap-2">
               <Button
@@ -225,17 +228,14 @@ export function LoginForm({
               >
                 Back
               </Button>
-              <form.Subscribe selector={(state) => state.isSubmitting}>
-                {(isSubmitting) => (
-                  <Button
-                    type="submit"
-                    className="flex-1"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Logging in..." : "Login"}
-                  </Button>
-                )}
-              </form.Subscribe>
+
+              <Button
+                type="submit"
+                className="flex-1"
+                disabled={signInMutation.isPending}
+              >
+                {signInMutation.isPending ? "Logging in..." : "Login"}
+              </Button>
             </div>
           </form>
         )}

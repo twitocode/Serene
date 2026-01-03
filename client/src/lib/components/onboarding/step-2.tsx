@@ -1,5 +1,7 @@
 "use client";
 
+import { completeStep2 } from "@/lib/client/onboarding-client";
+import FormError from "@/lib/components/common/forms/form-error";
 import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import {
@@ -17,11 +19,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
-import { ApiError } from "@/lib/helpers/api-fetch";
 import { useOnboardingStore } from "@/lib/hooks/stores/onboarding-store";
-import { stepTwoSchema } from "@/lib/validation";
+import { StepTwoSchema, stepTwoSchema } from "@/lib/validation";
 import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
+import { useState } from "react";
 
 export function StepTwo() {
   const {
@@ -31,52 +34,57 @@ export function StepTwo() {
     setGender,
     pronouns,
     setPronouns,
-    submitStep,
+    completeServerStep,
     goBack,
   } = useOnboardingStore();
+  const [serverError, setServerError] = useState("");
+
+  const mutation = useMutation({
+    mutationFn: (values: { age: number; gender: string; pronouns: string }) =>
+      completeStep2(values.age, values.gender, values.pronouns),
+  });
+
+  const defaultValues: StepTwoSchema = {
+    age: age ?? 0,
+    gender: "Prefer not to say",
+    pronouns: pronouns ?? ""
+  };
 
   const form = useForm({
-    defaultValues: {
-      age: age || 0,
-      gender: gender || "",
-      pronouns: pronouns || "",
+    defaultValues,
+    validators: {
+      onSubmit: stepTwoSchema,
     },
     onSubmit: async ({ value }) => {
       setAge(value.age);
       setGender(value.gender);
       setPronouns(value.pronouns);
-      try {
-        await submitStep();
-      } catch (error) {
-        if (
-          error instanceof ApiError &&
-          error.status === 400 &&
-          error.data?.errors
-        ) {
-          const errors = error.data.errors;
-          Object.keys(errors).forEach((key) => {
-            const fieldName = key.charAt(0).toLowerCase() + key.slice(1);
-            if (fieldName === "age") {
-              form.setFieldMeta("age", (prev) => ({
-                ...prev,
-                errors: errors[key],
-              }));
-            }
-            if (fieldName === "gender") {
-              form.setFieldMeta("gender", (prev) => ({
-                ...prev,
-                errors: errors[key],
-              }));
-            }
 
-            if (fieldName === "pronouns") {
-              form.setFieldMeta("pronouns", (prev) => ({
-                ...prev,
-                errors: errors[key],
-              }));
-            }
-          });
-        }
+      const result = await mutation.mutateAsync({
+        age: value.age,
+        gender: value.gender,
+        pronouns: value.pronouns.replace("-", " "),
+      });
+
+      if (result.isSuccess) {
+        completeServerStep();
+        return;
+      }
+
+      if (result.errorCode === "VALIDATION_ERROR") {
+        Object.keys(result.errors!).forEach((key) => {
+          const fieldName = key.toLowerCase() as "age" | "gender" | "pronouns";
+          form.setFieldMeta(fieldName, (prev) => ({
+            ...prev,
+            errorMap: {
+              onChange: [result.errors![key]],
+            },
+          }));
+        });
+      } else {
+        setServerError(
+          result.message ?? "Something weird happened on the server"
+        );
       }
     },
   });
@@ -100,15 +108,6 @@ export function StepTwo() {
         >
           <form.Field
             name="age"
-            validators={{
-              onChange: ({ value }) => {
-                const result = stepTwoSchema.shape.age.safeParse(value);
-                if (!result.success) {
-                  return result.error.issues[0]?.message || "Invalid age";
-                }
-                return undefined;
-              },
-            }}
           >
             {(field) => (
               <FormField field={field}>
@@ -134,15 +133,6 @@ export function StepTwo() {
           <div className="grid grid-cols-2 gap-4">
             <form.Field
               name="gender"
-              validators={{
-                onChange: ({ value }) => {
-                  const result = stepTwoSchema.shape.gender.safeParse(value);
-                  if (!result.success) {
-                    return result.error.issues[0]?.message || "Invalid gender";
-                  }
-                  return undefined;
-                },
-              }}
             >
               {(field) => (
                 <FormField field={field}>
@@ -151,7 +141,7 @@ export function StepTwo() {
                     <FormControl>
                       <Select
                         value={field.state.value}
-                        onValueChange={(value) => field.handleChange(value)}
+                        onValueChange={(value) => field.handleChange(value as any)}
                         onOpenChange={(open) => {
                           if (!open) field.handleBlur();
                         }}
@@ -177,20 +167,7 @@ export function StepTwo() {
 
             <form.Field
               name="pronouns"
-              validators={{
-                onChange: ({ value }) => {
-                  if (value) {
-                    const result =
-                      stepTwoSchema.shape.pronouns.safeParse(value);
-                    if (!result.success) {
-                      return (
-                        result.error.issues[0]?.message || "Invalid pronouns"
-                      );
-                    }
-                  }
-                  return undefined;
-                },
-              }}
+
             >
               {(field) => (
                 <FormField field={field}>
@@ -224,6 +201,7 @@ export function StepTwo() {
               )}
             </form.Field>
           </div>
+          <FormError error={serverError} />
 
           <div className="flex gap-4">
             <Button
@@ -242,9 +220,9 @@ export function StepTwo() {
                 <Button
                   type="submit"
                   className="bg-black hover:bg-gray-800 flex-1"
-                  disabled={!canSubmit || isSubmitting}
+                  disabled={!canSubmit || isSubmitting || mutation.isPending}
                 >
-                  {isSubmitting ? "Validating..." : "Continue"}
+                  {mutation.isPending ? "Validating..." : "Continue"}
                 </Button>
               )}
             </form.Subscribe>

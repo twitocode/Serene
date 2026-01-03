@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
@@ -32,14 +33,33 @@ try
         .AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+        })
+        .ConfigureApiBehaviorOptions(options =>
+        {
+            options.InvalidModelStateResponseFactory = context =>
+            {
+                var errors = context.ModelState
+                    .Where(e => e.Value?.Errors.Count > 0)
+                    .ToDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToArray()
+                    );
+
+                return new BadRequestObjectResult(new
+                {
+                    isSuccess = false,
+                    data = (object?)null,
+                    error = "One or more validation errors occurred.",
+                    errorCode = "VALIDATION_ERROR",
+                    errors = errors
+                });
+            };
         });
 
     // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
     builder.Services.AddOpenApi();
 
-    const string defaultConnectionString = "Host=localhost;Database=serene_db;Username=postgres;Password=postgres";
-
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? defaultConnectionString;
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentException("DB string not provided");
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(connectionString, o => o.UseNodaTime()));
 
@@ -61,6 +81,8 @@ try
 
     builder.Services.AddScoped<TokenService>();
     builder.Services.AddScoped<IOnboardingService, OnboardingService>();
+    builder.Services.AddScoped<IAuthService, AuthService>();
+    builder.Services.AddScoped<IUsersService, UsersService>();
 
 
     builder.Services.AddAuthentication(options =>

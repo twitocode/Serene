@@ -7,20 +7,18 @@ using Serene.Data;
 using Serene.DTOs;
 using Serene.Entities;
 
-namespace Serene.Modules.Users;
+namespace Serene.Controllers;
 
 
 [ApiController]
 [Route("preferences")]
-public class PreferencesController : ControllerBase
+public class PreferencesController : BaseApiController
 {
     private readonly ApplicationDbContext _context;
-    private readonly ILogger<PreferencesController> _logger;
 
-    public PreferencesController(ApplicationDbContext context, ILogger<PreferencesController> logger)
+    public PreferencesController(ApplicationDbContext context, ILogger<PreferencesController> logger) : base(logger)
     {
         _context = context;
-        _logger = logger;
     }
 
     [HttpGet]
@@ -59,4 +57,41 @@ public class PreferencesController : ControllerBase
 
         return Ok(prefs);
     }
+
+
+    [HttpPut]
+    [Authorize]
+    public async Task<IActionResult> UpdatePreferences([FromBody] UpdatePreferencesDto dto)
+    {
+        return await ExecuteWithResult(async () =>
+        {
+            var userId = GetUserId();
+            if (string.IsNullOrEmpty(userId)) throw new UnauthorizedAccessException();
+
+            var user = await _context.Users
+                .Include(u => u.Preferences)
+                .FirstOrDefaultAsync(u => u.Id == userId) ?? throw new KeyNotFoundException("User not found");
+            if (user.Preferences == null)
+            {
+                user.Preferences = new Preferences { UserId = userId };
+                _context.Preferences.Add(user.Preferences);
+            }
+
+            if (dto.Theme != null) user.Preferences.Theme = dto.Theme;
+            if (dto.PasswordLock != null) user.Preferences.PasswordLock = dto.PasswordLock;
+
+            await _context.SaveChangesAsync();
+
+            return new PreferencesDto
+            {
+                Id = user.Preferences.Id,
+                Theme = user.Preferences.Theme,
+                PasswordLock = user.Preferences.PasswordLock,
+                UserId = user.Preferences.UserId,
+                CreatedAt = user.Preferences.CreatedAt,
+                UpdatedAt = user.Preferences.UpdatedAt
+            };
+        });
+    }
+
 }

@@ -1,12 +1,10 @@
 import { env } from "@/lib/env";
-// ❌ REMOVED: import { headers as nextHeaders } from "next/headers";
+import { Result } from "../types/api-types";
 
-// 1. Custom Error for better handling in UI components
 export class ApiError extends Error {
   constructor(
     public message: string,
     public status: number,
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public data?: any
   ) {
@@ -15,79 +13,78 @@ export class ApiError extends Error {
   }
 }
 
-interface ApiFetchOptions extends RequestInit {
-  skipUnwrap?: boolean; // Option to bypass the auto-unwrapping
-}
-
-export async function apiFetch<T = unknown>(
+export async function apiFetch<T = void>(
   endpoint: string,
-  { skipUnwrap = false, ...options }: ApiFetchOptions = {}
-): Promise<T> {
+  options: RequestInit = {}
+): Promise<Result<T>> {
   const isServer = typeof window === "undefined";
 
   // Select URL based on environment
   const baseUrl = isServer
-    ? env.INTERNAL_SERVER_URL // Docker/Localhost internal URL
-    : env.NEXT_PUBLIC_SERVER_URL; // Public domain
+    ? env.INTERNAL_SERVER_URL
+    : env.NEXT_PUBLIC_SERVER_URL;
 
-  // Prepare Headers
   const headers = new Headers(options.headers);
   headers.set("Content-Type", "application/json");
 
-  // Server-side: Propagate Auth & Origin
   if (isServer) {
-    // We only call the cookie helper on the server
     const cookieStore = await getCookiesDynamically();
-
-    // cookieStore.toString() formats it correctly as a Cookie header string
     headers.set("Cookie", cookieStore.toString());
-
-    // Required for Better Auth/NextAuth to verify origin on server-to-server calls
     headers.set("Origin", env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000");
   } else {
-    // Client-side: Include credentials (cookies) automatically
     options.credentials = "include";
   }
 
-  const response = await fetch(`${baseUrl}${endpoint}`, {
-    ...options,
-    headers,
-  });
+  try {
+    const response = await fetch(`${baseUrl}${endpoint}`, {
+      ...options,
+      headers,
+    });
 
-  // 2. Handle Errors
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => null);
-
-    throw new ApiError(
-      errorData?.message ||
-        response.statusText ||
-        "An unexpected error occurred",
-      response.status,
-      errorData
-    );
-  }
-
-  // 3. Handle Response
-  // Return empty object if status is 204 (No Content)
-  if (response.status === 204) {
-    return {} as T;
-  }
-
-  const json = await response.json();
-
-  // 4. "Magic" Unwrap
-  if (!skipUnwrap && json && typeof json === "object" && !Array.isArray(json)) {
-    const keys = Object.keys(json);
-    if (keys.length === 1) {
-      return json[keys[0]];
+    // 204 No Content
+    if (response.status === 204) {
+      return { isSuccess: true, data: null };
     }
-  }
 
-  return json;
+    const json = await response.json().catch(() => null);
+
+    if (json && typeof json === "object" && "isSuccess" in json) {
+      return json as Result<T>;
+    }
+
+    // ASP.NET ProblemDetails (RFC 7807)
+    if (!response.ok && json && (json.title || json.errors)) {
+      return {
+        isSuccess: false,
+        data: null,
+        message: json.title || json.detail || "Validation failed",
+        errorCode: json.type || "VALIDATION_ERROR",
+        errors: json.errors,
+      };
+    }
+
+    if (response.ok) {
+      return { isSuccess: true, data: json as T };
+    }
+
+    //generic http
+    return {
+      isSuccess: false,
+      data: null,
+      message: response.statusText || "An unexpected error occurred",
+      errorCode: `HTTP_${response.status}`,
+    };
+  } catch (error) {
+    return {
+      isSuccess: false,
+      data: null,
+      message:
+        error instanceof Error ? error.message : "Network request failed",
+      errorCode: "NETWORK_ERROR",
+    };
+  }
 }
 
-// Helper: Dynamically import next/headers ONLY when called.
-// This prevents the "next/headers" import from crashing the browser bundle.
 async function getCookiesDynamically() {
   const { cookies } = await import("next/headers");
   return cookies();
