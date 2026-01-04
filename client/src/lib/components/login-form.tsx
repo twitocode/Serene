@@ -15,8 +15,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from "@/lib/components/ui/tanstack-form";
+  FormMessage,} from "@/lib/components/ui/tanstack-form";
 import { Input } from "@/lib/components/ui/input";
 import { checkOnboarding } from "@/lib/server/onboarding-server";
 import { cn } from "@/lib/utils";
