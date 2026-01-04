@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/helpers/api-fetch";
-import { Preferences, User } from "@/lib/types/index";
+import { User } from "@/lib/types/index";
 import { useQuery } from "@tanstack/react-query";
 
 export function useUser() {

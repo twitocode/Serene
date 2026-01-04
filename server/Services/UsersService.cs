@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using Serene.Controllers;
 using Serene.Data;
 using Serene.DTOs;
 using Serene.Entities;
-using Serene.Controllers;
 
 namespace Serene.Services;
 
@@ -30,6 +30,7 @@ public class UsersService : IUsersService
         var user = await _context.Users
             .AsNoTracking()
             .Include(u => u.Profile)
+                .ThenInclude(p => p!.School)
             .Include(u => u.Preferences)
             .Where(u => u.Id == userId)
             .Select(u => new UserDto
@@ -49,6 +50,25 @@ public class UsersService : IUsersService
                     UserId = u.Preferences.UserId,
                     CreatedAt = u.Preferences.CreatedAt,
                     UpdatedAt = u.Preferences.UpdatedAt
+                } : null,
+                Profile = u.Profile != null ? new ProfileDto
+                {
+                    Id = u.Profile.Id,
+                    LongestStreak = u.Profile.LongestStreak,
+                    CurrentStreak = u.Profile.CurrentStreak,
+                    UserId = u.Id,
+                    KoalaColour = u.Profile.KoalaColour,
+                    KoalaName = u.Profile.KoalaName,
+                    KoalaPronouns = u.Profile.KoalaPronouns,
+                    School = u.Profile.School != null ? new SchoolDto
+                    {
+                        Id = u.Profile.School.Id,
+                        Name = u.Profile.School.Name!,
+                        City = u.Profile.School.City!,
+                        RegionCode = u.Profile.School.RegionCode!,
+                        UserId = u.Id,
+                        CountryCode = u.Profile.School.CountryCode,
+                    } : null,
                 } : null
             })
             .FirstOrDefaultAsync();
@@ -87,7 +107,7 @@ public class UsersService : IUsersService
             _logger.LogInformation("User {UserId} changed theme to {Theme}", userId, dto.Theme);
             user.Preferences.Theme = dto.Theme;
         }
-        
+
         if (dto.PasswordLock != null)
         {
             _logger.LogInformation("User {UserId} updated password lock setting", userId);

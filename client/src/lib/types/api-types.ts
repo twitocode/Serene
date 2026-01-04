@@ -26,6 +26,26 @@ export interface PreferencesDto {
   updatedAt: string;
 }
 
+export interface ProfileDto {
+  id: string;
+  koalaName: string | null;
+  koalaColour: string | null;
+  koalaPronouns: string | null;
+  currentStreak: number;
+  longestStreak: number;
+  userId: string;
+  schoolId: string;
+}
+
+export interface SchoolDto {
+  id: string;
+  city: string;
+  name: string;
+  countryCode: string;
+  regionCode: string;
+  userId: string;
+}
+
 export interface OnboardingStatusDto {
   step: number;
   completed: boolean;

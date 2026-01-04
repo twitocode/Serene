@@ -7,7 +7,7 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "@/lib/components/ui/sidebar";
-import { Home, Library, ListMusic, Pencil, TrendingUp } from "lucide-react";
+import { CompassIcon, Handshake, History, Home, HouseHeart, Library, ListMusic, Navigation2, Pencil, TrendingUp } from "lucide-react";
 import * as React from "react";
 
 import NavMain from "./nav-main";
@@ -20,11 +20,12 @@ const data = {
     image: "/avatars/shadcn.jpg",
   },
   navMain: [
-    { title: "Home", url: "/home", icon: Home },
-    { title: "Reflect", url: "/home/reflect", icon: Pencil, isActive: true },
-    { title: "Ambience", url: "/home/ambience", icon: ListMusic },
+    { title: "Home", url: "/home", icon: HouseHeart },
+    { title: "Checkin", url: "/home/checkin", icon: Pencil, isActive: true },
+    { title: "Community", url: "/home/community", icon: Handshake },
+    { title: "Explore", url: "/home/explore", icon: CompassIcon },
     { title: "Trends", url: "/home/trends", icon: TrendingUp },
-    { title: "Content Library", url: "/home/library", icon: Library },
+    { title: "History", url: "/home/history", icon: History },
   ],
 };
 

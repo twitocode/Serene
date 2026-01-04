@@ -11,8 +11,9 @@ public class UserDto
     public bool EmailConfirmed { get; set; }
     public Instant CreatedAt { get; set; }
     public Instant UpdatedAt { get; set; }
-    
+
     public PreferencesDto? Preferences { get; set; }
+    public ProfileDto? Profile { get; set; }
 }
 
 public class PreferencesDto
@@ -23,6 +24,30 @@ public class PreferencesDto
     public string UserId { get; set; } = string.Empty;
     public Instant? CreatedAt { get; set; }
     public Instant? UpdatedAt { get; set; }
+}
+public class ProfileDto
+{
+    public string Id { get; set; } = string.Empty;
+    public string? KoalaName { get; set; } = string.Empty;
+    public string? KoalaColour { get; set; } = string.Empty;
+    public string? KoalaPronouns { get; set; } = string.Empty;
+    public int CurrentStreak { get; set; }
+    public int LongestStreak { get; set; }
+
+    public string UserId { get; set; } = string.Empty;
+    public SchoolDto? School { get; set; }
+}
+
+public class SchoolDto
+{
+    public string Id { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string CountryCode { get; set; } = string.Empty;
+    public string RegionCode { get; set; } = string.Empty;
+
+    public string UserId { get; set; } = string.Empty;
+
 }
 
 public class AuthResponseDto
