@@ -8,12 +8,12 @@ namespace Serene.Services;
 
 public interface IOnboardingService
 {
-    Task<OnboardingStatusDto> GetStatusAsync(string userId);
-    Task CompleteStep1Async(string userId, StepOneDto dto);
-    Task CompleteStep2Async(string userId, StepTwoDto dto);
-    Task CompleteStep3Async(string userId, StepThreeDto dto);
-    Task CompleteStep4Async(string userId, StepFourDto dto);
-    Task CompleteStep5Async(string userId, StepFiveDto dto);
+    Task<OnboardingStatusResponse> GetStatusAsync(string userId);
+    Task CompleteStep1Async(string userId, StepOneRequest dto);
+    Task CompleteStep2Async(string userId, StepTwoRequest dto);
+    Task CompleteStep3Async(string userId, StepThreeRequest dto);
+    Task CompleteStep4Async(string userId, StepFourRequest dto);
+    Task CompleteStep5Async(string userId, StepFiveRequest dto);
 }
 
 public class OnboardingService : IOnboardingService
@@ -48,14 +48,14 @@ public class OnboardingService : IOnboardingService
         }
     }
 
-    public async Task<OnboardingStatusDto> GetStatusAsync(string userId)
+    public async Task<OnboardingStatusResponse> GetStatusAsync(string userId)
     {
         _logger.LogInformation("Getting onboarding status for user: {UserId}", userId);
         var user = await _context.Users
             .Where(u => u.Id == userId)
             .Include(u => u.Profile)
                 .ThenInclude(p => p!.School)
-            .Select(u => new OnboardingStatusDto
+            .Select(u => new OnboardingStatusResponse
             {
                 Step = u.OnboardingStep,
                 Completed = u.OnboardingCompleted,
@@ -75,7 +75,7 @@ public class OnboardingService : IOnboardingService
         return user;
     }
 
-    public async Task CompleteStep1Async(string userId, StepOneDto dto)
+    public async Task CompleteStep1Async(string userId, StepOneRequest dto)
     {
         _logger.LogInformation("User {UserId} completing Onboarding Step 1 (Identity)", userId);
         await ValidateStep(userId, 1);
@@ -94,7 +94,7 @@ public class OnboardingService : IOnboardingService
         await _context.SaveChangesAsync();
     }
 
-    public async Task CompleteStep2Async(string userId, StepTwoDto dto)
+    public async Task CompleteStep2Async(string userId, StepTwoRequest dto)
     {
         _logger.LogInformation("User {UserId} completing Onboarding Step 2 (Demographics)", userId);
         await ValidateStep(userId, 2);
@@ -107,7 +107,7 @@ public class OnboardingService : IOnboardingService
         await _context.SaveChangesAsync();
     }
 
-    public async Task CompleteStep3Async(string userId, StepThreeDto dto)
+    public async Task CompleteStep3Async(string userId, StepThreeRequest dto)
     {
         _logger.LogInformation("User {UserId} completing Onboarding Step 3 (Geography)", userId);
         await ValidateStep(userId, 3);
@@ -118,7 +118,7 @@ public class OnboardingService : IOnboardingService
         await _context.SaveChangesAsync();
     }
 
-    public async Task CompleteStep4Async(string userId, StepFourDto dto)
+    public async Task CompleteStep4Async(string userId, StepFourRequest dto)
     {
         _logger.LogInformation("User {UserId} completing Onboarding Step 4 (School)", userId);
         await ValidateStep(userId, 4);
@@ -163,7 +163,7 @@ public class OnboardingService : IOnboardingService
         }
     }
 
-    public async Task CompleteStep5Async(string userId, StepFiveDto dto)
+    public async Task CompleteStep5Async(string userId, StepFiveRequest dto)
     {
         _logger.LogInformation("User {UserId} completing Onboarding Step 5 (Companion)", userId);
         await ValidateStep(userId, 5);

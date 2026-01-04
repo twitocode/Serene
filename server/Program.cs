@@ -83,6 +83,7 @@ try
     builder.Services.AddScoped<IOnboardingService, OnboardingService>();
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<IUsersService, UsersService>();
+    builder.Services.AddScoped<ICommunityService, CommunityService>();
 
 
     builder.Services.AddAuthentication(options =>
@@ -127,7 +128,7 @@ try
 
                 o.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new ArgumentException("Missing Client ID");
                 o.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new ArgumentException("Missing Client Secret");
-                o.Scope.Add("profile"); // This implicitly includes userinfo.profile and picture
+                o.Scope.Add("profile");
                 o.SignInScheme = "ExternalCookie";
             });
 

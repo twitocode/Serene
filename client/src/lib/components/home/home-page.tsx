@@ -28,7 +28,7 @@ export default function HomePage() {
           good morning
         </motion.h1>
 
-       <DateScroll />
+        <DateScroll />
       </div>
 
       {/* Main Card (Stressed for exams?) */}
@@ -36,7 +36,7 @@ export default function HomePage() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, delay: 0.2 }}
-        className="bg-gray-200 rounded-3xl p-8 flex items-center justify-between"
+        className="bg-gray-200 rounded-3xl p-8 flex items-center justify-between "
       >
         {/* Koala Placeholder Icon */}
         <Smile
@@ -49,7 +49,7 @@ export default function HomePage() {
             Stressed for exams?
           </h2>
           <Link href="/home/checkin">
-            <Button className="bg-black text-white hover:bg-gray-800 px-6 py-2 rounded-full text-base font-medium">
+            <Button className="bg-black text-white hover:bg-gray-800 px-6 py-2 rounded-full text-base font-medium hover:scale-105 transition active:scale-105">
               Talk about it
             </Button>
           </Link>
@@ -70,10 +70,14 @@ export default function HomePage() {
         <div className="grid grid-cols-3 gap-4">
           {suggestions.map((suggestion, index) => {
             const Icon = suggestion.icon;
-            const link = `/explore/${suggestion.id}`;
+            const link = `/home/explore/${suggestion.id}`;
 
             return (
-              <Link href={link} key={suggestion.id}>
+              <Link
+                href={link}
+                key={suggestion.id}
+                className="hover:scale-105 transition active:scale-105"
+              >
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}

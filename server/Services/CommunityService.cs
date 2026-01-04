@@ -6,19 +6,19 @@ using Serene.Entities;
 
 namespace Serene.Services;
 
-public interface IUsersService
+public interface ICommunityService
 {
     Task<UserResponse> GetUserProfileAsync(string userId);
     Task<PreferencesResponse> UpdatePreferencesAsync(string userId, UpdatePreferencesDto dto);
     Task<bool> DoesUserExistAsync(string email);
 }
 
-public class UsersService : IUsersService
+public class CommunityService : ICommunityService
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<UsersService> _logger;
 
-    public UsersService(ApplicationDbContext context, ILogger<UsersService> logger)
+    public CommunityService(ApplicationDbContext context, ILogger<UsersService> logger)
     {
         _context = context;
         _logger = logger;
@@ -80,56 +80,5 @@ public class UsersService : IUsersService
         }
 
         return user;
-    }
-
-    public async Task<PreferencesResponse> UpdatePreferencesAsync(string userId, UpdatePreferencesDto dto)
-    {
-        _logger.LogInformation("Updating preferences for user: {UserId}", userId);
-        var user = await _context.Users
-            .Include(u => u.Preferences)
-            .FirstOrDefaultAsync(u => u.Id == userId);
-
-        if (user == null)
-        {
-            _logger.LogWarning("Preference update failed: User {UserId} not found", userId);
-            throw new KeyNotFoundException("User not found");
-        }
-
-        if (user.Preferences == null)
-        {
-            _logger.LogInformation("Creating new preferences record for user: {UserId}", userId);
-            user.Preferences = new Preferences { UserId = userId };
-            _context.Preferences.Add(user.Preferences);
-        }
-
-        if (dto.Theme != null)
-        {
-            _logger.LogInformation("User {UserId} changed theme to {Theme}", userId, dto.Theme);
-            user.Preferences.Theme = dto.Theme;
-        }
-
-        if (dto.PasswordLock != null)
-        {
-            _logger.LogInformation("User {UserId} updated password lock setting", userId);
-            user.Preferences.PasswordLock = dto.PasswordLock;
-        }
-
-        await _context.SaveChangesAsync();
-
-        return new PreferencesResponse
-        {
-            Id = user.Preferences.Id,
-            Theme = user.Preferences.Theme,
-            PasswordLock = user.Preferences.PasswordLock,
-            UserId = user.Preferences.UserId,
-            CreatedAt = user.Preferences.CreatedAt,
-            UpdatedAt = user.Preferences.UpdatedAt
-        };
-    }
-
-    public async Task<bool> DoesUserExistAsync(string email)
-    {
-        _logger.LogInformation("Checking if user exists with email: {Email}", email);
-        return await _context.Users.AnyAsync(u => u.Email == email);
     }
 }

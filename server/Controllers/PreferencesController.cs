@@ -23,14 +23,14 @@ public class PreferencesController : BaseApiController
 
     [HttpGet]
     [Authorize]
-    public async Task<ActionResult<PreferencesDto>> GetUserPreferences()
+    public async Task<ActionResult<PreferencesResponse>> GetUserPreferences()
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId))
         {
             return Unauthorized(new { Success = false, Message = "User ID not found in token" });
         }
-        var prefs = await _context.Preferences.Where(x => x.UserId == userId).Select(x => new PreferencesDto
+        var prefs = await _context.Preferences.Where(x => x.UserId == userId).Select(x => new PreferencesResponse
         {
             PasswordLock = x.PasswordLock,
             Theme = x.Theme,
@@ -52,7 +52,7 @@ public class PreferencesController : BaseApiController
                 UserId = userId
             };
             await _context.SaveChangesAsync();
-            prefs = new PreferencesDto { Theme = newPrefs.Theme, PasswordLock = newPrefs.PasswordLock };
+            prefs = new PreferencesResponse { Theme = newPrefs.Theme, PasswordLock = newPrefs.PasswordLock };
         }
 
         return Ok(prefs);
@@ -82,7 +82,7 @@ public class PreferencesController : BaseApiController
 
             await _context.SaveChangesAsync();
 
-            return new PreferencesDto
+            return new PreferencesResponse
             {
                 Id = user.Preferences.Id,
                 Theme = user.Preferences.Theme,

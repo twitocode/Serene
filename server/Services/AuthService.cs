@@ -1,34 +1,43 @@
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using NodaTime;
+using Serene.Common;
 using Serene.Data;
 using Serene.DTOs;
 using Serene.Entities;
 using System.Security.Claims;
+
 namespace Serene.Services;
 
 public interface IAuthService
 {
-    Task<CheckEmailResponseDto> CheckEmailAsync(string email);
-    Task<AuthResponseDto> SignUpAsync(EmailSignUpDto dto);
-    Task<AuthResponseDto> SignInAsync(EmailSignInDto dto);
-    Task<AuthResponseDto> HandleGoogleCallbackAsync(ClaimsPrincipal principal);
+    Task<CheckEmailResponse> CheckEmailAsync(string email);
+    Task<AuthResponse> SignUpAsync(EmailSignUpRequest dto);
+    Task<AuthResponse> SignInAsync(EmailSignInRequest dto);
+    Task<AuthResponse> HandleGoogleCallbackAsync(ClaimsPrincipal principal);
 }
 
 public class AuthService : IAuthService
 {
     private readonly UserManager<User> _userManager;
     private readonly TokenService _tokenService;
-    private readonly ILogger<AuthService> _logger;
     private readonly ApplicationDbContext _context;
-    public AuthService(UserManager<User> userManager, TokenService tokenService, ILogger<AuthService> logger, ApplicationDbContext context)
+    private readonly ILogger<AuthService> _logger;
+
+    public AuthService(
+        UserManager<User> userManager,
+        TokenService tokenService,
+        ApplicationDbContext context,
+        ILogger<AuthService> logger)
     {
         _userManager = userManager;
         _tokenService = tokenService;
-        _logger = logger;
         _context = context;
+        _logger = logger;
     }
 
-    public async Task<CheckEmailResponseDto> CheckEmailAsync(string email)
+    public async Task<CheckEmailResponse> CheckEmailAsync(string email)
     {
         _logger.LogInformation("Checking existence of email: {Email}", email);
         var user = await _userManager.FindByEmailAsync(email);
@@ -36,7 +45,7 @@ public class AuthService : IAuthService
         if (user == null)
         {
             _logger.LogInformation("Email {Email} does not exist", email);
-            return new CheckEmailResponseDto { Exists = false };
+            return new CheckEmailResponse { Exists = false };
         }
 
         var hasPassword = await _userManager.HasPasswordAsync(user);
@@ -49,7 +58,7 @@ public class AuthService : IAuthService
         }
 
         _logger.LogInformation("Email {Email} exists with providers: {Providers}", email, string.Join(", ", providers));
-        return new CheckEmailResponseDto
+        return new CheckEmailResponse
         {
             Exists = true,
             HasPassword = hasPassword,
@@ -57,7 +66,7 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task<AuthResponseDto> SignUpAsync(EmailSignUpDto dto)
+    public async Task<AuthResponse> SignUpAsync(EmailSignUpRequest dto)
     {
         _logger.LogInformation("Attempting to sign up user with email: {Email}", dto.Email);
         var existingUser = await _userManager.FindByEmailAsync(dto.Email);
@@ -71,7 +80,6 @@ public class AuthService : IAuthService
         {
             UserName = dto.Email,
             Email = dto.Email,
-            Name = dto.Email, //temporary until the onboarding
             EmailConfirmed = false
         };
 
@@ -95,14 +103,14 @@ public class AuthService : IAuthService
         _logger.LogInformation("User {Email} signed up successfully", dto.Email);
         var token = _tokenService.GenerateToken(user);
 
-        return new AuthResponseDto
+        return new AuthResponse
         {
             Token = token,
             User = MapToDto(user)
         };
     }
 
-    public async Task<AuthResponseDto> SignInAsync(EmailSignInDto dto)
+    public async Task<AuthResponse> SignInAsync(EmailSignInRequest dto)
     {
         _logger.LogInformation("Login attempt for email: {Email}", dto.Email);
         var user = await _userManager.FindByEmailAsync(dto.Email);
@@ -116,14 +124,14 @@ public class AuthService : IAuthService
         _logger.LogInformation("User {Email} logged in successfully", dto.Email);
         var token = _tokenService.GenerateToken(user);
 
-        return new AuthResponseDto
+        return new AuthResponse
         {
             Token = token,
             User = MapToDto(user)
         };
     }
 
-    public async Task<AuthResponseDto> HandleGoogleCallbackAsync(ClaimsPrincipal principal)
+    public async Task<AuthResponse> HandleGoogleCallbackAsync(ClaimsPrincipal principal)
     {
         _logger.LogInformation("Handling Google callback");
         
@@ -196,16 +204,16 @@ public class AuthService : IAuthService
 
         var token = _tokenService.GenerateToken(user);
 
-        return new AuthResponseDto
+        return new AuthResponse
         {
             Token = token,
             User = MapToDto(user)
         };
     }
 
-    private static UserDto MapToDto(User user)
+    private static UserResponse MapToDto(User user)
     {
-        return new UserDto
+        return new UserResponse
         {
             Id = user.Id,
             Email = user.Email,

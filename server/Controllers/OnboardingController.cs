@@ -28,7 +28,7 @@ public class OnboardingController : BaseApiController
 
     [HttpPost("step1")]
     [Authorize]
-    public async Task<IActionResult> SubmitStep1([FromBody] StepOneDto body)
+    public async Task<IActionResult> SubmitStep1([FromBody] StepOneRequest body)
     {
         var userId = GetUserId();
         if (userId == null) return Unauthorized();
@@ -38,7 +38,7 @@ public class OnboardingController : BaseApiController
 
     [HttpPost("step2")]
     [Authorize]
-    public async Task<IActionResult> SubmitStep2([FromBody] StepTwoDto body)
+    public async Task<IActionResult> SubmitStep2([FromBody] StepTwoRequest body)
     {
         var userId = GetUserId();
         if (userId == null) return Unauthorized();
@@ -48,7 +48,7 @@ public class OnboardingController : BaseApiController
 
     [HttpPost("step3")]
     [Authorize]
-    public async Task<IActionResult> SubmitStep3([FromBody] StepThreeDto body)
+    public async Task<IActionResult> SubmitStep3([FromBody] StepThreeRequest body)
     {
         var userId = GetUserId();
         if (userId == null) return Unauthorized();
@@ -58,7 +58,7 @@ public class OnboardingController : BaseApiController
 
     [HttpPost("step4")]
     [Authorize]
-    public async Task<IActionResult> SubmitStep4([FromBody] StepFourDto body)
+    public async Task<IActionResult> SubmitStep4([FromBody] StepFourRequest body)
     {
         var userId = GetUserId();
         if (userId == null) return Unauthorized();
@@ -68,7 +68,7 @@ public class OnboardingController : BaseApiController
 
     [HttpPost("step5")]
     [Authorize]
-    public async Task<IActionResult> SubmitStep5([FromBody] StepFiveDto body)
+    public async Task<IActionResult> SubmitStep5([FromBody] StepFiveRequest body)
     {
         var userId = GetUserId();
         if (userId == null) return Unauthorized();

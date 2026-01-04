@@ -3,7 +3,7 @@ using Reinforced.Typings.Exceptions;
 
 namespace Serene.DTOs;
 
-public class StepOneDto
+public class StepOneRequest
 {
     [Required(ErrorMessage = "Username was not provided")]
     [MinLength(2, ErrorMessage = "Username must be at least 2 characters")]
@@ -12,7 +12,7 @@ public class StepOneDto
     public string Name { get; set; } = string.Empty;
 }
 
-public class StepTwoDto
+public class StepTwoRequest
 {
     [Required(ErrorMessage = "Age was not provided")]
     [Range(13, 120, ErrorMessage = "Must be 18 years or older")]
@@ -27,14 +27,14 @@ public class StepTwoDto
     public string? Pronouns { get; set; }
 }
 
-public class StepThreeDto
+public class StepThreeRequest
 {
     [Required(ErrorMessage = "Country Code was not provided")]
     [MinLength(2, ErrorMessage = "Provided an invalid country code")]
     public string CountryCode { get; set; } = string.Empty;
 }
 
-public class StepFourDto
+public class StepFourRequest
 {
     [Required(ErrorMessage = "School's name was not provided")]
     [MinLength(2)]
@@ -52,7 +52,7 @@ public class StepFourDto
     public string RegionCode { get; set; } = string.Empty;
 }
 
-public class StepFiveDto
+public class StepFiveRequest
 {
     [Required(ErrorMessage = "Koala's name was not provided")]
     [MinLength(2, ErrorMessage = "Koala's name must be at least 2 characters long")]
@@ -69,24 +69,3 @@ public class StepFiveDto
     public string? KoalaPronouns { get; set; }
 }
 
-public class OnboardingStatusDto
-{
-    public int Step { get; set; }
-    public bool Completed { get; set; }
-    public bool Started { get; set; }
-    
-    // User Info
-    public string? Name { get; set; }
-    public int Age { get; set; }
-    public string? Gender { get; set; }
-    public string? Pronouns { get; set; }
-    public string? CountryCode { get; set; }
-    
-    // School Info
-    public string? SchoolName { get; set; }
-    
-    // Koala Info
-    public string? KoalaName { get; set; }
-    public string? KoalaColour { get; set; }
-    public string? KoalaPronouns { get; set; }
-}

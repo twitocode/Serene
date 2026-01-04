@@ -1,0 +1,50 @@
+
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using NodaTime;
+
+namespace Serene.Entities;
+
+[Table("checkins")]
+public class Checkin
+{
+    [Key]
+    [Column("id")]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+
+    [Column("user_id")]
+    public string UserId { get; set; } = string.Empty;
+    public User User { get; set; } = null!;
+
+    [Column("mood_label")]
+    [Required]
+    public string MoodLabel { get; set; } = string.Empty;
+
+    [Column("mood_severity")]
+    public int MoodSeverity { get; set; } = 5;
+
+    [Column("prompt_question")]
+    [Required]
+    public string PromptQuestion { get; set; } = string.Empty;
+
+    [Column("prompt_answer")]
+    public string? PromptAnswer { get; set; }
+
+    [Column("somatic_state", TypeName = "jsonb")]
+    public Dictionary<string, GridPoint>? SomaticState { get; set; }
+
+    [Column("created_at")]
+    public Instant CreatedAt { get; set; } = SystemClock.Instance.GetCurrentInstant();
+
+    [Column("updated_at")]
+    public Instant UpdatedAt { get; set; } = SystemClock.Instance.GetCurrentInstant();
+}
+public class GridPoint
+{
+    //Normalized coordinates
+    public int X { get; set; }
+    public int Y { get; set; }
+
+    //Arm, leg, etc
+    public string? Label { get; set; }
+}

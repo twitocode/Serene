@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Serene.DTOs;
 
-public class EmailSignUpDto
+public class EmailSignUpRequest
 {
     [Required(ErrorMessage = "You did not enter in an email")]
     [EmailAddress(ErrorMessage = "Enter a valid email")]
@@ -17,7 +17,7 @@ public class EmailSignUpDto
     public string Name { get; set; } = string.Empty;
 }
 
-public class EmailSignInDto
+public class EmailSignInRequest
 {
     [Required(ErrorMessage = "You did not enter in an email")]
     [EmailAddress(ErrorMessage = "Enter a valid email")]
@@ -27,14 +27,14 @@ public class EmailSignInDto
     public string Password { get; set; } = string.Empty;
 }
 
-public class CheckEmailDto
+public class CheckEmailRequest
 {
     [Required(ErrorMessage = "You did not enter in an email")]
     [EmailAddress(ErrorMessage = "Enter a valid email")]
     public string Email { get; set; } = string.Empty;
 }
 
-public class GoogleLoginDto
+public class GoogleLoginRequest
 {
     [Required(ErrorMessage = "Google ID token not provided")]
     public string IdToken { get; set; } = string.Empty;

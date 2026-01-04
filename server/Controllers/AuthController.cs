@@ -34,13 +34,13 @@ public class AuthController : BaseApiController
     }
 
     [HttpPost("check-email")]
-    public async Task<IActionResult> CheckEmail([FromBody] CheckEmailDto dto)
+    public async Task<IActionResult> CheckEmail([FromBody] CheckEmailRequest dto)
     {
         return await ExecuteWithResult(() => _authService.CheckEmailAsync(dto.Email));
     }
 
     [HttpPost("sign-up/email")]
-    public async Task<IActionResult> SignUp([FromBody] EmailSignUpDto dto)
+    public async Task<IActionResult> SignUp([FromBody] EmailSignUpRequest dto)
     {
         return await ExecuteWithResult(async () =>
         {
@@ -51,7 +51,7 @@ public class AuthController : BaseApiController
     }
 
     [HttpPost("sign-in/email")]
-    public async Task<IActionResult> SignIn([FromBody] EmailSignInDto dto)
+    public async Task<IActionResult> SignIn([FromBody] EmailSignInRequest dto)
     {
         return await ExecuteWithResult(async () =>
         {
