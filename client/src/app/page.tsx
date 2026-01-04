@@ -2,9 +2,13 @@ import Footer from "@/lib/components/common/footer";
 import { Navbar } from "@/lib/components/common/navbar";
 import { Button } from "@/lib/components/ui/button";
 import { getSession } from "@/lib/get-session";
+import { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+export const metadata: Metadata = {
+  title: "Serene",
+};
 export default async function Home() {
   const session = await getSession();
 

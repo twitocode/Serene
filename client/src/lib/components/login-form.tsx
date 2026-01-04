@@ -16,7 +16,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/lib/components/ui/form";
+} from "@/lib/components/ui/tanstack-form";
 import { Input } from "@/lib/components/ui/input";
 import { checkOnboarding } from "@/lib/server/onboarding-server";
 import { cn } from "@/lib/utils";
@@ -24,11 +24,11 @@ import Link from "next/link";
 import { z } from "zod";
 
 const emailSchema = z.object({
-  email: z.email(),
+  email: z.string().email("Invalid email address"),
 });
 
 const authSchema = z.object({
-  email: z.email(),
+  email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -90,7 +90,7 @@ export function LoginForm({
       password: "",
     },
     validators: {
-      onChange: authSchema,
+      onSubmit: authSchema,
     },
     onSubmit: async ({ value }) => {
       setLoginError("");
@@ -109,6 +109,14 @@ export function LoginForm({
     if (emailValidation.success) {
       setLoginError("");
       checkEmailMutation.mutate(emailValue);
+    } else {
+      // Manually set error for step 1
+      form.setFieldMeta("email", (prev) => ({
+        ...prev,
+        errorMap: {
+          onSubmit: [emailValidation.error.issues[0].message],
+        },
+      }));
     }
   };
 
@@ -146,7 +154,7 @@ export function LoginForm({
           <form onSubmit={handleEmailSubmit} className="space-y-4">
             <form.Field name="email">
               {(field) => (
-                <FormField name={field.name}>
+                <FormField field={field}>
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
@@ -154,19 +162,18 @@ export function LoginForm({
                         type="email"
                         placeholder="m@example.com"
                         value={field.state.value}
-                        onChange={(e) => field.handleChange(e.target.value)}
+                        onChange={(e) => {
+                          field.handleChange(e.target.value);
+                          if (field.state.meta.errorMap.onSubmit) {
+                            field.setMeta((prev) => ({
+                              ...prev,
+                              errorMap: { ...prev.errorMap, onSubmit: undefined },
+                            }));
+                          }
+                        }}
                       />
                     </FormControl>
-                    {!field.state.meta.isValid && field.state.meta.isTouched
-                      ? field.state.meta.errors.map((error) => (
-                          <FormMessage
-                            role="alert"
-                            key={error?.message || "error"}
-                          >
-                            {error?.message}
-                          </FormMessage>
-                        ))
-                      : null}
+                    <FormMessage />
                   </FormItem>
                 </FormField>
               )}
@@ -191,7 +198,7 @@ export function LoginForm({
           >
             <form.Field name="password">
               {(field) => (
-                <FormField name={field.name}>
+                <FormField field={field}>
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
@@ -199,19 +206,18 @@ export function LoginForm({
                         type="password"
                         placeholder="Enter your password"
                         value={field.state.value}
-                        onChange={(e) => field.handleChange(e.target.value)}
+                        onChange={(e) => {
+                          field.handleChange(e.target.value);
+                          if (field.state.meta.errorMap.onSubmit) {
+                            field.setMeta((prev) => ({
+                              ...prev,
+                              errorMap: { ...prev.errorMap, onSubmit: undefined },
+                            }));
+                          }
+                        }}
                       />
                     </FormControl>
-                    {!field.state.meta.isValid && field.state.meta.isTouched
-                      ? field.state.meta.errors.map((error) => (
-                          <FormMessage
-                            role="alert"
-                            key={error?.message || "error"}
-                          >
-                            {error?.message}
-                          </FormMessage>
-                        ))
-                      : null}
+                    <FormMessage />
                   </FormItem>
                 </FormField>
               )}
@@ -249,3 +255,4 @@ export function LoginForm({
     </div>
   );
 }
+

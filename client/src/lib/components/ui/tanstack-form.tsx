@@ -32,8 +32,18 @@ const FormField = ({
 const useTanStackFormField = () => {
   const context = React.useContext(TanStackFormFieldContext);
   
-  if (!context) {
-    throw new Error("useTanStackFormField should be used within <FormField>");
+  if (!context || !context.field) {
+    return {
+      field: undefined,
+      name: undefined,
+      id: undefined,
+      formItemId: undefined,
+      formDescriptionId: undefined,
+      formMessageId: undefined,
+      error: undefined,
+      isTouched: false,
+      isValidating: false,
+    };
   }
 
   const { field } = context;
@@ -83,7 +93,7 @@ function FormItem({ className, ...props }: React.ComponentProps<"div">) {
     <FormItemContext.Provider value={{ id }}>
       <div
         data-slot="form-item"
-        className={`grid gap-2 ${className || ''}`}
+        className={cn("grid gap-2", className)}
         {...props}
       />
     </FormItemContext.Provider>
@@ -120,9 +130,11 @@ function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
       data-slot="form-control"
       id={formItemId}
       aria-describedby={
-        !(isTouched && error)
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
+        !formDescriptionId
+          ? undefined
+          : !(isTouched && error)
+            ? `${formDescriptionId}`
+            : `${formDescriptionId} ${formMessageId}`
       }
       aria-invalid={isTouched && !!error}
       {...props}
@@ -173,6 +185,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
     </p>
   );
 }
+
 
 export {
   Form,

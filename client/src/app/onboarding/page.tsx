@@ -10,7 +10,12 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Onboarding | Serene",
+};
 
 export default async function OnboardingPage() {
   const session = await getSession();

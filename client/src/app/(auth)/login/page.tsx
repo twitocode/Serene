@@ -2,7 +2,12 @@ import { LoginForm } from "@/lib/components/login-form";
 import { env } from "@/lib/env";
 import { getSession } from "@/lib/get-session";
 import { checkOnboarding } from "@/lib/server/onboarding-server";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Login | Serene",
+};
 
 export default async function LoginPage() {
   const session = await getSession();

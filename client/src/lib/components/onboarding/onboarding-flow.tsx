@@ -74,33 +74,35 @@ export function OnboardingFlow() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 w-full">
-      <div className="w-full max-w-2xl h-[600px] bg-white rounded-lg overflow-hidden relative">
-        <AnimatePresence initial={false} mode="wait" custom={direction}>
-          <motion.div
-            key={uiStep}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{
-              x: { type: "spring", stiffness: 300, damping: 30 },
-              opacity: { duration: 0.2 },
-            }}
-            className="h-full flex items-center justify-center p-8"
-          >
-            {uiStep === 0 && <ReturningStep />}
-            {uiStep === 1 && <IntermediateStepOne />}
-            {uiStep === 2 && <StepOne />}
-            {uiStep === 3 && <IntermediateStepTwo />}
-            {uiStep === 4 && <StepTwo />}
-            {uiStep === 5 && <StepThree />}
-            {uiStep === 6 && <StepFour />}
-            {uiStep === 7 && <StepFive />}
-          </motion.div>
-        </AnimatePresence>
+      <div className="w-full max-w-2xl min-h-[800px] bg-white rounded-lg overflow-hidden flex flex-col">
+        <div className="flex-1 relative flex flex-col overflow-hidden">
+          <AnimatePresence initial={false} mode="wait" custom={direction}>
+            <motion.div
+              key={uiStep}
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 },
+              }}
+              className="flex-1 flex items-center justify-center p-8"
+            >
+              {uiStep === 0 && <ReturningStep />}
+              {uiStep === 1 && <IntermediateStepOne />}
+              {uiStep === 2 && <StepOne />}
+              {uiStep === 3 && <IntermediateStepTwo />}
+              {uiStep === 4 && <StepTwo />}
+              {uiStep === 5 && <StepThree />}
+              {uiStep === 6 && <StepFour />}
+              {uiStep === 7 && <StepFive />}
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+        <div className="pb-8 flex justify-center gap-2 bg-white">
           {[1, 2, 3, 4, 5].map((i) => (
             <motion.div
               key={i}
