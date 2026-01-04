@@ -90,6 +90,7 @@ try
         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
+    .AddCookie("ExternalCookie")
     .AddJwtBearer(options =>
     {
         options.Authority = builder.Configuration["Authentication:Jwt:Authority"];
@@ -120,13 +121,15 @@ try
                 return Task.CompletedTask;
             }
         };
-    });
-    //TODO: Add google auth
-    // .AddGoogle(options =>
-    // {
-    //     options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? "missing-client-id";
-    //     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "missing-client-secret";
-    // });
+    })
+    .AddGoogle(o =>
+            {
+
+                o.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new ArgumentException("Missing Client ID");
+                o.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new ArgumentException("Missing Client Secret");
+                o.Scope.Add("profile"); // This implicitly includes userinfo.profile and picture
+                o.SignInScheme = "ExternalCookie";
+            });
 
 
     builder.Services.AddCors(options =>

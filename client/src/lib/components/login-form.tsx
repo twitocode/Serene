@@ -6,8 +6,11 @@ import { GalleryVerticalEnd } from "lucide-react";
 import { useState } from "react";
 
 import { auth } from "@/lib/auth";
+import GoogleButton from "@/lib/components/auth/google-button";
 import FormError from "@/lib/components/common/forms/form-error";
 import { Button } from "@/lib/components/ui/button";
+import { Input } from "@/lib/components/ui/input";
+import { Separator } from "@/lib/components/ui/separator";
 import {
   Form,
   FormControl,
@@ -15,8 +18,8 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,} from "@/lib/components/ui/tanstack-form";
-import { Input } from "@/lib/components/ui/input";
+  FormMessage,
+} from "@/lib/components/ui/tanstack-form";
 import { checkOnboarding } from "@/lib/server/onboarding-server";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -132,6 +135,7 @@ export function LoginForm({
             <GalleryVerticalEnd className="size-6" />
           </div>
         </div>
+
         <h1 className="text-xl font-bold">
           {step === 1 ? "Welcome Back" : "Enter Password"}
         </h1>
@@ -166,7 +170,10 @@ export function LoginForm({
                           if (field.state.meta.errorMap.onSubmit) {
                             field.setMeta((prev) => ({
                               ...prev,
-                              errorMap: { ...prev.errorMap, onSubmit: undefined },
+                              errorMap: {
+                                ...prev.errorMap,
+                                onSubmit: undefined,
+                              },
                             }));
                           }
                         }}
@@ -210,7 +217,10 @@ export function LoginForm({
                           if (field.state.meta.errorMap.onSubmit) {
                             field.setMeta((prev) => ({
                               ...prev,
-                              errorMap: { ...prev.errorMap, onSubmit: undefined },
+                              errorMap: {
+                                ...prev.errorMap,
+                                onSubmit: undefined,
+                              },
                             }));
                           }
                         }}
@@ -245,7 +255,17 @@ export function LoginForm({
           </form>
         )}
       </Form>
-
+      <div className="relative my-1">
+        <div className="absolute inset-0 flex items-center">
+          <Separator className="w-full" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">
+            or with
+          </span>
+        </div>
+      </div>
+      <GoogleButton serverUrl={serverUrl}/>
       <FormDescription className="px-6 text-center">
         By clicking continue, you agree to our{" "}
         <Link href="/terms">Terms of Service</Link> and{" "}
@@ -254,4 +274,3 @@ export function LoginForm({
     </div>
   );
 }
-

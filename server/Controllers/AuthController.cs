@@ -1,4 +1,5 @@
-using Google.Apis.Auth;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Serene.Common;
@@ -60,15 +61,28 @@ public class AuthController : BaseApiController
         });
     }
 
-    [HttpPost("google")]
-    public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDto dto)
+    [HttpGet("sign-in/google")]
+    public IActionResult LoginGoogle([FromQuery] string returnUrl)
     {
-        return await ExecuteWithResult(async () =>
+        var redirectUrl = Url.Action("GoogleCallback", "Auth", new { returnUrl });
+        var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+        return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+    }
+
+    [HttpGet("sign-in/google/callback")]
+    public async Task<IActionResult> GoogleCallback([FromQuery] string returnUrl)
+    {
+        var result = await HttpContext.AuthenticateAsync("ExternalCookie");
+        
+        if (!result.Succeeded)
         {
-            var result = await _authService.GoogleLoginAsync(dto.IdToken);
-            SetTokenCookie(result.Token);
-            return result;
-        });
+            return Unauthorized();
+        }
+
+        var authResponse = await _authService.HandleGoogleCallbackAsync(result.Principal);
+        SetTokenCookie(authResponse.Token);
+
+        return Redirect(returnUrl);
     }
 
     [HttpPost("sign-out")]

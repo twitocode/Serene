@@ -21,6 +21,8 @@ import { Input } from "@/lib/components/ui/input";
 import { cn } from "@/lib/utils";
 import { emailSchema, signupSchema } from "@/lib/validation";
 import Link from "next/link";
+import GoogleButton from "@/lib/components/auth/google-button";
+import { Separator } from "@/lib/components/ui/separator";
 
 interface Props {
   serverUrl: string;
@@ -148,7 +150,10 @@ export function SignupForm({
                           if (field.state.meta.errorMap.onSubmit) {
                             field.setMeta((prev) => ({
                               ...prev,
-                              errorMap: { ...prev.errorMap, onSubmit: undefined },
+                              errorMap: {
+                                ...prev.errorMap,
+                                onSubmit: undefined,
+                              },
                             }));
                           }
                         }}
@@ -193,7 +198,10 @@ export function SignupForm({
                           if (field.state.meta.errorMap.onSubmit) {
                             field.setMeta((prev) => ({
                               ...prev,
-                              errorMap: { ...prev.errorMap, onSubmit: undefined },
+                              errorMap: {
+                                ...prev.errorMap,
+                                onSubmit: undefined,
+                              },
                             }));
                           }
                         }}
@@ -220,7 +228,10 @@ export function SignupForm({
                           if (field.state.meta.errorMap.onSubmit) {
                             field.setMeta((prev) => ({
                               ...prev,
-                              errorMap: { ...prev.errorMap, onSubmit: undefined },
+                              errorMap: {
+                                ...prev.errorMap,
+                                onSubmit: undefined,
+                              },
                             }));
                           }
                         }}
@@ -255,7 +266,17 @@ export function SignupForm({
           </form>
         )}
       </Form>
-
+      <div className="relative my-1">
+        <div className="absolute inset-0 flex items-center">
+          <Separator className="w-full" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">
+            or with
+          </span>
+        </div>
+      </div>
+      <GoogleButton serverUrl={serverUrl} />
       <FormDescription className="px-6 text-center">
         By clicking continue, you agree to our{" "}
         <Link href="/terms">Terms of Service</Link> and{" "}

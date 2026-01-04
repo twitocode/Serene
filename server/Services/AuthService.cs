@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Serene.Data;
 using Serene.DTOs;
 using Serene.Entities;
-
+using System.Security.Claims;
 namespace Serene.Services;
 
 public interface IAuthService
@@ -11,7 +11,7 @@ public interface IAuthService
     Task<CheckEmailResponseDto> CheckEmailAsync(string email);
     Task<AuthResponseDto> SignUpAsync(EmailSignUpDto dto);
     Task<AuthResponseDto> SignInAsync(EmailSignInDto dto);
-    Task<AuthResponseDto> GoogleLoginAsync(string idToken);
+    Task<AuthResponseDto> HandleGoogleCallbackAsync(ClaimsPrincipal principal);
 }
 
 public class AuthService : IAuthService
@@ -71,7 +71,7 @@ public class AuthService : IAuthService
         {
             UserName = dto.Email,
             Email = dto.Email,
-            Name = dto.Name,
+            Name = dto.Email, //temporary until the onboarding
             EmailConfirmed = false
         };
 
@@ -123,64 +123,84 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task<AuthResponseDto> GoogleLoginAsync(string idToken)
+    public async Task<AuthResponseDto> HandleGoogleCallbackAsync(ClaimsPrincipal principal)
     {
-        _logger.LogInformation("Attempting Google login");
-        try
+        _logger.LogInformation("Handling Google callback");
+        
+        var email = principal.FindFirstValue(ClaimTypes.Email);
+        if (email == null)
         {
-            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
-            _logger.LogInformation("Google token validated for email: {Email}", payload.Email);
+            throw new Exception("Email claim not found");
+        }
 
-            var user = await _userManager.FindByEmailAsync(payload.Email);
+        // Extract Country Code
+        var countryCode = principal.FindFirstValue(ClaimTypes.Country) ??
+                          principal.FindFirstValue("locale")?.Split('-').LastOrDefault()?.ToUpper();
 
-            if (user == null)
+        // Extract Gender
+        var gender = "";
+        var genderClaimValue = principal.FindFirstValue(ClaimTypes.Gender);
+        if (!string.IsNullOrEmpty(genderClaimValue))
+        {
+             if (genderClaimValue.Equals("male", StringComparison.OrdinalIgnoreCase)) gender = "Male";
+             else if (genderClaimValue.Equals("female", StringComparison.OrdinalIgnoreCase)) gender = "Female";
+             else if (genderClaimValue.Equals("non-binary", StringComparison.OrdinalIgnoreCase)) gender = "NonBinary";
+        }
+
+        // Extract AvatarUrl
+        var avatarUrl = principal.FindFirstValue("picture");
+        
+        // Extract Name
+        var name = principal.FindFirstValue(ClaimTypes.Name) ?? email;
+
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user == null)
+        {
+            _logger.LogInformation("Creating new user from Google principal: {Email}", email);
+            user = new User
             {
-                _logger.LogInformation("Creating new user from Google payload: {Email}", payload.Email);
-                user = new User
-                {
-                    UserName = payload.Email,
-                    Email = payload.Email,
-                    Name = payload.Name,
-                    Image = payload.Picture,
-                    EmailConfirmed = payload.EmailVerified
-                };
-
-                var createResult = await _userManager.CreateAsync(user);
-                if (!createResult.Succeeded)
-                {
-                    _logger.LogError("Failed to create user from Google: {Errors}", string.Join(", ", createResult.Errors.Select(e => e.Description)));
-                    throw new Exception("Failed to create user: " + string.Join(", ", createResult.Errors.Select(e => e.Description)));
-                }
-
-                // Ensure profile exists for new Google users
-                var profile = new Profile
-                {
-                    UserId = user.Id,
-                };
-                _context.Profiles.Add(profile);
-                await _context.SaveChangesAsync();
-            }
-
-            var logins = await _userManager.GetLoginsAsync(user);
-            if (!logins.Any(l => l.LoginProvider == "Google" && l.ProviderKey == payload.Subject))
-            {
-                _logger.LogInformation("Linking Google account for user: {Email}", payload.Email);
-                await _userManager.AddLoginAsync(user, new UserLoginInfo("Google", payload.Subject, "Google"));
-            }
-
-            var token = _tokenService.GenerateToken(user);
-
-            return new AuthResponseDto
-            {
-                Token = token,
-                User = MapToDto(user)
+                UserName = email,
+                Email = email,
+                Name = name,
+                Image = avatarUrl,
+                CountryCode = countryCode,
+                Gender = gender,
+                EmailConfirmed = true // Trusted provider
             };
+
+            var createResult = await _userManager.CreateAsync(user);
+            if (!createResult.Succeeded)
+            {
+                var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
+                _logger.LogError("Failed to create user from Google: {Errors}", errors);
+                throw new Exception("Failed to create user: " + errors);
+            }
+
+            var profile = new Profile
+            {
+                UserId = user.Id,
+            };
+            _context.Profiles.Add(profile);
+            await _context.SaveChangesAsync();
         }
-        catch (InvalidJwtException ex)
+
+        // Check if login already exists
+        var logins = await _userManager.GetLoginsAsync(user);
+        var subject = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (subject != null && !logins.Any(l => l.LoginProvider == "Google" && l.ProviderKey == subject))
         {
-            _logger.LogWarning(ex, "Invalid Google token provided");
-            throw new ArgumentException("Invalid Google Token: " + ex.Message);
+            _logger.LogInformation("Linking Google account for user: {Email}", email);
+            await _userManager.AddLoginAsync(user, new UserLoginInfo("Google", subject, "Google"));
         }
+
+        var token = _tokenService.GenerateToken(user);
+
+        return new AuthResponseDto
+        {
+            Token = token,
+            User = MapToDto(user)
+        };
     }
 
     private static UserDto MapToDto(User user)
