@@ -28,9 +28,7 @@ export default function SidebarMenuComponent() {
           <div className="grid flex-1 text-left text-sm leading-tight">
             <SereneLogo noLogo />
           </div>
-          <div>
-            <ThemeToggle />
-          </div>
+        
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>

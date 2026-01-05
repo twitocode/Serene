@@ -1,28 +1,14 @@
-import { SignupForm } from "@/lib/components/signup-form";
+import SignupAuthPage from "@/lib/components/auth/signup-auth-page";
 import { env } from "@/lib/env";
-import { getSession } from "@/lib/get-session";
 import { Metadata } from "next";
-import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Login | Serene",
+  title: "Signup | Serene",
 };
 
-export default async function SignupPage() {
-  const session = await getSession();
-
-  if (session?.user) {
-    redirect("/home");
-  }
-
+export default function SignupPage() {
   const serverUrl = env.NEXT_PUBLIC_SERVER_URL;
   if (!serverUrl) return null;
 
-  return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6">
-      <div className="w-full max-w-sm">
-        <SignupForm serverUrl={serverUrl} />
-      </div>
-    </div>
-  );
+  return <SignupAuthPage serverUrl={serverUrl} />;
 }

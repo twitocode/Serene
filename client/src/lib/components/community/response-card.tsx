@@ -15,7 +15,7 @@ export const ResponseCard = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="bg-secondary bg-opacity-20 text-secondary-foreground p-6 rounded-2xl w-full flex flex-col gap-3 shadow-sm"
+      className="bg-secondary bg-opacity-20 text-secondary-foreground p-6  w-full flex flex-col gap-3 border-[1.5px] shadow-sm"
     >
       <div className="flex items-center gap-3">
         <Avatar>

@@ -1,19 +1,24 @@
 "use client";
 
 import { ApiError } from "@/lib/helpers/api-fetch";
+import { usePreferencesQuery } from "@/lib/hooks/queries/use-preferences";
 import { usePasswordLockStore } from "@/lib/hooks/stores/lock-store";
 import { fetchUser } from "@/lib/server/get-user";
 import { User } from "@/lib/types/index";
 import { useQuery } from "@tanstack/react-query";
+import { useTheme } from "next-themes";
 import { PropsWithChildren, useEffect } from "react";
 
 interface Props {}
 
 export default function StateLoader({ children }: PropsWithChildren<Props>) {
-  const { data: user } = useQuery<User, ApiError>({
-    queryKey: ["user"],
-    queryFn: fetchUser,
-  });
+  const {data: preferences} = usePreferencesQuery();
+
+  const {setTheme} = useTheme();
+
+  useEffect(() => {
+    setTheme(preferences?.theme.toLowerCase() ?? "dark");
+  }, [])
 
   const {
     lockInterval,
@@ -29,13 +34,13 @@ export default function StateLoader({ children }: PropsWithChildren<Props>) {
   useEffect(() => {
     usePasswordLockStore.persist.rehydrate();
 
-    if (!lockInterval.isRunning && user?.preferences?.passwordLock) {
+    if (!lockInterval.isRunning && preferences?.passwordLock) {
       startInterval();
     }
   }, []);
 
   useEffect(() => {
-    if (!user?.preferences?.passwordLock) return;
+    if (!preferences?.passwordLock) return;
     if (!lockInterval.isRunning) return;
 
     const intervalId = setInterval(() => {

@@ -23,7 +23,7 @@ export default function HomePage() {
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-semibold"
+          className="text-4xl font-semibold font-serif"
         >
           good morning
         </motion.h1>
@@ -36,7 +36,7 @@ export default function HomePage() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, delay: 0.2 }}
-        className="bg-gray-200 rounded-3xl p-8 flex items-center justify-between "
+        className="bg-gray-200 border-[1.5px] p-8 flex items-center justify-between "
       >
         {/* Koala Placeholder Icon */}
         <Smile
@@ -49,7 +49,7 @@ export default function HomePage() {
             Stressed for exams?
           </h2>
           <Link href="/home/checkin">
-            <Button className="bg-black text-white hover:bg-gray-800 px-6 py-2 rounded-full text-base font-medium hover:scale-105 transition active:scale-105">
+            <Button className="bg-black text-white hover:bg-gray-800 px-6 py-2 text-base font-medium hover:scale-105 transition active:scale-105">
               Talk about it
             </Button>
           </Link>
@@ -76,13 +76,13 @@ export default function HomePage() {
               <Link
                 href={link}
                 key={suggestion.id}
-                className="hover:scale-105 transition active:scale-105"
+                className="hover:scale-105 transition active:scale-105 hover:rotate-3"
               >
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
-                  className="bg-purple-200 rounded-2xl p-6 flex flex-col items-center text-center gap-3"
+                  className="bg-purple-200  border  p-6 flex flex-col items-center text-center gap-3"
                 >
                   <Icon
                     className="w-16 h-16 text-black fill-current"

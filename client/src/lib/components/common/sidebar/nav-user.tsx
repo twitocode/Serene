@@ -69,7 +69,7 @@ export function NavUser({}: NavUserProps) {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent
-            className="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-lg font-sans"
+            className="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-none font-sans"
             side={sidebar.isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}

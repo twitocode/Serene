@@ -39,7 +39,7 @@ export default function DateScroll() {
           <div
             key={index}
             className={cn("flex flex-col items-center p-4", {
-              "bg-secondary text-secondary-foreground rounded-md": isToday,
+              "bg-secondary text-secondary-foreground border": isToday,
             })}
           >
             <span className="text-gray-500 text-sm font-medium">
