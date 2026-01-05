@@ -3,8 +3,6 @@ import HomeLock from "@/lib/components/home/home-lock";
 import StateLoader from "@/lib/components/home/state-loader";
 import { getSession } from "@/lib/get-session";
 import { apiFetch } from "@/lib/helpers/api-fetch";
-import { usePreferences } from "@/lib/hooks/queries/use-preferences";
-import { fetchUser } from "@/lib/server/get-user";
 import { checkOnboarding } from "@/lib/server/onboarding-server";
 import { Preferences, User } from "@/lib/types/index";
 import {
@@ -38,7 +36,7 @@ export default async function layout({
 
   await queryClient.prefetchQuery({
     queryKey: ["preferences"],
-    queryFn: async () =>( await apiFetch<Preferences>("/preferences")).data!,
+    queryFn: async () => (await apiFetch<Preferences>("/preferences")).data!,
   });
 
   return (

@@ -10,12 +10,12 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "@/lib/components/ui/navigation-menu";
-import { useUser } from "@/lib/hooks/queries/use-user";
+import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import { useIsMobile } from "@/lib/hooks/use-mobile";
 
 export function OnBoardingNavbar() {
   const isMobile = useIsMobile();
-  const { data: user } = useUser();
+  const { data: user } = useUserQuery();
 
   const logout = async () => {
     await auth.signOut();

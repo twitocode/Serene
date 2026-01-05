@@ -6,7 +6,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/lib/components/ui/sidebar";
-import { usePreferences } from "@/lib/hooks/queries/use-preferences";
+import { usePreferencesQuery } from "@/lib/hooks/queries/use-preferences";
 import { usePasswordLockStore } from "@/lib/hooks/stores/lock-store";
 import { Lock } from "lucide-react";
 import { PropsWithChildren } from "react";
@@ -16,7 +16,7 @@ interface Props {}
 
 export default function HomeLayout({ children }: PropsWithChildren<Props>) {
   const { setLockState, isLocked } = usePasswordLockStore();
-  const { data: prefs } = usePreferences();
+  const { data: prefs } = usePreferencesQuery();
 
   return !isLocked ? (
     <SidebarProvider>
@@ -39,7 +39,7 @@ export default function HomeLayout({ children }: PropsWithChildren<Props>) {
                   <Lock /> Lock Page
                 </Button>
               </div>
-          )}
+            )}
           </div>
         </header>
         <div className="px-4">{children}</div>

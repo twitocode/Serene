@@ -21,6 +21,9 @@ public class QuestionOfTheDay
 
     [Column("updated_at")]
     public Instant UpdatedAt { get; set; } = SystemClock.Instance.GetCurrentInstant();
+
+    [Column("posts")]
+    public ICollection<Post> Responses { get; set; } = new List<Post>();
 }
 
 [Table("post")]

@@ -26,7 +26,9 @@ public class CommunityController : BaseApiController
     [HttpPost("qotd")]
     public async Task<IActionResult> AnswerQOTD([FromBody] QOTDPostRequest dto)
     {
-        return await ExecuteWithResult(() => _commnityService.AnswerQOTDAsync(dto));
+        string? uid = GetUserId();
+        if (uid == null) return Unauthorized();
+        return await ExecuteWithResult(() => _commnityService.AnswerQOTDAsync(dto, uid));
     }
 
     [Authorize]
@@ -37,8 +39,8 @@ public class CommunityController : BaseApiController
     }
 
     [Authorize]
-    [HttpGet("qotd/responses")]
-    public async Task<IActionResult> GetQOTDResponses([FromQuery] string? date)
+    [HttpGet("qotd/{date}/responses")]
+    public async Task<IActionResult> GetQOTDResponses([FromRoute] string date)
     {
         return await ExecuteWithResult(() => _commnityService.GetResponsesAsync(date));
     }

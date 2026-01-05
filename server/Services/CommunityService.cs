@@ -13,7 +13,7 @@ namespace Serene.Services;
 
 public interface ICommunityService
 {
-    Task AnswerQOTDAsync(QOTDPostRequest dto);
+    Task AnswerQOTDAsync(QOTDPostRequest dto, string uid);
     Task<List<PostResponse>> GetResponsesAsync(string? date);
     Task<QOTDResponse?> GetQOTDAsync(string? date);
     Task<QuestionOfTheDay?> CreateNewQOTD();
@@ -32,9 +32,26 @@ public class CommunityService : ICommunityService
         _geminiService = geminiService;
     }
 
-    public async Task AnswerQOTDAsync(QOTDPostRequest dto)
+    public async Task AnswerQOTDAsync(QOTDPostRequest dto, string uid)
     {
-        throw new NotImplementedException();
+        //assumes qotd already exists
+        var alreadyPosted = await _context.Posts.AnyAsync(x => x.UserId == uid && x.QotdId == dto.QOTDId);
+        if (alreadyPosted)
+        {
+            throw new AppException("You already responded to this question", ErrorCodes.InvalidCredentials);
+        }
+
+        var response = new Post
+        {
+            UserId = uid,
+            Answer = dto.Response!,
+            QotdId = dto.QOTDId,
+        };
+
+        _context.Posts.Add(response);
+        _logger.LogInformation("User {uid} responded to QOTD {qotdId}", uid, dto.QOTDId);
+
+        await _context.SaveChangesAsync();
     }
 
     public async Task<QuestionOfTheDay?> CreateNewQOTD()
@@ -60,7 +77,7 @@ public class CommunityService : ICommunityService
         {
             Question = question
         };
-        _context.Add(qotd);
+        _context.QuestionsOfTheDay.Add(qotd);
         await _context.SaveChangesAsync();
         _logger.LogInformation("QOTD added");
         return qotd;
@@ -93,7 +110,7 @@ public class CommunityService : ICommunityService
 
         if (qotd == null && targetDate == today)
         {
-             qotd = await CreateNewQOTD();
+            qotd = await CreateNewQOTD();
         }
 
         if (qotd != null)
@@ -105,11 +122,50 @@ public class CommunityService : ICommunityService
             };
         }
 
-        throw new Exception("A question of the day is supposed to exist but does not");
+        return null;
     }
 
     public async Task<List<PostResponse>> GetResponsesAsync(string? date)
     {
-        throw new NotImplementedException();
+        LocalDate targetDate;
+
+        if (string.IsNullOrWhiteSpace(date))
+        {
+            targetDate = SystemClock.Instance.GetCurrentInstant().InUtc().Date;
+        }
+        else
+        {
+            var parseResult = LocalDatePattern.Iso.Parse(date);
+            if (!parseResult.Success)
+            {
+                _logger.LogError("Invalid date format provided in query string: {date}", date);
+                throw new AppException("Invalid date format. Please use yyyy-MM-dd", ErrorCodes.InvalidInput);
+            }
+            targetDate = parseResult.Value;
+        }
+
+        Instant start = targetDate.AtMidnight().InUtc().ToInstant();
+        Instant end = start.Plus(Duration.FromDays(1));
+
+        var qotd = await _context.QuestionsOfTheDay
+            .FirstOrDefaultAsync(x => x.CreatedAt >= start && x.CreatedAt < end);
+
+        if (qotd == null)
+        {
+            return new List<PostResponse>();
+        }
+
+        var responses = await _context.Posts
+            .Where(x => x.QotdId == qotd.Id)
+            .Include(x => x.User)
+            .Select(x => new PostResponse
+            {
+                Answer = x.Answer,
+                UserId = x.UserId,
+                Username = x.User != null && x.User.Name != null ? x.User.Name : "Anonymous",
+            })
+            .ToListAsync();
+
+        return responses;
     }
 }

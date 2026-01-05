@@ -7,7 +7,7 @@ interface UpdatePreferencesDto {
   passwordLock?: string;
 }
 
-export function usePreferences() {
+export function usePreferencesQuery() {
   return useQuery<Preferences>({
     queryKey: ["preferences"],
     queryFn: async () => {
@@ -18,7 +18,7 @@ export function usePreferences() {
   });
 }
 
-export function useUpdatePreferences() {
+export function useUpdatePrefsMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
