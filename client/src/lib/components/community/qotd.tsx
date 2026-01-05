@@ -14,44 +14,10 @@ import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import { QOTDAnswerDto } from "@/lib/types/api-types";
 import { Star } from "lucide-react";
 import { useEffect, useState } from "react";
+import { ResponseCard } from "@/lib/components/community/response-card";
 
 // --- Components ---
 
-const ResponseCard = ({
-  response,
-  isMe,
-}: {
-  response: QOTDAnswerDto;
-  isMe?: boolean;
-}) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="bg-[#AFAFAF] bg-opacity-80 p-6 rounded-2xl w-full flex flex-col gap-3 shadow-sm"
-    >
-      <div className="flex items-center gap-3">
-        <Avatar>
-          <AvatarFallback
-            className={`${isMe ? "bg-orange-400" : "bg-gray-400"} text-white`}
-          >
-            {isMe ? (
-              <Star className="w-5 h-5 fill-current" />
-            ) : (
-              response.username?.[0] || "?"
-            )}
-          </AvatarFallback>
-        </Avatar>
-
-        <span className="font-medium text-black text-lg">
-          {isMe ? "You" : response.username || "Anonymous"}
-        </span>
-      </div>
-      <p className="text-black text-base leading-relaxed">{response.answer}</p>
-    </motion.div>
-  );
-};
 
 export default function QuestionOfTheDay() {
   const today = new Date().toISOString().split("T")[0];
@@ -89,7 +55,7 @@ export default function QuestionOfTheDay() {
   }, [responses])
 
   return (
-    <div className="min-h-screen bg-white text-black p-8 max-w-2xl mx-auto flex flex-col gap-8">
+    <div className="min-h-screen bg-background text-foreground p-8 max-w-2xl mx-auto flex flex-col gap-8">
       {/* Header */}
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
@@ -107,7 +73,7 @@ export default function QuestionOfTheDay() {
         className="flex flex-col gap-4 mt-8"
       >
         <div>
-          <span className="text-lg font-medium text-gray-800">
+          <span className="text-lg font-medium text-foreground">
             Question of the Day
           </span>
           <h2 className="text-3xl font-bold mt-1 leading-tight">

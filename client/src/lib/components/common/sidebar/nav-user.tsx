@@ -22,6 +22,7 @@ import {
   useSidebar,
 } from "@/lib/components/ui/sidebar";
 import { ApiError } from "@/lib/helpers/api-fetch";
+import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import { fetchUser } from "@/lib/server/get-user";
 import { User } from "@/lib/types/index";
 import { useQuery } from "@tanstack/react-query";
@@ -34,6 +35,7 @@ import {
   LogOut,
   Sparkles,
 } from "lucide-react";
+import Link from "next/link";
 
 type NavUserProps = {
   isMobile?: boolean;
@@ -41,11 +43,7 @@ type NavUserProps = {
 
 export function NavUser({}: NavUserProps) {
   const sidebar = useSidebar();
-  const { data: user } = useQuery<User, ApiError>({
-    queryKey: ["user"],
-    queryFn: fetchUser,
-  });
-
+  const { data: user } = useUserQuery()
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -104,18 +102,12 @@ export function NavUser({}: NavUserProps) {
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck className="mr-2 h-4 w-4" />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard className="mr-2 h-4 w-4" />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell className="mr-2 h-4 w-4" />
-                Notifications
-              </DropdownMenuItem>
+              <Link href="/home/account">
+                <DropdownMenuItem>
+                  <BadgeCheck className="mr-2 h-4 w-4" />
+                  Account
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />

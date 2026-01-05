@@ -2,6 +2,7 @@ import Providers from "@/lib/components/providers";
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/lib/components/providers/theme-provider";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -28,11 +29,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${ibmPlexMono.variable} ${playfairDisplay.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            {children}
+          </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

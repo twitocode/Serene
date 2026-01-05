@@ -17,7 +17,7 @@ const suggestions = [
 // --- Main Page Component ---
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-white text-black p-8 max-w-2xl mx-auto flex flex-col gap-8">
+    <div className="min-h-screen bg-background text-foreground p-8 max-w-2xl mx-auto flex flex-col gap-8">
       {/* Header & Calendar */}
       <div className="flex flex-col items-center gap-6 mt-4">
         <motion.h1
@@ -40,12 +40,12 @@ export default function HomePage() {
       >
         {/* Koala Placeholder Icon */}
         <Smile
-          className="w-32 h-32 text-black fill-current"
+          className="w-32 h-32 text-black  fill-current"
           strokeWidth={1.5}
         />
 
         <div className="flex flex-col gap-4 items-start max-w-xs">
-          <h2 className="text-3xl font-bold leading-tight">
+          <h2 className="text-3xl font-bold leading-tight text-black">
             Stressed for exams?
           </h2>
           <Link href="/home/checkin">
@@ -61,7 +61,7 @@ export default function HomePage() {
         <motion.h3
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.3 }} 
           className="text-xl font-medium"
         >
           Suggested Actions
@@ -88,7 +88,7 @@ export default function HomePage() {
                     className="w-16 h-16 text-black fill-current"
                     strokeWidth={1.5}
                   />
-                  <span className="text-lg font-bold leading-tight">
+                  <span className="text-lg font-bold leading-tight text-black">
                     {suggestion.title}
                   </span>
                 </motion.div>

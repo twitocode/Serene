@@ -2,10 +2,7 @@
 "use client";
 
 import SereneLogo from "@/lib/components/common/serene-logo"; // React version of your logo
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-} from "@/lib/components/ui/dropdown-menu";
+import { ThemeToggle } from "@/lib/components/common/theme-toggle";
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -21,21 +18,20 @@ export default function SidebarMenuComponent() {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
-                <SereneLogo noText sidebar />
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <SereneLogo noLogo />
-              </div>
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
-        </DropdownMenu>
+        <SidebarMenuButton
+          size="lg"
+          className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+        >
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
+            <SereneLogo noText sidebar />
+          </div>
+          <div className="grid flex-1 text-left text-sm leading-tight">
+            <SereneLogo noLogo />
+          </div>
+          <div>
+            <ThemeToggle />
+          </div>
+        </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>
   );

@@ -42,7 +42,7 @@ export default async function layout({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <StateLoader>
-        <HomeLayout children={children} />
+        <HomeLayout>{children}</HomeLayout>
         <HomeLock />
       </StateLoader>
     </HydrationBoundary>
