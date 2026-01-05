@@ -13,7 +13,6 @@ namespace Serene.Controllers;
 
 [ApiController]
 [Route("community")]
-[Authorize]
 public class CommunityController : BaseApiController
 {
     private readonly ICommunityService _commnityService;
@@ -22,14 +21,25 @@ public class CommunityController : BaseApiController
     {
         _commnityService = commnityService;
     }
-
-
-    [HttpPost("post/{qotdId}")]
-    public async Task<IActionResult> CheckEmail([FromBody] CheckEmailRequest dto, [FromRoute] string qotdId)
+    
+    [Authorize]
+    [HttpPost("qotd")]
+    public async Task<IActionResult> AnswerQOTD([FromBody] QOTDPostRequest dto)
     {
-        return await ExecuteWithResult(() =>
-        {
-            _commnityService.
-        });
+        return await ExecuteWithResult(() => _commnityService.AnswerQOTDAsync(dto));
+    }
+
+    [Authorize]
+    [HttpGet("qotd")]
+    public async Task<IActionResult> GetQOTD([FromQuery] string? date)
+    {
+        return await ExecuteWithResult(() => _commnityService.GetQOTDAsync(date));
+    }
+
+    [Authorize]
+    [HttpGet("qotd/responses")]
+    public async Task<IActionResult> GetQOTDResponses([FromQuery] string? date)
+    {
+        return await ExecuteWithResult(() => _commnityService.GetResponsesAsync(date));
     }
 }

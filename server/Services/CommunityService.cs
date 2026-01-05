@@ -1,4 +1,9 @@
+using Google.GenAI;
+using Google.GenAI.Types;
 using Microsoft.EntityFrameworkCore;
+using NodaTime;
+using NodaTime.Text;
+using Serene.Common;
 using Serene.Controllers;
 using Serene.Data;
 using Serene.DTOs;
@@ -8,77 +13,103 @@ namespace Serene.Services;
 
 public interface ICommunityService
 {
-    Task<UserResponse> GetUserProfileAsync(string userId);
-    Task<PreferencesResponse> UpdatePreferencesAsync(string userId, UpdatePreferencesDto dto);
-    Task<bool> DoesUserExistAsync(string email);
+    Task AnswerQOTDAsync(QOTDPostRequest dto);
+    Task<List<PostResponse>> GetResponsesAsync(string? date);
+    Task<QOTDResponse?> GetQOTDAsync(string? date);
+    Task<QuestionOfTheDay?> CreateNewQOTD();
 }
 
 public class CommunityService : ICommunityService
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<UsersService> _logger;
+    private readonly IGeminiService _geminiService;
 
-    public CommunityService(ApplicationDbContext context, ILogger<UsersService> logger)
+    public CommunityService(ApplicationDbContext context, ILogger<UsersService> logger, IGeminiService geminiService)
     {
         _context = context;
         _logger = logger;
+        _geminiService = geminiService;
     }
 
-    public async Task<UserResponse> GetUserProfileAsync(string userId)
+    public async Task AnswerQOTDAsync(QOTDPostRequest dto)
     {
-        _logger.LogInformation("Fetching profile for user: {UserId}", userId);
-        var user = await _context.Users
-            .AsNoTracking()
-            .Include(u => u.Profile)
-                .ThenInclude(p => p!.School)
-            .Include(u => u.Preferences)
-            .Where(u => u.Id == userId)
-            .Select(u => new UserResponse
-            {
-                Id = u.Id,
-                Email = u.Email,
-                Name = u.Name,
-                Image = u.Image,
-                EmailConfirmed = u.EmailConfirmed,
-                CreatedAt = u.CreatedAt,
-                UpdatedAt = u.UpdatedAt,
-                Preferences = u.Preferences != null ? new PreferencesResponse
-                {
-                    Id = u.Preferences.Id,
-                    Theme = u.Preferences.Theme,
-                    PasswordLock = u.Preferences.PasswordLock,
-                    UserId = u.Preferences.UserId,
-                    CreatedAt = u.Preferences.CreatedAt,
-                    UpdatedAt = u.Preferences.UpdatedAt
-                } : null,
-                Profile = u.Profile != null ? new ProfileResponse
-                {
-                    Id = u.Profile.Id,
-                    LongestStreak = u.Profile.LongestStreak,
-                    CurrentStreak = u.Profile.CurrentStreak,
-                    UserId = u.Id,
-                    KoalaColour = u.Profile.KoalaColour,
-                    KoalaName = u.Profile.KoalaName,
-                    KoalaPronouns = u.Profile.KoalaPronouns,
-                    School = u.Profile.School != null ? new SchoolResponse
-                    {
-                        Id = u.Profile.School.Id,
-                        Name = u.Profile.School.Name!,
-                        City = u.Profile.School.City!,
-                        RegionCode = u.Profile.School.RegionCode!,
-                        UserId = u.Id,
-                        CountryCode = u.Profile.School.CountryCode,
-                    } : null,
-                } : null
-            })
-            .FirstOrDefaultAsync();
+        throw new NotImplementedException();
+    }
 
-        if (user == null)
+    public async Task<QuestionOfTheDay?> CreateNewQOTD()
+    {
+        LocalDate today = SystemClock.Instance.GetCurrentInstant().InUtc().Date;
+        Instant todayStart = today.AtMidnight().InUtc().ToInstant();
+        Instant tomorrowStart = todayStart.Plus(Duration.FromDays(1));
+
+        var existingQotd = await _context.QuestionsOfTheDay
+            .FirstOrDefaultAsync(x => x.CreatedAt >= todayStart && x.CreatedAt < tomorrowStart);
+
+        if (existingQotd != null)
         {
-            _logger.LogWarning("User profile not found for ID: {UserId}", userId);
-            throw new KeyNotFoundException("User profile not found");
+            _logger.LogInformation("QOTD already exists today");
+            return existingQotd;
         }
 
-        return user;
+
+        string question = await _geminiService.GetDailyQuestionAsync();
+
+        //TODO: add error handling
+        var qotd = new QuestionOfTheDay
+        {
+            Question = question
+        };
+        _context.Add(qotd);
+        await _context.SaveChangesAsync();
+        _logger.LogInformation("QOTD added");
+        return qotd;
+    }
+    public async Task<QOTDResponse?> GetQOTDAsync(string? date)
+    {
+        LocalDate targetDate;
+        LocalDate today = SystemClock.Instance.GetCurrentInstant().InUtc().Date;
+
+        if (string.IsNullOrWhiteSpace(date))
+        {
+            targetDate = today;
+        }
+        else
+        {
+            var parseResult = LocalDatePattern.Iso.Parse(date);
+            if (!parseResult.Success)
+            {
+                _logger.LogError("Invalid date format provided in query string: {date}", date);
+                throw new AppException("Invalid date format. Please use yyyy-MM-dd", ErrorCodes.InvalidInput);
+            }
+            targetDate = parseResult.Value;
+        }
+
+        Instant start = targetDate.AtMidnight().InUtc().ToInstant();
+        Instant end = start.Plus(Duration.FromDays(1));
+
+        var qotd = await _context.QuestionsOfTheDay
+            .FirstOrDefaultAsync(x => x.CreatedAt >= start && x.CreatedAt < end);
+
+        if (qotd == null && targetDate == today)
+        {
+             qotd = await CreateNewQOTD();
+        }
+
+        if (qotd != null)
+        {
+            return new QOTDResponse
+            {
+                QOTDId = qotd.Id,
+                Question = qotd.Question,
+            };
+        }
+
+        throw new Exception("A question of the day is supposed to exist but does not");
+    }
+
+    public async Task<List<PostResponse>> GetResponsesAsync(string? date)
+    {
+        throw new NotImplementedException();
     }
 }

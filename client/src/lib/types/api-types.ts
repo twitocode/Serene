@@ -90,3 +90,19 @@ export interface CheckEmailDto {
 export interface GoogleLoginDto {
   idToken: string;
 }
+
+export interface QOTDPostDto {
+  qotdId: string;
+  response: string;
+}
+
+export interface QOTDResponseDto {
+  qotdId: string;
+  question: string;
+}
+
+export interface QOTDAnswerDto {
+  userId: string;
+  username: string;
+  answer: string;
+}

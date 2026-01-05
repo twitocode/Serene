@@ -1,12 +1,16 @@
+using Google.GenAI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
+using Quartz;
+using Quartz.AspNetCore;
 using Scalar.AspNetCore;
 using Serene.Data;
 using Serene.Entities;
+using Serene.Jobs;
 using Serene.Middleware;
 using Serene.Services;
 using Serilog;
@@ -16,19 +20,22 @@ using Serilog.Sinks.SystemConsole.Themes;
 Log.Logger = new LoggerConfiguration()
    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
     .Enrich.FromLogContext()
-    .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen)
+    .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen, applyThemeToRedirectedOutput: true)
     .CreateBootstrapLogger(); // <-- Change this line!
 
 Log.Information("Starting web application");
+
 try
 {
 
     var builder = WebApplication.CreateBuilder(args);
+
     builder.Services.AddSerilog((services, lc) => lc
         .ReadFrom.Configuration(builder.Configuration)
         .ReadFrom.Services(services)
         .Enrich.FromLogContext()
         .WriteTo.Console());
+
     builder.Services.AddControllers()
         .AddJsonOptions(options =>
         {
@@ -56,12 +63,13 @@ try
             };
         });
 
-    // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
     builder.Services.AddOpenApi();
 
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentException("DB string not provided");
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(connectionString, o => o.UseNodaTime()));
+
 
     builder.Services.AddIdentityCore<User>(options =>
     {
@@ -84,7 +92,9 @@ try
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<IUsersService, UsersService>();
     builder.Services.AddScoped<ICommunityService, CommunityService>();
+    builder.Services.AddScoped<IGeminiService, GeminiService>();
 
+    builder.Services.AddScoped(x => new Client(apiKey: builder.Configuration["GEMINI_API_KEY"] ?? throw new ArgumentException("Gemini API key not found in environment")));
 
     builder.Services.AddAuthentication(options =>
     {
@@ -124,13 +134,13 @@ try
         };
     })
     .AddGoogle(o =>
-            {
+    {
 
-                o.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new ArgumentException("Missing Client ID");
-                o.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new ArgumentException("Missing Client Secret");
-                o.Scope.Add("profile");
-                o.SignInScheme = "ExternalCookie";
-            });
+        o.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? throw new ArgumentException("Missing Client ID");
+        o.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? throw new ArgumentException("Missing Client Secret");
+        o.Scope.Add("profile");
+        o.SignInScheme = "ExternalCookie";
+    });
 
 
     builder.Services.AddCors(options =>
@@ -142,6 +152,28 @@ try
                 .AllowAnyMethod()
                 .AllowCredentials();
         });
+    });
+
+    builder.Services.AddQuartz(options =>
+    {
+        var jobKey = new JobKey("SendQOTDJob");
+        options.AddJob<SendQOTDJob>(opts => opts.WithIdentity(jobKey));
+
+        options.AddTrigger(opts => opts
+            .ForJob(jobKey)
+            .WithIdentity("SendQOTDJob-trigger")
+            .WithSimpleSchedule(x => x
+                    .WithIntervalInHours(1)
+                    // .WithIntervalInMinutes(1)
+                    .RepeatForever())
+        );
+
+    });
+
+    builder.Services.AddQuartzServer(options =>
+    {
+        // when shutting down we want jobs to complete gracefully
+        options.WaitForJobsToComplete = true;
     });
 
     var app = builder.Build();
@@ -162,7 +194,6 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
-
     app.Run();
 
 }

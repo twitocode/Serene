@@ -88,5 +88,5 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .WithMany()
             .HasForeignKey(p => p.QotdId)
             .OnDelete(DeleteBehavior.Cascade);
-    }
+  }
 }

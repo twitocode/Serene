@@ -8,6 +8,7 @@ import { Star } from "lucide-react"; // Using lucide-react (standard with shadcn
 import { Input } from "@/lib/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { Separator } from "@radix-ui/react-dropdown-menu";
+import { useQOTD } from "@/lib/hooks/queries/use-qotd";
 
 // --- Types ---
 type Response = {
@@ -78,8 +79,10 @@ const ResponseCard = ({ response }: { response: Response }) => {
 };
 
 export default function QuestionOfTheDay() {
-  const [inputText, setInputText] = useState("");
+  const {data: qotd} = useQOTD();
 
+  const [inputText, setInputText] = useState("");
+  
   const myResponse = MOCK_RESPONSES.find((r) => r.isMe);
   const otherResponses = MOCK_RESPONSES.filter((r) => !r.isMe);
 
@@ -105,9 +108,7 @@ export default function QuestionOfTheDay() {
           <span className="text-lg font-medium text-gray-800">
             Question of the Day
           </span>
-          <h2 className="text-3xl font-bold mt-1 leading-tight">
-            How do you deal with stress in classes?
-          </h2>
+          <h2 className="text-3xl font-bold mt-1 leading-tight">{qotd?.question}</h2>
         </div>
 
         {/* Shadcn Input with custom styling to match design */}
