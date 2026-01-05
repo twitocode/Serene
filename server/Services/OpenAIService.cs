@@ -1,13 +1,17 @@
+
 using Google.GenAI;
 using Google.GenAI.Types;
+using OpenAI;
+using OpenAI.Chat;
+using OpenAI.Responses;
 
 namespace Serene.Services;
 
 
 
-public class GeminiService(Client genAiClient, ILogger<GeminiService> logger) : IAIService
+public class OpenAIService(ChatClient genAiClient, ILogger<GeminiService> logger) : IAIService
 {
-    private readonly Client _client = genAiClient;
+    private readonly ChatClient _client = genAiClient;
     private readonly ILogger<GeminiService> _logger = logger;
 
     public async Task<string> GetDailyQuestionAsync()
@@ -31,34 +35,24 @@ public class GeminiService(Client genAiClient, ILogger<GeminiService> logger) : 
             * **A Gentle Tip:** (A 5-second actionable tip)
 
             Safety Rule: If the user indicates a crisis, provide professional resources immediately.
+
+            Whenever you are asked to generate a question of the day. Respond with JUST the question. nothing else.
+            do not write **The Question:** in your response. I literally mean just what the question should be.
             """;
 
         try
         {
-            var response = await _client.Models.GenerateContentAsync(
-                model: "gemini-2.0-flash-lite",
-                contents: "Generate the question of the day",
-                config: new GenerateContentConfig
-                {
-                    SystemInstruction = new Content
-                    {
-                        Parts = [
-                            new Part { Text = systemPrompt },
-                            new Part { Text = "Whenever you are asked to generate a question of the day. Respond with JUST the question. nothing else" }
-                        ]
-                    }
-                }
-            );
+            _logger.LogInformation("Generating question of the day");
+            ChatCompletion? response = await _client.CompleteChatAsync(systemPrompt + " Generate the question of the day");
 
-            string? text = response?.Candidates?[0]?.Content?.Parts?[0]?.Text;
-
-            if (string.IsNullOrWhiteSpace(text))
+            if (response == null)
             {
-                _logger.LogWarning("Gemini returned empty response");
+                _logger.LogWarning("OpenAI returned empty response");
                 return "What is one small thing you can do for yourself today?";
             }
 
-            _logger.LogInformation("GEMINI RESPONSE: {response}", text);
+            string text = response.Content[0].Text;
+            _logger.LogInformation("OPENAI RESPONSE: {response}", text);
             return text;
         }
         catch (Exception ex)

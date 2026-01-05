@@ -16,6 +16,9 @@ public class QuestionOfTheDay
     [Required]
     public string Question { get; set; } = string.Empty;
 
+    [Column("day")]
+    public LocalDate Day { get; set; } 
+
     [Column("created_at")]
     public Instant CreatedAt { get; set; } = SystemClock.Instance.GetCurrentInstant();
 

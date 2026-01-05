@@ -27,7 +27,7 @@ export default function LandingPage() {
             patterns, and build a safety plan—all with a companion who’s got
             your back.
           </p>
-          <a href="/login">
+          <a href="/signup">
             <Button>Get Started</Button>
           </a>
         </section>

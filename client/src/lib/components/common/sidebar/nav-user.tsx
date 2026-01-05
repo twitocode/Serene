@@ -35,6 +35,7 @@ import {
   LogOut,
   Sparkles,
 } from "lucide-react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 
 type NavUserProps = {
@@ -44,6 +45,8 @@ type NavUserProps = {
 export function NavUser({}: NavUserProps) {
   const sidebar = useSidebar();
   const { data: user } = useUserQuery()
+  const {setTheme} =useTheme();
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -115,7 +118,9 @@ export function NavUser({}: NavUserProps) {
             <DropdownMenuItem
               onClick={async () => {
                 await auth.signOut();
-                window.location.reload();
+                setTheme("light")
+                // window.location.reload();
+                window.location.href = "/"
               }}
             >
               <LogOut className="mr-2 h-4 w-4" />

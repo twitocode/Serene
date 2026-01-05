@@ -1,3 +1,4 @@
+using System.ClientModel;
 using Google.GenAI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -5,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
+using OpenAI;
+using OpenAI.Chat;
 using Quartz;
 using Quartz.AspNetCore;
 using Scalar.AspNetCore;
@@ -92,9 +95,16 @@ try
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<IUsersService, UsersService>();
     builder.Services.AddScoped<ICommunityService, CommunityService>();
-    builder.Services.AddScoped<IGeminiService, GeminiService>();
+    // builder.Services.AddScoped<IAIService, GeminiService>();
+    builder.Services.AddScoped<IAIService, OpenAIService>();
 
     builder.Services.AddScoped(x => new Client(apiKey: builder.Configuration["GEMINI_API_KEY"] ?? throw new ArgumentException("Gemini API key not found in environment")));
+    builder.Services.AddScoped(x => new ChatClient(
+        credential: new ApiKeyCredential(builder.Configuration["OPENROUTER_API_KEY"] 
+            ?? throw new ArgumentException("Gemini API key not found in environment")), 
+        model: "openai/gpt-oss-20b", 
+        options: new OpenAIClientOptions { Endpoint = new Uri("https://openrouter.ai/api/v1") 
+    }));
 
     builder.Services.AddAuthentication(options =>
     {
@@ -162,10 +172,7 @@ try
         options.AddTrigger(opts => opts
             .ForJob(jobKey)
             .WithIdentity("SendQOTDJob-trigger")
-            .WithSimpleSchedule(x => x
-                    .WithIntervalInHours(1)
-                    // .WithIntervalInMinutes(1)
-                    .RepeatForever())
+            .WithCronSchedule("0 0 0 * * ?") // Run at midnight every day
         );
 
     });
@@ -175,6 +182,9 @@ try
         // when shutting down we want jobs to complete gracefully
         options.WaitForJobsToComplete = true;
     });
+
+    // Add startup service to check and run QOTD if needed
+    builder.Services.AddHostedService<QOTDStartupService>();
 
     var app = builder.Build();
 

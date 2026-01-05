@@ -13,8 +13,9 @@ import {
 import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import { QOTDAnswerDto } from "@/lib/types/api-types";
 import { Star } from "lucide-react";
-import { useEffect, useState } from "react";
+import { FormEventHandler, useEffect, useState } from "react";
 import { ResponseCard } from "@/lib/components/community/response-card";
+import { Button } from "@/lib/components/ui/button";
 
 // --- Components ---
 
@@ -32,8 +33,9 @@ export default function QuestionOfTheDay() {
 
   const myResponse = responses.find((r) => r.userId === user?.id);
 
-  const handleSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && inputText.trim() && qotd?.qotdId && !myResponse) {
+  const handleSubmit:FormEventHandler<HTMLFormElement>  = (e) => {
+    e.preventDefault()
+    if (inputText.trim() && qotd?.qotdId && !myResponse) {
       mutation.mutate(
         {
           qotdId: qotd.qotdId,
@@ -45,6 +47,7 @@ export default function QuestionOfTheDay() {
       );
     }
   };
+
 
   useEffect(() => {
     if (responses.find(x => x.userId == user?.id) != null) {
@@ -81,18 +84,25 @@ export default function QuestionOfTheDay() {
           </div>
 
           {!hasPosted && (
-            <Input
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              onKeyDown={handleSubmit}
-              disabled={mutation.isPending}
-              placeholder={
-                mutation.isPending
-                  ? "Submitting..."
-                  : "Type your response here and press Enter"
-              }
-              className="w-full bg-gray-200 border-none rounded-xl px-5 py-6 text-base text-gray-700 placeholder:text-gray-400 focus-visible:ring-2 focus-visible:ring-gray-300"
-            />
+            <form
+              onSubmit={handleSubmit}
+              className="flex space-x-2 items-center"
+            >
+              <Input
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                disabled={mutation.isPending}
+                placeholder={
+                  mutation.isPending
+                    ? "Submitting..."
+                    : "Type your response here and press Enter"
+                }
+                className="w-full bg-gray-200 border border-gray-300 px-5 py-6 text-base text-gray-700 placeholder:text-gray-400 focus-visible:ring-2 focus-visible:ring-gray-300 shadow-sm"
+              />
+              <Button type="submit" className="py-6 shadow-sm border border-gray-300">
+                Respond
+              </Button>
+            </form>
           )}
         </motion.div>
       </div>

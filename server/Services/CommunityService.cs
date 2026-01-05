@@ -23,9 +23,9 @@ public class CommunityService : ICommunityService
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<UsersService> _logger;
-    private readonly IGeminiService _geminiService;
+    private readonly IAIService _geminiService;
 
-    public CommunityService(ApplicationDbContext context, ILogger<UsersService> logger, IGeminiService geminiService)
+    public CommunityService(ApplicationDbContext context, ILogger<UsersService> logger, IAIService geminiService)
     {
         _context = context;
         _logger = logger;
@@ -57,30 +57,46 @@ public class CommunityService : ICommunityService
     public async Task<QuestionOfTheDay?> CreateNewQOTD()
     {
         LocalDate today = SystemClock.Instance.GetCurrentInstant().InUtc().Date;
-        Instant todayStart = today.AtMidnight().InUtc().ToInstant();
-        Instant tomorrowStart = todayStart.Plus(Duration.FromDays(1));
 
         var existingQotd = await _context.QuestionsOfTheDay
-            .FirstOrDefaultAsync(x => x.CreatedAt >= todayStart && x.CreatedAt < tomorrowStart);
+            .FirstOrDefaultAsync(x => x.Day == today);
 
         if (existingQotd != null)
         {
-            _logger.LogInformation("QOTD already exists today");
+            _logger.LogInformation("QOTD already exists for today: {date}", today);
             return existingQotd;
         }
 
-
-        string question = await _geminiService.GetDailyQuestionAsync();
-
-        //TODO: add error handling
-        var qotd = new QuestionOfTheDay
+        try
         {
-            Question = question
-        };
-        _context.QuestionsOfTheDay.Add(qotd);
-        await _context.SaveChangesAsync();
-        _logger.LogInformation("QOTD added");
-        return qotd;
+            string question = await _geminiService.GetDailyQuestionAsync();
+
+            var qotd = new QuestionOfTheDay
+            {
+                Question = question,
+                Day = today
+            };
+            
+            _context.QuestionsOfTheDay.Add(qotd);
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("QOTD created successfully for {date}: {id}", today, qotd.Id);
+            return qotd;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create QOTD for {date}", today);
+            
+            var retryQotd = await _context.QuestionsOfTheDay
+                .FirstOrDefaultAsync(x => x.Day == today);
+            
+            if (retryQotd != null)
+            {
+                _logger.LogInformation("QOTD found after retry for {date}: {id}", today, retryQotd.Id);
+                return retryQotd;
+            }
+            
+            throw;
+        }
     }
     public async Task<QOTDResponse?> GetQOTDAsync(string? date)
     {
@@ -102,16 +118,8 @@ public class CommunityService : ICommunityService
             targetDate = parseResult.Value;
         }
 
-        Instant start = targetDate.AtMidnight().InUtc().ToInstant();
-        Instant end = start.Plus(Duration.FromDays(1));
-
         var qotd = await _context.QuestionsOfTheDay
-            .FirstOrDefaultAsync(x => x.CreatedAt >= start && x.CreatedAt < end);
-
-        if (qotd == null && targetDate == today)
-        {
-            qotd = await CreateNewQOTD();
-        }
+            .FirstOrDefaultAsync(x => x.Day == targetDate);
 
         if (qotd != null)
         {
@@ -144,11 +152,8 @@ public class CommunityService : ICommunityService
             targetDate = parseResult.Value;
         }
 
-        Instant start = targetDate.AtMidnight().InUtc().ToInstant();
-        Instant end = start.Plus(Duration.FromDays(1));
-
         var qotd = await _context.QuestionsOfTheDay
-            .FirstOrDefaultAsync(x => x.CreatedAt >= start && x.CreatedAt < end);
+            .FirstOrDefaultAsync(x => x.Day == targetDate);
 
         if (qotd == null)
         {
