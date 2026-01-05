@@ -20,24 +20,22 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 
-Log.Logger = new LoggerConfiguration()
-   .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-    .Enrich.FromLogContext()
-    .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen, applyThemeToRedirectedOutput: true)
-    .CreateBootstrapLogger(); // <-- Change this line!
 
-Log.Information("Starting web application");
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
 try
 {
-
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Services.AddSerilog((services, lc) => lc
-        .ReadFrom.Configuration(builder.Configuration)
-        .ReadFrom.Services(services)
-        .Enrich.FromLogContext()
-        .WriteTo.Console());
+    builder.Services.AddSerilog((context, loggerConfiguration) =>
+    {
+        loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Code, applyThemeToRedirectedOutput: true);
+        loggerConfiguration.ReadFrom.Configuration(builder.Configuration);
+    });
+
+    Log.Information("Starting web application");
 
     builder.Services.AddControllers()
         .AddJsonOptions(options =>
@@ -100,11 +98,13 @@ try
 
     builder.Services.AddScoped(x => new Client(apiKey: builder.Configuration["GEMINI_API_KEY"] ?? throw new ArgumentException("Gemini API key not found in environment")));
     builder.Services.AddScoped(x => new ChatClient(
-        credential: new ApiKeyCredential(builder.Configuration["OPENROUTER_API_KEY"] 
-            ?? throw new ArgumentException("Gemini API key not found in environment")), 
-        model: "openai/gpt-oss-20b", 
-        options: new OpenAIClientOptions { Endpoint = new Uri("https://openrouter.ai/api/v1") 
-    }));
+        credential: new ApiKeyCredential(builder.Configuration["OPENROUTER_API_KEY"]
+            ?? throw new ArgumentException("Gemini API key not found in environment")),
+        model: "openai/gpt-oss-20b",
+        options: new OpenAIClientOptions
+        {
+            Endpoint = new Uri("https://openrouter.ai/api/v1")
+        }));
 
     builder.Services.AddAuthentication(options =>
     {

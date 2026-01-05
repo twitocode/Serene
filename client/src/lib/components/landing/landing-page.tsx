@@ -1,16 +1,14 @@
-
-"use client"
+"use client";
 import Footer from "@/lib/components/common/footer";
 import { Navbar } from "@/lib/components/common/navbar";
 import { Button } from "@/lib/components/ui/button";
-import { Link } from "lucide-react";
 import { useEffect } from "react";
 
 export default function LandingPage() {
   useEffect(() => {
-    document.documentElement.classList.remove('dark');
-    document.documentElement.classList.add('light');
-    localStorage.setItem('theme', 'light');
+    document.documentElement.classList.remove("dark");
+    document.documentElement.classList.add("light");
+    localStorage.setItem("theme", "light");
   }, []);
 
   return (
