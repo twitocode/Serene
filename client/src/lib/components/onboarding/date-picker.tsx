@@ -61,6 +61,7 @@ export function OnboardingDatePicker({
           mode="single"
           selected={displayDate}
           defaultMonth={displayDate}
+          //@ts-ignore
           defaultYear={displayDate?.getFullYear()}
           captionLayout="dropdown"
           onSelect={handleDateSelect}
