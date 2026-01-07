@@ -105,6 +105,7 @@ try
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<IUsersService, UsersService>();
     builder.Services.AddScoped<ICommunityService, CommunityService>();
+    builder.Services.AddScoped<ICheckinService, CheckinService>();
     // builder.Services.AddScoped<IAIService, GeminiService>();
     builder.Services.AddScoped<IAIService, OpenAIService>();
 

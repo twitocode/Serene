@@ -4,9 +4,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/lib/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function NavMain(props: any) {
+  const pathname = usePathname();
+
   const {
     items,
   }: {
@@ -30,7 +34,13 @@ export default function NavMain(props: any) {
         {items.map((item) => (
           <Link href={item.url} key={item.title}>
             <SidebarMenuItem>
-              <SidebarMenuButton tooltip={item.title}>
+              <SidebarMenuButton
+                tooltip={item.title}
+                className={cn({
+                  "bg-primary text-primary-foreground hover:bg-primary/25 transition hover:text-black":
+                    item.url.endsWith(pathname),
+                })}
+              >
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
               </SidebarMenuButton>
