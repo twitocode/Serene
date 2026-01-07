@@ -6,7 +6,7 @@ import {
   PopoverTrigger,
 } from "@/lib/components/ui/popover";
 import { ChevronDownIcon } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export function OnboardingDatePicker({
   value,
@@ -18,18 +18,9 @@ export function OnboardingDatePicker({
   onBlur: () => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [internalDate, setInternalDate] = useState<Date | undefined>(
-    value ? new Date(value) : undefined
-  );
-
-  useEffect(() => {
-    if (value) {
-      setInternalDate(new Date(value));
-    }
-  }, [value]);
+  const displayDate = value ? new Date(value) : undefined;
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
-    setInternalDate(selectedDate);
     if (selectedDate) {
       onChange(selectedDate.toISOString().split("T")[0]);
     }
@@ -39,9 +30,6 @@ export function OnboardingDatePicker({
 
   const handlePopoverOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
-    if (!isOpen && value) {
-      setInternalDate(new Date(value));
-    }
   };
 
   const formatDisplayDate = (date: Date | undefined) => {
@@ -62,8 +50,8 @@ export function OnboardingDatePicker({
           variant="outline"
           className="w-full justify-between font-normal bg-gray-100 border-0"
         >
-          <span className={internalDate ? "" : "text-muted-foreground"}>
-            {formatDisplayDate(internalDate)}
+          <span className={displayDate ? "" : "text-muted-foreground"}>
+            {formatDisplayDate(displayDate)}
           </span>
           <ChevronDownIcon className="w-4 h-4" />
         </Button>
@@ -71,9 +59,12 @@ export function OnboardingDatePicker({
       <PopoverContent className="w-auto overflow-hidden p-0" align="start">
         <Calendar
           mode="single"
-          selected={internalDate}
+          selected={displayDate}
+          defaultMonth={displayDate}
+          defaultYear={displayDate?.getFullYear()}
           captionLayout="dropdown"
           onSelect={handleDateSelect}
+          max={new Date()}
         />
       </PopoverContent>
     </Popover>

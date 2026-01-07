@@ -8,11 +8,11 @@ import {
 } from '@/lib/components/ui/shadcn-io/color-picker';
 import { Popover, PopoverContent, PopoverTrigger } from '@/lib/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { FormEventHandler, useState } from 'react';
 
 interface KoalaColorPickerProps {
   value: string;
-  onChange: (value: string) => void;
+  onChange: FormEventHandler<HTMLDivElement> & ((value: string) => void);
   className?: string;
 }
 
