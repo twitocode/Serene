@@ -22,7 +22,6 @@ using Serene.Services;
 using Serene.Validators;
 using Serilog;
 using Serilog.Events;
-using Serilog.Formatting.Compact;
 using Serilog.Sinks.SystemConsole.Themes;
 
 Log.Logger = new LoggerConfiguration()
@@ -169,7 +168,7 @@ try
     {
         options.AddDefaultPolicy(policy =>
         {
-            policy.WithOrigins("http://localhost:3000", "http://localhost:5025")
+            policy.WithOrigins(builder.Configuration.GetSection("Cors:Origins").Get<string[]>() ?? throw new ArgumentException("Missing Cors Origins"))
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
