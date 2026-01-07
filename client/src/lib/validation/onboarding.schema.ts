@@ -14,10 +14,20 @@ const pronounsRegex =
   /^(She\s?[\/\-]\s?Her|He\s?[\/\-]\s?Him|They\s?[\/\-]\s?Them|Prefer not to say)$/i;
 
 export const stepTwoSchema = z.object({
-  age: z
-    .number()
-    .min(13, "You must be at least 13 years old")
-    .max(120, "Please enter a valid age"),
+  dateOfBirth: z
+    .string()
+    .min(1, "Date of birth is required")
+    .refine((date) => {
+      const birthDate = new Date(date);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      const dayDiff = today.getDate() - birthDate.getDate();
+      
+      const actualAge = monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
+      
+      return actualAge >= 13 && actualAge <= 120;
+    }, "You must greater than 13 years old"),
   gender: z.enum(["Male", "Female", "Non-Binary", "Prefer not to say"], {
     message: "Please select a gender",
   }),

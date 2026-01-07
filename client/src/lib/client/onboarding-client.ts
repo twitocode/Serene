@@ -23,11 +23,11 @@ export async function completeStep1(
 }
 
 export async function completeStep2(
-  age: number,
+  dateOfBirth: string,
   gender: string,
   pronouns: string
 ): Promise<Result<{ success: boolean }>> {
-  return completeOnboardingStep<{ success: boolean }>(2, { age, gender, pronouns });
+  return completeOnboardingStep<{ success: boolean }>(2, { dateOfBirth, gender, pronouns });
 }
 
 export async function completeStep3(

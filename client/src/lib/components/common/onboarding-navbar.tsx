@@ -27,7 +27,7 @@ export function OnBoardingNavbar() {
     <nav className="flex justify-between w-full items-center">
       <div>
         <Link href="/" className="hover:opacity-75">
-          <SereneLogo textSize="4xl" iconSize={40} />
+          <SereneLogo />
         </Link>
       </div>
       <NavigationMenu viewport={isMobile}>

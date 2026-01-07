@@ -14,8 +14,8 @@ public class User : IdentityUser
     [Column("image")]
     public string? Image { get; set; }
 
-    [Column("age")]
-    public int Age { get; set; } = 0;
+    [Column("date_of_birth")]
+    public LocalDate? DateOfBirth { get; set; }
 
     [Column("gender")]
     public string Gender { get; set; } = string.Empty;

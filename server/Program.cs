@@ -1,4 +1,6 @@
 using System.ClientModel;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Google.GenAI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +10,7 @@ using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using OpenAI;
 using OpenAI.Chat;
+
 using Quartz;
 using Quartz.AspNetCore;
 using Scalar.AspNetCore;
@@ -16,13 +19,13 @@ using Serene.Entities;
 using Serene.Jobs;
 using Serene.Middleware;
 using Serene.Services;
+using Serene.Validators;
 using Serilog;
 using Serilog.Events;
+using Serilog.Formatting.Compact;
 using Serilog.Sinks.SystemConsole.Themes;
 
-
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
     .CreateBootstrapLogger();
 
 try
@@ -31,8 +34,13 @@ try
 
     builder.Services.AddSerilog((context, loggerConfiguration) =>
     {
-        loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Code, applyThemeToRedirectedOutput: true);
+        loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Code, applyThemeToRedirectedOutput: true, restrictedToMinimumLevel: LogEventLevel.Information);
+        loggerConfiguration.MinimumLevel.Debug();
         loggerConfiguration.ReadFrom.Configuration(builder.Configuration);
+
+        loggerConfiguration.Enrich.FromLogContext();
+        loggerConfiguration.Enrich.WithProperty("Application", "YourAppName");
+        loggerConfiguration.Enrich.WithProperty("Environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
     });
 
     Log.Information("Starting web application");
@@ -63,6 +71,10 @@ try
                 });
             };
         });
+
+    // Add FluentValidation
+    builder.Services.AddFluentValidationAutoValidation();
+    builder.Services.AddValidatorsFromAssemblyContaining<EmailSignUpRequestValidator>();
 
 
     builder.Services.AddOpenApi();
@@ -192,8 +204,23 @@ try
     {
         app.MapOpenApi();
         app.MapScalarApiReference();
-        app.UseSerilogRequestLogging();
     }
+
+    app.UseSerilogRequestLogging(options =>
+    {
+        options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+        options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+        {
+            diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
+            diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
+            diagnosticContext.Set("UserAgent", httpContext.Request.Headers["User-Agent"].FirstOrDefault());
+            // Add custom business context
+            if (httpContext.User.Identity.IsAuthenticated)
+            {
+                diagnosticContext.Set("UserId", httpContext.User.FindFirst("sub")?.Value);
+            }
+        };
+    });
 
     app.UseExceptionHandler();
     app.UseHttpsRedirection();

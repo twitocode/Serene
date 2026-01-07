@@ -1,3 +1,5 @@
+using NodaTime;
+
 namespace Serene.DTOs;
 
 public class OnboardingStatusResponse
@@ -8,7 +10,7 @@ public class OnboardingStatusResponse
     
     // User Info
     public string? Name { get; set; }
-    public int Age { get; set; }
+    public LocalDate? DateOfBirth { get; set; }
     public string? Gender { get; set; }
     public string? Pronouns { get; set; }
     public string? CountryCode { get; set; }

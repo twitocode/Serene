@@ -61,7 +61,7 @@ public class OnboardingService : IOnboardingService
                 Completed = u.OnboardingCompleted,
                 Started = u.OnboardingStarted,
                 Name = u.Name,
-                Age = u.Age,
+                DateOfBirth = u.DateOfBirth,
                 Gender = u.Gender,
                 Pronouns = u.Pronouns,
                 CountryCode = u.CountryCode,
@@ -100,7 +100,7 @@ public class OnboardingService : IOnboardingService
         await ValidateStep(userId, 2);
 
         var user = await _context.Users.FindAsync(userId) ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
-        user.Age = dto.Age;
+        user.DateOfBirth = dto.DateOfBirth;
         user.Gender = dto.Gender;
         user.Pronouns = dto.Pronouns ?? "Prefer not to say";
         user.OnboardingStep = 3;

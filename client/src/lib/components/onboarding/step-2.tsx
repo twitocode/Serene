@@ -2,9 +2,9 @@
 
 import { completeStep2 } from "@/lib/client/onboarding-client";
 import FormError from "@/lib/components/common/forms/form-error";
+import { OnboardingDatePicker } from "@/lib/components/onboarding/date-picker";
 import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
-import { Input } from "@/lib/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -28,8 +28,8 @@ import { useState } from "react";
 
 export function StepTwo() {
   const {
-    age,
-    setAge,
+    dateOfBirth,
+    setDateOfBirth,
     gender,
     setGender,
     pronouns,
@@ -41,12 +41,15 @@ export function StepTwo() {
   const [serverError, setServerError] = useState("");
 
   const mutation = useMutation({
-    mutationFn: (values: { age: number; gender: string; pronouns: string }) =>
-      completeStep2(values.age, values.gender, values.pronouns),
+    mutationFn: (values: {
+      dateOfBirth: string;
+      gender: string;
+      pronouns: string;
+    }) => completeStep2(values.dateOfBirth, values.gender, values.pronouns),
   });
 
   const defaultValues: StepTwoSchema = {
-    age: hasStarted ? age : 0,
+    dateOfBirth: hasStarted ? dateOfBirth : "",
     gender: hasStarted && gender ? (gender as any) : "Prefer not to say",
     pronouns: hasStarted && pronouns ? pronouns : "",
   };
@@ -57,12 +60,12 @@ export function StepTwo() {
       onSubmit: stepTwoSchema,
     },
     onSubmit: async ({ value }) => {
-      setAge(value.age);
+      setDateOfBirth(value.dateOfBirth);
       setGender(value.gender);
       setPronouns(value.pronouns);
 
       const result = await mutation.mutateAsync({
-        age: value.age,
+        dateOfBirth: value.dateOfBirth,
         gender: value.gender,
         pronouns: value.pronouns,
       });
@@ -72,7 +75,7 @@ export function StepTwo() {
         return;
       }
 
-      console.log(result)
+      console.log(result);
       if (result.errorCode === "VALIDATION_ERROR") {
         Object.keys(result.errors!).forEach((key) => {
           const fieldName = key.toLowerCase() as StepTwoValues;
@@ -108,28 +111,30 @@ export function StepTwo() {
           }}
           className="space-y-4"
         >
-          <form.Field name="age">
+          <form.Field name="dateOfBirth">
             {(field) => (
               <FormField field={field}>
                 <FormItem>
-                  <FormLabel>Age</FormLabel>
+                  <FormLabel>Date of Birth</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Age"
-                      value={field.state.value}
-                      onChange={(e) => {
-                        field.handleChange(Number(e.target.value));
-                        if (field.state.meta.errorMap.onSubmit) {
-                          field.setMeta((prev) => ({
-                            ...prev,
-                            errorMap: { ...prev.errorMap, onSubmit: undefined },
-                          }));
-                        }
-                      }}
-                      className="bg-gray-100 border-0"
-                      type="number"
-                      onBlur={field.handleBlur}
-                    />
+                    <div className="w-full">
+                      <OnboardingDatePicker
+                        value={field.state.value}
+                        onChange={(date) => {
+                          field.handleChange(date);
+                          if (field.state.meta.errorMap.onSubmit) {
+                            field.setMeta((prev) => ({
+                              ...prev,
+                              errorMap: {
+                                ...prev.errorMap,
+                                onSubmit: undefined,
+                              },
+                            }));
+                          }
+                        }}
+                        onBlur={field.handleBlur}
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

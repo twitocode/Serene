@@ -5,7 +5,7 @@ export interface OnboardingProps {
   initialStep?: number;
   initialHasStarted?: boolean;
   initialName?: string;
-  initialAge?: number;
+  initialDateOfBirth?: string;
   initialGender?: string;
   initialPronouns?: string;
   initialCountryCode?: string;
@@ -18,7 +18,7 @@ export interface OnboardingProps {
 export interface OnboardingState {
   // Current values
   name: string;
-  age: number;
+  dateOfBirth: string;
   gender: string;
   pronouns: string;
   countryCode: string;
@@ -29,7 +29,7 @@ export interface OnboardingState {
 
   // Initial values from server (to check if already set)
   initialName: string;
-  initialAge: number;
+  initialDateOfBirth: string;
   initialGender: string;
   initialPronouns: string;
   initialCountryCode: string;
@@ -45,7 +45,7 @@ export interface OnboardingState {
   direction: number;
 
   setName: (name: string) => void;
-  setAge: (age: number) => void;
+  setDateOfBirth: (dateOfBirth: string) => void;
   setGender: (gender: string) => void;
   setPronouns: (pronouns: string) => void;
   setCountryCode: (country: string) => void;
@@ -70,7 +70,7 @@ export const createOnboardingStore = (initProps?: OnboardingProps) => {
   return createStore<OnboardingState>((set, get) => ({
     // Current State (initialized with initial values)
     name: initProps?.initialName || "",
-    age: initProps?.initialAge || 0,
+    dateOfBirth: initProps?.initialDateOfBirth || "",
     gender: initProps?.initialGender || "",
     pronouns: initProps?.initialPronouns || "",
     countryCode: initProps?.initialCountryCode || "",
@@ -81,7 +81,7 @@ export const createOnboardingStore = (initProps?: OnboardingProps) => {
 
     // Initial State (preserved for comparison)
     initialName: initProps?.initialName || "",
-    initialAge: initProps?.initialAge || 0,
+    initialDateOfBirth: initProps?.initialDateOfBirth || "",
     initialGender: initProps?.initialGender || "",
     initialPronouns: initProps?.initialPronouns || "",
     initialCountryCode: initProps?.initialCountryCode || "",
@@ -97,7 +97,7 @@ export const createOnboardingStore = (initProps?: OnboardingProps) => {
 
     // Actions
     setName: (name) => set({ name }),
-    setAge: (age) => set({ age }),
+    setDateOfBirth: (dateOfBirth) => set({ dateOfBirth }),
     setGender: (gender) => set({ gender }),
     setPronouns: (pronouns) => set({ pronouns }),
     setCountryCode: (countryCode) => set({ countryCode }),

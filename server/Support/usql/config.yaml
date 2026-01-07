@@ -1,2 +1,0 @@
-connections:
-  serene: pg://postgres:postgres@localhost:5432/serene
