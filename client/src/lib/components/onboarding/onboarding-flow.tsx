@@ -2,15 +2,8 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect } from "react";
-import { IntermediateStepOne } from "./intermediate-step-1";
-import { IntermediateStepTwo } from "./intermediate-step-2";
-import { ReturningStep } from "./returning-step";
-import { StepOne } from "./step-1";
-import { StepTwo } from "./step-2";
-import { StepThree } from "./step-3";
-import { StepFour } from "./step-4";
-import { StepFive } from "./step-5";
 import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
+import { ONBOARDING_STEPS } from "./onboarding-config";
 
 type TransitionType = "slide" | "fade" | "scale";
 
@@ -50,26 +43,8 @@ export function OnboardingFlow() {
   const variants = getVariants(transitionType);
 
   const getProgressStep = (currentUIStep: number): number => {
-    switch (currentUIStep) {
-      case 0:
-        return 1;
-      case 1:
-        return 1;
-      case 2:
-        return 1;
-      case 3:
-        return 2;
-      case 4:
-        return 2;
-      case 5:
-        return 3;
-      case 6:
-        return 4;
-      case 7:
-        return 5;
-      default:
-        return 1;
-    }
+    const stepConfig = ONBOARDING_STEPS.find((step) => step.uiStep === currentUIStep);
+    return stepConfig?.progress || 1;
   };
 
   return (
@@ -90,14 +65,12 @@ export function OnboardingFlow() {
               }}
               className="flex-1 flex items-center justify-center p-8"
             >
-              {uiStep === 0 && <ReturningStep />}
-              {uiStep === 1 && <IntermediateStepOne />}
-              {uiStep === 2 && <StepOne />}
-              {uiStep === 3 && <IntermediateStepTwo />}
-              {uiStep === 4 && <StepTwo />}
-              {uiStep === 5 && <StepThree />}
-              {uiStep === 6 && <StepFour />}
-              {uiStep === 7 && <StepFive />}
+              {(() => {
+                const activeConfig = ONBOARDING_STEPS.find((step) => step.uiStep === uiStep);
+                if (!activeConfig) return null;
+                const ActiveComponent = activeConfig.component;
+                return <ActiveComponent />;
+              })()}
             </motion.div>
           </AnimatePresence>
         </div>

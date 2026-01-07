@@ -1,4 +1,5 @@
 import { createStore } from "zustand/vanilla";
+import { ONBOARDING_STEPS } from "@/lib/components/onboarding/onboarding-config";
 
 // 1. Define the props that might come from the Server (DB)
 export interface OnboardingProps {
@@ -107,50 +108,52 @@ export const createOnboardingStore = (initProps?: OnboardingProps) => {
     setKoalaPronouns: (koalaPronouns) => set({ koalaPronouns }),
 
     goNext: () => {
-      const { step, uiStep, initialName } = get();
+      const { step, uiStep } = get();
+      const currentState = get();
       set({ direction: 1 });
 
       if (uiStep === 0) {
-        let nextUiStep = 1;
-        switch (step) {
-          case 1:
-            nextUiStep = 2;
-            break;
-          case 2:
-            nextUiStep = 4;
-            break;
-          case 3:
-            nextUiStep = 5;
-            break;
-          case 4:
-            nextUiStep = 6;
-            break;
-          case 5:
-            nextUiStep = 7;
-            break;
-          default:
-            nextUiStep = 1;
+        // Find the first step that matches current server step and doesn't skip
+        const nextStep = ONBOARDING_STEPS.find(
+          (s) => s.serverStep === step && !s.shouldSkip?.(currentState)
+        );
+        if (nextStep) {
+          set({ uiStep: nextStep.uiStep });
         }
-        set({ uiStep: nextUiStep });
         return;
       }
 
-      // Skip "Hello, {name}" (uiStep 3) if moving from StepOne (uiStep 2) and name was already claimed
-      if (uiStep === 2 && initialName) {
-        set({ uiStep: 4 });
-        return;
-      }
+      // Find current step index
+      const currentIndex = ONBOARDING_STEPS.findIndex((s) => s.uiStep === uiStep);
+      if (currentIndex === -1) return;
 
-      set((state) => ({ uiStep: state.uiStep + 1 }));
+      // Find next step that doesn't skip
+      for (let i = currentIndex + 1; i < ONBOARDING_STEPS.length; i++) {
+        const stepConfig = ONBOARDING_STEPS[i];
+        if (!stepConfig.shouldSkip?.(currentState)) {
+          set({ uiStep: stepConfig.uiStep });
+          return;
+        }
+      }
     },
 
     goBack: () => {
       const { uiStep } = get();
+      const currentState = get();
       set({ direction: -1 });
-      let prevUiStep = uiStep - 1;
-      if (uiStep === 4) prevUiStep = 2;
-      if (uiStep === 2) prevUiStep = 1;
-      set({ uiStep: prevUiStep });
+
+      // Find current step index
+      const currentIndex = ONBOARDING_STEPS.findIndex((s) => s.uiStep === uiStep);
+      if (currentIndex === -1) return;
+
+      // Find previous step that doesn't skip
+      for (let i = currentIndex - 1; i >= 0; i--) {
+        const stepConfig = ONBOARDING_STEPS[i];
+        if (!stepConfig.shouldSkip?.(currentState)) {
+          set({ uiStep: stepConfig.uiStep });
+          return;
+        }
+      }
     },
 
     completeServerStep: () => {

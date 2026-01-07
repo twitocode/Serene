@@ -51,7 +51,7 @@ export interface OnboardingStatusDto {
   completed: boolean;
   started: boolean;
   name?: string | null;
-  age?: number;
+  dateOfBirth?: string;
   gender?: string | null;
   pronouns?: string | null;
   countryCode?: string | null;

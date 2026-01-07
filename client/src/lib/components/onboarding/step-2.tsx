@@ -50,7 +50,7 @@ export function StepTwo() {
 
   const defaultValues: StepTwoSchema = {
     dateOfBirth: hasStarted ? dateOfBirth : "",
-    gender: hasStarted && gender ? (gender as any) : "Prefer not to say",
+    gender: hasStarted && gender ? (gender as any) : "",
     pronouns: hasStarted && pronouns ? pronouns : "",
   };
 

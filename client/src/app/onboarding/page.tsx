@@ -46,7 +46,7 @@ export default async function OnboardingPage() {
           initialStep={step}
           initialHasStarted={started}
           initialName={rest.name || ""}
-          initialAge={rest.age}
+          initialDateOfBirth={rest.dateOfBirth}
           initialGender={rest.gender || ""}
           initialPronouns={rest.pronouns || ""}
           initialCountryCode={rest.countryCode || ""}
