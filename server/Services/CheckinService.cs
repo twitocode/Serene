@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using NodaTime;
+using NodaTime.Extensions;
 using Serene.Common;
 using Serene.Data;
 using Serene.DTOs;
@@ -8,12 +10,8 @@ namespace Serene.Services;
 
 public interface ICheckinService
 {
-    Task<OnboardingStatusResponse> GetStatusAsync(string userId);
-    Task CompleteStep1Async(string userId, StepOneRequest dto);
-    Task CompleteStep2Async(string userId, StepTwoRequest dto);
-    Task CompleteStep3Async(string userId, StepThreeRequest dto);
-    Task CompleteStep4Async(string userId, StepFourRequest dto);
-    Task CompleteStep5Async(string userId, StepFiveRequest dto);
+    Task<List<CheckinResponse>> GetCheckinAsync(string userId, LocalDate? date);
+    Task CompleteCheckinAsync(string userId, CompleteCheckinRequest dto);
 }
 
 public class CheckinService : ICheckinService
@@ -27,155 +25,55 @@ public class CheckinService : ICheckinService
         _logger = logger;
     }
 
-    public async Task<OnboardingStatusResponse> GetStatusAsync(string userId)
+    public async Task<List<CheckinResponse>> GetCheckinAsync(string userId, LocalDate? date)
     {
-        _logger.LogInformation("Getting onboarding status for user: {UserId}", userId);
-        var user = await _context.Users
-            .Where(u => u.Id == userId)
-            .Include(u => u.Profile)
-                .ThenInclude(p => p!.School)
-            .Select(u => new OnboardingStatusResponse
+        _logger.LogInformation("Getting checkin status for user: {UserId}", userId);
+        
+        var query = _context.Checkins.Where(x => x.UserId == userId);
+
+        if (date.HasValue)
+        {
+            var zone = DateTimeZoneProviders.Tzdb.GetSystemDefault();
+            var startOfDay = date.Value.AtStartOfDayInZone(zone).ToInstant();
+            var endOfDay = date.Value.PlusDays(1).AtStartOfDayInZone(zone).ToInstant();
+            
+            query = query.Where(x => x.DateCompleted >= startOfDay && x.DateCompleted < endOfDay);
+        }
+
+        var checkins = await query
+            .Select(x => new CheckinResponse
             {
-                Step = u.OnboardingStep,
-                Completed = u.OnboardingCompleted,
-                Started = u.OnboardingStarted,
-                Name = u.Name,
-                DateOfBirth = u.DateOfBirth,
-                Gender = u.Gender,
-                Pronouns = u.Pronouns,
-                CountryCode = u.CountryCode,
-                SchoolName = u.Profile != null && u.Profile.School != null ? u.Profile.School.Name : null,
-                KoalaName = u.Profile != null ? u.Profile.KoalaName : null,
-                KoalaColour = u.Profile != null ? u.Profile.KoalaColour : null,
-                KoalaPronouns = u.Profile != null ? u.Profile.KoalaPronouns : null,
+                DateCompleted = x.DateCompleted ?? x.CreatedAt,
+                Id = x.Id,
+                LingeringThoughts = x.LingeringThoughts,
+                MoodLabel = x.MoodLabel,
+                PromptAnswer = x.PromptAnswer,
+                PromptQuestion = x.PromptQuestion,
+                SomaticState = x.SomaticState,
+                MoodSeverity = x.MoodSeverity
             })
-            .FirstOrDefaultAsync() ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
+            .ToListAsync();
 
-        return user;
+        return checkins;
     }
 
-    public async Task CompleteStep1Async(string userId, StepOneRequest dto)
+    public async Task CompleteCheckinAsync(string userId, CompleteCheckinRequest dto)
     {
-        _logger.LogInformation("User {UserId} completing Onboarding Step 1 (Identity)", userId);
-
         var user = await _context.Users.FindAsync(userId) ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
 
-        var exists = await _context.Users.AnyAsync(x => x.Name == dto.Name && x.Id != user.Id);
-        if (exists)
+        var checkin = new Checkin
         {
-            throw new AppException("Username taken by someone", ErrorCodes.UsernameTaken);
-        }
+            LingeringThoughts = dto.LingeringThoughts,
+            MoodLabel = dto.MoodLabel,
+            MoodSeverity = dto.MoodSeverity,
+            PromptAnswer = dto.PromptAnswer,
+            PromptQuestion = dto.PromptQuestion,
+            UserId = userId,
+            SomaticState = dto.SomaticState,
+            DateCompleted = SystemClock.Instance.GetCurrentInstant()
+        };
 
-        user.Name = dto.Name;
-        user.OnboardingStep = 2;
-        user.OnboardingStarted = true;
+        await _context.Checkins.AddAsync(checkin);
         await _context.SaveChangesAsync();
-    }
-
-    public async Task CompleteStep2Async(string userId, StepTwoRequest dto)
-    {
-        _logger.LogInformation("User {UserId} completing Onboarding Step 2 (Demographics)", userId);
-
-        var user = await _context.Users.FindAsync(userId) ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
-        user.DateOfBirth = dto.DateOfBirth;
-        user.Gender = dto.Gender;
-        user.Pronouns = dto.Pronouns ?? "Prefer not to say";
-        user.OnboardingStep = 3;
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task CompleteStep3Async(string userId, StepThreeRequest dto)
-    {
-        _logger.LogInformation("User {UserId} completing Onboarding Step 3 (Geography)", userId);
-
-        var user = await _context.Users.FindAsync(userId) ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
-        user.CountryCode = dto.CountryCode;
-        user.OnboardingStep = 4;
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task CompleteStep4Async(string userId, StepFourRequest dto)
-    {
-        _logger.LogInformation("User {UserId} completing Onboarding Step 4 (School)", userId);
-
-        using var transaction = await _context.Database.BeginTransactionAsync();
-        try
-        {
-            var user = await _context.Users.FindAsync(userId) ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
-            var school = await _context.Schools.FirstOrDefaultAsync(s => s.Name == dto.Name);
-            if (school == null)
-            {
-                _logger.LogInformation("Registering new school: {SchoolName} in {Country}", dto.Name, dto.CountryCode);
-                school = new School
-                {
-                    Name = dto.Name,
-                    CountryCode = dto.CountryCode,
-                    City = dto.City,
-                    RegionCode = dto.RegionCode
-                };
-                _context.Schools.Add(school);
-                await _context.SaveChangesAsync();
-            }
-
-            var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
-            if (profile == null)
-            {
-                profile = new Profile { UserId = userId, KoalaName = "Koala" };
-                _context.Profiles.Add(profile);
-            }
-
-            profile.SchoolId = school.Id;
-            user.OnboardingStep = 5;
-
-            await _context.SaveChangesAsync();
-            await transaction.CommitAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Transaction failed while saving school for user {UserId}", userId);
-            await transaction.RollbackAsync();
-            throw new Exception($"Failed to save school details: {ex.Message}");
-        }
-    }
-
-    public async Task CompleteStep5Async(string userId, StepFiveRequest dto)
-    {
-        _logger.LogInformation("User {UserId} completing Onboarding Step 5 (Companion)", userId);
-
-        using var transaction = await _context.Database.BeginTransactionAsync();
-        try
-        {
-            var user = await _context.Users.FindAsync(userId) ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
-            user.OnboardingCompleted = true;
-            user.OnboardingStep = -1;
-
-            var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
-            if (profile == null)
-            {
-                profile = new Profile { UserId = userId, KoalaName = "Koala" };
-                _context.Profiles.Add(profile);
-            }
-
-            profile.KoalaName = dto.KoalaName;
-            profile.KoalaColour = dto.KoalaColour;
-            profile.KoalaPronouns = dto.KoalaPronouns ?? "They/Them";
-
-            var prefs = new Preferences
-            {
-                UserId = userId,
-                Theme = "Light"
-            };
-            _context.Preferences.Add(prefs);
-
-            await _context.SaveChangesAsync();
-            await transaction.CommitAsync();
-            _logger.LogInformation("User {UserId} has fully completed onboarding", userId);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Transaction failed while finalizing onboarding for user {UserId}", userId);
-            await transaction.RollbackAsync();
-            throw new Exception($"Failed to complete onboarding: {ex.Message}");
-        }
     }
 }

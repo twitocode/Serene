@@ -29,9 +29,14 @@ public class Checkin
 
     [Column("prompt_answer")]
     public string? PromptAnswer { get; set; }
+    [Column("lingering_thoughts")]
+    public string? LingeringThoughts { get; set; }
 
     [Column("somatic_state", TypeName = "jsonb")]
     public Dictionary<string, GridPoint>? SomaticState { get; set; }
+
+    [Column("date_completed")]
+    public Instant? DateCompleted { get; set; }
 
     [Column("created_at")]
     public Instant CreatedAt { get; set; } = SystemClock.Instance.GetCurrentInstant();
@@ -42,9 +47,8 @@ public class Checkin
 public class GridPoint
 {
     //Normalized coordinates
-    public int X { get; set; }
-    public int Y { get; set; }
+    public float X { get; set; }
+    public float Y { get; set; }
 
-    //Arm, leg, etc
-    public string? Label { get; set; }
+    public string? Sensation { get; set; }
 }

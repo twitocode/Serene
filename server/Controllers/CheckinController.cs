@@ -1,68 +1,38 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NodaTime;
 using Serene.DTOs;
 using Serene.Services;
 
 namespace Serene.Controllers;
 
 [ApiController]
-[Route("users/onboarding")]
+[Route("checkin")]
 public class CheckinController : BaseApiController
 {
-    private readonly IOnboardingService _onboardingService;
+    private readonly ICheckinService _checkinService;
 
-    public CheckinController(IOnboardingService onboardingService, ILogger<OnboardingController> logger) : base(logger)
+    public CheckinController(ICheckinService onboardingService, ILogger<OnboardingController> logger) : base(logger)
     {
-        _onboardingService = onboardingService;
+        _checkinService = onboardingService;
     }
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetCheckinStatus()
+    public async Task<IActionResult> GetCheckin ([ModelBinder(typeof(LocalDateModelBinder))] LocalDate? date)
     {
         var userId = GetUserId();
         if (userId == null) return Unauthorized();
-
-        return await ExecuteWithResult(() => _onboardingService.GetStatusAsync(userId));
+        return await ExecuteWithResult(() => _checkinService.GetCheckinAsync(userId, date));
     }
 
-    [HttpPost("step1")]
+    [HttpPost]
     [Authorize]
-    public async Task<IActionResult> EmotionIdentificationStep([FromBody] StepOneRequest body)
+    public async Task<IActionResult> CompleteCheckin([FromBody] CompleteCheckinRequest body)
     {
         var userId = GetUserId();
         if (userId == null) return Unauthorized();
 
-        return await ExecuteWithResult(() => _onboardingService.CompleteStep1Async(userId, body));
-    }
-
-    [HttpPost("step2")]
-    [Authorize]
-    public async Task<IActionResult> RandomPromptStep([FromBody] StepTwoRequest body)
-    {
-        var userId = GetUserId();
-        if (userId == null) return Unauthorized();
-
-        return await ExecuteWithResult(() => _onboardingService.CompleteStep2Async(userId, body));
-    }
-
-    [HttpPost("step3")]
-    [Authorize]
-    public async Task<IActionResult> SomaticStateStep([FromBody] StepThreeRequest body)
-    {
-        var userId = GetUserId();
-        if (userId == null) return Unauthorized();
-
-        return await ExecuteWithResult(() => _onboardingService.CompleteStep3Async(userId, body));
-    }
-
-    [HttpPost("step4")]
-    [Authorize]
-    public async Task<IActionResult> LingeringThoughtsStep([FromBody] StepFourRequest body)
-    {
-        var userId = GetUserId();
-        if (userId == null) return Unauthorized();
-
-        return await ExecuteWithResult(() => _onboardingService.CompleteStep4Async(userId, body));
+        return await ExecuteWithResult(() => _checkinService.CompleteCheckinAsync(userId, body));
     }
 }

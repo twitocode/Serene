@@ -8,7 +8,6 @@ import { useState } from "react";
 import { auth } from "@/lib/auth";
 import GoogleButton from "@/lib/components/auth/google-button";
 import FormError from "@/lib/components/common/forms/form-error";
-import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import { Separator } from "@/lib/components/ui/separator";
 import {
@@ -24,6 +23,7 @@ import { checkOnboarding } from "@/lib/server/onboarding-server";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { z } from "zod";
+import { Button } from "@/lib/components/ui/button";
 
 const emailSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -265,7 +265,7 @@ export function LoginForm({
           </span>
         </div>
       </div>
-      <GoogleButton serverUrl={serverUrl}/>
+      <GoogleButton serverUrl={serverUrl} />
       <FormDescription className="px-6 text-center">
         By clicking continue, you agree to our{" "}
         <Link href="/terms">Terms of Service</Link> and{" "}

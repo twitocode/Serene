@@ -9,7 +9,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
-    
+
     public DbSet<Profile> Profiles { get; set; }
     public DbSet<Verification> Verifications { get; set; }
     public DbSet<SafetyPlan> SafetyPlans { get; set; }
@@ -23,7 +23,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder); 
+        base.OnModelCreating(modelBuilder);
 
         // Configure UserAchievement composite key
         modelBuilder.Entity<UserAchievement>()
@@ -76,17 +76,17 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .WithMany(u => u.Checkins)
             .HasForeignKey(c => c.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         modelBuilder.Entity<Post>()
             .HasOne(p => p.User)
             .WithMany(u => u.Posts)
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-            
+
         modelBuilder.Entity<Post>()
             .HasOne(p => p.QuestionOfTheDay)
             .WithMany()
             .HasForeignKey(p => p.QotdId)
             .OnDelete(DeleteBehavior.Cascade);
-  }
+    }
 }

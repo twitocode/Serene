@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
+using Npgsql;
 using OpenAI;
 using OpenAI.Chat;
-
 using Quartz;
 using Quartz.AspNetCore;
 using Scalar.AspNetCore;
@@ -79,9 +79,20 @@ try
 
     builder.Services.AddOpenApi();
 
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentException("DB string not provided");
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+        ?? throw new ArgumentException("DB string not provided");
+
+    var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+    dataSourceBuilder.EnableDynamicJson(); //for dict mapping
+    dataSourceBuilder.UseNodaTime();
+    var dataSource = dataSourceBuilder.Build();
+
+
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(connectionString, o => o.UseNodaTime()));
+        options.UseNpgsql(dataSource, o =>
+        {
+            o.UseNodaTime();
+        }));
 
 
     builder.Services.AddIdentityCore<User>(options =>
@@ -229,7 +240,7 @@ try
     {
         ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
     });
-    
+
     app.UseExceptionHandler();
 
     app.UseCors();
