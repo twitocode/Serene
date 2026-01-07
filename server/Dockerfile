@@ -19,7 +19,7 @@ COPY . .
 RUN dotnet publish "Serene.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+FROM mcr.microsoft.com/dotnet/nightly/sdk:10.0-preview AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Serene.dll"]
