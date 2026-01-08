@@ -1,3 +1,5 @@
+import { GridPoint } from "@/lib/types/index";
+
 export interface Result<T = void> {
   isSuccess: boolean;
   data: T | null;
@@ -105,4 +107,23 @@ export interface QOTDAnswerDto {
   userId: string;
   username: string;
   answer: string;
+}
+
+
+export interface CompleteCheckinRequest {
+  promptAnswer: string | null;
+  somaticState: { [key: string]: GridPoint };
+  lingeringThoughts: string | null;
+  moodLabel: string;
+  promptQuestion: string;
+  moodSeverity: number;
+}
+
+export interface CheckinResponse {
+  lingeringThoughts: string | null;
+  moodLabel: string;
+  promptQuestion: string;
+  moodSeverity: number;
+  id: string;
+  dateCompleted: string;
 }

@@ -124,6 +124,7 @@ export interface Checkin {
   moodSeverity: number;
   promptQuestion: string;
   promptAnswer: string | null;
+  dateCompleted: string;
   somaticState: { [key: string]: GridPoint } | null;
   createdAt: string;
   updatedAt: string;
@@ -132,7 +133,7 @@ export interface Checkin {
 export interface GridPoint {
   x: number;
   y: number;
-  label: string | null;
+  sensation: string | null;
 }
 
 export interface QuestionOfTheDay {

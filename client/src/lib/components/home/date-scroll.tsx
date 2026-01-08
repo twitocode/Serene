@@ -2,12 +2,12 @@ import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { useMemo, useState } from "react";
 
-const getCalendarDays = (daysCount: number = 7) => {
+const getCalendarDays = (daysCount: number = 7, fromDate?: Date) => {
   const days = [];
-  const now = new Date();
+  const now = fromDate || new Date();
 
   for (let i = 0; i < daysCount; i++) {
-    const date = new Date();
+    const date = new Date(now);
     date.setDate(now.getDate() - i);
 
     days.push({
@@ -21,9 +21,14 @@ const getCalendarDays = (daysCount: number = 7) => {
   return days.reverse();
 };
 
-export default function DateScroll() {
-  const calendarDays = useMemo(() => getCalendarDays(7), []);
-  const currentDate = useState(calendarDays[-1]);
+interface Props {
+  selectedDate?: string;
+  changeSelectedDate?: (date: string) => void;
+  date?: Date;
+}
+
+export default function DateScroll({ selectedDate, changeSelectedDate, date }: Props) {
+  const calendarDays = useMemo(() => getCalendarDays(7, date), [date]);
   const today = new Date().getDate();
 
   return (
@@ -33,20 +38,24 @@ export default function DateScroll() {
       transition={{ delay: 0.1 }}
       className={`grid grid-cols-7 gap-6 text-center`}
     >
-      {calendarDays.map((item, index) => {
+      {calendarDays.map((item) => {
         const isToday = item.fullDate.getDate() === today;
+        const isSelected = selectedDate === item.fullDate.toISOString().split('T')[0];
         return (
-          <div
-            key={index}
+          <button
+            type="button"
+            key={item.fullDate.toISOString()}
             className={cn("flex flex-col items-center p-4", {
               "bg-secondary text-secondary-foreground border": isToday,
+              "bg-primary text-primary-foreground": isSelected,
             })}
+            onClick={() => changeSelectedDate?.(item.fullDate.toISOString().split('T')[0])}
           >
             <span className="text-gray-500 text-sm font-medium">
               {item.day}
             </span>
             <span className="text-lg font-semibold">{item.date}</span>
-          </div>
+          </button>
         );
       })}
     </motion.div>

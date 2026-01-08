@@ -1,40 +1,9 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
-import { useEffect } from "react";
 import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
+import { getVariants, TransitionType } from "@/lib/helpers/get-variants";
+import { AnimatePresence, motion } from "motion/react";
 import { ONBOARDING_STEPS } from "./onboarding-config";
-
-type TransitionType = "slide" | "fade" | "scale";
-
-const getVariants = (type: TransitionType) => {
-  switch (type) {
-    case "slide":
-      return {
-        enter: (direction: number) => ({
-          x: direction > 0 ? 1000 : -1000,
-          opacity: 0,
-        }),
-        center: { x: 0, opacity: 1 },
-        exit: (direction: number) => ({
-          x: direction < 0 ? 1000 : -1000,
-          opacity: 0,
-        }),
-      };
-    case "fade":
-      return {
-        enter: { opacity: 0 },
-        center: { opacity: 1 },
-        exit: { opacity: 0 },
-      };
-    case "scale":
-      return {
-        enter: { opacity: 0, scale: 0.8 },
-        center: { opacity: 1, scale: 1 },
-        exit: { opacity: 0, scale: 0.8 },
-      };
-  }
-};
 
 export function OnboardingFlow() {
   const { uiStep, direction } = useOnboardingStore((state) => state);
@@ -43,7 +12,9 @@ export function OnboardingFlow() {
   const variants = getVariants(transitionType);
 
   const getProgressStep = (currentUIStep: number): number => {
-    const stepConfig = ONBOARDING_STEPS.find((step) => step.uiStep === currentUIStep);
+    const stepConfig = ONBOARDING_STEPS.find(
+      (step) => step.uiStep === currentUIStep
+    );
     return stepConfig?.progress || 1;
   };
 
@@ -66,7 +37,9 @@ export function OnboardingFlow() {
               className="flex-1 flex items-center justify-center p-8"
             >
               {(() => {
-                const activeConfig = ONBOARDING_STEPS.find((step) => step.uiStep === uiStep);
+                const activeConfig = ONBOARDING_STEPS.find(
+                  (step) => step.uiStep === uiStep
+                );
                 if (!activeConfig) return null;
                 const ActiveComponent = activeConfig.component;
                 return <ActiveComponent />;

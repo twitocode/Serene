@@ -6,19 +6,15 @@ import { motion } from "framer-motion";
 import { Flower2, Smile, Square } from "lucide-react";
 import Link from "next/link";
 
-
-
 const suggestions = [
   { id: "1", icon: Smile, title: "Talk to Koala" },
   { id: "2", icon: Flower2, title: "Daily Affirmations" },
   { id: "3", icon: Square, title: "Box Breathing" },
 ];
 
-// --- Main Page Component ---
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background text-foreground p-8 max-w-2xl mx-auto flex flex-col gap-8">
-      {/* Header & Calendar */}
       <div className="flex flex-col items-center gap-6 mt-4">
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
@@ -31,14 +27,12 @@ export default function HomePage() {
         <DateScroll />
       </div>
 
-      {/* Main Card (Stressed for exams?) */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, delay: 0.2 }}
         className="bg-gray-200 border-[1.5px] p-8 flex items-center justify-between "
       >
-        {/* Koala Placeholder Icon */}
         <Smile
           className="w-32 h-32 text-black  fill-current"
           strokeWidth={1.5}
@@ -48,7 +42,7 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold leading-tight text-black">
             Stressed for exams?
           </h2>
-          <Link href="/home/checkin">
+          <Link href="/home/checkin?start=true">
             <Button className="bg-black text-white hover:bg-gray-800 px-6 py-2 text-base font-medium hover:scale-105 transition active:scale-105">
               Talk about it
             </Button>
@@ -56,7 +50,6 @@ export default function HomePage() {
         </div>
       </motion.div>
 
-      {/* Suggested Actions Section */}
       <div className="flex flex-col gap-4">
         <motion.h3
           initial={{ opacity: 0 }}
