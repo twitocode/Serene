@@ -46,54 +46,34 @@ export default function MoodStep() {
             scrollToBottom={scrollToBottom}
             type="vibe"
             Icon={Heart}
-            iconColour="red"
           />
           <MoodPicker
             setHasSelected={setHasSelected}
             scrollToBottom={scrollToBottom}
             type="energy"
             Icon={CloudLightning}
-            iconColour="orange"
           />
           <MoodPicker
             setHasSelected={setHasSelected}
             scrollToBottom={scrollToBottom}
             type="mental"
             Icon={Brain}
-            iconColour="purple"
           />
           <MoodPicker
             setHasSelected={setHasSelected}
             scrollToBottom={scrollToBottom}
             type="status"
             Icon={Shield}
-            iconColour="blue"
           />
           <div className="min-h-[80px] w-full flex justify-center md:justify-normal items-center">
-            <AnimatePresence>
-              {hasSelected && (
-                <motion.div
-                  key="next-button"
-                  variants={{
-                    hidden: { opacity: 0, scale: 0.8 },
-                    visible: { opacity: 1, scale: 1 },
-                  }}
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  transition={{ duration: 0.4 }}
-                  className="w-full md:w-auto"
-                >
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="px-10 text-lg w-full"
-                  >
-                    Next
-                  </Button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <Button
+              type="submit"
+              size="lg"
+              className="px-10 text-lg w-full"
+              disabled={selectedMood === null}
+            >
+              Next
+            </Button>
           </div>
         </div>
       </div>

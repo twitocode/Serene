@@ -3,6 +3,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/lib/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -10,6 +11,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 export default function NavMain(props: any) {
   const pathname = usePathname();
+  const { isMobile, setOpenMobile } = useSidebar();
 
   const {
     items,
@@ -32,11 +34,15 @@ export default function NavMain(props: any) {
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => (
-          <Link href={item.url} key={item.title} >
+          <Link
+            href={item.url}
+            key={item.title}
+            onClick={() => isMobile && setOpenMobile(false)}
+          >
             <SidebarMenuItem>
               <SidebarMenuButton
                 tooltip={item.title}
-                className={cn("text-md",{
+                className={cn("text-md", {
                   "bg-primary text-primary-foreground hover:bg-primary/25 transition hover:text-black":
                     item.url.endsWith(pathname),
                 })}

@@ -26,6 +26,9 @@ export interface CheckinState {
 
   setSelectedMood: (mood: Mood) => void;
   setSomaticState: (state: { [key: string]: GridPoint }) => void;
+  setPromptAnswer: (answer: string) => void;
+  setLingeringThoughts: (thoughts: string) => void;
+  setMoodSeverity: (severity: number) => void;
   randomizePrompt: () => void;
 
   goNext: () => void;
@@ -33,6 +36,8 @@ export interface CheckinState {
 
   complete: () => void;
   toggleIsCheckingIn: () => void;
+  startCheckin: () => void;
+  cancel: () => void;
   changeDate: (date: string) => void;
 }
 
@@ -54,9 +59,18 @@ export const createCheckinStore = (initProps?: CheckinProps) => {
     moodLabel: "",
     moodSeverity: -1,
     somaticState: {},
-    setSelectedMood: (mood: Mood) => set({ selectedMood: mood }),
+    setSelectedMood: (mood: Mood) =>
+      set({
+        selectedMood: mood,
+        moodSeverity: mood.severity,
+        moodLabel: mood.label,
+      }),
     setSomaticState: (state: { [key: string]: GridPoint }) =>
       set({ somaticState: state }),
+    setPromptAnswer: (answer: string) => set({ promptAnswer: answer }),
+    setLingeringThoughts: (thoughts: string) =>
+      set({ lingeringThoughts: thoughts }),
+    setMoodSeverity: (severity: number) => set({ moodSeverity: severity }),
     randomizePrompt: () =>
       set((state) => ({
         promptQuestion: getRandomPrompt(state.promptQuestion).question,
@@ -70,6 +84,8 @@ export const createCheckinStore = (initProps?: CheckinProps) => {
     changeDate: (date: string) => set({ displayDate: date }),
     toggleIsCheckingIn: () =>
       set(({ isCheckingIn }) => ({ isCheckingIn: !isCheckingIn })),
+    startCheckin: () => set({ isCheckingIn: true, step: 0 }),
+    cancel: () => set({ isCheckingIn: false, step: 0 }),
     complete: async () => {
       set({
         promptAnswer: "",
@@ -77,6 +93,8 @@ export const createCheckinStore = (initProps?: CheckinProps) => {
         moodLabel: "",
         moodSeverity: -1,
         somaticState: {},
+        isCheckingIn: false,
+        step: 0,
       });
     },
   }));

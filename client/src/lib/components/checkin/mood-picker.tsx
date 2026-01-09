@@ -1,18 +1,16 @@
 import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
-import { MOODS, MoodType } from "@/lib/data/moods";
+import { getMoodTypeColour, MOODS, MoodType } from "@/lib/data/moods";
 import { useIsMobile } from "@/lib/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { Heart } from "lucide-react";
 
 interface Props {
-  Icon: React.ComponentType<{ color?: string }>;
-  iconColour: string;
+  Icon: React.ComponentType<{ color?: string, strokeWidth: number }>;
   type: MoodType;
   scrollToBottom: () => void;
   setHasSelected: (a: boolean) => void;
 }
 export default function MoodPicker({
-  iconColour,
   type,
   Icon,
   setHasSelected,
@@ -24,7 +22,7 @@ export default function MoodPicker({
   return (
     <div className="flex flex-col gap-2">
       <span className="flex items-center gap-2">
-        <Icon color={iconColour} />
+        <Icon color={getMoodTypeColour(type)} strokeWidth={3}/>
         {type[0].toUpperCase() + type.substring(1, type.length)}
       </span>
       <div className="flex-wrap flex gap-1 md:gap-2">

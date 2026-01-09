@@ -5,8 +5,10 @@ import {
   getBodyPart,
   PRESET_SENSATIONS,
 } from "@/lib/components/checkin/somatic-utils";
+import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
 import { Badge } from "@/lib/components/ui/badge";
 import { Button } from "@/lib/components/ui/button";
+import { ButtonGroup } from "@/lib/components/ui/button-group";
 import {
   Drawer,
   DrawerClose,
@@ -24,7 +26,6 @@ import {
   MultiSelectItem,
   MultiSelectTrigger,
 } from "@/lib/components/ui/multi-select";
-import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
 import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import { useIsMobile } from "@/lib/hooks/use-mobile";
 import { Plus, X } from "lucide-react";
@@ -32,7 +33,7 @@ import { useState } from "react";
 
 export default function SomaticStep() {
   const { data: user } = useUserQuery();
-  const { somaticState, setSomaticState, goNext } = useCheckinStore(
+  const { somaticState, setSomaticState, goNext, goBack } = useCheckinStore(
     (state) => state
   );
 
@@ -105,14 +106,6 @@ export default function SomaticStep() {
     PRESET_SENSATIONS.includes(s)
   );
 
-  const sensationCounts = Object.entries(somaticState).reduce(
-    (acc, [part, data]) => {
-      acc[part] = data.sensations.length;
-      return acc;
-    },
-    {} as Record<string, number>
-  );
-
   return (
     <div className="flex flex-col md:grid md:grid-cols-2 h-full">
       <div className="flex flex-col items-center justify-center">
@@ -122,8 +115,18 @@ export default function SomaticStep() {
         <span className="text-muted-foreground text-center">
           {isMobile ? "Tap" : "Click"} a spot on the body
         </span>
+        {!isMobile && (
+          <ButtonGroup className="gap-1 grid grid-cols-2 w-full mt-40">
+            <Button size="lg" className="px-10 text-lg" onClick={goBack}>
+              Back
+            </Button>
+            <Button size="lg" className="px-10 text-lg" onClick={goNext}>
+              {Object.keys(somaticState).length === 0 ? "Skip" : "Next"}
+            </Button>
+          </ButtonGroup>
+        )}
       </div>
-      <div className="h-full max-h-[60vh] w-full flex justify-center items-center px-4">
+      <div className="max-h-[60vh] md:max-h-full w-full flex justify-center items-center px-4">
         {user?.gender === "Female" ? (
           <FemaleBody
             onClick={handleBodyClick}
@@ -138,10 +141,16 @@ export default function SomaticStep() {
           />
         )}
       </div>
-      <Button className="mt-4" onClick={goNext}>
-        {Object.keys(somaticState).length === 0 ? "Skip" : "Continue"}
-      </Button>
-
+      {isMobile && (
+        <ButtonGroup className="gap-1 grid grid-cols-2 w-full">
+          <Button size="lg" className="px-10 text-lg" onClick={goBack}>
+            Back
+          </Button>
+          <Button size="lg" className="px-10 text-lg" onClick={goNext}>
+            {Object.keys(somaticState).length === 0 ? "Skip" : "Next"}
+          </Button>
+        </ButtonGroup>
+      )}
       <Drawer
         open={isOpen}
         onOpenChange={(open) => {
@@ -152,70 +161,72 @@ export default function SomaticStep() {
           setIsOpen(open);
         }}
       >
-        <DrawerContent >
-          <DrawerHeader className="">
+        <DrawerContent>
+          <DrawerHeader>
             <DrawerTitle>{selectedPart?.part}</DrawerTitle>
-            <DrawerDescription className="flex flex-col gap-4 pt-4">
-              <div className="flex flex-wrap gap-2 mb-2">
-                {currentSensations.length === 0 && (
-                  <span className="text-sm text-muted-foreground">
-                    No sensations selected
-                  </span>
-                )}
-                {currentSensations.map((s) => (
-                  <Badge key={s} variant="secondary" className="gap-1 pr-1">
-                    {s}
-                    <X
-                      className="h-3 w-3 cursor-pointer hover:text-destructive"
-                      onClick={() =>
-                        setCurrentSensations(
-                          currentSensations.filter((x) => x !== s)
-                        )
-                      }
-                    />
-                  </Badge>
-                ))}
-              </div>
+            <DrawerDescription asChild>
+              <div className="flex flex-col gap-4 pt-4">
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {currentSensations.length === 0 && (
+                    <span className="text-sm text-muted-foreground">
+                      No sensations selected
+                    </span>
+                  )}
+                  {currentSensations.map((s) => (
+                    <Badge key={s} variant="secondary" className="gap-1 pr-1">
+                      {s}
+                      <X
+                        className="h-3 w-3 cursor-pointer hover:text-destructive"
+                        onClick={() =>
+                          setCurrentSensations(
+                            currentSensations.filter((x) => x !== s)
+                          )
+                        }
+                      />
+                    </Badge>
+                  ))}
+                </div>
 
-              <MultiSelect
-                values={currentPresets}
-                onValuesChange={onPresetsChange}
-              >
-                <MultiSelectTrigger className="w-full">
-                  <span className="text-muted-foreground font-normal">
-                    Select preset sensations...
-                  </span>
-                </MultiSelectTrigger>
-                <MultiSelectContent>
-                  <MultiSelectGroup>
-                    {PRESET_SENSATIONS.map((s) => (
-                      <MultiSelectItem key={s} value={s}>
-                        {s}
-                      </MultiSelectItem>
-                    ))}
-                  </MultiSelectGroup>
-                </MultiSelectContent>
-              </MultiSelect>
-
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Other sensation..."
-                  value={customSensation}
-                  onChange={(e) => setCustomSensation(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      addCustomSensation();
-                    }
-                  }}
-                />
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={addCustomSensation}
+                <MultiSelect
+                  values={currentPresets}
+                  onValuesChange={onPresetsChange}
                 >
-                  <Plus className="h-4 w-4" />
-                </Button>
+                  <MultiSelectTrigger className="w-full">
+                    <span className="text-muted-foreground font-normal">
+                      Select preset sensations...
+                    </span>
+                  </MultiSelectTrigger>
+                  <MultiSelectContent>
+                    <MultiSelectGroup>
+                      {PRESET_SENSATIONS.map((s) => (
+                        <MultiSelectItem key={s} value={s}>
+                          {s}
+                        </MultiSelectItem>
+                      ))}
+                    </MultiSelectGroup>
+                  </MultiSelectContent>
+                </MultiSelect>
+
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Other sensation..."
+                    value={customSensation}
+                    onChange={(e) => setCustomSensation(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addCustomSensation();
+                      }
+                    }}
+                  />
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={addCustomSensation}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </DrawerDescription>
           </DrawerHeader>

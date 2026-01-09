@@ -2,7 +2,8 @@
 
 import { motion } from "motion/react";
 
-import { Avatar, AvatarFallback } from "@/lib/components/ui/avatar";
+import { ResponseCard } from "@/lib/components/community/response-card";
+import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import { Separator } from "@/lib/components/ui/separator";
 import {
@@ -11,14 +12,7 @@ import {
   useQOTDResponsesQuery,
 } from "@/lib/hooks/queries/use-qotd";
 import { useUserQuery } from "@/lib/hooks/queries/use-user";
-import { QOTDAnswerDto } from "@/lib/types/api-types";
-import { Star } from "lucide-react";
 import { FormEventHandler, useEffect, useState } from "react";
-import { ResponseCard } from "@/lib/components/community/response-card";
-import { Button } from "@/lib/components/ui/button";
-
-// --- Components ---
-
 
 export default function QuestionOfTheDay() {
   const today = new Date().toISOString().split("T")[0];
@@ -33,8 +27,8 @@ export default function QuestionOfTheDay() {
 
   const myResponse = responses.find((r) => r.userId === user?.id);
 
-  const handleSubmit:FormEventHandler<HTMLFormElement>  = (e) => {
-    e.preventDefault()
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
     if (inputText.trim() && qotd?.qotdId && !myResponse) {
       mutation.mutate(
         {
@@ -48,17 +42,16 @@ export default function QuestionOfTheDay() {
     }
   };
 
-
   useEffect(() => {
-    if (responses.find(x => x.userId == user?.id) != null) {
-      console.log("posted")
-      setHasPosted(true)
+    if (responses.find((x) => x.userId == user?.id) != null) {
+      console.log("posted");
+      setHasPosted(true);
     }
-    console.log("not  posted")
-  }, [responses])
+    console.log("not  posted");
+  }, [responses]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground max-w-2xl mx-auto flex flex-col">
+    <div className="min-h-full max-w-2xl mx-auto flex flex-col  px-4">
       <div className="sticky top-0 z-10 bg-background/95  px-8 pt-8 pb-4 background-blur">
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
@@ -78,7 +71,7 @@ export default function QuestionOfTheDay() {
             <span className="text-lg font-medium text-foreground">
               Question of the Day
             </span>
-            <h2 className="text-3xl font-bold mt-1 leading-tight">
+            <h2 className="text-2xl md:text-3xl font-bold mt-1 leading-tight">
               {qotd?.question || "Loading today's question..."}
             </h2>
           </div>
@@ -99,7 +92,10 @@ export default function QuestionOfTheDay() {
                 }
                 className="w-full bg-gray-200 border border-gray-300 px-5 py-6 text-base text-gray-700 placeholder:text-gray-400 focus-visible:ring-2 focus-visible:ring-gray-300 shadow-sm"
               />
-              <Button type="submit" className="py-6 shadow-sm border border-gray-300">
+              <Button
+                type="submit"
+                className="py-6 shadow-sm border border-gray-300"
+              >
                 Respond
               </Button>
             </form>

@@ -12,6 +12,9 @@ import {
 } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
 import { PropsWithChildren } from "react";
+import { CheckinProvider } from "@/lib/components/providers/zustand-provider";
+import { getRandomPrompt } from "@/lib/data/prompts";
+import { getCurrentDate } from "@/lib/helpers/get-current-date";
 
 export default async function layout({
   children,
@@ -42,8 +45,13 @@ export default async function layout({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <StateLoader>
-        <HomeLayout>{children}</HomeLayout>
-        <HomeLock />
+        <CheckinProvider
+          initialDisplayDate={getCurrentDate()}
+          initialPromptQuestion={getRandomPrompt().question}
+        >
+          <HomeLayout>{children}</HomeLayout>
+          <HomeLock />
+        </CheckinProvider>
       </StateLoader>
     </HydrationBoundary>
   );

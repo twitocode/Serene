@@ -1,3 +1,4 @@
+import CheckinCompleteStep from "@/lib/components/checkin/checkin-complete-step";
 import LingeringStep from "@/lib/components/checkin/lingering-step";
 import MoodStep from "@/lib/components/checkin/mood-step";
 import PromptStep from "@/lib/components/checkin/prompt-step";
@@ -26,5 +27,9 @@ export const CHECKIN_STEPS: StepConfig[] = [
   {
     step: 3,
     component: LingeringStep,
+  },
+  {
+    step: 4,
+    component: CheckinCompleteStep,
   },
 ];

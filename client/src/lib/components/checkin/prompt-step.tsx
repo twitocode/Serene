@@ -6,10 +6,14 @@ import { Textarea } from "@/lib/components/ui/textarea";
 import { FormEventHandler, useState } from "react";
 
 export default function PromptStep() {
-  const { goBack, goNext, promptQuestion, randomizePrompt } = useCheckinStore(
-    (s) => s
-  );
-  const [answer, setAnswer] = useState("");
+  const {
+    goBack,
+    goNext,
+    promptQuestion,
+    randomizePrompt,
+    promptAnswer,
+    setPromptAnswer,
+  } = useCheckinStore((s) => s);
 
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -30,11 +34,11 @@ export default function PromptStep() {
         id="response"
         className="h-10 resize-none"
         rows={40}
-        value={answer}
-        onChange={(e) => setAnswer(e.target.value)}
+        value={promptAnswer || ""}
+        onChange={(e) => setPromptAnswer(e.target.value)}
       />
 
-      <ButtonGroup className="gap-1">
+      <ButtonGroup className="gap-1 w-full grid grid-cols-2">
         <Button
           onClick={goBack}
           type="button"

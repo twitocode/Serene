@@ -1,10 +1,12 @@
 "use client";
 
 import DateScroll from "@/lib/components/home/date-scroll";
+import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import { motion } from "framer-motion";
 import { Flower2, Smile, Square } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const suggestions = [
   { id: "1", icon: Smile, title: "Talk to Koala" },
@@ -13,8 +15,16 @@ const suggestions = [
 ];
 
 export default function HomePage() {
+  const router = useRouter();
+  const { startCheckin } = useCheckinStore((s) => s);
+
+  const handleStartCheckin = () => {
+    startCheckin();
+    router.push("/home/checkin");
+  };
+
   return (
-    <div className="min-h-screen bg-background text-foreground p-8 max-w-2xl mx-auto flex flex-col gap-8">
+    <div className="min-h-full max-w-2xl mx-auto flex flex-col gap-8  p-4">
       <div className="flex flex-col items-center gap-6 mt-4">
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
@@ -23,9 +33,8 @@ export default function HomePage() {
         >
           good morning
         </motion.h1>
-
-        <DateScroll />
       </div>
+      <DateScroll readOnly />
 
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -42,11 +51,12 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold leading-tight text-black">
             Stressed for exams?
           </h2>
-          <Link href="/home/checkin?start=true">
-            <Button className="bg-black text-white hover:bg-gray-800 px-6 py-2 text-base font-medium hover:scale-105 transition active:scale-105">
-              Talk about it
-            </Button>
-          </Link>
+          <Button
+            onClick={handleStartCheckin}
+            className="bg-black text-white hover:bg-gray-800 px-6 py-2 text-base font-medium hover:scale-105 transition active:scale-105"
+          >
+            Talk about it
+          </Button>
         </div>
       </motion.div>
 
@@ -54,7 +64,7 @@ export default function HomePage() {
         <motion.h3
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }} 
+          transition={{ delay: 0.3 }}
           className="text-xl font-medium"
         >
           Suggested Actions

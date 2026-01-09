@@ -3,36 +3,35 @@
 import CheckinFlow from "@/lib/components/checkin/checkin-flow";
 import DateScroll from "@/lib/components/home/date-scroll";
 import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
+import { Badge } from "@/lib/components/ui/badge";
 import { Button } from "@/lib/components/ui/button";
+import { getMoodFromLabel, getSeverityColor, MoodLabel } from "@/lib/data/moods";
 import { useCheckinsQuery } from "@/lib/hooks/queries/use-checkins";
 import { Smile } from "lucide-react";
 import { motion } from "motion/react";
-import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 export default function CheckinPage() {
-  const searchParams = useSearchParams();
-  const initialStart = searchParams.get("start");
-
-  useEffect(() => {
-    if (initialStart == "true") {
-      toggleIsCheckingIn();
-    }
-  }, [initialStart]);
-
-  const { displayDate, toggleIsCheckingIn, isCheckingIn } = useCheckinStore(
+  const { displayDate, startCheckin, isCheckingIn, changeDate, cancel } = useCheckinStore(
     (s) => s
   );
+
+  useEffect(() => {
+    return () => {
+      cancel();
+    }
+  }, [])
+
   const { data: checkins } = useCheckinsQuery(displayDate);
 
   const onStartCheckin = () => {
-    toggleIsCheckingIn();
+    startCheckin();
   };
 
-  return initialStart === "true" || isCheckingIn ? (
+  return isCheckingIn ? (
     <CheckinFlow />
   ) : (
-    <div className="min-h-screen bg-background text-foreground p-8 max-w-2xl mx-auto flex flex-col gap-8">
+    <div className="min-h-full max-w-2xl mx-auto flex flex-col gap-8  p-4">
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -40,7 +39,7 @@ export default function CheckinPage() {
       >
         Checkin
       </motion.h1>
-      <DateScroll />
+      <DateScroll selectedDate={displayDate} changeSelectedDate={changeDate} />
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -84,7 +83,7 @@ export default function CheckinPage() {
                   className="bg-black text-white hover:bg-gray-800 px-6 py-2 text-base font-medium hover:scale-105 transition active:scale-105"
                   onClick={onStartCheckin}
                 >
-                  Checkin now
+                  Checkin again
                 </Button>
               </>
             </div>
@@ -99,19 +98,37 @@ export default function CheckinPage() {
               Number(new Date(a.dateCompleted))
           )
           .map((checkin) => {
-            const formattedDate = new Intl.DateTimeFormat(
-              navigator.language
-            ).format(new Date(checkin.dateCompleted.split("T")[0]));
+            const formattedDate = new Intl.DateTimeFormat(navigator.language, {
+              dateStyle: "medium", // e.g., "Jan 9, 2026"
+              timeStyle: "short", // e.g., "1:58 PM"
+            }).format(new Date(checkin.dateCompleted));
+
+            const checkinMood = getMoodFromLabel(
+              checkin.moodLabel as MoodLabel
+            );
+            const severityClass = checkinMood
+              ? getSeverityColor(checkinMood.severity)
+              : "";
 
             return (
               <motion.div
+                key={checkin.id}
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="border flex flex-col p-4 hover:scale-105 transition ease-in-out"
+                className="border flex items-center justify-between p-4 hover:scale-105 transition ease-in-out"
               >
-                <p className="text-muted-foreground">{formattedDate}</p>
-                {checkin.moodLabel}
+                <p className="text-muted-foreground" suppressHydrationWarning>
+                  {formattedDate}
+                </p>
+                <div className="flex items-center">
+                  <Badge
+                    variant="outline"
+                    className={`text-lg px-4 py-0 ${severityClass}`}
+                  >
+                    {checkin.moodLabel}
+                  </Badge>
+                </div>
               </motion.div>
             );
           })}

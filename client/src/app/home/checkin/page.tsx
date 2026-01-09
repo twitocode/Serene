@@ -1,6 +1,4 @@
 import CheckinPage from "@/lib/components/checkin/checkin-page";
-import { CheckinProvider } from "@/lib/components/providers/zustand-provider";
-import { getRandomPrompt } from "@/lib/data/prompts";
 import { apiFetch } from "@/lib/helpers/api-fetch";
 import { getCurrentDate } from "@/lib/helpers/get-current-date";
 import {
@@ -24,12 +22,7 @@ export default async function page() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <CheckinProvider
-        initialDisplayDate={today}
-        initialPromptQuestion={getRandomPrompt().question}
-      >
-        <CheckinPage />
-      </CheckinProvider>
+      <CheckinPage />
     </HydrationBoundary>
   );
 }
