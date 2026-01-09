@@ -75,4 +75,14 @@ public class OnboardingController : BaseApiController
 
         return await ExecuteWithResult(() => _onboardingService.CompleteStep5Async(userId, body));
     }
+
+    [HttpPost("step6")]
+    [Authorize]
+    public async Task<IActionResult> SubmitStep6([FromBody] StepSixRequest body)
+    {
+        var userId = GetUserId();
+        if (userId == null) return Unauthorized();
+
+        return await ExecuteWithResult(() => _onboardingService.CompleteStep6Async(userId, body));
+    }
 }

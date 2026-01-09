@@ -61,3 +61,9 @@ export async function completeStep5(
     koalaColour,
   });
 }
+
+export async function completeStep6(
+  struggles: string[]
+): Promise<Result<{ success: boolean }>> {
+  return completeOnboardingStep<{ success: boolean }>(6, { struggles });
+}

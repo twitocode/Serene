@@ -8,6 +8,7 @@ import { StepTwo } from "./step-2";
 import { StepThree } from "./step-3";
 import { StepFour } from "./step-4";
 import { StepFive } from "./step-5";
+import { StepSix } from "./step-6";
 
 export type StepConfig = {
   uiStep: number;
@@ -66,5 +67,11 @@ export const ONBOARDING_STEPS: StepConfig[] = [
     component: StepFive,
     serverStep: 5,
     progress: 5,
+  },
+  {
+    uiStep: 8,
+    component: StepSix,
+    serverStep: 6,
+    progress: 6,
   },
 ];

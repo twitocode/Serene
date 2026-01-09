@@ -38,6 +38,7 @@ export function StepFive() {
     setKoalaPronouns,
     goBack,
     hasStarted,
+    completeServerStep,
   } = useOnboardingStore((state) => state);
   const [serverError, setServerError] = useState("");
 
@@ -66,7 +67,7 @@ export function StepFive() {
         color: value.koalaColour,
       });
       if (result.isSuccess) {
-        window.location.href = "/home";
+        completeServerStep();
         return;
       }
 
@@ -239,7 +240,7 @@ export function StepFive() {
                     className="bg-black hover:bg-gray-800 flex-1"
                     disabled={!canSubmit || isSubmitting || mutation.isPending}
                   >
-                    {mutation.isPending ? "Validating..." : "Complete"}
+                    {mutation.isPending ? "Validating..." : "Next"}
                   </Button>
                 )}
               </form.Subscribe>

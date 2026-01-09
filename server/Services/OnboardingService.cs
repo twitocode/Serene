@@ -14,6 +14,7 @@ public interface IOnboardingService
     Task CompleteStep3Async(string userId, StepThreeRequest dto);
     Task CompleteStep4Async(string userId, StepFourRequest dto);
     Task CompleteStep5Async(string userId, StepFiveRequest dto);
+    Task CompleteStep6Async(string userId, StepSixRequest dto);
 }
 
 public class OnboardingService : IOnboardingService
@@ -69,6 +70,7 @@ public class OnboardingService : IOnboardingService
                 KoalaName = u.Profile != null ? u.Profile.KoalaName : null,
                 KoalaColour = u.Profile != null ? u.Profile.KoalaColour : null,
                 KoalaPronouns = u.Profile != null ? u.Profile.KoalaPronouns : null,
+                Struggles = u.Profile != null ? u.Profile.Struggles : new List<string>(),
             })
             .FirstOrDefaultAsync() ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
 
@@ -172,8 +174,7 @@ public class OnboardingService : IOnboardingService
         try
         {
             var user = await _context.Users.FindAsync(userId) ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
-            user.OnboardingCompleted = true;
-            user.OnboardingStep = -1;
+            user.OnboardingStep = 6;
 
             var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
             if (profile == null)
@@ -185,6 +186,38 @@ public class OnboardingService : IOnboardingService
             profile.KoalaName = dto.KoalaName;
             profile.KoalaColour = dto.KoalaColour;
             profile.KoalaPronouns = dto.KoalaPronouns ?? "They/Them";
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Transaction failed while saving companion details for user {UserId}", userId);
+            await transaction.RollbackAsync();
+            throw new Exception($"Failed to save companion details: {ex.Message}");
+        }
+    }
+
+    public async Task CompleteStep6Async(string userId, StepSixRequest dto)
+    {
+        _logger.LogInformation("User {UserId} completing Onboarding Step 6 (Struggles)", userId);
+        await ValidateStep(userId, 6);
+
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        try
+        {
+            var user = await _context.Users.FindAsync(userId) ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
+            user.OnboardingCompleted = true;
+            user.OnboardingStep = -1;
+
+            var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
+            if (profile == null)
+            {
+                profile = new Profile { UserId = userId, KoalaName = "Koala" };
+                _context.Profiles.Add(profile);
+            }
+
+            profile.Struggles = dto.Struggles;
 
             var prefs = new Preferences
             {

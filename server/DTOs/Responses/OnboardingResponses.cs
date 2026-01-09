@@ -22,4 +22,5 @@ public class OnboardingStatusResponse
     public string? KoalaName { get; set; }
     public string? KoalaColour { get; set; }
     public string? KoalaPronouns { get; set; }
+    public List<string> Struggles { get; set; } = new List<string>();
 }

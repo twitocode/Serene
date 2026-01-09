@@ -14,6 +14,7 @@ export interface OnboardingProps {
   initialKoalaName?: string;
   initialKoalaColour?: string;
   initialKoalaPronouns?: string;
+  initialStruggles?: string[];
 }
 
 export interface OnboardingState {
@@ -27,6 +28,7 @@ export interface OnboardingState {
   koalaName: string;
   koalaColour: string;
   koalaPronouns: string;
+  struggles: string[];
 
   // Initial values from server (to check if already set)
   initialName: string;
@@ -38,6 +40,7 @@ export interface OnboardingState {
   initialKoalaName: string;
   initialKoalaColour: string;
   initialKoalaPronouns: string;
+  initialStruggles: string[];
 
   // Flow Control
   step: number; // Server step
@@ -54,6 +57,7 @@ export interface OnboardingState {
   setKoalaName: (name: string) => void;
   setKoalaColor: (color: string) => void;
   setKoalaPronouns: (pronouns: string) => void;
+  setStruggles: (struggles: string[]) => void;
 
   goNext: () => void;
   goBack: () => void;
@@ -79,6 +83,7 @@ export const createOnboardingStore = (initProps?: OnboardingProps) => {
     koalaName: initProps?.initialKoalaName || "",
     koalaColour: initProps?.initialKoalaColour || "#5EEAD4",
     koalaPronouns: initProps?.initialKoalaPronouns || "",
+    struggles: initProps?.initialStruggles || [],
 
     // Initial State (preserved for comparison)
     initialName: initProps?.initialName || "",
@@ -90,6 +95,7 @@ export const createOnboardingStore = (initProps?: OnboardingProps) => {
     initialKoalaName: initProps?.initialKoalaName || "",
     initialKoalaColour: initProps?.initialKoalaColour || "#5EEAD4",
     initialKoalaPronouns: initProps?.initialKoalaPronouns || "",
+    initialStruggles: initProps?.initialStruggles || [],
 
     direction: 0,
     step: initialStep,
@@ -106,6 +112,7 @@ export const createOnboardingStore = (initProps?: OnboardingProps) => {
     setKoalaName: (koalaName) => set({ koalaName }),
     setKoalaColor: (koalaColour) => set({ koalaColour }),
     setKoalaPronouns: (koalaPronouns) => set({ koalaPronouns }),
+    setStruggles: (struggles) => set({ struggles }),
 
     goNext: () => {
       const { step, uiStep } = get();

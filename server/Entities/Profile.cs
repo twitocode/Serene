@@ -25,6 +25,9 @@ public class Profile
     [MaxLength(50)]
     public string KoalaPronouns { get; set; } = "They/Them";
 
+    [Column("struggles")]
+    public List<string> Struggles { get; set; } = new List<string>();
+
     [Column("current_streak")]
     public int CurrentStreak { get; set; } = 0;
 

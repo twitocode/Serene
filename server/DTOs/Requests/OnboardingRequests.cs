@@ -36,3 +36,8 @@ public class StepFiveRequest
     public string? KoalaPronouns { get; set; }
 }
 
+public class StepSixRequest
+{
+    public List<string> Struggles { get; set; } = new List<string>();
+}
+

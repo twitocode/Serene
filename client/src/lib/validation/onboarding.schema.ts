@@ -74,12 +74,19 @@ export const stepFiveSchema = z.object({
     .regex(pronounsRegex, "Koala's pronouns were not provided")
 });
 
+export const stepSixSchema = z.object({
+  struggles: z
+    .array(z.string())
+    .min(1, "Please select at least one item")
+});
+
 export const onboardingFormSchema = z.object({
   ...stepOneSchema.shape,
   ...stepTwoSchema.shape,
   ...stepThreeSchema.shape,
   ...stepFourSchema.shape,
   ...stepFiveSchema.shape,
+  ...stepSixSchema.shape,
 });
 
 export type StepOneSchema = z.infer<typeof stepOneSchema>;
@@ -87,6 +94,7 @@ export type StepTwoSchema = z.infer<typeof stepTwoSchema>;
 export type StepThreeSchema = z.infer<typeof stepThreeSchema>;
 export type StepFourSchema = z.infer<typeof stepFourSchema>;
 export type StepFiveSchema = z.infer<typeof stepFiveSchema>;
+export type StepSixSchema = z.infer<typeof stepSixSchema>;
 export type OnboardingSchema = z.infer<typeof onboardingFormSchema>;
 
 export type StepOneValues = keyof z.infer<typeof stepOneSchema>;
@@ -94,4 +102,5 @@ export type StepTwoValues = keyof z.infer<typeof stepTwoSchema>;
 export type StepThreeValues = keyof z.infer<typeof stepThreeSchema>;
 export type StepFourValues = keyof z.infer<typeof stepFourSchema>;
 export type StepFiveValues = keyof z.infer<typeof stepFiveSchema>;
+export type StepSixValues = keyof z.infer<typeof stepSixSchema>;
 export type OnboardingValues = keyof z.infer<typeof onboardingFormSchema>;
