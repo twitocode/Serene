@@ -40,7 +40,7 @@ export default async function OnboardingPage() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className=" mx-40 mt-5">
+      <div className="mx-5 lg:mx-40 mt-5">
         <OnBoardingNavbar />
         <OnboardingProvider
           initialStep={step}

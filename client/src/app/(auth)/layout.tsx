@@ -20,7 +20,7 @@ export default async function layout({
   }
 
   return (
-    <div className=" mx-40 mt-5">
+    <div className="mx-5 lg:mx-40 mt-5">
       <AuthNavbar />
       {children}
     </div>

@@ -32,11 +32,11 @@ export default function NavMain(props: any) {
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => (
-          <Link href={item.url} key={item.title}>
+          <Link href={item.url} key={item.title} >
             <SidebarMenuItem>
               <SidebarMenuButton
                 tooltip={item.title}
-                className={cn({
+                className={cn("text-md",{
                   "bg-primary text-primary-foreground hover:bg-primary/25 transition hover:text-black":
                     item.url.endsWith(pathname),
                 })}

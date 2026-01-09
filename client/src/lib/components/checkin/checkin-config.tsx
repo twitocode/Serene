@@ -24,7 +24,7 @@ export const CHECKIN_STEPS: StepConfig[] = [
     component: SomaticStep,
   },
   {
-    step: 0,
+    step: 3,
     component: LingeringStep,
   },
 ];

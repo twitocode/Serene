@@ -32,8 +32,13 @@ export function OnBoardingNavbar() {
       </div>
       <NavigationMenu viewport={isMobile}>
         <NavigationMenuList>
-          <NavigationMenuItem className="space-x-4">
-            <span>Signed in as {user?.name}</span>
+          <NavigationMenuItem className="space-x-4 items-center flex">
+            {user?.name != "" && (
+              <span className="hidden md:flex gap-1">
+                <span className="text-muted-foreground">Welcome</span>
+                <span>{user?.name}</span>
+              </span>
+            )}
             <Button onClick={logout}>Logout</Button>
           </NavigationMenuItem>
         </NavigationMenuList>

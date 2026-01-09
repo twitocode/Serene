@@ -8,6 +8,7 @@ export enum Gender {
 export enum Theme {
   Dark,
   Light,
+  System
 }
 
 export interface IdentityUser {

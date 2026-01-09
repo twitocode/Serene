@@ -42,6 +42,7 @@ public class UsersService : IUsersService
                 EmailConfirmed = u.EmailConfirmed,
                 CreatedAt = u.CreatedAt,
                 UpdatedAt = u.UpdatedAt,
+                Gender = u.Gender,
                 Preferences = u.Preferences != null ? new PreferencesResponse
                 {
                     Id = u.Preferences.Id,
@@ -60,6 +61,7 @@ public class UsersService : IUsersService
                     KoalaColour = u.Profile.KoalaColour,
                     KoalaName = u.Profile.KoalaName,
                     KoalaPronouns = u.Profile.KoalaPronouns,
+
                     School = u.Profile.School != null ? new SchoolResponse
                     {
                         Id = u.Profile.School.Id,

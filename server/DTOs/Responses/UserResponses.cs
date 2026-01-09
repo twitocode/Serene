@@ -9,6 +9,7 @@ public class UserResponse
     public string? Name { get; set; }
     public string? Image { get; set; }
     public bool EmailConfirmed { get; set; }
+    public string? Gender { get; set; }
     public Instant CreatedAt { get; set; }
     public Instant UpdatedAt { get; set; }
 

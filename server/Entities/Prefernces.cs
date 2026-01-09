@@ -8,7 +8,8 @@ namespace Serene.Entities;
 public enum Theme
 {
     Dark,
-    Light
+    Light,
+    System
 }
 
 

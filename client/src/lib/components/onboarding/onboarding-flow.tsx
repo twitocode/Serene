@@ -19,7 +19,7 @@ export function OnboardingFlow() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 w-full">
+    <div className="min-h-screen flex items-center justify-center lg:p-4 w-full">
       <div className="w-full max-w-2xl min-h-[800px] bg-white rounded-lg overflow-hidden flex flex-col">
         <div className="flex-1 relative flex flex-col overflow-hidden">
           <AnimatePresence initial={false} mode="wait" custom={direction}>

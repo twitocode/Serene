@@ -16,7 +16,7 @@ export default function LandingPage() {
       <div className="light mx-40 mt-5 space-y-40">
         <Navbar />
         <section className="flex flex-col items-center justify-center space-y-4 mx-40">
-          <h1 className="font-bold text-7xl text-center">
+          <h1 className="font-bold text-7xl text-center font-display">
             A <span className="text-primary">Student's Companion</span> for the
             Ups and Downs
           </h1>

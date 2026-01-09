@@ -50,17 +50,17 @@ export default function CheckinPage() {
         {checkins?.length == 0 ? (
           <>
             <Smile
-              className="w-32 h-32 text-black  fill-current"
+              className="w-32 h-32 text-primary  fill-current"
               strokeWidth={1.5}
             />
 
             <div className="flex flex-col gap-4 items-start max-w-xs">
               <>
-                <h2 className="text-xl lg:text-3xl font-bold leading-tight text-black">
+                <h2 className="text-xl lg:text-3xl font-bold leading-tight text-secondary-foreground">
                   Time to check in for the day
                 </h2>
                 <Button
-                  className="bg-black text-white hover:bg-gray-800 px-6 py-2 text-base font-medium hover:scale-105 transition active:scale-105"
+                  className="bg-primary text-primary-foreground  px-6 py-2 text-base font-medium hover:scale-105 transition active:scale-105"
                   onClick={onStartCheckin}
                 >
                   Talk about it
