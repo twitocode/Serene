@@ -1,3 +1,4 @@
+// somatic-step.tsx
 import FemaleBody from "@/lib/components/checkin/bodies/female-body";
 import MaleBody from "@/lib/components/checkin/bodies/male-body";
 import { getBodyPart, BodyPart } from "@/lib/components/checkin/somatic-utils";
@@ -17,9 +18,10 @@ export default function SomaticStep() {
 
   const handleBodyClick = (e: React.MouseEvent<SVGSVGElement>) => {
     const svgRect = e.currentTarget.getBoundingClientRect();
+    // Calculate percentage position (0-1)
     const x = (e.clientX - svgRect.left) / svgRect.width;
     const y = (e.clientY - svgRect.top) / svgRect.height;
-    
+
     const part = getBodyPart(x, y);
 
     setSensation({
@@ -28,32 +30,32 @@ export default function SomaticStep() {
       active: true,
       part,
     });
-
-    console.table(sensation);
   };
 
   return (
     <div className="flex flex-col md:grid md:grid-cols-2 h-full">
-      <div className=" flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center">
         <h1 className="text-center font-medium text-xl">
           Have you felt any physical discomfort lately?
         </h1>
         <span className="text-muted-foreground text-center">
           {isMobile ? "Tap" : "Click"} a spot on the body
         </span>
-        {sensation.active && sensation.part && (
-            <div className="mt-4 p-2 bg-primary/10 rounded-md">
-                <p className="text-sm font-semibold">Selected: {sensation.part}</p>
-            </div>
-        )}
       </div>
       <div className="h-full max-h-[60vh] w-full flex justify-center items-center px-4">
-        {user?.gender == "Female" ? (
-          <FemaleBody onClick={handleBodyClick} />
+        {user?.gender === "Female" ? (
+          <FemaleBody onClick={handleBodyClick} activePart={sensation.part} />
         ) : (
-          <MaleBody onClick={handleBodyClick} />
+          <MaleBody onClick={handleBodyClick} activePart={sensation.part} />
         )}
       </div>
+      {sensation.active && sensation.part && (
+        <div className="mt-4 p-2 bg-primary/10 rounded-md animate-in fade-in zoom-in">
+          <p className="text-sm font-semibold text-primary">
+            Selected: {sensation.part}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
