@@ -1,11 +1,33 @@
-import { FEMALE_ZONES, BodyPart } from "@/lib/components/checkin/somatic-utils";
+import { FEMALE_ZONES } from "@/lib/components/checkin/somatic-utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/lib/components/ui/tooltip";
+import { GridPoint } from "@/lib/types/index";
 
 interface Props {
   onClick: (e: React.MouseEvent<SVGSVGElement>) => void;
-  activePart?: BodyPart;
+  somaticState?: { [key: string]: GridPoint };
+  selectedPart?: string | null;
 }
 
-export default function FemaleBody({ onClick, activePart }: Props) {
+export default function FemaleBody({
+  onClick,
+  somaticState = {},
+  selectedPart,
+}: Props) {
+  // Parts that have data but are not currently being edited
+  const savedParts = Object.keys(somaticState).filter(
+    (p) => p !== selectedPart
+  );
+
+  const getSeverityColor = (count: number) => {
+    if (count >= 4) return "fill-red-500";
+    if (count >= 2) return "fill-orange-500";
+    return "fill-yellow-400";
+  };
+
   // Using backticks to handle the multi-line string safely
   const femalePathData = `M736.728,849.786c-0.634-1.435-13.566-15.425-33.487-23.292c-4.568-1.94-4.545,2.705-16.944-34.925
     c-26.957-72.647-5.661-112.736-51.135-200.791c-6.888-14.322-9.901-24.921-16.16-50.12c-25.397-104.478-6.032-90.98-15.87-135.251
@@ -60,12 +82,14 @@ export default function FemaleBody({ onClick, activePart }: Props) {
   return (
     <svg
       onClick={onClick}
+      role="img"
+      aria-label="Female body diagram for selecting areas of discomfort"
       version="1.1"
       id="Layer_1"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
       viewBox="0 0 837.483 1819.369"
-      className="dark:stroke-white stroke-black max-h-full max-w-full"
+      className="dark:stroke-white stroke-black max-h-full max-w-full cursor-pointer"
       preserveAspectRatio="xMidYMid meet"
     >
       <defs>
@@ -98,7 +122,7 @@ export default function FemaleBody({ onClick, activePart }: Props) {
 
       {/* 1. The Body Outline/Dots */}
       <path
-        fill="transparent"
+        fill="none"
         stroke="currentColor"
         strokeWidth="5"
         className="pointer-events-auto cursor-pointer hover:stroke-primary transition-colors duration-300"
@@ -106,17 +130,51 @@ export default function FemaleBody({ onClick, activePart }: Props) {
       />
 
       {/* 2. The Highlight Zone */}
-      {activePart &&
-        FEMALE_ZONES[activePart] &&
-        FEMALE_ZONES[activePart].map((zone, i) => (
+      {/* Saved Parts (Severity Color) */}
+      {savedParts.map((part) => {
+        const sensations = somaticState[part]?.sensations || [];
+        const count = sensations.length;
+        const colorClass = getSeverityColor(count);
+
+        return (
+          <Tooltip key={part}>
+            <TooltipTrigger asChild>
+              <g>
+                {FEMALE_ZONES[part]?.map((zone) => (
+                  <rect
+                    key={`saved-${part}-${zone.x}-${zone.y}`}
+                    x={`${zone.x}%`}
+                    y={`${zone.y}%`}
+                    width={`${zone.width}%`}
+                    height={`${zone.height}%`}
+                    className={`${colorClass} transition-all duration-500 opacity-60`}
+                    clipPath="url(#body-clip-female)"
+                    filter="url(#glow-blur)"
+                    style={{ pointerEvents: "all", cursor: "pointer" }}
+                  />
+                ))}
+              </g>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="font-semibold text-lg">{part}</p>
+              <div className="text-md text-muted-foreground">
+                {sensations.join(", ")}
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        );
+      })}
+
+      {/* Currently Selected Part (Primary) */}
+      {selectedPart &&
+        FEMALE_ZONES[selectedPart]?.map((zone) => (
           <rect
-            key={i}
+            key={`selected-${selectedPart}-${zone.x}-${zone.y}`}
             x={`${zone.x}%`}
             y={`${zone.y}%`}
             width={`${zone.width}%`}
             height={`${zone.height}%`}
-            // Fill with primary color, but use blur and clipping
-            className="fill-primary transition-all duration-500 opacity-60"
+            className="fill-primary animate-pulse-strong transition-all duration-500"
             clipPath="url(#body-clip-female)"
             filter="url(#glow-blur)"
             style={{ pointerEvents: "none" }}

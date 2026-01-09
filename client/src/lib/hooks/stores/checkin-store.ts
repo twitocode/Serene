@@ -23,6 +23,7 @@ export interface CheckinState {
   moodSeverity: number;
 
   setSelectedMood: (mood: Mood) => void;
+  setSomaticState: (state: { [key: string]: GridPoint }) => void;
 
   goNext: () => void;
   goBack: () => void;
@@ -49,11 +50,13 @@ export const createCheckinStore = (initProps?: CheckinProps) => {
     moodSeverity: -1,
     somaticState: {},
     setSelectedMood: (mood: Mood) => set({ selectedMood: mood }),
+    setSomaticState: (state: { [key: string]: GridPoint }) =>
+      set({ somaticState: state }),
     goNext: () => {
       set(({ step }) => ({ step: step + 1 }));
     },
     goBack: () => {
-      set(({ step }) => ({ step: step - 1 }));
+      set(({ step }) => ({ step: step > 0 ? step - 1 : step }));
     },
     changeDate: (date: string) => set({ displayDate: date }),
     toggleIsCheckingIn: () =>

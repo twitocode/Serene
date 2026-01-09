@@ -50,5 +50,5 @@ public class GridPoint
     public float X { get; set; }
     public float Y { get; set; }
 
-    public string? Sensation { get; set; }
+    public List<string> Sensations { get; set; } = [];
 }

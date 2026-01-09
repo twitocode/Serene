@@ -16,9 +16,9 @@ export default function PromptStep() {
   return (
     <form
       onSubmit={onSubmit}
-      className="flex flex-col justify-between items-center p-4 gap-10 w-1/2"
+      className="flex flex-col justify-center items-center p-4 gap-10 w-full md:w-1/2"
     >
-      <h1 className="font-serif text-5xl">["insert prompt here"]</h1>
+      <h1 className="font-serif text-2xl md:text-5xl text-center">["insert prompt here"]</h1>
 
       <Textarea
         placeholder="Type in your response here"
@@ -29,7 +29,7 @@ export default function PromptStep() {
       />
 
       <ButtonGroup className="gap-1">
-        <Button onClick={goBack} size="lg" className="px-10 text-lg">
+        <Button onClick={goBack} type="button" size="lg" className="px-10 text-lg">
           Back
         </Button>
         <Button type="submit" size="lg" className="px-10 text-lg">

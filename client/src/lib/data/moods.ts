@@ -20,9 +20,9 @@ export type MoodLabel =
 export type MoodType = "energy" | "vibe" | "mental" | "status";
 
 export interface Mood {
-  label: MoodLabel
+  label: MoodLabel;
   severity: number;
-  type: MoodType
+  type: MoodType;
   //for the companion
   imageUrl: string;
 }

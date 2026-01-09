@@ -134,7 +134,7 @@ export interface Checkin {
 export interface GridPoint {
   x: number;
   y: number;
-  sensation: string | null;
+  sensations: string[];
 }
 
 export interface QuestionOfTheDay {

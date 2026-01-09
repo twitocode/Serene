@@ -6,7 +6,8 @@ export type BodyPart =
   | "Right Arm"
   | "Left Leg"
   | "Right Leg"
-  | "Hands"
+  | "Left Hand"
+  | "Right Hand"
   | "Feet"
   | null;
 
@@ -23,10 +24,8 @@ export const FEMALE_ZONES: Record<string, Zone[]> = {
   Hips: [{ x: 32.5, y: 33, width: 35, height: 16 }],
   "Right Arm": [{ x: 5, y: 18, width: 20, height: 35 }],
   "Left Arm": [{ x: 75, y: 18, width: 20, height: 35 }],
-  Hands: [
-    { x: 0, y: 46, width: 20, height: 15 },
-    { x: 80, y: 46, width: 20, height: 15 },
-  ],
+  "Right Hand": [{ x: 0, y: 46, width: 20, height: 15 }],
+  "Left Hand": [{ x: 80, y: 46, width: 20, height: 15 }],
   "Right Leg": [{ x: 23, y: 50, width: 20, height: 48 }],
   "Left Leg": [{ x: 55, y: 50, width: 20, height: 48 }],
   Feet: [
@@ -41,10 +40,8 @@ export const MALE_ZONES: Record<string, Zone[]> = {
   Hips: [{ x: 27, y: 34, width: 43, height: 15 }],
   "Right Arm": [{ x: 5, y: 18, width: 15, height: 35 }],
   "Left Arm": [{ x: 85, y: 18, width: 20, height: 35 }],
-  Hands: [
-    { x: 0, y: 46, width: 20, height: 15 },
-    { x: 80, y: 46, width: 20, height: 15 },
-  ],
+  "Right Hand": [{ x: 0, y: 46, width: 20, height: 15 }],
+  "Left Hand": [{ x: 80, y: 46, width: 20, height: 15 }],
   "Right Leg": [{ x: 23, y: 50, width: 20, height: 48 }],
   "Left Leg": [{ x: 55, y: 50, width: 20, height: 48 }],
 
@@ -53,6 +50,22 @@ export const MALE_ZONES: Record<string, Zone[]> = {
     { x: 59, y: 92, width: 18, height: 8 },
   ],
 };
+
+export const PRESET_SENSATIONS = [
+  "Tension",
+  "Pain",
+  "Numbness",
+  "Tingling",
+  "Heat",
+  "Cold",
+  "Tightness",
+  "Ache",
+  "Soreness",
+  "Cramping",
+  "Stiffness",
+  "Heaviness",
+  "Throbbing",
+];
 
 export function getBodyPart(
   x: number,
@@ -67,7 +80,8 @@ export function getBodyPart(
   const checkOrder: BodyPart[] = [
     "Head",
     "Feet",
-    "Hands",
+    "Left Hand",
+    "Right Hand",
     "Left Arm",
     "Right Arm",
     "Chest",

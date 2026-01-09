@@ -41,7 +41,7 @@ public class GridPointValidator : AbstractValidator<GridPoint>
             .WithMessage("Y coordinate must be normalized between 0 and 1.");
 
         //TODO: preset senssations
-        RuleFor(x => x.Sensation)
+        RuleForEach(x => x.Sensations)
             .MaximumLength(200).WithMessage("Sensation length is too long");
     }
 }
