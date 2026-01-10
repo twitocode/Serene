@@ -11,35 +11,43 @@ import {
   FormItem,
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
+import { cn } from "@/lib/utils";
 import { stepSixSchema } from "@/lib/validation";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 
 const STRUGGLES = [
   "Anxiety",
   "Depression",
-  "Stress",
+  "Trauma",
+  "Suicidal Thoughts",
+  "Grief",
+  "Academic Burnout",
+  "Imposter Syndrome",
+  "Procrastination",
+  "Perfectionism",
   "Loneliness",
+  "Social Anxiety",
+  "Relationships",
+  "Roommate Conflict",
+  "Identity & Belonging",
+  "Family Pressure",
+  "Discrimination",
+  "Sleep Issues",
   "Body Image",
   "Eating Disorder",
-  "Grief",
-  "Trauma",
-  "Relationships",
-  "Identity",
-  "Suicidal Thoughts",
-  "Other"
+  "Chronic Pain",
+  "Financial Stress",
+  "Substance Use",
+  "Other",
 ];
 
 export function StepSix() {
-  const {
-    struggles,
-    setStruggles,
-    goBack,
-    hasStarted,
-  } = useOnboardingStore((state) => state);
+  const { struggles, setStruggles, goBack, hasStarted } = useOnboardingStore(
+    (state) => state
+  );
   const [serverError, setServerError] = useState("");
 
   const mutation = useMutation({
@@ -98,31 +106,34 @@ export function StepSix() {
                 <FormField field={field}>
                   <FormItem>
                     <FormControl>
-                        <div className="flex flex-wrap gap-2 justify-center">
-                            {STRUGGLES.map((struggle) => {
-                                const isSelected = field.state.value.includes(struggle);
-                                return (
-                                    <button
-                                        key={struggle}
-                                        type="button"
-                                        onClick={() => {
-                                            const newValue = isSelected
-                                                ? field.state.value.filter((s) => s !== struggle)
-                                                : [...field.state.value, struggle];
-                                            field.handleChange(newValue);
-                                        }}
-                                        className={cn(
-                                            "px-4 py-2 rounded-full border transition-colors text-sm",
-                                            isSelected
-                                                ? "bg-black text-white border-black"
-                                                : "bg-white text-black border-gray-300 hover:border-gray-400"
-                                        )}
-                                    >
-                                        {struggle}
-                                    </button>
-                                );
-                            })}
-                        </div>
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        {STRUGGLES.map((struggle) => {
+                          const isSelected =
+                            field.state.value.includes(struggle);
+                          return (
+                            <button
+                              key={struggle}
+                              type="button"
+                              onClick={() => {
+                                const newValue = isSelected
+                                  ? field.state.value.filter(
+                                      (s) => s !== struggle
+                                    )
+                                  : [...field.state.value, struggle];
+                                field.handleChange(newValue);
+                              }}
+                              className={cn(
+                                "px-4 py-2 rounded-full border transition-colors text-sm",
+                                isSelected
+                                  ? "bg-black text-white border-black"
+                                  : "bg-white text-black border-gray-300 hover:border-gray-400"
+                              )}
+                            >
+                              {struggle}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

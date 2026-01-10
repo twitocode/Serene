@@ -1,7 +1,7 @@
 
+using NodaTime;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using NodaTime;
 
 namespace Serene.Entities;
 

@@ -1,6 +1,6 @@
-using System.ComponentModel.DataAnnotations;
-using Reinforced.Typings.Exceptions;
 using NodaTime;
+using Reinforced.Typings.Exceptions;
+using System.ComponentModel.DataAnnotations;
 
 namespace Serene.DTOs;
 
@@ -40,4 +40,3 @@ public class StepSixRequest
 {
     public List<string> Struggles { get; set; } = new List<string>();
 }
-

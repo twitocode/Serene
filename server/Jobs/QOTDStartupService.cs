@@ -29,7 +29,7 @@ public class QOTDStartupService : IHostedService
             var communityService = scope.ServiceProvider.GetRequiredService<ICommunityService>();
 
             var todayQOTD = await communityService.GetQOTDAsync(null);
-            
+
             if (todayQOTD == null)
             {
                 _logger.LogInformation("No QOTD found for today, creating one now");
@@ -44,7 +44,7 @@ public class QOTDStartupService : IHostedService
             var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
             var jobKey = new JobKey("SendQOTDJob");
             var triggers = await scheduler.GetTriggersOfJob(jobKey, cancellationToken);
-            
+
             if (triggers.Any())
             {
                 var nextFireTime = triggers.First().GetNextFireTimeUtc();

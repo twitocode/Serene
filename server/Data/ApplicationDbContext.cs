@@ -20,10 +20,13 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<Checkin> Checkins { get; set; }
     public DbSet<QuestionOfTheDay> QuestionsOfTheDay { get; set; }
     public DbSet<Post> Posts { get; set; }
+    public DbSet<ExploreContent> ExploreContent { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.HasPostgresExtension("vector");
 
         // Configure UserAchievement composite key
         modelBuilder.Entity<UserAchievement>()

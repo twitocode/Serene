@@ -12,7 +12,7 @@ public class Result
 
     [JsonPropertyName("errorCode")]
     public string? ErrorCode { get; set; }
-    
+
     [JsonPropertyName("errors")]
     public string[] Errors { get; set; } = [];
 

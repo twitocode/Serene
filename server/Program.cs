@@ -1,4 +1,3 @@
-using System.ClientModel;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Google.GenAI;
@@ -24,6 +23,7 @@ using Serene.Validators;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
+using System.ClientModel;
 
 Log.Logger = new LoggerConfiguration()
     .CreateBootstrapLogger();
@@ -85,6 +85,7 @@ try
     var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
     dataSourceBuilder.EnableDynamicJson(); //for dict mapping
     dataSourceBuilder.UseNodaTime();
+    dataSourceBuilder.UseVector();
     var dataSource = dataSourceBuilder.Build();
 
 
@@ -92,6 +93,7 @@ try
         options.UseNpgsql(dataSource, o =>
         {
             o.UseNodaTime();
+            o.UseVector();
         }));
 
 
@@ -104,6 +106,7 @@ try
         options.Password.RequireUppercase = false;
         options.Password.RequireLowercase = false;
     })
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
@@ -117,6 +120,8 @@ try
     builder.Services.AddScoped<IUsersService, UsersService>();
     builder.Services.AddScoped<ICommunityService, CommunityService>();
     builder.Services.AddScoped<ICheckinService, CheckinService>();
+    builder.Services.AddScoped<IEmbeddingService, EmbeddingService>();
+    builder.Services.AddScoped<IExploreService, ExploreService>();
     // builder.Services.AddScoped<IAIService, GeminiService>();
     builder.Services.AddScoped<IAIService, OpenAIService>();
 
@@ -249,6 +254,22 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        try
+        {
+            await DbInitializer.InitializeAsync(services);
+            await DbInitializer.PromoteUserToAdminAsync(services, "test@test.com");
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred while seeding the database.");
+        }
+    }
+
     app.Run();
 
 }

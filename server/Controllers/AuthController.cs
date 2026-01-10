@@ -73,7 +73,7 @@ public class AuthController : BaseApiController
     public async Task<IActionResult> GoogleCallback([FromQuery] string returnUrl)
     {
         var result = await HttpContext.AuthenticateAsync("ExternalCookie");
-        
+
         if (!result.Succeeded)
         {
             return Unauthorized();

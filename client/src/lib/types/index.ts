@@ -34,6 +34,7 @@ export interface User extends IdentityUser {
   image: string | null;
   age: number;
   gender: string;
+  roles: string[];
   pronouns: string;
   countryCode: string | null;
   onboardingCompleted: boolean;
@@ -150,7 +151,15 @@ export interface Post {
   userId: string;
   user: User;
   qotdId: string | null;
-  questionOfTheDay: QuestionOfTheDay | null;
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ExploreContent {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  type: "Article" | "Video";
+}
+

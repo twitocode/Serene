@@ -19,7 +19,7 @@ public class CheckinController : BaseApiController
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetCheckin ([ModelBinder(typeof(LocalDateModelBinder))] LocalDate? date)
+    public async Task<IActionResult> GetCheckin([ModelBinder(typeof(LocalDateModelBinder))] LocalDate? date)
     {
         var userId = GetUserId();
         if (userId == null) return Unauthorized();

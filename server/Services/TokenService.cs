@@ -1,8 +1,8 @@
+using Microsoft.IdentityModel.Tokens;
+using Serene.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using Serene.Entities;
 
 namespace Serene.Services;
 
@@ -15,7 +15,7 @@ public class TokenService
         _configuration = configuration;
     }
 
-    public string GenerateToken(User user)
+    public string GenerateToken(User user, IList<string> roles)
     {
         var key = Encoding.UTF8.GetBytes(_configuration["Authentication:Jwt:Key"] ?? throw new Exception("Missing Jwt Key in configuration"));
         var issuer = _configuration["Authentication:Jwt:Authority"];
@@ -27,6 +27,11 @@ public class TokenService
             new Claim(ClaimTypes.Email, user.Email ?? ""),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
+
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
 
         if (!string.IsNullOrEmpty(user.Name))
         {

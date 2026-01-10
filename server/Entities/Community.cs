@@ -1,6 +1,6 @@
+using NodaTime;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using NodaTime;
 
 namespace Serene.Entities;
 
@@ -17,7 +17,7 @@ public class QuestionOfTheDay
     public string Question { get; set; } = string.Empty;
 
     [Column("day")]
-    public LocalDate Day { get; set; } 
+    public LocalDate Day { get; set; }
 
     [Column("created_at")]
     public Instant CreatedAt { get; set; } = SystemClock.Instance.GetCurrentInstant();

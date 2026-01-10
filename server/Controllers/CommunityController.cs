@@ -21,7 +21,7 @@ public class CommunityController : BaseApiController
     {
         _commnityService = commnityService;
     }
-    
+
     [Authorize]
     [HttpPost("qotd")]
     public async Task<IActionResult> AnswerQOTD([FromBody] QOTDPostRequest dto)

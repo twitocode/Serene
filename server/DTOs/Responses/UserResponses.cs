@@ -10,6 +10,7 @@ public class UserResponse
     public string? Image { get; set; }
     public bool EmailConfirmed { get; set; }
     public string? Gender { get; set; }
+    public List<string> Roles { get; set; } = new();
     public Instant CreatedAt { get; set; }
     public Instant UpdatedAt { get; set; }
 

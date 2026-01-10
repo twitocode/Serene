@@ -101,12 +101,13 @@ public class AuthService : IAuthService
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("User {Email} signed up successfully", dto.Email);
-        var token = _tokenService.GenerateToken(user);
+        var roles = await _userManager.GetRolesAsync(user);
+        var token = _tokenService.GenerateToken(user, roles);
 
         return new AuthResponse
         {
             Token = token,
-            User = MapToDto(user)
+            User = MapToDto(user, roles)
         };
     }
 
@@ -122,24 +123,21 @@ public class AuthService : IAuthService
         }
 
         _logger.LogInformation("User {Email} logged in successfully", dto.Email);
-        var token = _tokenService.GenerateToken(user);
+        var roles = await _userManager.GetRolesAsync(user);
+        var token = _tokenService.GenerateToken(user, roles);
 
         return new AuthResponse
         {
             Token = token,
-            User = MapToDto(user)
+            User = MapToDto(user, roles)
         };
     }
 
     public async Task<AuthResponse> HandleGoogleCallbackAsync(ClaimsPrincipal principal)
     {
         _logger.LogInformation("Handling Google callback");
-        
-        var email = principal.FindFirstValue(ClaimTypes.Email);
-        if (email == null)
-        {
-            throw new Exception("Email claim not found");
-        }
+
+        var email = principal.FindFirstValue(ClaimTypes.Email) ?? throw new Exception("Email claim not found");
 
         // Extract Country Code
         var countryCode = principal.FindFirstValue(ClaimTypes.Country) ??
@@ -150,14 +148,14 @@ public class AuthService : IAuthService
         var genderClaimValue = principal.FindFirstValue(ClaimTypes.Gender);
         if (!string.IsNullOrEmpty(genderClaimValue))
         {
-             if (genderClaimValue.Equals("male", StringComparison.OrdinalIgnoreCase)) gender = "Male";
-             else if (genderClaimValue.Equals("female", StringComparison.OrdinalIgnoreCase)) gender = "Female";
-             else if (genderClaimValue.Equals("non-binary", StringComparison.OrdinalIgnoreCase)) gender = "NonBinary";
+            if (genderClaimValue.Equals("male", StringComparison.OrdinalIgnoreCase)) gender = "Male";
+            else if (genderClaimValue.Equals("female", StringComparison.OrdinalIgnoreCase)) gender = "Female";
+            else if (genderClaimValue.Equals("non-binary", StringComparison.OrdinalIgnoreCase)) gender = "NonBinary";
         }
 
         // Extract AvatarUrl
         var avatarUrl = principal.FindFirstValue("picture");
-        
+
         // Extract Name
         var name = principal.FindFirstValue(ClaimTypes.Name) ?? email;
 
@@ -202,16 +200,17 @@ public class AuthService : IAuthService
             await _userManager.AddLoginAsync(user, new UserLoginInfo("Google", subject, "Google"));
         }
 
-        var token = _tokenService.GenerateToken(user);
+        var roles = await _userManager.GetRolesAsync(user);
+        var token = _tokenService.GenerateToken(user, roles);
 
         return new AuthResponse
         {
             Token = token,
-            User = MapToDto(user)
+            User = MapToDto(user, roles)
         };
     }
 
-    private static UserResponse MapToDto(User user)
+    private static UserResponse MapToDto(User user, IList<string> roles)
     {
         return new UserResponse
         {
@@ -219,6 +218,7 @@ public class AuthService : IAuthService
             Email = user.Email,
             Name = user.Name,
             Image = user.Image,
+            Roles = roles.ToList(),
             EmailConfirmed = user.EmailConfirmed,
             CreatedAt = user.CreatedAt,
             UpdatedAt = user.UpdatedAt

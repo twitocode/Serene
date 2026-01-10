@@ -76,7 +76,7 @@ public class CommunityService : ICommunityService
                 Question = question,
                 Day = today
             };
-            
+
             _context.QuestionsOfTheDay.Add(qotd);
             await _context.SaveChangesAsync();
             _logger.LogInformation("QOTD created successfully for {date}: {id}", today, qotd.Id);
@@ -85,16 +85,16 @@ public class CommunityService : ICommunityService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to create QOTD for {date}", today);
-            
+
             var retryQotd = await _context.QuestionsOfTheDay
                 .FirstOrDefaultAsync(x => x.Day == today);
-            
+
             if (retryQotd != null)
             {
                 _logger.LogInformation("QOTD found after retry for {date}: {id}", today, retryQotd.Id);
                 return retryQotd;
             }
-            
+
             throw;
         }
     }

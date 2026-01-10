@@ -1,6 +1,6 @@
 using FluentValidation;
-using Serene.DTOs;
 using NodaTime;
+using Serene.DTOs;
 
 namespace Serene.Validators;
 

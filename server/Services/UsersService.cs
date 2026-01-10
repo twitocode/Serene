@@ -16,18 +16,20 @@ public interface IUsersService
 public class UsersService : IUsersService
 {
     private readonly ApplicationDbContext _context;
+    private readonly Microsoft.AspNetCore.Identity.UserManager<User> _userManager;
     private readonly ILogger<UsersService> _logger;
 
-    public UsersService(ApplicationDbContext context, ILogger<UsersService> logger)
+    public UsersService(ApplicationDbContext context, Microsoft.AspNetCore.Identity.UserManager<User> userManager, ILogger<UsersService> logger)
     {
         _context = context;
+        _userManager = userManager;
         _logger = logger;
     }
 
     public async Task<UserResponse> GetUserProfileAsync(string userId)
     {
         _logger.LogInformation("Fetching profile for user: {UserId}", userId);
-        var user = await _context.Users
+        var userResponse = await _context.Users
             .AsNoTracking()
             .Include(u => u.Profile)
                 .ThenInclude(p => p!.School)
@@ -75,13 +77,20 @@ public class UsersService : IUsersService
             })
             .FirstOrDefaultAsync();
 
-        if (user == null)
+        if (userResponse == null)
         {
             _logger.LogWarning("User profile not found for ID: {UserId}", userId);
             throw new KeyNotFoundException("User profile not found");
         }
 
-        return user;
+        var userEntity = await _userManager.FindByIdAsync(userId);
+        if (userEntity != null)
+        {
+            var roles = await _userManager.GetRolesAsync(userEntity);
+            userResponse.Roles = roles.ToList();
+        }
+
+        return userResponse;
     }
 
     public async Task<PreferencesResponse> UpdatePreferencesAsync(string userId, UpdatePreferencesDto dto)

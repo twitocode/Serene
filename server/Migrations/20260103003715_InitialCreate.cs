@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using NodaTime;
 using Serene.Entities;
+using System.Collections.Generic;
 
 #nullable disable
 

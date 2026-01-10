@@ -1,6 +1,6 @@
-using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using Serene.Common;
+using System.Net;
 
 namespace Serene.Middleware;
 

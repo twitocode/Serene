@@ -28,7 +28,7 @@ public class CheckinService : ICheckinService
     public async Task<List<CheckinResponse>> GetCheckinAsync(string userId, LocalDate? date)
     {
         _logger.LogInformation("Getting checkin status for user: {UserId}", userId);
-        
+
         var query = _context.Checkins.Where(x => x.UserId == userId);
 
         if (date.HasValue)
@@ -36,7 +36,7 @@ public class CheckinService : ICheckinService
             var zone = DateTimeZoneProviders.Tzdb.GetSystemDefault();
             var startOfDay = date.Value.AtStartOfDayInZone(zone).ToInstant();
             var endOfDay = date.Value.PlusDays(1).AtStartOfDayInZone(zone).ToInstant();
-            
+
             query = query.Where(x => x.DateCompleted >= startOfDay && x.DateCompleted < endOfDay);
         }
 

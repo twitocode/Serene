@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +5,7 @@ using NodaTime;
 using Serene.Data;
 using Serene.DTOs;
 using Serene.Entities;
+using System.Security.Claims;
 
 namespace Serene.Controllers;
 

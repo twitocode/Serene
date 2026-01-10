@@ -15,7 +15,7 @@ public class SendQOTDJob : IJob
     }
 
     public async Task Execute(IJobExecutionContext context)
-    { 
+    {
         await _communityService.CreateNewQOTD();
     }
 }

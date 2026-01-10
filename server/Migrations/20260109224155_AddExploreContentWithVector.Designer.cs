@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -15,9 +16,11 @@ using Serene.Entities;
 namespace Serene.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260109224155_AddExploreContentWithVector")]
+    partial class AddExploreContentWithVector
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,7 +187,7 @@ namespace Serene.Migrations
                     b.HasIndex("Slug")
                         .IsUnique();
 
-                    b.ToTable("achievements", (string)null);
+                    b.ToTable("achievements");
                 });
 
             modelBuilder.Entity("Serene.Entities.Checkin", b =>
@@ -240,7 +243,7 @@ namespace Serene.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("checkins", (string)null);
+                    b.ToTable("checkins");
                 });
 
             modelBuilder.Entity("Serene.Entities.ExploreContent", b =>
@@ -278,7 +281,7 @@ namespace Serene.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("explore_content", (string)null);
+                    b.ToTable("explore_content");
                 });
 
             modelBuilder.Entity("Serene.Entities.Post", b =>
@@ -320,7 +323,7 @@ namespace Serene.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("post", (string)null);
+                    b.ToTable("post");
                 });
 
             modelBuilder.Entity("Serene.Entities.Preferences", b =>
@@ -357,7 +360,7 @@ namespace Serene.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("preferences", (string)null);
+                    b.ToTable("preferences");
                 });
 
             modelBuilder.Entity("Serene.Entities.Profile", b =>
@@ -419,7 +422,7 @@ namespace Serene.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("profile", (string)null);
+                    b.ToTable("profile");
                 });
 
             modelBuilder.Entity("Serene.Entities.QuestionOfTheDay", b =>
@@ -447,7 +450,7 @@ namespace Serene.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("community_qotd", (string)null);
+                    b.ToTable("community_qotd");
                 });
 
             modelBuilder.Entity("Serene.Entities.SafetyPlan", b =>
@@ -487,7 +490,7 @@ namespace Serene.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("safety_plan", (string)null);
+                    b.ToTable("safety_plan");
                 });
 
             modelBuilder.Entity("Serene.Entities.School", b =>
@@ -517,7 +520,7 @@ namespace Serene.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("school", (string)null);
+                    b.ToTable("school");
                 });
 
             modelBuilder.Entity("Serene.Entities.User", b =>
@@ -649,7 +652,7 @@ namespace Serene.Migrations
 
                     b.HasIndex("AchievementId");
 
-                    b.ToTable("user_achievements", (string)null);
+                    b.ToTable("user_achievements");
                 });
 
             modelBuilder.Entity("Serene.Entities.Verification", b =>
@@ -682,7 +685,7 @@ namespace Serene.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("verification", (string)null);
+                    b.ToTable("verification");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
