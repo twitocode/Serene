@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using Serene.Controllers;
 using Serene.Data;
 using Serene.DTOs;
@@ -18,64 +19,71 @@ public class UsersService : IUsersService
     private readonly ApplicationDbContext _context;
     private readonly Microsoft.AspNetCore.Identity.UserManager<User> _userManager;
     private readonly ILogger<UsersService> _logger;
+    private readonly HybridCache _cache;
 
-    public UsersService(ApplicationDbContext context, Microsoft.AspNetCore.Identity.UserManager<User> userManager, ILogger<UsersService> logger)
+    public UsersService(ApplicationDbContext context, Microsoft.AspNetCore.Identity.UserManager<User> userManager, ILogger<UsersService> logger, HybridCache cache)
     {
         _context = context;
         _userManager = userManager;
         _logger = logger;
+        _cache = cache;
     }
 
     public async Task<UserResponse> GetUserProfileAsync(string userId)
     {
         _logger.LogInformation("Fetching profile for user: {UserId}", userId);
-        var userResponse = await _context.Users
-            .AsNoTracking()
-            .Include(u => u.Profile)
-                .ThenInclude(p => p!.School)
-            .Include(u => u.Preferences)
-            .Where(u => u.Id == userId)
-            .Select(u => new UserResponse
-            {
-                Id = u.Id,
-                Email = u.Email,
-                Name = u.Name,
-                Image = u.Image,
-                EmailConfirmed = u.EmailConfirmed,
-                CreatedAt = u.CreatedAt,
-                UpdatedAt = u.UpdatedAt,
-                Gender = u.Gender,
-                Preferences = u.Preferences != null ? new PreferencesResponse
+        var userResponse = await _cache.GetOrCreateAsync($"profile-{userId}", async token =>
+        {
+            var userResponse = await _context.Users
+                .AsNoTracking()
+                .Include(u => u.Profile)
+                    .ThenInclude(p => p!.School)
+                .Include(u => u.Preferences)
+                .Where(u => u.Id == userId)
+                .Select(u => new UserResponse
                 {
-                    Id = u.Preferences.Id,
-                    Theme = u.Preferences.Theme,
-                    PasswordLock = u.Preferences.PasswordLock,
-                    UserId = u.Preferences.UserId,
-                    CreatedAt = u.Preferences.CreatedAt,
-                    UpdatedAt = u.Preferences.UpdatedAt
-                } : null,
-                Profile = u.Profile != null ? new ProfileResponse
-                {
-                    Id = u.Profile.Id,
-                    LongestStreak = u.Profile.LongestStreak,
-                    CurrentStreak = u.Profile.CurrentStreak,
-                    UserId = u.Id,
-                    KoalaColour = u.Profile.KoalaColour,
-                    KoalaName = u.Profile.KoalaName,
-                    KoalaPronouns = u.Profile.KoalaPronouns,
-
-                    School = u.Profile.School != null ? new SchoolResponse
+                    Id = u.Id,
+                    Email = u.Email,
+                    Name = u.Name,
+                    Image = u.Image,
+                    EmailConfirmed = u.EmailConfirmed,
+                    CreatedAt = u.CreatedAt,
+                    UpdatedAt = u.UpdatedAt,
+                    Gender = u.Gender,
+                    Preferences = u.Preferences != null ? new PreferencesResponse
                     {
-                        Id = u.Profile.School.Id,
-                        Name = u.Profile.School.Name!,
-                        City = u.Profile.School.City!,
-                        RegionCode = u.Profile.School.RegionCode!,
-                        UserId = u.Id,
-                        CountryCode = u.Profile.School.CountryCode,
+                        Id = u.Preferences.Id,
+                        Theme = u.Preferences.Theme,
+                        PasswordLock = u.Preferences.PasswordLock,
+                        UserId = u.Preferences.UserId,
+                        CreatedAt = u.Preferences.CreatedAt,
+                        UpdatedAt = u.Preferences.UpdatedAt
                     } : null,
-                } : null
-            })
+                    Profile = u.Profile != null ? new ProfileResponse
+                    {
+                        Id = u.Profile.Id,
+                        LongestStreak = u.Profile.LongestStreak,
+                        CurrentStreak = u.Profile.CurrentStreak,
+                        UserId = u.Id,
+                        KoalaColour = u.Profile.KoalaColour,
+                        KoalaName = u.Profile.KoalaName,
+                        KoalaPronouns = u.Profile.KoalaPronouns,
+
+                        School = u.Profile.School != null ? new SchoolResponse
+                        {
+                            Id = u.Profile.School.Id,
+                            Name = u.Profile.School.Name!,
+                            City = u.Profile.School.City!,
+                            RegionCode = u.Profile.School.RegionCode!,
+                            UserId = u.Id,
+                            CountryCode = u.Profile.School.CountryCode,
+                        } : null,
+                    } : null
+                })
             .FirstOrDefaultAsync();
+            return userResponse;
+            //TODO: invalidate when editing user in any way
+        }, tags: [$"profile-{userId}"]);
 
         if (userResponse == null)
         {

@@ -1,5 +1,6 @@
 using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using NodaTime;
 using Pgvector.EntityFrameworkCore;
 using Serene.Data;
@@ -24,15 +25,17 @@ public class ExploreService : IExploreService
     private readonly ApplicationDbContext _context;
     private readonly IEmbeddingService _embeddingService;
     private readonly ILogger<ExploreService> _logger;
-
+    private readonly HybridCache _cache;
     public ExploreService(
         ApplicationDbContext context,
         IEmbeddingService embeddingService,
-        ILogger<ExploreService> logger)
+        ILogger<ExploreService> logger,
+        HybridCache cache)
     {
         _context = context;
         _embeddingService = embeddingService;
         _logger = logger;
+        _cache = cache;
     }
 
     public async Task<List<ExploreContentResponse>> GetRecommendationsAsync(string userId)
@@ -60,21 +63,22 @@ public class ExploreService : IExploreService
         _logger.LogInformation("Generating recommendations for query: {QueryText}", queryText);
 
         var embedding = await _embeddingService.GetEmbeddingAsync(queryText);
-
-        // Vector Search
-        var recommendations = await _context.ExploreContent
-            .Where(c => c.Embedding != null)
-            .OrderBy(c => c.Embedding!.CosineDistance(embedding))
-            .Take(10)
-            .Select(c => new ExploreContentResponse
-            {
-                Id = c.Id,
-                Title = c.Title,
-                Description = c.Description,
-                Url = c.Url,
-                Type = c.Type.ToString()
-            })
-            .ToListAsync();
+        var recommendations = await _cache.GetOrCreateAsync($"recommendations-{embedding}", async token =>
+        {
+            return await _context.ExploreContent
+                .Where(c => c.Embedding != null)
+                .OrderBy(c => c.Embedding!.CosineDistance(embedding))
+                .Take(10)
+                .Select(c => new ExploreContentResponse
+                {
+                    Id = c.Id,
+                    Title = c.Title,
+                    Description = c.Description,
+                    Url = c.Url,
+                    Type = c.Type.ToString()
+                })
+                .ToListAsync(token);    
+        });
 
         return recommendations;
     }

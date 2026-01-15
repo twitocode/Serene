@@ -8,6 +8,8 @@ using Serene.DTOs;
 using Serene.Entities;
 using System.Security.Claims;
 
+using Microsoft.Extensions.Caching.Hybrid;
+
 namespace Serene.Services;
 
 public interface IAuthService
@@ -24,17 +26,20 @@ public class AuthService : IAuthService
     private readonly TokenService _tokenService;
     private readonly ApplicationDbContext _context;
     private readonly ILogger<AuthService> _logger;
+    private readonly HybridCache _cache;
 
     public AuthService(
         UserManager<User> userManager,
         TokenService tokenService,
         ApplicationDbContext context,
-        ILogger<AuthService> logger)
+        ILogger<AuthService> logger,
+        HybridCache hybridCache)
     {
         _userManager = userManager;
         _tokenService = tokenService;
         _context = context;
         _logger = logger;
+        _cache = hybridCache;
     }
 
     public async Task<CheckEmailResponse> CheckEmailAsync(string email)
@@ -76,39 +81,52 @@ public class AuthService : IAuthService
             throw new ArgumentException("User already exists");
         }
 
-        var user = new User
-        {
-            UserName = dto.Email,
-            Email = dto.Email,
-            EmailConfirmed = false
-        };
+        await using var transaction = await _context.Database.BeginTransactionAsync();
 
-        var result = await _userManager.CreateAsync(user, dto.Password);
-
-        if (!result.Succeeded)
+        try
         {
-            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            _logger.LogError("User creation failed for {Email}: {Errors}", dto.Email, errors);
-            throw new Exception("Sign up failed: " + errors);
+            var user = new User
+            {
+                UserName = dto.Email,
+                Email = dto.Email,
+                EmailConfirmed = false
+            };
+
+            var result = await _userManager.CreateAsync(user, dto.Password);
+
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                _logger.LogError("User creation failed for {Email}: {Errors}", dto.Email, errors);
+                throw new Exception("Sign up failed: " + errors);
+            }
+
+            var profile = new Profile
+            {
+                UserId = user.Id,
+            };
+
+            _context.Profiles.Add(profile);
+            await _context.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+            _logger.LogInformation("User {Email} signed up successfully", dto.Email);
+            var roles = await GetUserRoles(user);
+            var token = _tokenService.GenerateToken(user, roles);
+
+            return new AuthResponse
+            {
+                Token = token,
+                User = MapToDto(user, roles)
+            };
+
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
         }
 
-        var profile = new Profile
-        {
-            UserId = user.Id,
-        };
-
-        _context.Profiles.Add(profile);
-        await _context.SaveChangesAsync();
-
-        _logger.LogInformation("User {Email} signed up successfully", dto.Email);
-        var roles = await _userManager.GetRolesAsync(user);
-        var token = _tokenService.GenerateToken(user, roles);
-
-        return new AuthResponse
-        {
-            Token = token,
-            User = MapToDto(user, roles)
-        };
     }
 
     public async Task<AuthResponse> SignInAsync(EmailSignInRequest dto)
@@ -123,7 +141,7 @@ public class AuthService : IAuthService
         }
 
         _logger.LogInformation("User {Email} logged in successfully", dto.Email);
-        var roles = await _userManager.GetRolesAsync(user);
+        var roles = await GetUserRoles(user);
         var token = _tokenService.GenerateToken(user, roles);
 
         return new AuthResponse
@@ -155,59 +173,75 @@ public class AuthService : IAuthService
 
         // Extract AvatarUrl
         var avatarUrl = principal.FindFirstValue("picture");
-
-        // Extract Name
         var name = principal.FindFirstValue(ClaimTypes.Name) ?? email;
 
-        var user = await _userManager.FindByEmailAsync(email);
-
-        if (user == null)
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        try
         {
-            _logger.LogInformation("Creating new user from Google principal: {Email}", email);
-            user = new User
-            {
-                UserName = email,
-                Email = email,
-                Name = name,
-                Image = avatarUrl,
-                CountryCode = countryCode,
-                Gender = gender,
-                EmailConfirmed = true // Trusted provider
-            };
+            var user = await _userManager.FindByEmailAsync(email);
 
-            var createResult = await _userManager.CreateAsync(user);
-            if (!createResult.Succeeded)
+            if (user == null)
             {
-                var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
-                _logger.LogError("Failed to create user from Google: {Errors}", errors);
-                throw new Exception("Failed to create user: " + errors);
+                _logger.LogInformation("Creating new user from Google principal: {Email}", email);
+                user = new User
+                {
+                    UserName = email,
+                    Email = email,
+                    Name = name,
+                    Image = avatarUrl,
+                    CountryCode = countryCode,
+                    Gender = gender,
+                    EmailConfirmed = true 
+                };
+
+                var createResult = await _userManager.CreateAsync(user);
+                if (!createResult.Succeeded)
+                {
+                    var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
+                    _logger.LogError("Failed to create user from Google: {Errors}", errors);
+                    throw new Exception("Failed to create user: " + errors);
+                }
+
+                var profile = new Profile
+                {
+                    UserId = user.Id,
+                };
+                _context.Profiles.Add(profile);
+                await _context.SaveChangesAsync();
             }
 
-            var profile = new Profile
+            // Check if login already exists
+            var logins = await _userManager.GetLoginsAsync(user);
+            var subject = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (subject != null && !logins.Any(l => l.LoginProvider == "Google" && l.ProviderKey == subject))
             {
-                UserId = user.Id,
+                _logger.LogInformation("Linking Google account for user: {Email}", email);
+                await _userManager.AddLoginAsync(user, new UserLoginInfo("Google", subject, "Google"));
+            }
+
+            var roles = await GetUserRoles(user);
+            var token = _tokenService.GenerateToken(user, roles);
+
+            return new AuthResponse
+            {
+                Token = token,
+                User = MapToDto(user, roles)
             };
-            _context.Profiles.Add(profile);
-            await _context.SaveChangesAsync();
         }
-
-        // Check if login already exists
-        var logins = await _userManager.GetLoginsAsync(user);
-        var subject = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (subject != null && !logins.Any(l => l.LoginProvider == "Google" && l.ProviderKey == subject))
+        catch
         {
-            _logger.LogInformation("Linking Google account for user: {Email}", email);
-            await _userManager.AddLoginAsync(user, new UserLoginInfo("Google", subject, "Google"));
+            await transaction.RollbackAsync();
+            throw;
         }
+    }
 
-        var roles = await _userManager.GetRolesAsync(user);
-        var token = _tokenService.GenerateToken(user, roles);
-
-        return new AuthResponse
-        {
-            Token = token,
-            User = MapToDto(user, roles)
-        };
+    private async Task<IList<string>> GetUserRoles(User user)
+    {
+        return await _cache.GetOrCreateAsync(
+            $"user-roles-{user.Id}",
+            async token => await _userManager.GetRolesAsync(user),
+            options: new HybridCacheEntryOptions { Expiration = TimeSpan.FromMinutes(30) }
+        );
     }
 
     private static UserResponse MapToDto(User user, IList<string> roles)

@@ -1,6 +1,7 @@
 using Google.GenAI;
 using Google.GenAI.Types;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using NodaTime;
 using NodaTime.Text;
 using Serene.Common;
@@ -22,19 +23,30 @@ public interface ICommunityService
 public class CommunityService : ICommunityService
 {
     private readonly ApplicationDbContext _context;
-    private readonly ILogger<UsersService> _logger;
+    private readonly ILogger<CommunityService> _logger;
     private readonly IAIService _geminiService;
+    private readonly HybridCache _cache;
 
-    public CommunityService(ApplicationDbContext context, ILogger<UsersService> logger, IAIService geminiService)
+    public CommunityService(
+        ApplicationDbContext context,
+        ILogger<CommunityService> logger,
+        IAIService geminiService,
+        HybridCache cache)
     {
         _context = context;
         _logger = logger;
         _geminiService = geminiService;
+        _cache = cache;
     }
 
     public async Task AnswerQOTDAsync(QOTDPostRequest dto, string uid)
     {
-        //assumes qotd already exists
+        var qotd = await _context.QuestionsOfTheDay.FindAsync(dto.QOTDId);
+        if (qotd == null)
+        {
+            throw new AppException("Question not found", ErrorCodes.NotFound);
+        }
+
         var alreadyPosted = await _context.Posts.AnyAsync(x => x.UserId == uid && x.QotdId == dto.QOTDId);
         if (alreadyPosted)
         {
@@ -52,6 +64,9 @@ public class CommunityService : ICommunityService
         _logger.LogInformation("User {uid} responded to QOTD {qotdId}", uid, dto.QOTDId);
 
         await _context.SaveChangesAsync();
+
+        var cacheKey = $"community-responses-{qotd.Day:yyyy-MM-dd}";
+        await _cache.RemoveAsync(cacheKey);
     }
 
     public async Task<QuestionOfTheDay?> CreateNewQOTD()
@@ -118,19 +133,25 @@ public class CommunityService : ICommunityService
             targetDate = parseResult.Value;
         }
 
-        var qotd = await _context.QuestionsOfTheDay
-            .FirstOrDefaultAsync(x => x.Day == targetDate);
-
-        if (qotd != null)
+        return await _cache.GetOrCreateAsync($"qotd-{targetDate:yyyy-MM-dd}", async token =>
         {
-            return new QOTDResponse
-            {
-                QOTDId = qotd.Id,
-                Question = qotd.Question,
-            };
-        }
+            var qotd = await _context.QuestionsOfTheDay
+                .FirstOrDefaultAsync(x => x.Day == targetDate, token);
 
-        return null;
+            if (qotd != null)
+            {
+                return new QOTDResponse
+                {
+                    QOTDId = qotd.Id,
+                    Question = qotd.Question,
+                };
+            }
+
+            return null;
+        }, options: new HybridCacheEntryOptions
+        {
+            Expiration = TimeSpan.FromHours(24)
+        });
     }
 
     public async Task<List<PostResponse>> GetResponsesAsync(string? date)
@@ -152,25 +173,34 @@ public class CommunityService : ICommunityService
             targetDate = parseResult.Value;
         }
 
-        var qotd = await _context.QuestionsOfTheDay
-            .FirstOrDefaultAsync(x => x.Day == targetDate);
+        var cacheKey = $"community-responses-{targetDate:yyyy-MM-dd}";
 
-        if (qotd == null)
+        return await _cache.GetOrCreateAsync(cacheKey, async token =>
         {
-            return new List<PostResponse>();
-        }
+            var qotd = await _context.QuestionsOfTheDay
+                .FirstOrDefaultAsync(x => x.Day == targetDate, token);
 
-        var responses = await _context.Posts
-            .Where(x => x.QotdId == qotd.Id)
-            .Include(x => x.User)
-            .Select(x => new PostResponse
+            if (qotd == null)
             {
-                Answer = x.Answer,
-                UserId = x.UserId,
-                Username = x.User != null && x.User.Name != null ? x.User.Name : "Anonymous",
-            })
-            .ToListAsync();
+                return new List<PostResponse>();
+            }
 
-        return responses;
+            var responses = await _context.Posts
+                .Where(x => x.QotdId == qotd.Id)
+                .Include(x => x.User)
+                .Select(x => new PostResponse
+                {
+                    Answer = x.Answer,
+                    UserId = x.UserId,
+                    Username = x.User != null && x.User.Name != null ? x.User.Name : "Anonymous",
+                })
+                .ToListAsync(token);
+
+            return responses;
+        }, options: new HybridCacheEntryOptions
+        {
+            Expiration = TimeSpan.FromMinutes(5),
+            LocalCacheExpiration = TimeSpan.FromMinutes(1)
+        });
     }
 }

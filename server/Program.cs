@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using Npgsql;
@@ -45,6 +46,22 @@ try
 
     Log.Information("Starting web application");
 
+    builder.Services.AddStackExchangeRedisCache(o =>
+    {
+        o.Configuration = builder.Configuration.GetConnectionString("Redis");
+    });
+
+    builder.Services.AddHybridCache(o =>
+    {
+        o.DefaultEntryOptions = new HybridCacheEntryOptions
+        {
+            Expiration = TimeSpan.FromSeconds(10),
+            LocalCacheExpiration = TimeSpan.FromSeconds(5)
+        };
+    });
+
+
+
     builder.Services.AddControllers()
         .AddJsonOptions(options =>
         {
@@ -72,14 +89,14 @@ try
             };
         });
 
-    // Add FluentValidation
+
     builder.Services.AddFluentValidationAutoValidation();
     builder.Services.AddValidatorsFromAssemblyContaining<EmailSignUpRequestValidator>();
 
 
     builder.Services.AddOpenApi();
 
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    var connectionString = builder.Configuration.GetConnectionString("Postgres")
         ?? throw new ArgumentException("DB string not provided");
 
     var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
@@ -118,6 +135,7 @@ try
     builder.Services.AddScoped<IOnboardingService, OnboardingService>();
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<IUsersService, UsersService>();
+    builder.Services.AddScoped<IPreferencesService, PreferencesService>();
     builder.Services.AddScoped<ICommunityService, CommunityService>();
     builder.Services.AddScoped<ICheckinService, CheckinService>();
     builder.Services.AddScoped<IEmbeddingService, EmbeddingService>();

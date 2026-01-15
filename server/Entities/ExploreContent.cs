@@ -32,7 +32,7 @@ public class ExploreContent
     [Column("type")]
     public ExploreContentType Type { get; set; }
 
-    [Column("embedding")]
+    [Column("embedding", TypeName = "vector(1024)")]
     public Vector? Embedding { get; set; }
 
     [Column("created_at")]

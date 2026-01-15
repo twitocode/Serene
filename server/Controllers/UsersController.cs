@@ -1,14 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serene.Services;
+using Serene.DTOs;
 
 namespace Serene.Controllers;
-
-public class UpdatePreferencesDto
-{
-    public string? Theme { get; set; }
-    public string? PasswordLock { get; set; }
-}
 
 [ApiController]
 [Route("users")]
