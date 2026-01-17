@@ -1,8 +1,10 @@
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Options;
 using OpenAI;
 using OpenAI.Embeddings;
 using Pgvector;
+using Serene.Configuration;
 using System.ClientModel;
 
 namespace Serene.Services;
@@ -19,17 +21,21 @@ public class EmbeddingService : IEmbeddingService
     private readonly IDistributedCache _l2;
     private const string ModelName = "qwen/qwen3-embedding-8b";
 
-    public EmbeddingService(IConfiguration configuration, HybridCache cache, IDistributedCache l2)
+    public EmbeddingService(IOptions<AIOptions> options, HybridCache cache, IDistributedCache l2)
     {
-        var apiKey = configuration["OPENROUTER_API_KEY"]
-                    ?? throw new ArgumentException("OPENROUTER_API_KEY not found in environment");
+        var apiKey = options.Value.OpenRouterApiKey;
+        
+        if (string.IsNullOrWhiteSpace(apiKey))
+        {
+             throw new ArgumentException("OPENROUTER_API_KEY not found in configuration");
+        }
 
-        var options = new OpenAIClientOptions
+        var clientOptions = new OpenAIClientOptions
         {
             Endpoint = new Uri("https://openrouter.ai/api/v1")
         };
 
-        var client = new OpenAIClient(new ApiKeyCredential(apiKey), options);
+        var client = new OpenAIClient(new ApiKeyCredential(apiKey), clientOptions);
         _client = client.GetEmbeddingClient(ModelName);
         _cache = cache;
         _l2 = l2;

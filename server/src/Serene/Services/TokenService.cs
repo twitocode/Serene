@@ -1,4 +1,6 @@
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Serene.Configuration;
 using Serene.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -8,18 +10,18 @@ namespace Serene.Services;
 
 public class TokenService
 {
-    private readonly IConfiguration _configuration;
+    private readonly JwtOptions _options;
 
-    public TokenService(IConfiguration configuration)
+    public TokenService(IOptions<JwtOptions> options)
     {
-        _configuration = configuration;
+        _options = options.Value;
     }
 
     public string GenerateToken(User user, IList<string> roles)
     {
-        var key = Encoding.UTF8.GetBytes(_configuration["Authentication:Jwt:Key"] ?? throw new Exception("Missing Jwt Key in configuration"));
-        var issuer = _configuration["Authentication:Jwt:Authority"];
-        var audience = _configuration["Authentication:Jwt:Audience"];
+        var key = Encoding.UTF8.GetBytes(_options.Key ?? throw new Exception("Missing Jwt Key in configuration"));
+        var issuer = _options.Authority;
+        var audience = _options.Audience;
 
         var claims = new List<Claim>
         {
@@ -55,9 +57,9 @@ public class TokenService
 
     public ClaimsPrincipal? ValidateToken(string token)
     {
-        var key = Encoding.UTF8.GetBytes(_configuration["Authentication:Jwt:Key"] ?? throw new Exception("Missing Jwt Key in configuration"));
-        var issuer = _configuration["Authentication:Jwt:Authority"];
-        var audience = _configuration["Authentication:Jwt:Audience"];
+        var key = Encoding.UTF8.GetBytes(_options.Key ?? throw new Exception("Missing Jwt Key in configuration"));
+        var issuer = _options.Authority;
+        var audience = _options.Audience;
 
         var tokenHandler = new JwtSecurityTokenHandler();
         var validationParameters = new TokenValidationParameters

@@ -12,7 +12,7 @@ public class CheckinController : BaseApiController
 {
     private readonly ICheckinService _checkinService;
 
-    public CheckinController(ICheckinService onboardingService, ILogger<OnboardingController> logger) : base(logger)
+    public CheckinController(ICheckinService onboardingService, ILogger<CheckinController> logger) : base(logger)
     {
         _checkinService = onboardingService;
     }

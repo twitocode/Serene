@@ -9,7 +9,6 @@ public class LocalDateModelBinder : IModelBinder
         var value = bindingContext.ValueProvider.GetValue(bindingContext.ModelName).FirstValue;
         if (string.IsNullOrEmpty(value)) return Task.CompletedTask;
 
-        // Use NodaTime's pattern to parse
         var result = LocalDatePattern.Iso.Parse(value);
         if (result.Success)
         {
