@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Serene.Common;
 using Serene.Data;
 using Serene.Entities;
@@ -32,12 +33,14 @@ public class AuthController : BaseApiController
     }
 
     [HttpPost("check-email")]
+    [EnableRateLimiting("auth-strict")]
     public async Task<IActionResult> CheckEmail([FromBody] CheckEmailRequest dto)
     {
         return await ExecuteWithResult(() => _authService.CheckEmailAsync(dto.Email));
     }
 
     [HttpPost("sign-up/email")]
+    [EnableRateLimiting("auth-strict")]
     public async Task<IActionResult> SignUp([FromBody] EmailSignUpRequest dto)
     {
         return await ExecuteWithResult(async () =>
@@ -49,6 +52,7 @@ public class AuthController : BaseApiController
     }
 
     [HttpPost("sign-in/email")]
+    [EnableRateLimiting("auth-strict")]
     public async Task<IActionResult> SignIn([FromBody] EmailSignInRequest dto)
     {
         return await ExecuteWithResult(async () =>

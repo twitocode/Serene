@@ -1,3 +1,4 @@
+using System.Threading.RateLimiting;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -32,11 +33,35 @@ try
 
     Log.Information("Starting web application");
 
-    // Extensions
     builder.Services.AddConfigurationBindings(builder.Configuration);
     builder.Services.AddDatabaseServices(builder.Configuration);
     builder.Services.AddIdentityServices(builder.Configuration);
     builder.Services.AddApplicationServices(builder.Configuration);
+
+    builder.Services.AddRateLimiter(options =>
+    {
+        options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+        // 1. Global Policy: Sane default (100 req/min)
+        options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+            RateLimitPartition.GetFixedWindowLimiter(
+                partitionKey: httpContext.User.Identity?.Name ?? httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                factory: partition => new FixedWindowRateLimiterOptions
+                {
+                    AutoReplenishment = true,
+                    PermitLimit = 100,
+                    QueueLimit = 2,
+                    Window = TimeSpan.FromMinutes(1)
+                }));
+
+        // 2. Strict Policy for Auth (5 req/min) - Prevent Brute Force
+        options.AddFixedWindowLimiter("auth-strict", opt =>
+        {
+            opt.PermitLimit = 5;
+            opt.Window = TimeSpan.FromMinutes(1);
+            opt.QueueLimit = 0;
+        });
+    });
 
     builder.Services.AddControllers()
         .AddJsonOptions(options =>
@@ -98,6 +123,7 @@ try
         });
     }
 
+    app.UseRateLimiter();
     app.UseExceptionHandler();
     app.UseCors();
 

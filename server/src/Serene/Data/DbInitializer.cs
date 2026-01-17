@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Serene.Entities;
 
 namespace Serene.Data;
@@ -7,6 +8,9 @@ public static class DbInitializer
 {
     public static async Task InitializeAsync(IServiceProvider serviceProvider)
     {
+        var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+        await context.Database.MigrateAsync();
+
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
         string[] roleNames = ["Admin", "User"];

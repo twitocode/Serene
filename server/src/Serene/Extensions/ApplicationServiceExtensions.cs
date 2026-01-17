@@ -8,14 +8,6 @@ using Quartz.AspNetCore;
 using Serene.Configuration;
 using Serene.Data;
 using Serene.Entities;
-using Serene.Features.AI;
-using Serene.Features.Auth;
-using Serene.Features.Checkins;
-using Serene.Features.Community;
-using Serene.Features.Explore;
-using Serene.Features.Onboarding;
-using Serene.Features.Users;
-using Serene.Features.UserSettings;
 using Serene.Jobs;
 using System.ClientModel;
 

@@ -24,10 +24,18 @@ public static class DatabaseServiceExtensions
                 o.UseVector();
             }));
 
-        services.AddStackExchangeRedisCache(o =>
+        var redisConnectionString = config.GetConnectionString("Redis");
+        if (!string.IsNullOrEmpty(redisConnectionString))
         {
-            o.Configuration = config.GetConnectionString("Redis") ?? throw new ArgumentException("Redis string not provided"); ;
-        });
+            services.AddStackExchangeRedisCache(o =>
+            {
+                o.Configuration = redisConnectionString;
+            });
+        }
+        else
+        {
+            services.AddDistributedMemoryCache();
+        }
 
         return services;
     }
