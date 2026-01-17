@@ -44,7 +44,7 @@ export interface User extends IdentityUser {
   updatedAt: string;
   profile: Profile | null;
   safetyPlan: SafetyPlan | null;
-  preferences: Preferences | null;
+  settings: Settings | null;
   userAchievements: UserAchievement[];
   checkins: Checkin[];
   posts: Post[];
@@ -85,7 +85,7 @@ export interface SafetyPlan {
   updatedAt: string;
 }
 
-export interface Preferences {
+export interface Settings {
   id: string;
   passwordLock: string | null;
   theme: string;

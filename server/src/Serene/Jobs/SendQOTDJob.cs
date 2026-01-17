@@ -1,5 +1,4 @@
 using Quartz;
-using Serene.Services;
 
 namespace Serene.Jobs;
 

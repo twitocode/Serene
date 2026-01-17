@@ -13,7 +13,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<Profile> Profiles { get; set; }
     public DbSet<Verification> Verifications { get; set; }
     public DbSet<SafetyPlan> SafetyPlans { get; set; }
-    public DbSet<Preferences> Preferences { get; set; }
+    public DbSet<Settings> Settings { get; set; }
     public DbSet<School> Schools { get; set; }
     public DbSet<Achievement> Achievements { get; set; }
     public DbSet<UserAchievement> UserAchievements { get; set; }
@@ -50,10 +50,10 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .HasForeignKey<SafetyPlan>(sp => sp.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<Preferences>()
+        modelBuilder.Entity<Settings>()
             .HasOne(p => p.User)
-            .WithOne(u => u.Preferences)
-            .HasForeignKey<Preferences>(p => p.UserId)
+            .WithOne(u => u.Settings)
+            .HasForeignKey<Settings>(p => p.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<UserAchievement>()

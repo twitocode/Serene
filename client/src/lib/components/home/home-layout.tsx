@@ -7,17 +7,17 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/lib/components/ui/sidebar";
-import { usePreferencesQuery } from "@/lib/hooks/queries/use-preferences";
+import { useSettingsQuery } from "@/lib/hooks/queries/use-settings";
 import { usePasswordLockStore } from "@/lib/hooks/stores/lock-store";
 import { Lock } from "lucide-react";
 import { PropsWithChildren } from "react";
 import { Toaster } from "sonner";
 
-interface Props {}
 
-export default function HomeLayout({ children }: PropsWithChildren<Props>) {
+
+export default function HomeLayout({ children }: PropsWithChildren) {
   const { setLockState, isLocked } = usePasswordLockStore();
-  const { data: prefs } = usePreferencesQuery();
+  const { data: settings } = useSettingsQuery();
 
   return !isLocked ? (
     <SidebarProvider className="h-svh overflow-hidden">
@@ -28,7 +28,7 @@ export default function HomeLayout({ children }: PropsWithChildren<Props>) {
             <SidebarTrigger className="-ml-1" />
             <div className="flex space-x-2">
               <ThemeToggle />
-              {prefs?.passwordLock != null && (
+              {settings?.passwordLock != null && (
                 <>
                   <Toaster />
                   <Button

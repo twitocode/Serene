@@ -5,12 +5,19 @@ using OpenAI;
 using OpenAI.Chat;
 using Quartz;
 using Quartz.AspNetCore;
-using Serene.Entities;
-using Serene.Jobs;
-using Serene.Services;
-using System.ClientModel;
-using Serene.Data;
 using Serene.Configuration;
+using Serene.Data;
+using Serene.Entities;
+using Serene.Features.AI;
+using Serene.Features.Auth;
+using Serene.Features.Checkins;
+using Serene.Features.Community;
+using Serene.Features.Explore;
+using Serene.Features.Onboarding;
+using Serene.Features.Users;
+using Serene.Features.UserSettings;
+using Serene.Jobs;
+using System.ClientModel;
 
 namespace Serene.Extensions;
 
@@ -18,13 +25,13 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
-        var aiOptions = new AIOptions 
+        var aiOptions = new AIOptions
         {
             GeminiApiKey = config["GEMINI_API_KEY"] ?? string.Empty,
             OpenRouterApiKey = config["OPENROUTER_API_KEY"] ?? string.Empty
         };
         var corsOptions = config.GetSection(CorsOptions.SectionName).Get<CorsOptions>();
-        
+
         services.AddHybridCache(o =>
         {
             o.DefaultEntryOptions = new HybridCacheEntryOptions
@@ -51,15 +58,15 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IOnboardingService, OnboardingService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUsersService, UsersService>();
-        services.AddScoped<IPreferencesService, PreferencesService>();
+        services.AddScoped<ISettingsService, SettingsService>();
         services.AddScoped<ICommunityService, CommunityService>();
         services.AddScoped<ICheckinService, CheckinService>();
         services.AddScoped<IEmbeddingService, EmbeddingService>();
         services.AddScoped<IExploreService, ExploreService>();
         services.AddScoped<IAIService, OpenAIService>();
-        
+
         services.AddScoped(x => new Client(apiKey: !string.IsNullOrEmpty(aiOptions.GeminiApiKey) ? aiOptions.GeminiApiKey : throw new ArgumentException("Gemini API key not found in environment")));
-        
+
         services.AddScoped(x => new ChatClient(
             credential: new ApiKeyCredential(!string.IsNullOrEmpty(aiOptions.OpenRouterApiKey) ? aiOptions.OpenRouterApiKey : throw new ArgumentException("OpenRouter API key not found in environment")),
             model: "openai/gpt-oss-20b",
@@ -94,7 +101,7 @@ public static class ApplicationServiceExtensions
             options.AddDefaultPolicy(policy =>
             {
                 if (corsOptions == null || corsOptions.Origins == null) throw new ArgumentException("Missing Cors Origins");
-                
+
                 policy.WithOrigins(corsOptions.Origins)
                     .AllowAnyHeader()
                     .AllowAnyMethod()

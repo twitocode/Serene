@@ -1,0 +1,1 @@
+namespace Serene.Features.Onboarding;

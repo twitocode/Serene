@@ -16,10 +16,10 @@ export interface UserDto {
   emailConfirmed: boolean;
   createdAt: string;
   updatedAt: string;
-  preferences?: PreferencesDto | null;
+  settings?: SettingsDto | null;
 }
 
-export interface PreferencesDto {
+export interface SettingsDto {
   id: string;
   theme?: string | null;
   passwordLock?: string | null;

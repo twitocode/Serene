@@ -8,7 +8,6 @@ using Scalar.AspNetCore;
 using Serene.Data;
 using Serene.Extensions;
 using Serene.Middleware;
-using Serene.Validators;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;

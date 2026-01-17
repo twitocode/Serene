@@ -45,7 +45,7 @@ public class User : IdentityUser
 
     public Profile? Profile { get; set; }
     public SafetyPlan? SafetyPlan { get; set; }
-    public Preferences? Preferences { get; set; }
+    public Settings? Settings { get; set; }
     public ICollection<UserAchievement> UserAchievements { get; set; } = new List<UserAchievement>();
     public ICollection<Checkin> Checkins { get; set; } = new List<Checkin>();
     public ICollection<Post> Posts { get; set; } = new List<Post>();

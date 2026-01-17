@@ -1,5 +1,5 @@
 import { Input } from "@/lib/components/ui/input";
-import { usePreferencesQuery } from "@/lib/hooks/queries/use-preferences";
+import { useSettingsQuery } from "@/lib/hooks/queries/use-settings";
 import { usePasswordLockStore } from "@/lib/hooks/stores/lock-store";
 import { Lock, LockOpen } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -8,10 +8,10 @@ import React from "react";
 export default function PasswordLock() {
   const { setLockState } = usePasswordLockStore();
   const [isUnlocking, setIsUnlocking] = React.useState(false);
-  const { data: prefs } = usePreferencesQuery();
+  const { data: settings } = useSettingsQuery();
 
   const handleUnlock = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value === prefs?.passwordLock && !isUnlocking) {
+    if (e.target.value === settings?.passwordLock && !isUnlocking) {
       setIsUnlocking(true);
 
       // Trigger unlock animation sequence

@@ -4,7 +4,7 @@ import { OnboardingProvider } from "@/lib/components/providers/zustand-provider"
 import { getSession } from "@/lib/get-session";
 import { apiFetch } from "@/lib/helpers/api-fetch";
 import { checkOnboarding } from "@/lib/server/onboarding-server";
-import { Preferences, User } from "@/lib/types/index";
+import { Settings, User } from "@/lib/types/index";
 import {
   dehydrate,
   HydrationBoundary,
@@ -34,8 +34,8 @@ export default async function OnboardingPage() {
   });
 
   await queryClient.prefetchQuery({
-    queryKey: ["preferences"],
-    queryFn: async () => (await apiFetch<Preferences>("/preferences")).data!,
+    queryKey: ["settings"],
+    queryFn: async () => (await apiFetch<Settings>("/settings")).data!,
   });
 
   return (

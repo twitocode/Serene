@@ -1,0 +1,29 @@
+# Justfile for Serene
+
+# Run the server
+run:
+    dotnet run --project src/Serene/Serene.csproj
+
+# Run the server with hot reload
+dev:
+    dotnet watch run --project src/Serene/Serene.csproj
+
+# Run all tests
+test:
+    dotnet test Serene.sln
+
+# Build the entire solution
+build:
+    dotnet build Serene.sln
+
+# Clean build artifacts
+clean:
+    dotnet clean Serene.sln
+
+# Update database (EF Core)
+db-update:
+    dotnet ef database update --project src/Serene/Serene.csproj
+
+# Add a new migration (usage: just migration Name)
+migration name:
+    dotnet ef migrations add {{name}} --project src/Serene/Serene.csproj

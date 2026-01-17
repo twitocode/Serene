@@ -1,0 +1,26 @@
+using NodaTime;
+
+namespace Serene.Features.Onboarding;
+
+public class OnboardingStatusResponse
+{
+    public int Step { get; set; }
+    public bool Completed { get; set; }
+    public bool Started { get; set; }
+
+    // User Info
+    public string? Name { get; set; }
+    public LocalDate? DateOfBirth { get; set; }
+    public string? Gender { get; set; }
+    public string? Pronouns { get; set; }
+    public string? CountryCode { get; set; }
+
+    // School Info
+    public string? SchoolName { get; set; }
+
+    // Koala Info
+    public string? KoalaName { get; set; }
+    public string? KoalaColour { get; set; }
+    public string? KoalaPronouns { get; set; }
+    public List<string> Struggles { get; set; } = new List<string>();
+}

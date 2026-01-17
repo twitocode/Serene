@@ -1,7 +1,7 @@
 "use client";
 
 import { ApiError } from "@/lib/helpers/api-fetch";
-import { usePreferencesQuery } from "@/lib/hooks/queries/use-preferences";
+import { useSettingsQuery } from "@/lib/hooks/queries/use-settings";
 import { usePasswordLockStore } from "@/lib/hooks/stores/lock-store";
 import { fetchUser } from "@/lib/server/get-user";
 import { User } from "@/lib/types/index";
@@ -9,15 +9,15 @@ import { useQuery } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 import { PropsWithChildren, useEffect } from "react";
 
-interface Props {}
 
-export default function StateLoader({ children }: PropsWithChildren<Props>) {
-  const {data: preferences} = usePreferencesQuery();
+
+export default function StateLoader({ children }: PropsWithChildren) {
+  const {data: settings} = useSettingsQuery();
 
   const {setTheme} = useTheme();
 
   useEffect(() => {
-    setTheme(preferences?.theme.toLowerCase() ?? "dark");
+    setTheme(settings?.theme.toLowerCase() ?? "dark");
   }, [])
 
   const {
@@ -34,13 +34,13 @@ export default function StateLoader({ children }: PropsWithChildren<Props>) {
   useEffect(() => {
     usePasswordLockStore.persist.rehydrate();
 
-    if (!lockInterval.isRunning && preferences?.passwordLock) {
+    if (!lockInterval.isRunning && settings?.passwordLock) {
       startInterval();
     }
   }, []);
 
   useEffect(() => {
-    if (!preferences?.passwordLock) return;
+    if (!settings?.passwordLock) return;
     if (!lockInterval.isRunning) return;
 
     const intervalId = setInterval(() => {
