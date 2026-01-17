@@ -21,6 +21,12 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+    builder.WebHost.UseKestrel(options =>
+    {
+        options.ListenAnyIP(int.Parse(port));
+    });
+
     builder.Services.AddSerilog((context, loggerConfiguration) =>
     {
         loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Code, applyThemeToRedirectedOutput: true, restrictedToMinimumLevel: LogEventLevel.Information);
