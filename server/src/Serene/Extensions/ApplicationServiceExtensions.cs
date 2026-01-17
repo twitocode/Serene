@@ -87,14 +87,33 @@ public static class ApplicationServiceExtensions
 
         services.AddHostedService<QOTDStartupService>();
 
-        // CORS
+        var allowedOriginsEnv = config["AllowedOrigins"];
+        string[]? origins = null;
+
+        if (!string.IsNullOrEmpty(allowedOriginsEnv))
+        {
+            // Support comma or semicolon separated list from Env Var
+            origins = allowedOriginsEnv.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                                       .Select(s => s.Trim())
+                                       .ToArray();
+        }
+        else
+        {
+            var corsSection = config.GetSection(CorsOptions.SectionName).Get<CorsOptions>();
+            if (corsSection?.Origins != null && corsSection.Origins.Length > 0)
+            {
+                origins = corsSection.Origins;
+            }
+        }
+
         services.AddCors(options =>
         {
             options.AddDefaultPolicy(policy =>
             {
-                if (corsOptions == null || corsOptions.Origins == null) throw new ArgumentException("Missing Cors Origins");
+                if (origins == null || origins.Length == 0) 
+                    throw new ArgumentException("Missing CORS Origins. Set 'AllowedOrigins' env var or 'Cors:Origins' in appsettings.");
 
-                policy.WithOrigins(corsOptions.Origins)
+                policy.WithOrigins(origins)
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();

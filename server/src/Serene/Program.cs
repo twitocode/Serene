@@ -1,4 +1,3 @@
-using System.Threading.RateLimiting;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -13,6 +12,7 @@ using Serene.Middleware;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
+using System.Threading.RateLimiting;
 
 Log.Logger = new LoggerConfiguration()
     .CreateBootstrapLogger();
