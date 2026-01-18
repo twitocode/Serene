@@ -1,4 +1,4 @@
-using Google.Apis.Auth;
+    using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
@@ -220,6 +220,8 @@ public class AuthService : IAuthService
 
             var roles = await GetUserRoles(user);
             var token = _tokenService.GenerateToken(user, roles);
+
+            await transaction.CommitAsync();
 
             return new AuthResponse
             {
