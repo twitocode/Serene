@@ -49,7 +49,7 @@ try
     {
         options.ForwardedHeaders =
             ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-        options.KnownNetworks.Clear();
+        options.KnownIPNetworks.Clear();
         options.KnownProxies.Clear();
     });
 
@@ -119,7 +119,6 @@ try
     {
         app.MapOpenApi();
         app.MapScalarApiReference();
-        app.UseHttpsRedirection();
 
         app.UseSerilogRequestLogging(options =>
         {
@@ -139,6 +138,8 @@ try
     }
 
     app.UseForwardedHeaders();
+    app.UseHttpsRedirection();
+
     app.UseRateLimiter();
     app.UseExceptionHandler();
     app.UseCors();
