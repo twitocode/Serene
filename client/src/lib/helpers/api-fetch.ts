@@ -29,7 +29,11 @@ export async function apiFetch<T = void>(
 
   if (isServer) {
     const cookieStore = await getCookiesDynamically();
-    headers.set("Cookie", cookieStore.toString());
+    const cookieString = cookieStore
+      .getAll()
+      .map((c) => `${c.name}=${c.value}`)
+      .join("; ");
+    headers.set("Cookie", cookieString);
     headers.set("Origin", env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000");
   } else {
     options.credentials = "include";
