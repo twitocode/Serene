@@ -22,8 +22,8 @@ public static class IdentityServiceExtensions
         })
         .AddCookie("ExternalCookie", o =>
         {
-            o.Cookie.SameSite = SameSiteMode.Lax;
-            o.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+            o.Cookie.SameSite = SameSiteMode.None;
+            o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             o.Cookie.HttpOnly = true;
         })
         .AddJwtBearer(options =>
@@ -61,6 +61,8 @@ public static class IdentityServiceExtensions
             o.ClientSecret = googleOptions.ClientSecret ?? throw new ArgumentException("Missing Client Secret");
             o.Scope.Add("profile");
             o.SignInScheme = "ExternalCookie";
+            o.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+            o.CorrelationCookie.SameSite = SameSiteMode.None;
         });
 
         return services;
