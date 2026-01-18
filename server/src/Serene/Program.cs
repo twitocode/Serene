@@ -118,26 +118,17 @@ try
         .SetApplicationName("Serene");
 
     var app = builder.Build();
-    app.UseForwardedHeaders();
 
-    if (app.Environment.IsProduction())
+    app.Use((context, next) =>
     {
-        app.Use((context, next) =>
+        if (context.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto))
         {
-            if (context.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto))
-            {
-                context.Request.Scheme = proto;
-            }
-            return next();
-        });
-    }
-
-    app.UseCookiePolicy(new CookiePolicyOptions
-    {
-        MinimumSameSitePolicy = SameSiteMode.Unspecified,
-        OnAppendCookie = cookieContext => CheckSameSite(cookieContext.Context, cookieContext.CookieOptions),
-        OnDeleteCookie = cookieContext => CheckSameSite(cookieContext.Context, cookieContext.CookieOptions)
+            context.Request.Scheme = proto;
+        }
+        return next();
     });
+
+    app.UseForwardedHeaders();
 
     app.UsePathBase("/api");
 
@@ -204,16 +195,4 @@ catch (Exception ex)
 finally
 {
     Log.CloseAndFlush();
-}
-
-void CheckSameSite(HttpContext httpContext, CookieOptions options)
-{
-    if (options.SameSite == SameSiteMode.None)
-    {
-        var userAgent = httpContext.Request.Headers["User-Agent"].ToString();
-        if (httpContext.Request.Scheme != "https")
-        {
-            options.SameSite = SameSiteMode.Unspecified;
-        }
-    }
 }

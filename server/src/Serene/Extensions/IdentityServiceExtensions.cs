@@ -22,7 +22,9 @@ public static class IdentityServiceExtensions
         })
         .AddCookie("ExternalCookie", o =>
         {
-            o.Cookie.SameSite = SameSiteMode.None;
+            o.Cookie.Name = ".Serene.External";
+            o.Cookie.Path = "/";
+            o.Cookie.SameSite = SameSiteMode.Lax;
             o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             o.Cookie.HttpOnly = true;
         })
@@ -61,13 +63,10 @@ public static class IdentityServiceExtensions
             o.ClientSecret = googleOptions.ClientSecret ?? throw new ArgumentException("Missing Client Secret");
             o.Scope.Add("profile");
             o.SignInScheme = "ExternalCookie";
-
+            o.CorrelationCookie.Name = ".Serene.Correlation";
             o.CorrelationCookie.Path = "/";
-
+            o.CorrelationCookie.SameSite = SameSiteMode.Lax;
             o.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
-            o.CorrelationCookie.SameSite = SameSiteMode.None;
-            o.CorrelationCookie.HttpOnly = true;
-            o.CorrelationCookie.IsEssential = true; 
         });
 
         return services;
