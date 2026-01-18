@@ -130,9 +130,6 @@ try
 
     app.UseForwardedHeaders();
 
-    app.UsePathBase("/api");
-
-
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();
