@@ -135,6 +135,17 @@ try
                 }
             };
         });
+    } else
+    {
+        app.Use(async (context, next) =>
+    {
+        if (context.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto)
+            && proto == "https")
+        {
+            context.Request.Scheme = "https";
+        }
+        await next();
+    });
     }
 
     app.UseForwardedHeaders();
