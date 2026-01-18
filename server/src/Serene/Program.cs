@@ -45,6 +45,12 @@ try
     builder.Services.AddIdentityServices(builder.Configuration);
     builder.Services.AddApplicationServices(builder.Configuration);
 
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders =
+            ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    });
+
     builder.Services.AddRateLimiter(options =>
     {
         options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -130,6 +136,7 @@ try
         });
     }
 
+    app.UseForwardedHeaders();
     app.UseRateLimiter();
     app.UseExceptionHandler();
     app.UseCors();

@@ -20,16 +20,21 @@ public class AuthController : BaseApiController
         _authService = authService;
     }
 
-    private void SetTokenCookie(string token)
+    private CookieOptions GetCookieOptions()
     {
-        var cookieOptions = new CookieOptions
+        var isProduction = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development";
+        return new CookieOptions
         {
             HttpOnly = true,
-            Secure = Request.IsHttps,
-            SameSite = SameSiteMode.Lax,
+            Secure = isProduction,
+            SameSite = isProduction ? SameSiteMode.None : SameSiteMode.Lax,
             Expires = DateTime.UtcNow.AddDays(7)
         };
-        Response.Cookies.Append("session_token", token, cookieOptions);
+    }
+
+    private void SetTokenCookie(string token)
+    {
+        Response.Cookies.Append("session_token", token, GetCookieOptions());
     }
 
     [HttpPost("check-email")]
@@ -92,7 +97,7 @@ public class AuthController : BaseApiController
     {
         return await ExecuteWithResult(() =>
         {
-            Response.Cookies.Delete("session_token");
+            Response.Cookies.Delete("session_token", GetCookieOptions());
             return Task.CompletedTask;
         });
     }
