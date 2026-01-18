@@ -218,12 +218,16 @@ public class OnboardingService : IOnboardingService
 
             profile.Struggles = dto.Struggles;
 
-            var prefs = new Settings
+            var existingSettings = await _context.Settings.FirstOrDefaultAsync(s => s.UserId == userId);
+            if (existingSettings == null)
             {
-                UserId = userId,
-                Theme = "Light"
-            };
-            _context.Settings.Add(prefs);
+                var prefs = new Settings
+                {
+                    UserId = userId,
+                    Theme = "Light"
+                };
+                _context.Settings.Add(prefs);
+            }
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
