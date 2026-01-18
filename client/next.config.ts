@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     if (!serverUrl) {
       console.warn("⚠️ NEXT_PUBLIC_SERVER_URL is not set. API rewrites will fail.");
     }
-    const destination = `${serverUrl}/:path*`;
+    const destination = `${serverUrl}/api/:path*`;
     console.log(`[next.config.ts] Rewriting /api/:path* to ${destination}`);
     return [
       {

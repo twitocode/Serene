@@ -115,8 +115,9 @@ try
 
     var app = builder.Build();
 
-    if (app.Environment.IsDevelopment())
-    {
+    app.UsePathBase("/api");
+
+    if (app.Environment.IsDevelopment()) {
         app.MapOpenApi();
         app.MapScalarApiReference();
 

@@ -20,7 +20,12 @@ public static class IdentityServiceExtensions
             options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         })
-        .AddCookie("ExternalCookie")
+        .AddCookie("ExternalCookie", o =>
+        {
+            o.Cookie.SameSite = SameSiteMode.Lax;
+            o.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+            o.Cookie.HttpOnly = true;
+        })
         .AddJwtBearer(options =>
         {
             options.Authority = jwtOptions.Authority;
