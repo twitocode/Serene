@@ -22,7 +22,7 @@ export async function apiFetch<T = void>(
   // Select URL based on environment
   const baseUrl = isServer
     ? env.INTERNAL_SERVER_URL
-    : env.NEXT_PUBLIC_SERVER_URL;
+    : "/api";
 
   const headers = new Headers(options.headers);
   headers.set("Content-Type", "application/json");

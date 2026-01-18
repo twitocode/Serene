@@ -22,12 +22,11 @@ public class AuthController : BaseApiController
 
     private CookieOptions GetCookieOptions()
     {
-        var isProduction = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Development";
         return new CookieOptions
         {
             HttpOnly = true,
-            Secure = isProduction,
-            SameSite = isProduction ? SameSiteMode.None : SameSiteMode.Lax,
+            Secure = Request.IsHttps,
+            SameSite = SameSiteMode.Lax,
             Expires = DateTime.UtcNow.AddDays(7)
         };
     }
