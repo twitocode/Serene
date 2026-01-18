@@ -40,6 +40,7 @@ export async function apiFetch<T = void>(
   }
 
   try {
+    console.log(`[apiFetch] Requesting: ${baseUrl}${endpoint}`, options);
     const response = await fetch(`${baseUrl}${endpoint}`, {
       ...options,
       headers,

@@ -105,10 +105,12 @@ export function LoginForm({
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("[LoginForm] Submitting email...");
     const emailValue = form.getFieldValue("email");
     const emailValidation = emailSchema.safeParse({ email: emailValue });
 
     if (emailValidation.success) {
+      console.log("[LoginForm] Email valid, mutating...", emailValue);
       setLoginError("");
       checkEmailMutation.mutate(emailValue);
     } else {
