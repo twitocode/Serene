@@ -24,7 +24,7 @@ public static class IdentityServiceExtensions
         {
             o.Cookie.Name = ".Serene.External";
             o.Cookie.Path = "/";
-            o.Cookie.SameSite = SameSiteMode.Lax;
+            o.Cookie.SameSite = SameSiteMode.None;
             o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             o.Cookie.HttpOnly = true;
         })
@@ -65,7 +65,7 @@ public static class IdentityServiceExtensions
             o.SignInScheme = "ExternalCookie";
             o.CorrelationCookie.Name = ".Serene.Correlation";
             o.CorrelationCookie.Path = "/";
-            o.CorrelationCookie.SameSite = SameSiteMode.Lax;
+            o.CorrelationCookie.SameSite = SameSiteMode.None;
             o.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
         });
 
