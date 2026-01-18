@@ -61,8 +61,13 @@ public static class IdentityServiceExtensions
             o.ClientSecret = googleOptions.ClientSecret ?? throw new ArgumentException("Missing Client Secret");
             o.Scope.Add("profile");
             o.SignInScheme = "ExternalCookie";
+
+            o.CorrelationCookie.Path = "/";
+
             o.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
             o.CorrelationCookie.SameSite = SameSiteMode.None;
+            o.CorrelationCookie.HttpOnly = true;
+            o.CorrelationCookie.IsEssential = true; 
         });
 
         return services;
