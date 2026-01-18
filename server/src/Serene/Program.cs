@@ -114,10 +114,26 @@ try
     builder.Services.AddProblemDetails();
 
     var app = builder.Build();
+    app.UseForwardedHeaders();
+    
+    if (app.Environment.IsProduction())
+    {
+        app.Use(async (context, next) =>
+        {
+            if (context.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto)
+                && proto == "https")
+            {
+                context.Request.Scheme = "https";
+            }
+            await next();
+        });
+    }
 
     app.UsePathBase("/api");
 
-    if (app.Environment.IsDevelopment()) {
+
+    if (app.Environment.IsDevelopment())
+    {
         app.MapOpenApi();
         app.MapScalarApiReference();
 
@@ -136,20 +152,8 @@ try
                 }
             };
         });
-    } else
-    {
-        app.Use(async (context, next) =>
-    {
-        if (context.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto)
-            && proto == "https")
-        {
-            context.Request.Scheme = "https";
-        }
-        await next();
-    });
     }
 
-    app.UseForwardedHeaders();
     app.UseHttpsRedirection();
 
     app.UseRateLimiter();
