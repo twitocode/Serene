@@ -2,15 +2,10 @@
 import Footer from "@/lib/components/common/footer";
 import { Navbar } from "@/lib/components/common/navbar";
 import { Button } from "@/lib/components/ui/button";
-import { useEffect } from "react";
+import Link from "next/link";
+
 
 export default function LandingPage() {
-  useEffect(() => {
-    document.documentElement.classList.remove("dark");
-    document.documentElement.classList.add("light");
-    localStorage.setItem("theme", "light");
-  }, []);
-
   return (
     <>
       <div className="light mx-40 mt-5 space-y-40">
@@ -25,9 +20,9 @@ export default function LandingPage() {
             patterns, and build a safety plan—all with a companion who’s got
             your back.
           </p>
-          <a href="/signup">
+          <Link href="/signup">
             <Button>Get Started</Button>
-          </a>
+          </Link>
         </section>
         <section>
           <h1 className="font-semibold text-4xl">Student Struggles</h1>
