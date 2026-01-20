@@ -1,3 +1,4 @@
+using System.Threading.RateLimiting;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.DataProtection;
@@ -13,31 +14,39 @@ using Serene.Middleware;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
-using System.Threading.RateLimiting;
 
-Log.Logger = new LoggerConfiguration()
-    .CreateBootstrapLogger();
+Log.Logger = new LoggerConfiguration().CreateBootstrapLogger();
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
 
+    //used for railway deploying
     var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
     builder.WebHost.UseKestrel(options =>
     {
         options.ListenAnyIP(int.Parse(port));
     });
 
-    builder.Services.AddSerilog((context, loggerConfiguration) =>
-    {
-        loggerConfiguration.WriteTo.Console(theme: AnsiConsoleTheme.Code, applyThemeToRedirectedOutput: true, restrictedToMinimumLevel: LogEventLevel.Information);
-        loggerConfiguration.MinimumLevel.Debug();
-        loggerConfiguration.ReadFrom.Configuration(builder.Configuration);
+    builder.Services.AddSerilog(
+        (context, loggerConfiguration) =>
+        {
+            loggerConfiguration.WriteTo.Console(
+                theme: AnsiConsoleTheme.Code,
+                applyThemeToRedirectedOutput: true,
+                restrictedToMinimumLevel: LogEventLevel.Information
+            );
+            loggerConfiguration.MinimumLevel.Debug();
+            loggerConfiguration.ReadFrom.Configuration(builder.Configuration);
 
-        loggerConfiguration.Enrich.FromLogContext();
-        loggerConfiguration.Enrich.WithProperty("Application", "YourAppName");
-        loggerConfiguration.Enrich.WithProperty("Environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
-    });
+            loggerConfiguration.Enrich.FromLogContext();
+            loggerConfiguration.Enrich.WithProperty("Application", "YourAppName");
+            loggerConfiguration.Enrich.WithProperty(
+                "Environment",
+                Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
+            );
+        }
+    );
 
     Log.Information("Starting web application");
 
@@ -48,7 +57,10 @@ try
 
     builder.Services.Configure<ForwardedHeadersOptions>(options =>
     {
-        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+        options.ForwardedHeaders =
+            ForwardedHeaders.XForwardedFor
+            | ForwardedHeaders.XForwardedProto
+            | ForwardedHeaders.XForwardedHost;
         options.KnownIPNetworks.Clear();
         options.KnownProxies.Clear();
         options.ForwardLimit = null;
@@ -61,25 +73,33 @@ try
         // 1. Global Policy: Sane default (100 req/min)
         options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
             RateLimitPartition.GetFixedWindowLimiter(
-                partitionKey: httpContext.User.Identity?.Name ?? httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                partitionKey: httpContext.User.Identity?.Name
+                    ?? httpContext.Connection.RemoteIpAddress?.ToString()
+                    ?? "unknown",
                 factory: partition => new FixedWindowRateLimiterOptions
                 {
                     AutoReplenishment = true,
                     PermitLimit = 100,
                     QueueLimit = 2,
-                    Window = TimeSpan.FromMinutes(1)
-                }));
+                    Window = TimeSpan.FromMinutes(1),
+                }
+            )
+        );
 
         // 2. Strict Policy for Auth (5 req/min) - Prevent Brute Force
-        options.AddFixedWindowLimiter("auth-strict", opt =>
-        {
-            opt.PermitLimit = 5;
-            opt.Window = TimeSpan.FromMinutes(1);
-            opt.QueueLimit = 0;
-        });
+        options.AddFixedWindowLimiter(
+            "auth-strict",
+            opt =>
+            {
+                opt.PermitLimit = 5;
+                opt.Window = TimeSpan.FromMinutes(1);
+                opt.QueueLimit = 0;
+            }
+        );
     });
 
-    builder.Services.AddControllers()
+    builder
+        .Services.AddControllers()
         .AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
@@ -88,21 +108,23 @@ try
         {
             options.InvalidModelStateResponseFactory = context =>
             {
-                var errors = context.ModelState
-                    .Where(e => e.Value?.Errors.Count > 0)
+                var errors = context
+                    .ModelState.Where(e => e.Value?.Errors.Count > 0)
                     .ToDictionary(
                         kvp => kvp.Key,
                         kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToArray()
                     );
 
-                return new BadRequestObjectResult(new
-                {
-                    isSuccess = false,
-                    data = (object?)null,
-                    error = "One or more validation errors occurred.",
-                    errorCode = "VALIDATION_ERROR",
-                    errors = errors
-                });
+                return new BadRequestObjectResult(
+                    new
+                    {
+                        isSuccess = false,
+                        data = (object?)null,
+                        error = "One or more validation errors occurred.",
+                        errorCode = "VALIDATION_ERROR",
+                        errors = errors,
+                    }
+                );
             };
         });
 
@@ -113,20 +135,23 @@ try
 
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
-    builder.Services.AddDataProtection()
+    builder
+        .Services.AddDataProtection()
         .PersistKeysToFileSystem(new DirectoryInfo("/app/keys"))
         .SetApplicationName("Serene");
 
     var app = builder.Build();
 
-    app.Use((context, next) =>
-    {
-        if (context.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto))
+    app.Use(
+        (context, next) =>
         {
-            context.Request.Scheme = proto;
+            if (context.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto))
+            {
+                context.Request.Scheme = proto.ToString();
+            }
+            return next();
         }
-        return next();
-    });
+    );
 
     app.UseForwardedHeaders();
 
@@ -137,12 +162,16 @@ try
 
         app.UseSerilogRequestLogging(options =>
         {
-            options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+            options.MessageTemplate =
+                "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
             options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
             {
                 diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
                 diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
-                diagnosticContext.Set("UserAgent", httpContext.Request.Headers["User-Agent"].FirstOrDefault());
+                diagnosticContext.Set(
+                    "UserAgent",
+                    httpContext.Request.Headers["User-Agent"].FirstOrDefault()
+                );
 
                 if (httpContext.User.Identity is { IsAuthenticated: true })
                 {
@@ -179,7 +208,6 @@ try
     }
 
     app.Run();
-
 }
 catch (Exception ex)
 {

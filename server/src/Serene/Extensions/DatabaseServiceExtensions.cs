@@ -6,9 +6,13 @@ namespace Serene.Extensions;
 
 public static class DatabaseServiceExtensions
 {
-    public static IServiceCollection AddDatabaseServices(this IServiceCollection services, IConfiguration config)
+    public static IServiceCollection AddDatabaseServices(
+        this IServiceCollection services,
+        IConfiguration config
+    )
     {
-        var connectionString = config.GetConnectionString("Postgres")
+        var connectionString =
+            config.GetConnectionString("Postgres")
             ?? throw new ArgumentException("Postgres DB string not provided");
 
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
@@ -18,11 +22,15 @@ public static class DatabaseServiceExtensions
         var dataSource = dataSourceBuilder.Build();
 
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(dataSource, o =>
-            {
-                o.UseNodaTime();
-                o.UseVector();
-            }));
+            options.UseNpgsql(
+                dataSource,
+                o =>
+                {
+                    o.UseNodaTime();
+                    o.UseVector();
+                }
+            )
+        );
 
         var redisConnectionString = config.GetConnectionString("Redis");
         if (!string.IsNullOrEmpty(redisConnectionString))

@@ -1,3 +1,4 @@
+using System.ClientModel;
 using Google.GenAI;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Hybrid;
@@ -9,18 +10,20 @@ using Serene.Configuration;
 using Serene.Data;
 using Serene.Entities;
 using Serene.Jobs;
-using System.ClientModel;
 
 namespace Serene.Extensions;
 
 public static class ApplicationServiceExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
+    public static IServiceCollection AddApplicationServices(
+        this IServiceCollection services,
+        IConfiguration config
+    )
     {
         var aiOptions = new AIOptions
         {
             GeminiApiKey = config["GEMINI_API_KEY"] ?? string.Empty,
-            OpenRouterApiKey = config["OPENROUTER_API_KEY"] ?? string.Empty
+            OpenRouterApiKey = config["OPENROUTER_API_KEY"] ?? string.Empty,
         };
         var corsOptions = config.GetSection(CorsOptions.SectionName).Get<CorsOptions>();
 
@@ -29,22 +32,23 @@ public static class ApplicationServiceExtensions
             o.DefaultEntryOptions = new HybridCacheEntryOptions
             {
                 Expiration = TimeSpan.FromSeconds(10),
-                LocalCacheExpiration = TimeSpan.FromSeconds(5)
+                LocalCacheExpiration = TimeSpan.FromSeconds(5),
             };
         });
 
-        services.AddIdentityCore<User>(options =>
-        {
-            options.User.RequireUniqueEmail = true;
-            options.Password.RequireDigit = false;
-            options.Password.RequiredLength = 8;
-            options.Password.RequireNonAlphanumeric = false;
-            options.Password.RequireUppercase = false;
-            options.Password.RequireLowercase = false;
-        })
-        .AddRoles<IdentityRole>()
-        .AddEntityFrameworkStores<ApplicationDbContext>()
-        .AddDefaultTokenProviders();
+        services
+            .AddIdentityCore<User>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
         services.AddScoped<TokenService>();
         services.AddScoped<IOnboardingService, OnboardingService>();
@@ -57,15 +61,21 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IExploreService, ExploreService>();
         services.AddScoped<IAIService, OpenAIService>();
 
-        services.AddScoped(x => new Client(apiKey: !string.IsNullOrEmpty(aiOptions.GeminiApiKey) ? aiOptions.GeminiApiKey : throw new ArgumentException("Gemini API key not found in environment")));
+        services.AddScoped(x => new Client(
+            apiKey: !string.IsNullOrEmpty(aiOptions.GeminiApiKey)
+                ? aiOptions.GeminiApiKey
+                : throw new ArgumentException("Gemini API key not found in environment")
+        ));
 
         services.AddScoped(x => new ChatClient(
-            credential: new ApiKeyCredential(!string.IsNullOrEmpty(aiOptions.OpenRouterApiKey) ? aiOptions.OpenRouterApiKey : throw new ArgumentException("OpenRouter API key not found in environment")),
+            credential: new ApiKeyCredential(
+                !string.IsNullOrEmpty(aiOptions.OpenRouterApiKey)
+                    ? aiOptions.OpenRouterApiKey
+                    : throw new ArgumentException("OpenRouter API key not found in environment")
+            ),
             model: "openai/gpt-oss-20b",
-            options: new OpenAIClientOptions
-            {
-                Endpoint = new Uri("https://openrouter.ai/api/v1")
-            }));
+            options: new OpenAIClientOptions { Endpoint = new Uri("https://openrouter.ai/api/v1") }
+        ));
 
         // Quartz
         services.AddQuartz(options =>
@@ -73,10 +83,10 @@ public static class ApplicationServiceExtensions
             var jobKey = new JobKey("SendQOTDJob");
             options.AddJob<SendQOTDJob>(opts => opts.WithIdentity(jobKey));
 
-            options.AddTrigger(opts => opts
-                .ForJob(jobKey)
-                .WithIdentity("SendQOTDJob-trigger")
-                .WithCronSchedule("0 0 0 * * ?") // Run at midnight every day
+            options.AddTrigger(opts =>
+                opts.ForJob(jobKey)
+                    .WithIdentity("SendQOTDJob-trigger")
+                    .WithCronSchedule("0 0 0 * * ?") // Run at midnight every day
             );
         });
 
@@ -93,9 +103,10 @@ public static class ApplicationServiceExtensions
         if (!string.IsNullOrEmpty(allowedOriginsEnv))
         {
             // Support comma or semicolon separated list from Env Var
-            origins = allowedOriginsEnv.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
-                                       .Select(s => s.Trim())
-                                       .ToArray();
+            origins = allowedOriginsEnv
+                .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Trim())
+                .ToArray();
         }
         else
         {
@@ -110,13 +121,12 @@ public static class ApplicationServiceExtensions
         {
             options.AddDefaultPolicy(policy =>
             {
-                if (origins == null || origins.Length == 0) 
-                    throw new ArgumentException("Missing CORS Origins. Set 'AllowedOrigins' env var or 'Cors:Origins' in appsettings.");
+                if (origins == null || origins.Length == 0)
+                    throw new ArgumentException(
+                        "Missing CORS Origins. Set 'AllowedOrigins' env var or 'Cors:Origins' in appsettings."
+                    );
 
-                policy.WithOrigins(origins)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
+                policy.WithOrigins(origins).AllowAnyHeader().AllowAnyMethod().AllowCredentials();
             });
         });
 
