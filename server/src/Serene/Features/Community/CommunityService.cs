@@ -7,7 +7,6 @@ using NodaTime.Text;
 using Serene.Common;
 using Serene.Data;
 using Serene.Entities;
-
 using Serene.Services;
 
 namespace Serene.Features.Community;

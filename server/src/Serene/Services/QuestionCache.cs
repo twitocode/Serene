@@ -25,8 +25,8 @@ public class QuestionCache(IMemoryCache cache, ApplicationDbContext context) : I
             return question;
         }
 
-        question = await context.QuestionsOfTheDay
-            .AsNoTracking()
+        question = await context
+            .QuestionsOfTheDay.AsNoTracking()
             .FirstOrDefaultAsync(q => q.Day == date);
 
         if (question != null)

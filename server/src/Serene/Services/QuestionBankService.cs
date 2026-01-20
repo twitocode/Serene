@@ -17,10 +17,10 @@ public class QuestionBankService(ApplicationDbContext context) : IQuestionBankSe
 {
     public async Task<QuestionBank?> GetUnusedQuestionAsync()
     {
-        return await context.QuestionBanks
-            .Where(q => q.IsActive)
+        return await context
+            .QuestionBanks.Where(q => q.IsActive)
             .OrderBy(q => q.UsedCount)
-            .ThenBy(_ => Guid.NewGuid()) 
+            .ThenBy(_ => Guid.NewGuid())
             .FirstOrDefaultAsync();
     }
 
@@ -43,7 +43,7 @@ public class QuestionBankService(ApplicationDbContext context) : IQuestionBankSe
             IsAiGenerated = false,
             CreatedAt = SystemClock.Instance.GetCurrentInstant(),
             UsedCount = 0,
-            IsActive = true
+            IsActive = true,
         };
 
         context.QuestionBanks.Add(bankQuestion);
@@ -52,8 +52,8 @@ public class QuestionBankService(ApplicationDbContext context) : IQuestionBankSe
 
     public async Task<IEnumerable<QuestionBank>> GetQuestionsByCategoryAsync(string category)
     {
-        return await context.QuestionBanks
-            .Where(q => q.Category == category && q.IsActive)
+        return await context
+            .QuestionBanks.Where(q => q.Category == category && q.IsActive)
             .OrderBy(q => q.UsedCount)
             .ToListAsync();
     }

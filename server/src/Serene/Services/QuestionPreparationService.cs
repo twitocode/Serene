@@ -16,7 +16,8 @@ public class QuestionPreparationService(
     ApplicationDbContext context,
     IAIService aiService,
     IQuestionBankService bankService,
-    ILogger<QuestionPreparationService> logger) : IQuestionPreparationService
+    ILogger<QuestionPreparationService> logger
+) : IQuestionPreparationService
 {
     public async Task PrepareQuestionsForRangeAsync(LocalDate start, LocalDate end)
     {
@@ -33,7 +34,8 @@ public class QuestionPreparationService(
     public async Task PrepareEmergencyQuestionAsync(LocalDate date)
     {
         var exists = await context.QuestionsOfTheDay.AnyAsync(q => q.Day == date);
-        if (exists) return;
+        if (exists)
+            return;
 
         logger.LogInformation("Generating emergency question for {Date}", date);
         await GenerateForDateAsync(date);
@@ -45,7 +47,6 @@ public class QuestionPreparationService(
         QuestionSourceType sourceType = QuestionSourceType.AiGenerated;
         string? sourceId = null;
         string? backupId = null;
-
 
         try
         {
@@ -73,7 +74,10 @@ public class QuestionPreparationService(
 
         if (string.IsNullOrWhiteSpace(questionText))
         {
-            logger.LogCritical("Failed to provide a question for {Date} even with bank fallback", date);
+            logger.LogCritical(
+                "Failed to provide a question for {Date} even with bank fallback",
+                date
+            );
             return;
         }
 
@@ -86,7 +90,7 @@ public class QuestionPreparationService(
             BackupQuestionId = backupId,
             GenerationStatus = GenerationStatus.Completed,
             CreatedAt = SystemClock.Instance.GetCurrentInstant(),
-            UpdatedAt = SystemClock.Instance.GetCurrentInstant()
+            UpdatedAt = SystemClock.Instance.GetCurrentInstant(),
         };
 
         context.QuestionsOfTheDay.Add(qotd);
