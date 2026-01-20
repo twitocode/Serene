@@ -15,7 +15,8 @@ public class AuthController : BaseApiController
 {
     private readonly IAuthService _authService;
 
-    public AuthController(IAuthService authService, ILogger<AuthController> logger) : base(logger)
+    public AuthController(IAuthService authService, ILogger<AuthController> logger)
+        : base(logger)
     {
         _authService = authService;
     }
@@ -28,7 +29,7 @@ public class AuthController : BaseApiController
             Secure = true,
             SameSite = SameSiteMode.None,
             Expires = DateTime.UtcNow.AddDays(7),
-            Path = "/"
+            Path = "/",
         };
     }
 

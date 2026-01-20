@@ -18,7 +18,6 @@ public class UserResponse
     public ProfileResponse? Profile { get; set; }
 }
 
-
 public class CheckEmailResponse
 {
     public bool Exists { get; set; }

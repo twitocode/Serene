@@ -9,7 +9,11 @@ public class OnboardingController : BaseApiController
 {
     private readonly IOnboardingService _onboardingService;
 
-    public OnboardingController(IOnboardingService onboardingService, ILogger<OnboardingController> logger) : base(logger)
+    public OnboardingController(
+        IOnboardingService onboardingService,
+        ILogger<OnboardingController> logger
+    )
+        : base(logger)
     {
         _onboardingService = onboardingService;
     }
@@ -19,7 +23,8 @@ public class OnboardingController : BaseApiController
     public async Task<IActionResult> GetOnboardingStatus()
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
 
         return await ExecuteWithResult(() => _onboardingService.GetStatusAsync(userId));
     }
@@ -29,7 +34,8 @@ public class OnboardingController : BaseApiController
     public async Task<IActionResult> SubmitStep1([FromBody] StepOneRequest body)
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
 
         return await ExecuteWithResult(() => _onboardingService.CompleteStep1Async(userId, body));
     }
@@ -39,7 +45,8 @@ public class OnboardingController : BaseApiController
     public async Task<IActionResult> SubmitStep2([FromBody] StepTwoRequest body)
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
 
         return await ExecuteWithResult(() => _onboardingService.CompleteStep2Async(userId, body));
     }
@@ -49,7 +56,8 @@ public class OnboardingController : BaseApiController
     public async Task<IActionResult> SubmitStep3([FromBody] StepThreeRequest body)
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
 
         return await ExecuteWithResult(() => _onboardingService.CompleteStep3Async(userId, body));
     }
@@ -59,7 +67,8 @@ public class OnboardingController : BaseApiController
     public async Task<IActionResult> SubmitStep4([FromBody] StepFourRequest body)
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
 
         return await ExecuteWithResult(() => _onboardingService.CompleteStep4Async(userId, body));
     }
@@ -69,7 +78,8 @@ public class OnboardingController : BaseApiController
     public async Task<IActionResult> SubmitStep5([FromBody] StepFiveRequest body)
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
 
         return await ExecuteWithResult(() => _onboardingService.CompleteStep5Async(userId, body));
     }
@@ -79,7 +89,8 @@ public class OnboardingController : BaseApiController
     public async Task<IActionResult> SubmitStep6([FromBody] StepSixRequest body)
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
 
         return await ExecuteWithResult(() => _onboardingService.CompleteStep6Async(userId, body));
     }

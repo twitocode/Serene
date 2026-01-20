@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -16,15 +16,14 @@ namespace Serene.Migrations
                 table: "profile",
                 type: "text[]",
                 nullable: false,
-                defaultValueSql: "'{}'");
+                defaultValueSql: "'{}'"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "struggles",
-                table: "profile");
+            migrationBuilder.DropColumn(name: "struggles", table: "profile");
         }
     }
 }

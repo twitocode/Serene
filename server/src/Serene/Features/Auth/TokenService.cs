@@ -1,10 +1,10 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Serene.Configuration;
 using Serene.Entities;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace Serene.Features.Auth;
 
@@ -19,7 +19,9 @@ public class TokenService
 
     public string GenerateToken(User user, IList<string> roles)
     {
-        var key = Encoding.UTF8.GetBytes(_options.Key ?? throw new Exception("Missing Jwt Key in configuration"));
+        var key = Encoding.UTF8.GetBytes(
+            _options.Key ?? throw new Exception("Missing Jwt Key in configuration")
+        );
         var issuer = _options.Authority;
         var audience = _options.Audience;
 
@@ -27,7 +29,7 @@ public class TokenService
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id),
             new Claim(ClaimTypes.Email, user.Email ?? ""),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
         foreach (var role in roles)
@@ -46,7 +48,10 @@ public class TokenService
             Expires = DateTime.UtcNow.AddDays(7),
             Issuer = issuer,
             Audience = audience,
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature
+            ),
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -57,7 +62,9 @@ public class TokenService
 
     public ClaimsPrincipal? ValidateToken(string token)
     {
-        var key = Encoding.UTF8.GetBytes(_options.Key ?? throw new Exception("Missing Jwt Key in configuration"));
+        var key = Encoding.UTF8.GetBytes(
+            _options.Key ?? throw new Exception("Missing Jwt Key in configuration")
+        );
         var issuer = _options.Authority;
         var audience = _options.Audience;
 
@@ -71,12 +78,16 @@ public class TokenService
             ValidateAudience = !string.IsNullOrEmpty(audience),
             ValidAudience = audience,
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
+            ClockSkew = TimeSpan.Zero,
         };
 
         try
         {
-            var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+            var principal = tokenHandler.ValidateToken(
+                token,
+                validationParameters,
+                out SecurityToken validatedToken
+            );
             return principal;
         }
         catch

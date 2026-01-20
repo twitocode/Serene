@@ -9,7 +9,8 @@ public class SettingsController : BaseApiController
 {
     private readonly ISettingsService _settingsService;
 
-    public SettingsController(ISettingsService settingsService, ILogger<SettingsController> logger) : base(logger)
+    public SettingsController(ISettingsService settingsService, ILogger<SettingsController> logger)
+        : base(logger)
     {
         _settingsService = settingsService;
     }
@@ -19,7 +20,8 @@ public class SettingsController : BaseApiController
     public async Task<IActionResult> GetSettings()
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
         return await ExecuteWithResult(() => _settingsService.GetSettingsAsync(userId));
     }
 
@@ -28,7 +30,8 @@ public class SettingsController : BaseApiController
     public async Task<IActionResult> UpdateSettings([FromBody] UpdateSettingsDto body)
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
 
         return await ExecuteWithResult(() => _settingsService.UpdateSettingsAsync(userId, body));
     }

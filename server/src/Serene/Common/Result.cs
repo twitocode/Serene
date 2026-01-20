@@ -16,7 +16,6 @@ public class Result
     [JsonPropertyName("errors")]
     public string[] Errors { get; set; } = [];
 
-
     [JsonIgnore]
     public bool IsFailure => !IsSuccess;
 
@@ -30,7 +29,9 @@ public class Result
     }
 
     public static Result Success() => new(true, null, null);
-    public static Result Failure(string error, string? errorCode = null) => new(false, error, errorCode);
+
+    public static Result Failure(string error, string? errorCode = null) =>
+        new(false, error, errorCode);
 }
 
 public class Result<T> : Result
@@ -47,5 +48,7 @@ public class Result<T> : Result
     }
 
     public static Result<T> Success(T data) => new(data, true, null, null);
-    public static new Result<T> Failure(string error, string? errorCode = null) => new(default, false, error, errorCode);
+
+    public static new Result<T> Failure(string error, string? errorCode = null) =>
+        new(default, false, error, errorCode);
 }

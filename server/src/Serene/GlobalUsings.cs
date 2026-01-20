@@ -1,9 +1,9 @@
+global using Serene.Features.AI;
 global using Serene.Features.Auth;
 global using Serene.Features.Checkins;
 global using Serene.Features.Community;
 global using Serene.Features.Explore;
 global using Serene.Features.Onboarding;
-global using Serene.Features.UserSettings;
-global using Serene.Features.Users;
 global using Serene.Features.Shared;
-global using Serene.Features.AI;
+global using Serene.Features.Users;
+global using Serene.Features.UserSettings;

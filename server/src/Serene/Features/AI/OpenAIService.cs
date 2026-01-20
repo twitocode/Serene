@@ -1,12 +1,9 @@
-
 using Google.GenAI;
 using Google.GenAI.Types;
 using OpenAI;
 using OpenAI.Chat;
 
 namespace Serene.Features.AI;
-
-
 
 public class OpenAIService(ChatClient genAiClient, ILogger<GeminiService> logger) : IAIService
 {
@@ -42,7 +39,9 @@ public class OpenAIService(ChatClient genAiClient, ILogger<GeminiService> logger
         try
         {
             _logger.LogInformation("Generating question of the day");
-            ChatCompletion? response = await _client.CompleteChatAsync(systemPrompt + " Generate the question of the day");
+            ChatCompletion? response = await _client.CompleteChatAsync(
+                systemPrompt + " Generate the question of the day"
+            );
 
             if (response == null)
             {

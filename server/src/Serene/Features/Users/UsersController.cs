@@ -9,7 +9,8 @@ public class UsersController : BaseApiController
 {
     private readonly IUsersService _usersService;
 
-    public UsersController(IUsersService usersService, ILogger<UsersController> logger) : base(logger)
+    public UsersController(IUsersService usersService, ILogger<UsersController> logger)
+        : base(logger)
     {
         _usersService = usersService;
     }
@@ -19,10 +20,12 @@ public class UsersController : BaseApiController
     public async Task<IActionResult> GetUserProfile()
     {
         var userId = GetUserId();
-        if (string.IsNullOrEmpty(userId)) throw new UnauthorizedAccessException();
+        if (string.IsNullOrEmpty(userId))
+            throw new UnauthorizedAccessException();
 
         return await ExecuteWithResult(() => _usersService.GetUserProfileAsync(userId));
     }
+
     [HttpGet("exists/{email}")]
     public async Task<IActionResult> DoesUserExist(string email)
     {

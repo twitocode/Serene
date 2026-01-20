@@ -9,21 +9,19 @@ public class ExploreController : BaseApiController
 {
     private readonly IExploreService _exploreService;
 
-    public ExploreController(
-        IExploreService exploreService,
-        ILogger<ExploreController> logger) : base(logger)
+    public ExploreController(IExploreService exploreService, ILogger<ExploreController> logger)
+        : base(logger)
     {
         _exploreService = exploreService;
     }
 
     [HttpGet("recommendations")]
-
     [Authorize]
-
     public async Task<IActionResult> GetRecommendations()
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
 
         return await ExecuteWithResult(() => _exploreService.GetRecommendationsAsync(userId));
     }
@@ -48,7 +46,10 @@ public class ExploreController : BaseApiController
 
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateContent(string id, [FromBody] CreateExploreContentRequest request)
+    public async Task<IActionResult> UpdateContent(
+        string id,
+        [FromBody] CreateExploreContentRequest request
+    )
     {
         return await ExecuteWithResult(async () =>
         {

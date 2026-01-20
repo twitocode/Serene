@@ -1,13 +1,12 @@
-    using Google.Apis.Auth;
+using System.Security.Claims;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using NodaTime;
 using Serene.Common;
 using Serene.Data;
 using Serene.Entities;
-using System.Security.Claims;
-
-using Microsoft.Extensions.Caching.Hybrid;
 
 namespace Serene.Features.Auth;
 
@@ -32,7 +31,8 @@ public class AuthService : IAuthService
         TokenService tokenService,
         ApplicationDbContext context,
         ILogger<AuthService> logger,
-        HybridCache hybridCache)
+        HybridCache hybridCache
+    )
     {
         _userManager = userManager;
         _tokenService = tokenService;
@@ -61,12 +61,16 @@ public class AuthService : IAuthService
             providers.Add("credential");
         }
 
-        _logger.LogInformation("Email {Email} exists with providers: {Providers}", email, string.Join(", ", providers));
+        _logger.LogInformation(
+            "Email {Email} exists with providers: {Providers}",
+            email,
+            string.Join(", ", providers)
+        );
         return new CheckEmailResponse
         {
             Exists = true,
             HasPassword = hasPassword,
-            Providers = providers
+            Providers = providers,
         };
     }
 
@@ -88,7 +92,7 @@ public class AuthService : IAuthService
             {
                 UserName = dto.Email,
                 Email = dto.Email,
-                EmailConfirmed = false
+                EmailConfirmed = false,
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password);
@@ -100,10 +104,7 @@ public class AuthService : IAuthService
                 throw new Exception("Sign up failed: " + errors);
             }
 
-            var profile = new Profile
-            {
-                UserId = user.Id,
-            };
+            var profile = new Profile { UserId = user.Id };
 
             _context.Profiles.Add(profile);
             await _context.SaveChangesAsync();
@@ -113,19 +114,13 @@ public class AuthService : IAuthService
             var roles = await GetUserRoles(user);
             var token = _tokenService.GenerateToken(user, roles);
 
-            return new AuthResponse
-            {
-                Token = token,
-                User = MapToDto(user, roles)
-            };
-
+            return new AuthResponse { Token = token, User = MapToDto(user, roles) };
         }
         catch
         {
             await transaction.RollbackAsync();
             throw;
         }
-
     }
 
     public async Task<AuthResponse> SignInAsync(EmailSignInRequest dto)
@@ -143,31 +138,33 @@ public class AuthService : IAuthService
         var roles = await GetUserRoles(user);
         var token = _tokenService.GenerateToken(user, roles);
 
-        return new AuthResponse
-        {
-            Token = token,
-            User = MapToDto(user, roles)
-        };
+        return new AuthResponse { Token = token, User = MapToDto(user, roles) };
     }
 
     public async Task<AuthResponse> HandleGoogleCallbackAsync(ClaimsPrincipal principal)
     {
         _logger.LogInformation("Handling Google callback");
 
-        var email = principal.FindFirstValue(ClaimTypes.Email) ?? throw new Exception("Email claim not found");
+        var email =
+            principal.FindFirstValue(ClaimTypes.Email)
+            ?? throw new Exception("Email claim not found");
 
         // Extract Country Code
-        var countryCode = principal.FindFirstValue(ClaimTypes.Country) ??
-                          principal.FindFirstValue("locale")?.Split('-').LastOrDefault()?.ToUpper();
+        var countryCode =
+            principal.FindFirstValue(ClaimTypes.Country)
+            ?? principal.FindFirstValue("locale")?.Split('-').LastOrDefault()?.ToUpper();
 
         // Extract Gender
         var gender = "";
         var genderClaimValue = principal.FindFirstValue(ClaimTypes.Gender);
         if (!string.IsNullOrEmpty(genderClaimValue))
         {
-            if (genderClaimValue.Equals("male", StringComparison.OrdinalIgnoreCase)) gender = "Male";
-            else if (genderClaimValue.Equals("female", StringComparison.OrdinalIgnoreCase)) gender = "Female";
-            else if (genderClaimValue.Equals("non-binary", StringComparison.OrdinalIgnoreCase)) gender = "NonBinary";
+            if (genderClaimValue.Equals("male", StringComparison.OrdinalIgnoreCase))
+                gender = "Male";
+            else if (genderClaimValue.Equals("female", StringComparison.OrdinalIgnoreCase))
+                gender = "Female";
+            else if (genderClaimValue.Equals("non-binary", StringComparison.OrdinalIgnoreCase))
+                gender = "NonBinary";
         }
 
         // Extract AvatarUrl
@@ -190,7 +187,7 @@ public class AuthService : IAuthService
                     Image = avatarUrl,
                     CountryCode = countryCode,
                     Gender = gender,
-                    EmailConfirmed = true 
+                    EmailConfirmed = true,
                 };
 
                 var createResult = await _userManager.CreateAsync(user);
@@ -201,10 +198,7 @@ public class AuthService : IAuthService
                     throw new Exception("Failed to create user: " + errors);
                 }
 
-                var profile = new Profile
-                {
-                    UserId = user.Id,
-                };
+                var profile = new Profile { UserId = user.Id };
                 _context.Profiles.Add(profile);
                 await _context.SaveChangesAsync();
             }
@@ -212,10 +206,16 @@ public class AuthService : IAuthService
             // Check if login already exists
             var logins = await _userManager.GetLoginsAsync(user);
             var subject = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (subject != null && !logins.Any(l => l.LoginProvider == "Google" && l.ProviderKey == subject))
+            if (
+                subject != null
+                && !logins.Any(l => l.LoginProvider == "Google" && l.ProviderKey == subject)
+            )
             {
                 _logger.LogInformation("Linking Google account for user: {Email}", email);
-                await _userManager.AddLoginAsync(user, new UserLoginInfo("Google", subject, "Google"));
+                await _userManager.AddLoginAsync(
+                    user,
+                    new UserLoginInfo("Google", subject, "Google")
+                );
             }
 
             var roles = await GetUserRoles(user);
@@ -223,11 +223,7 @@ public class AuthService : IAuthService
 
             await transaction.CommitAsync();
 
-            return new AuthResponse
-            {
-                Token = token,
-                User = MapToDto(user, roles)
-            };
+            return new AuthResponse { Token = token, User = MapToDto(user, roles) };
         }
         catch
         {
@@ -256,7 +252,7 @@ public class AuthService : IAuthService
             Roles = roles.ToList(),
             EmailConfirmed = user.EmailConfirmed,
             CreatedAt = user.CreatedAt,
-            UpdatedAt = user.UpdatedAt
+            UpdatedAt = user.UpdatedAt,
         };
     }
 }

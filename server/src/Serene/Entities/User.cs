@@ -1,8 +1,8 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Serene.Entities;
 
@@ -42,22 +42,21 @@ public class User : IdentityUser
     [Column("updated_at")]
     public Instant UpdatedAt { get; set; } = SystemClock.Instance.GetCurrentInstant();
 
-
     public Profile? Profile { get; set; }
     public SafetyPlan? SafetyPlan { get; set; }
     public Settings? Settings { get; set; }
-    public ICollection<UserAchievement> UserAchievements { get; set; } = new List<UserAchievement>();
+    public ICollection<UserAchievement> UserAchievements { get; set; } =
+        new List<UserAchievement>();
     public ICollection<Checkin> Checkins { get; set; } = new List<Checkin>();
     public ICollection<Post> Posts { get; set; } = new List<Post>();
 }
-
 
 public enum Gender
 {
     Male,
     Female,
     NonBinary,
-    PreferNotToSay
+    PreferNotToSay,
 }
 
 [Table("verification")]

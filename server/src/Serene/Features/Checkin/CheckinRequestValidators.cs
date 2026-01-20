@@ -8,10 +8,10 @@ public class CompleteCheckinRequestValidator : AbstractValidator<CompleteCheckin
     public CompleteCheckinRequestValidator()
     {
         //TODO: have a custom list of labels
-        RuleFor(x => x.MoodLabel)
-            .NotEmpty().WithMessage("You did not enter in a mood label");
+        RuleFor(x => x.MoodLabel).NotEmpty().WithMessage("You did not enter in a mood label");
         RuleFor(x => x.PromptQuestion)
-            .NotEmpty().WithMessage("You did not provide a prompt question");
+            .NotEmpty()
+            .WithMessage("You did not provide a prompt question");
         RuleFor(x => x.LingeringThoughts)
             .MaximumLength(2000)
             .WithMessage("Lingering thoughts is too long, max 2000 characters");
@@ -19,13 +19,13 @@ public class CompleteCheckinRequestValidator : AbstractValidator<CompleteCheckin
             .MaximumLength(2000)
             .WithMessage("Prompt answer is too long, max 2000 characters");
         RuleFor(x => x.MoodSeverity)
-            .InclusiveBetween(1, 10).WithMessage("Mood severity must be between 1 and 10 inclusive")
-            .NotEmpty().WithMessage("You did not provide a mood severity");
-        RuleForEach(x => x.SomaticState.Values)
-            .SetValidator(new GridPointValidator());
+            .InclusiveBetween(1, 10)
+            .WithMessage("Mood severity must be between 1 and 10 inclusive")
+            .NotEmpty()
+            .WithMessage("You did not provide a mood severity");
+        RuleForEach(x => x.SomaticState.Values).SetValidator(new GridPointValidator());
     }
 }
-
 
 public class GridPointValidator : AbstractValidator<GridPoint>
 {
@@ -41,6 +41,7 @@ public class GridPointValidator : AbstractValidator<GridPoint>
 
         //TODO: preset senssations
         RuleForEach(x => x.Sensations)
-            .MaximumLength(200).WithMessage("Sensation length is too long");
+            .MaximumLength(200)
+            .WithMessage("Sensation length is too long");
     }
 }

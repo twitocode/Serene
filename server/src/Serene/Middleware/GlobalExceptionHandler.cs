@@ -1,6 +1,6 @@
+using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using Serene.Common;
-using System.Net;
 
 namespace Serene.Middleware;
 
@@ -8,6 +8,7 @@ public class GlobalExceptionHandler : IExceptionHandler
 {
     private readonly ILogger<GlobalExceptionHandler> _logger;
     private readonly IWebHostEnvironment _env;
+
     public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IWebHostEnvironment env)
     {
         _logger = logger;
@@ -17,16 +18,21 @@ public class GlobalExceptionHandler : IExceptionHandler
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext,
         Exception exception,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
-        _logger.LogError(exception, "An unhandled exception has occurred: {Message}", exception.Message);
+        _logger.LogError(
+            exception,
+            "An unhandled exception has occurred: {Message}",
+            exception.Message
+        );
 
         var statusCode = exception switch
         {
             KeyNotFoundException => (int)HttpStatusCode.NotFound,
             ArgumentException => (int)HttpStatusCode.BadRequest,
             UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized,
-            _ => (int)HttpStatusCode.InternalServerError
+            _ => (int)HttpStatusCode.InternalServerError,
         };
 
         var message = _env.IsDevelopment() ? exception.Message : "An unexpected error occurred.";

@@ -24,11 +24,13 @@ public class ExploreService : IExploreService
     private readonly IEmbeddingService _embeddingService;
     private readonly ILogger<ExploreService> _logger;
     private readonly HybridCache _cache;
+
     public ExploreService(
         ApplicationDbContext context,
         IEmbeddingService embeddingService,
         ILogger<ExploreService> logger,
-        HybridCache cache)
+        HybridCache cache
+    )
     {
         _context = context;
         _embeddingService = embeddingService;
@@ -38,9 +40,9 @@ public class ExploreService : IExploreService
 
     public async Task<List<ExploreContentResponse>> GetRecommendationsAsync(string userId)
     {
-        var user = await _context.Users
-            .Include(u => u.Profile)
-            .FirstOrDefaultAsync(u => u.Id == userId) ?? throw new Exception("User not found");
+        var user =
+            await _context.Users.Include(u => u.Profile).FirstOrDefaultAsync(u => u.Id == userId)
+            ?? throw new Exception("User not found");
 
         var age = 0;
         if (user.DateOfBirth.HasValue)
@@ -61,44 +63,49 @@ public class ExploreService : IExploreService
         _logger.LogInformation("Generating recommendations for query: {QueryText}", queryText);
 
         var embedding = await _embeddingService.GetEmbeddingAsync(queryText);
-        var recommendations = await _cache.GetOrCreateAsync($"recommendations-{embedding}", async token =>
-        {
-            return await _context.ExploreContent
-                .Where(c => c.Embedding != null)
-                .OrderBy(c => c.Embedding!.CosineDistance(embedding))
-                .Take(10)
-                .Select(c => new ExploreContentResponse
-                {
-                    Id = c.Id,
-                    Title = c.Title,
-                    Description = c.Description,
-                    Url = c.Url,
-                    Type = c.Type.ToString()
-                })
-                .ToListAsync(token);    
-        });
+        var recommendations = await _cache.GetOrCreateAsync(
+            $"recommendations-{embedding}",
+            async token =>
+            {
+                return await _context
+                    .ExploreContent.Where(c => c.Embedding != null)
+                    .OrderBy(c => c.Embedding!.CosineDistance(embedding))
+                    .Take(10)
+                    .Select(c => new ExploreContentResponse
+                    {
+                        Id = c.Id,
+                        Title = c.Title,
+                        Description = c.Description,
+                        Url = c.Url,
+                        Type = c.Type.ToString(),
+                    })
+                    .ToListAsync(token);
+            }
+        );
 
         return recommendations;
     }
 
     public async Task<List<ExploreContentResponse>> GetAllContentAsync()
     {
-        return await _context.ExploreContent
-            .OrderByDescending(c => c.CreatedAt)
+        return await _context
+            .ExploreContent.OrderByDescending(c => c.CreatedAt)
             .Select(c => new ExploreContentResponse
             {
                 Id = c.Id,
                 Title = c.Title,
                 Description = c.Description,
                 Url = c.Url,
-                Type = c.Type.ToString()
+                Type = c.Type.ToString(),
             })
             .ToListAsync();
     }
 
     public async Task<string> AddContentAsync(CreateExploreContentRequest request)
     {
-        var embedding = await _embeddingService.GetEmbeddingAsync($"{request.Title} {request.Description} {request.Tags}");
+        var embedding = await _embeddingService.GetEmbeddingAsync(
+            $"{request.Title} {request.Description} {request.Tags}"
+        );
 
         var content = new ExploreContent
         {
@@ -106,7 +113,7 @@ public class ExploreService : IExploreService
             Description = request.Description,
             Url = request.Url,
             Type = Enum.Parse<ExploreContentType>(request.Type, true),
-            Embedding = embedding
+            Embedding = embedding,
         };
 
         _context.ExploreContent.Add(content);
@@ -117,8 +124,11 @@ public class ExploreService : IExploreService
 
     public async Task UpdateContentAsync(string id, CreateExploreContentRequest request)
     {
-        var content = await _context.ExploreContent.FindAsync(id) ?? throw new Exception("Content not found");
-        var embedding = await _embeddingService.GetEmbeddingAsync($"{request.Title} {request.Description} {request.Tags}");
+        var content =
+            await _context.ExploreContent.FindAsync(id) ?? throw new Exception("Content not found");
+        var embedding = await _embeddingService.GetEmbeddingAsync(
+            $"{request.Title} {request.Description} {request.Tags}"
+        );
 
         content.Title = request.Title;
         content.Description = request.Description;
@@ -144,20 +154,26 @@ public class ExploreService : IExploreService
         var web = new HtmlWeb();
         var doc = await web.LoadFromWebAsync(url);
 
-        var title = doc.DocumentNode.SelectSingleNode("//meta[@property='og:title']")?.GetAttributeValue("content", "")
-                    ?? doc.DocumentNode.SelectSingleNode("//title")?.InnerText;
+        var title =
+            doc.DocumentNode.SelectSingleNode("//meta[@property='og:title']")
+                ?.GetAttributeValue("content", "")
+            ?? doc.DocumentNode.SelectSingleNode("//title")?.InnerText;
 
-        var description = doc.DocumentNode.SelectSingleNode("//meta[@property='og:description']")?.GetAttributeValue("content", "")
-            ?? doc.DocumentNode.SelectSingleNode("//meta[@name='description']")?.GetAttributeValue("content", "");
+        var description =
+            doc.DocumentNode.SelectSingleNode("//meta[@property='og:description']")
+                ?.GetAttributeValue("content", "")
+            ?? doc.DocumentNode.SelectSingleNode("//meta[@name='description']")
+                ?.GetAttributeValue("content", "");
 
         var type = "Article";
-        if (url.Contains("youtube.com") || url.Contains("youtu.be")) type = "Video";
+        if (url.Contains("youtube.com") || url.Contains("youtu.be"))
+            type = "Video";
 
         return new ScrapedContentResponse
         {
             Title = System.Net.WebUtility.HtmlDecode(title ?? "").Trim(),
             Description = System.Net.WebUtility.HtmlDecode(description ?? "").Trim(),
-            Type = type
+            Type = type,
         };
     }
 }

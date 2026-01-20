@@ -16,22 +16,23 @@ namespace Serene.Migrations
                 table: "community_qotd",
                 type: "date",
                 nullable: false,
-                defaultValue: new NodaTime.LocalDate(1, 1, 1));
+                defaultValue: new NodaTime.LocalDate(1, 1, 1)
+            );
 
             // Update existing records to set Day based on CreatedAt
-            migrationBuilder.Sql(@"
+            migrationBuilder.Sql(
+                @"
                 UPDATE community_qotd 
                 SET day = DATE(created_at)
                 WHERE created_at IS NOT NULL
-            ");
+            "
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "day",
-                table: "community_qotd");
+            migrationBuilder.DropColumn(name: "day", table: "community_qotd");
         }
     }
 }

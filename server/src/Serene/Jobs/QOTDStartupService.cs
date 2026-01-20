@@ -13,7 +13,8 @@ public class QOTDStartupService : IHostedService
     public QOTDStartupService(
         ILogger<QOTDStartupService> logger,
         IServiceProvider serviceProvider,
-        ISchedulerFactory schedulerFactory)
+        ISchedulerFactory schedulerFactory
+    )
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
@@ -49,7 +50,10 @@ public class QOTDStartupService : IHostedService
                 var nextFireTime = triggers.First().GetNextFireTimeUtc();
                 if (nextFireTime.HasValue)
                 {
-                    _logger.LogInformation("Next QOTD job scheduled for: {time}", nextFireTime.Value);
+                    _logger.LogInformation(
+                        "Next QOTD job scheduled for: {time}",
+                        nextFireTime.Value
+                    );
                 }
             }
         }

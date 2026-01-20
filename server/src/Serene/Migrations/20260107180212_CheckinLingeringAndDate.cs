@@ -15,25 +15,23 @@ namespace Serene.Migrations
                 name: "date_completed",
                 table: "checkins",
                 type: "date",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "lingering_thoughts",
                 table: "checkins",
                 type: "text",
-                nullable: true);
+                nullable: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "date_completed",
-                table: "checkins");
+            migrationBuilder.DropColumn(name: "date_completed", table: "checkins");
 
-            migrationBuilder.DropColumn(
-                name: "lingering_thoughts",
-                table: "checkins");
+            migrationBuilder.DropColumn(name: "lingering_thoughts", table: "checkins");
         }
     }
 }

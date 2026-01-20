@@ -18,7 +18,8 @@ namespace Serene.Migrations
                 nullable: true,
                 oldClrType: typeof(LocalDate),
                 oldType: "date",
-                oldNullable: true);
+                oldNullable: true
+            );
         }
 
         /// <inheritdoc />
@@ -31,7 +32,8 @@ namespace Serene.Migrations
                 nullable: true,
                 oldClrType: typeof(Instant),
                 oldType: "timestamp with time zone",
-                oldNullable: true);
+                oldNullable: true
+            );
         }
     }
 }

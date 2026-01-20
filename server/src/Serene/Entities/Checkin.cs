@@ -1,7 +1,6 @@
-
-using NodaTime;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using NodaTime;
 
 namespace Serene.Entities;
 
@@ -29,6 +28,7 @@ public class Checkin
 
     [Column("prompt_answer")]
     public string? PromptAnswer { get; set; }
+
     [Column("lingering_thoughts")]
     public string? LingeringThoughts { get; set; }
 
@@ -44,6 +44,7 @@ public class Checkin
     [Column("updated_at")]
     public Instant UpdatedAt { get; set; } = SystemClock.Instance.GetCurrentInstant();
 }
+
 public class GridPoint
 {
     //Normalized coordinates

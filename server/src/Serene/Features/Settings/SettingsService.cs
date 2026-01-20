@@ -17,7 +17,11 @@ public class SettingsService : ISettingsService
     private readonly ILogger<SettingsService> _logger;
     private readonly HybridCache _cache;
 
-    public SettingsService(ApplicationDbContext context, ILogger<SettingsService> logger, HybridCache cache = null)
+    public SettingsService(
+        ApplicationDbContext context,
+        ILogger<SettingsService> logger,
+        HybridCache cache = null
+    )
     {
         _context = context;
         _logger = logger;
@@ -28,8 +32,8 @@ public class SettingsService : ISettingsService
     {
         _logger.LogInformation("Fetching settings for user: {UserId}", userId);
 
-        var settings = await _context.Settings
-            .Where(x => x.UserId == userId)
+        var settings = await _context
+            .Settings.Where(x => x.UserId == userId)
             .Select(x => new SettingsResponse
             {
                 PasswordLock = x.PasswordLock,
@@ -37,7 +41,7 @@ public class SettingsService : ISettingsService
                 Id = x.Id,
                 UserId = x.UserId,
                 CreatedAt = x.CreatedAt,
-                UpdatedAt = x.UpdatedAt
+                UpdatedAt = x.UpdatedAt,
             })
             .FirstOrDefaultAsync();
 
@@ -56,7 +60,7 @@ public class SettingsService : ISettingsService
             {
                 PasswordLock = null,
                 Theme = "Light",
-                UserId = userId
+                UserId = userId,
             };
 
             _context.Settings.Add(newSettings);
@@ -69,7 +73,7 @@ public class SettingsService : ISettingsService
                 PasswordLock = newSettings.PasswordLock,
                 UserId = newSettings.UserId,
                 CreatedAt = newSettings.CreatedAt,
-                UpdatedAt = newSettings.UpdatedAt
+                UpdatedAt = newSettings.UpdatedAt,
             };
         }
 
@@ -82,9 +86,11 @@ public class SettingsService : ISettingsService
 
         try
         {
-            var user = await _context.Users
-                .Include(u => u.Settings)
-                .FirstOrDefaultAsync(u => u.Id == userId) ?? throw new KeyNotFoundException("User not found");
+            var user =
+                await _context
+                    .Users.Include(u => u.Settings)
+                    .FirstOrDefaultAsync(u => u.Id == userId)
+                ?? throw new KeyNotFoundException("User not found");
 
             if (user.Settings == null)
             {
@@ -115,9 +121,12 @@ public class SettingsService : ISettingsService
                 PasswordLock = user.Settings.PasswordLock,
                 UserId = user.Settings.UserId,
                 CreatedAt = user.Settings.CreatedAt,
-                UpdatedAt = user.Settings.UpdatedAt
+                UpdatedAt = user.Settings.UpdatedAt,
             };
         }
-        catch { throw; }
+        catch
+        {
+            throw;
+        }
     }
 }

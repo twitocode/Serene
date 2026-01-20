@@ -10,17 +10,21 @@ public class CheckinController : BaseApiController
 {
     private readonly ICheckinService _checkinService;
 
-    public CheckinController(ICheckinService onboardingService, ILogger<CheckinController> logger) : base(logger)
+    public CheckinController(ICheckinService onboardingService, ILogger<CheckinController> logger)
+        : base(logger)
     {
         _checkinService = onboardingService;
     }
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetCheckin([ModelBinder(typeof(LocalDateModelBinder))] LocalDate? date)
+    public async Task<IActionResult> GetCheckin(
+        [ModelBinder(typeof(LocalDateModelBinder))] LocalDate? date
+    )
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
         return await ExecuteWithResult(() => _checkinService.GetCheckinAsync(userId, date));
     }
 
@@ -29,7 +33,8 @@ public class CheckinController : BaseApiController
     public async Task<IActionResult> CompleteCheckin([FromBody] CompleteCheckinRequest body)
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
 
         return await ExecuteWithResult(() => _checkinService.CompleteCheckinAsync(userId, body));
     }

@@ -11,30 +11,28 @@ namespace Serene.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "age",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "age", table: "AspNetUsers");
 
             migrationBuilder.AddColumn<LocalDate>(
                 name: "date_of_birth",
                 table: "AspNetUsers",
                 type: "date",
-                nullable: true);
+                nullable: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "date_of_birth",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "date_of_birth", table: "AspNetUsers");
 
             migrationBuilder.AddColumn<int>(
                 name: "age",
                 table: "AspNetUsers",
                 type: "integer",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0
+            );
         }
     }
 }

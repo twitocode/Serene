@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using System;
 
 #nullable disable
 
@@ -13,67 +13,48 @@ namespace Serene.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_checkins_user_user_id",
-                table: "checkins");
+            migrationBuilder.DropForeignKey(name: "FK_checkins_user_user_id", table: "checkins");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_post_user_user_id",
-                table: "post");
+            migrationBuilder.DropForeignKey(name: "FK_post_user_user_id", table: "post");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_preferences_user_user_id",
-                table: "preferences");
+                table: "preferences"
+            );
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_profile_user_user_id",
-                table: "profile");
+            migrationBuilder.DropForeignKey(name: "FK_profile_user_user_id", table: "profile");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_safety_plan_user_user_id",
-                table: "safety_plan");
+                table: "safety_plan"
+            );
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_session_user_user_id",
-                table: "session");
+            migrationBuilder.DropForeignKey(name: "FK_session_user_user_id", table: "session");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_user_achievements_user_user_id",
-                table: "user_achievements");
+                table: "user_achievements"
+            );
 
-            migrationBuilder.DropTable(
-                name: "account");
+            migrationBuilder.DropTable(name: "account");
 
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_user",
-                table: "user");
+            migrationBuilder.DropPrimaryKey(name: "PK_user", table: "user");
 
-            migrationBuilder.DropIndex(
-                name: "IX_user_email",
-                table: "user");
+            migrationBuilder.DropIndex(name: "IX_user_email", table: "user");
 
-            migrationBuilder.DropIndex(
-                name: "IX_user_name",
-                table: "user");
+            migrationBuilder.DropIndex(name: "IX_user_name", table: "user");
 
-            migrationBuilder.RenameTable(
-                name: "user",
-                newName: "AspNetUsers");
+            migrationBuilder.RenameTable(name: "user", newName: "AspNetUsers");
 
-            migrationBuilder.RenameColumn(
-                name: "email",
-                table: "AspNetUsers",
-                newName: "Email");
+            migrationBuilder.RenameColumn(name: "email", table: "AspNetUsers", newName: "Email");
 
-            migrationBuilder.RenameColumn(
-                name: "id",
-                table: "AspNetUsers",
-                newName: "Id");
+            migrationBuilder.RenameColumn(name: "id", table: "AspNetUsers", newName: "Id");
 
             migrationBuilder.RenameColumn(
                 name: "email_verified",
                 table: "AspNetUsers",
-                newName: "TwoFactorEnabled");
+                newName: "TwoFactorEnabled"
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "Email",
@@ -82,115 +63,142 @@ namespace Serene.Migrations
                 maxLength: 256,
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "text");
+                oldType: "text"
+            );
 
             migrationBuilder.AddColumn<int>(
                 name: "AccessFailedCount",
                 table: "AspNetUsers",
                 type: "integer",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "ConcurrencyStamp",
                 table: "AspNetUsers",
                 type: "text",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddColumn<bool>(
                 name: "EmailConfirmed",
                 table: "AspNetUsers",
                 type: "boolean",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: false
+            );
 
             migrationBuilder.AddColumn<bool>(
                 name: "LockoutEnabled",
                 table: "AspNetUsers",
                 type: "boolean",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: false
+            );
 
             migrationBuilder.AddColumn<DateTimeOffset>(
                 name: "LockoutEnd",
                 table: "AspNetUsers",
                 type: "timestamp with time zone",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "NormalizedEmail",
                 table: "AspNetUsers",
                 type: "character varying(256)",
                 maxLength: 256,
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "NormalizedUserName",
                 table: "AspNetUsers",
                 type: "character varying(256)",
                 maxLength: 256,
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "PasswordHash",
                 table: "AspNetUsers",
                 type: "text",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "PhoneNumber",
                 table: "AspNetUsers",
                 type: "text",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddColumn<bool>(
                 name: "PhoneNumberConfirmed",
                 table: "AspNetUsers",
                 type: "boolean",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: false
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "SecurityStamp",
                 table: "AspNetUsers",
                 type: "text",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "UserName",
                 table: "AspNetUsers",
                 type: "character varying(256)",
                 maxLength: 256,
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_AspNetUsers",
                 table: "AspNetUsers",
-                column: "Id");
+                column: "Id"
+            );
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
+                    Name = table.Column<string>(
+                        type: "character varying(256)",
+                        maxLength: 256,
+                        nullable: true
+                    ),
+                    NormalizedName = table.Column<string>(
+                        type: "character varying(256)",
+                        maxLength: 256,
+                        nullable: true
+                    ),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
-                });
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table
+                        .Column<int>(type: "integer", nullable: false)
+                        .Annotation(
+                            "Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn
+                        ),
                     UserId = table.Column<string>(type: "text", nullable: false),
                     ClaimType = table.Column<string>(type: "text", nullable: true),
-                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                    ClaimValue = table.Column<string>(type: "text", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -200,8 +208,10 @@ namespace Serene.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserLogins",
@@ -210,18 +220,23 @@ namespace Serene.Migrations
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
                     ProviderKey = table.Column<string>(type: "text", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<string>(type: "text", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: false),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.PrimaryKey(
+                        "PK_AspNetUserLogins",
+                        x => new { x.LoginProvider, x.ProviderKey }
+                    );
                     table.ForeignKey(
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
@@ -230,28 +245,42 @@ namespace Serene.Migrations
                     UserId = table.Column<string>(type: "text", nullable: false),
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Value = table.Column<string>(type: "text", nullable: true)
+                    Value = table.Column<string>(type: "text", nullable: true),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.PrimaryKey(
+                        "PK_AspNetUserTokens",
+                        x => new
+                        {
+                            x.UserId,
+                            x.LoginProvider,
+                            x.Name,
+                        }
+                    );
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table
+                        .Column<int>(type: "integer", nullable: false)
+                        .Annotation(
+                            "Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn
+                        ),
                     RoleId = table.Column<string>(type: "text", nullable: false),
                     ClaimType = table.Column<string>(type: "text", nullable: true),
-                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                    ClaimValue = table.Column<string>(type: "text", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -261,15 +290,17 @@ namespace Serene.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
-                    RoleId = table.Column<string>(type: "text", nullable: false)
+                    RoleId = table.Column<string>(type: "text", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -279,51 +310,61 @@ namespace Serene.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Cascade
+                    );
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
-                column: "NormalizedEmail");
+                column: "NormalizedEmail"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
-                unique: true);
+                unique: true
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
-                column: "RoleId");
+                column: "RoleId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
-                unique: true);
+                unique: true
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
                 table: "AspNetUserClaims",
-                column: "UserId");
+                column: "UserId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserLogins_UserId",
                 table: "AspNetUserLogins",
-                column: "UserId");
+                column: "UserId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
-                column: "RoleId");
+                column: "RoleId"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_checkins_AspNetUsers_user_id",
@@ -331,7 +372,8 @@ namespace Serene.Migrations
                 column: "user_id",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_post_AspNetUsers_user_id",
@@ -339,7 +381,8 @@ namespace Serene.Migrations
                 column: "user_id",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_preferences_AspNetUsers_user_id",
@@ -347,7 +390,8 @@ namespace Serene.Migrations
                 column: "user_id",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_profile_AspNetUsers_user_id",
@@ -355,7 +399,8 @@ namespace Serene.Migrations
                 column: "user_id",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_safety_plan_AspNetUsers_user_id",
@@ -363,7 +408,8 @@ namespace Serene.Migrations
                 column: "user_id",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_session_AspNetUsers_user_id",
@@ -371,7 +417,8 @@ namespace Serene.Migrations
                 column: "user_id",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_user_achievements_AspNetUsers_user_id",
@@ -379,7 +426,8 @@ namespace Serene.Migrations
                 column: "user_id",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
         }
 
         /// <inheritdoc />
@@ -387,128 +435,89 @@ namespace Serene.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_checkins_AspNetUsers_user_id",
-                table: "checkins");
+                table: "checkins"
+            );
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_post_AspNetUsers_user_id",
-                table: "post");
+            migrationBuilder.DropForeignKey(name: "FK_post_AspNetUsers_user_id", table: "post");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_preferences_AspNetUsers_user_id",
-                table: "preferences");
+                table: "preferences"
+            );
 
             migrationBuilder.DropForeignKey(
                 name: "FK_profile_AspNetUsers_user_id",
-                table: "profile");
+                table: "profile"
+            );
 
             migrationBuilder.DropForeignKey(
                 name: "FK_safety_plan_AspNetUsers_user_id",
-                table: "safety_plan");
+                table: "safety_plan"
+            );
 
             migrationBuilder.DropForeignKey(
                 name: "FK_session_AspNetUsers_user_id",
-                table: "session");
+                table: "session"
+            );
 
             migrationBuilder.DropForeignKey(
                 name: "FK_user_achievements_AspNetUsers_user_id",
-                table: "user_achievements");
+                table: "user_achievements"
+            );
 
-            migrationBuilder.DropTable(
-                name: "AspNetRoleClaims");
+            migrationBuilder.DropTable(name: "AspNetRoleClaims");
 
-            migrationBuilder.DropTable(
-                name: "AspNetUserClaims");
+            migrationBuilder.DropTable(name: "AspNetUserClaims");
 
-            migrationBuilder.DropTable(
-                name: "AspNetUserLogins");
+            migrationBuilder.DropTable(name: "AspNetUserLogins");
 
-            migrationBuilder.DropTable(
-                name: "AspNetUserRoles");
+            migrationBuilder.DropTable(name: "AspNetUserRoles");
 
-            migrationBuilder.DropTable(
-                name: "AspNetUserTokens");
+            migrationBuilder.DropTable(name: "AspNetUserTokens");
 
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
+            migrationBuilder.DropTable(name: "AspNetRoles");
 
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_AspNetUsers",
-                table: "AspNetUsers");
+            migrationBuilder.DropPrimaryKey(name: "PK_AspNetUsers", table: "AspNetUsers");
 
-            migrationBuilder.DropIndex(
-                name: "EmailIndex",
-                table: "AspNetUsers");
+            migrationBuilder.DropIndex(name: "EmailIndex", table: "AspNetUsers");
 
-            migrationBuilder.DropIndex(
-                name: "UserNameIndex",
-                table: "AspNetUsers");
+            migrationBuilder.DropIndex(name: "UserNameIndex", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "AccessFailedCount",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "AccessFailedCount", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "ConcurrencyStamp",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "ConcurrencyStamp", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "EmailConfirmed",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "EmailConfirmed", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "LockoutEnabled",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "LockoutEnabled", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "LockoutEnd",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "LockoutEnd", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "NormalizedEmail",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "NormalizedEmail", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "NormalizedUserName",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "NormalizedUserName", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "PasswordHash",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "PasswordHash", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "PhoneNumber",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "PhoneNumber", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "PhoneNumberConfirmed",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "PhoneNumberConfirmed", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "SecurityStamp",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "SecurityStamp", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "UserName",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "UserName", table: "AspNetUsers");
 
-            migrationBuilder.RenameTable(
-                name: "AspNetUsers",
-                newName: "user");
+            migrationBuilder.RenameTable(name: "AspNetUsers", newName: "user");
 
-            migrationBuilder.RenameColumn(
-                name: "Email",
-                table: "user",
-                newName: "email");
+            migrationBuilder.RenameColumn(name: "Email", table: "user", newName: "email");
 
-            migrationBuilder.RenameColumn(
-                name: "Id",
-                table: "user",
-                newName: "id");
+            migrationBuilder.RenameColumn(name: "Id", table: "user", newName: "id");
 
             migrationBuilder.RenameColumn(
                 name: "TwoFactorEnabled",
                 table: "user",
-                newName: "email_verified");
+                newName: "email_verified"
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "email",
@@ -519,12 +528,10 @@ namespace Serene.Migrations
                 oldClrType: typeof(string),
                 oldType: "character varying(256)",
                 oldMaxLength: 256,
-                oldNullable: true);
+                oldNullable: true
+            );
 
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_user",
-                table: "user",
-                column: "id");
+            migrationBuilder.AddPrimaryKey(name: "PK_user", table: "user", column: "id");
 
             migrationBuilder.CreateTable(
                 name: "account",
@@ -533,16 +540,28 @@ namespace Serene.Migrations
                     id = table.Column<string>(type: "text", nullable: false),
                     user_id = table.Column<string>(type: "text", nullable: false),
                     access_token = table.Column<string>(type: "text", nullable: true),
-                    access_token_expires_at = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
+                    access_token_expires_at = table.Column<Instant>(
+                        type: "timestamp with time zone",
+                        nullable: true
+                    ),
                     account_id = table.Column<string>(type: "text", nullable: false),
-                    created_at = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
+                    created_at = table.Column<Instant>(
+                        type: "timestamp with time zone",
+                        nullable: false
+                    ),
                     id_token = table.Column<string>(type: "text", nullable: true),
                     password = table.Column<string>(type: "text", nullable: true),
                     provider_id = table.Column<string>(type: "text", nullable: false),
                     refresh_token = table.Column<string>(type: "text", nullable: true),
-                    refresh_token_expires_at = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
+                    refresh_token_expires_at = table.Column<Instant>(
+                        type: "timestamp with time zone",
+                        nullable: true
+                    ),
                     scope = table.Column<string>(type: "text", nullable: true),
-                    updated_at = table.Column<Instant>(type: "timestamp with time zone", nullable: false)
+                    updated_at = table.Column<Instant>(
+                        type: "timestamp with time zone",
+                        nullable: false
+                    ),
                 },
                 constraints: table =>
                 {
@@ -552,25 +571,30 @@ namespace Serene.Migrations
                         column: x => x.user_id,
                         principalTable: "user",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_email",
                 table: "user",
                 column: "email",
-                unique: true);
+                unique: true
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_name",
                 table: "user",
                 column: "name",
-                unique: true);
+                unique: true
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_account_user_id",
                 table: "account",
-                column: "user_id");
+                column: "user_id"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_checkins_user_user_id",
@@ -578,7 +602,8 @@ namespace Serene.Migrations
                 column: "user_id",
                 principalTable: "user",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_post_user_user_id",
@@ -586,7 +611,8 @@ namespace Serene.Migrations
                 column: "user_id",
                 principalTable: "user",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_preferences_user_user_id",
@@ -594,7 +620,8 @@ namespace Serene.Migrations
                 column: "user_id",
                 principalTable: "user",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_profile_user_user_id",
@@ -602,7 +629,8 @@ namespace Serene.Migrations
                 column: "user_id",
                 principalTable: "user",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_safety_plan_user_user_id",
@@ -610,7 +638,8 @@ namespace Serene.Migrations
                 column: "user_id",
                 principalTable: "user",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_session_user_user_id",
@@ -618,7 +647,8 @@ namespace Serene.Migrations
                 column: "user_id",
                 principalTable: "user",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_user_achievements_user_user_id",
@@ -626,7 +656,8 @@ namespace Serene.Migrations
                 column: "user_id",
                 principalTable: "user",
                 principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
         }
     }
 }

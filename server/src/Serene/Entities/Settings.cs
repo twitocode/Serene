@@ -1,7 +1,6 @@
-
-using NodaTime;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using NodaTime;
 
 namespace Serene.Entities;
 
@@ -9,10 +8,8 @@ public enum Theme
 {
     Dark,
     Light,
-    System
+    System,
 }
-
-
 
 [Table("preferences")]
 public class Settings

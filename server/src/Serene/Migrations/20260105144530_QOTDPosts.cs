@@ -14,19 +14,22 @@ namespace Serene.Migrations
                 name: "QuestionOfTheDayId",
                 table: "post",
                 type: "text",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_post_QuestionOfTheDayId",
                 table: "post",
-                column: "QuestionOfTheDayId");
+                column: "QuestionOfTheDayId"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_post_community_qotd_QuestionOfTheDayId",
                 table: "post",
                 column: "QuestionOfTheDayId",
                 principalTable: "community_qotd",
-                principalColumn: "id");
+                principalColumn: "id"
+            );
         }
 
         /// <inheritdoc />
@@ -34,15 +37,12 @@ namespace Serene.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_post_community_qotd_QuestionOfTheDayId",
-                table: "post");
+                table: "post"
+            );
 
-            migrationBuilder.DropIndex(
-                name: "IX_post_QuestionOfTheDayId",
-                table: "post");
+            migrationBuilder.DropIndex(name: "IX_post_QuestionOfTheDayId", table: "post");
 
-            migrationBuilder.DropColumn(
-                name: "QuestionOfTheDayId",
-                table: "post");
+            migrationBuilder.DropColumn(name: "QuestionOfTheDayId", table: "post");
         }
     }
 }

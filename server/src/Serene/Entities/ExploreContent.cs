@@ -1,14 +1,14 @@
-using NodaTime;
-using Pgvector;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using NodaTime;
+using Pgvector;
 
 namespace Serene.Entities;
 
 public enum ExploreContentType
 {
     Article,
-    Video
+    Video,
 }
 
 [Table("explore_content")]

@@ -1,6 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 using NodaTime;
 using Reinforced.Typings.Exceptions;
-using System.ComponentModel.DataAnnotations;
 
 namespace Serene.Features.Onboarding;
 

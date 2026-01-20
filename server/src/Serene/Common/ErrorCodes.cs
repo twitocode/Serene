@@ -2,7 +2,6 @@ namespace Serene.Common;
 
 public static class ErrorCodes
 {
-
     public const string Unauthorized = "UNAUTHORIZED";
     public const string UserNotFound = "USER_NOT_FOUND";
     public const string UserAlreadyExists = "USER_ALREADY_EXISTS";
@@ -12,7 +11,6 @@ public static class ErrorCodes
     public const string ValidationError = "VALIDATION_ERROR";
 
     public const string InvalidStepOrder = "INVALID_STEP_ORDER";
-
 
     public const string ServerError = "SERVER_ERROR";
     public const string DatabaseError = "DATABASE_ERROR";

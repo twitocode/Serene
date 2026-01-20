@@ -15,7 +15,11 @@ public class CommunityController : BaseApiController
 {
     private readonly ICommunityService _commnityService;
 
-    public CommunityController(ICommunityService commnityService, ILogger<CommunityController> logger) : base(logger)
+    public CommunityController(
+        ICommunityService commnityService,
+        ILogger<CommunityController> logger
+    )
+        : base(logger)
     {
         _commnityService = commnityService;
     }
@@ -25,7 +29,8 @@ public class CommunityController : BaseApiController
     public async Task<IActionResult> AnswerQOTD([FromBody] QOTDPostRequest dto)
     {
         string? uid = GetUserId();
-        if (uid == null) return Unauthorized();
+        if (uid == null)
+            return Unauthorized();
         return await ExecuteWithResult(() => _commnityService.AnswerQOTDAsync(dto, uid));
     }
 

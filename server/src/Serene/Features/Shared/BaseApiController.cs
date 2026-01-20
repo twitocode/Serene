@@ -12,7 +12,8 @@ public abstract class BaseApiController : ControllerBase
         _logger = logger;
     }
 
-    protected string? GetUserId() => User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    protected string? GetUserId() =>
+        User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
     protected async Task<IActionResult> ExecuteWithResult(Func<Task> action)
     {
@@ -23,7 +24,11 @@ public abstract class BaseApiController : ControllerBase
         }
         catch (AppException ex)
         {
-            _logger.LogWarning("Business rule violation: {Message} ({ErrorCode})", ex.Message, ex.ErrorCode);
+            _logger.LogWarning(
+                "Business rule violation: {Message} ({ErrorCode})",
+                ex.Message,
+                ex.ErrorCode
+            );
             return new BadRequestObjectResult(Result.Failure(ex.Message, ex.ErrorCode));
         }
         catch (ArgumentException ex)
@@ -34,12 +39,17 @@ public abstract class BaseApiController : ControllerBase
         catch (UnauthorizedAccessException ex)
         {
             _logger.LogWarning("Unauthorized access attempt: {Message}", ex.Message);
-            return new UnauthorizedObjectResult(Result.Failure(ex.Message, ErrorCodes.Unauthorized));
+            return new UnauthorizedObjectResult(
+                Result.Failure(ex.Message, ErrorCodes.Unauthorized)
+            );
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred during an API call");
-            return new ObjectResult(Result.Failure(ex.Message, ErrorCodes.ServerError)) { StatusCode = 500 };
+            return new ObjectResult(Result.Failure(ex.Message, ErrorCodes.ServerError))
+            {
+                StatusCode = 500,
+            };
         }
     }
 
@@ -53,13 +63,19 @@ public abstract class BaseApiController : ControllerBase
         }
         catch (AppException ex)
         {
-            _logger.LogWarning("Business rule violation: {Message} ({ErrorCode})", ex.Message, ex.ErrorCode);
+            _logger.LogWarning(
+                "Business rule violation: {Message} ({ErrorCode})",
+                ex.Message,
+                ex.ErrorCode
+            );
             return new BadRequestObjectResult(Result<T>.Failure(ex.Message, ex.ErrorCode));
         }
         catch (ArgumentException ex)
         {
             _logger.LogWarning("Invalid input: {Message}", ex.Message);
-            return new BadRequestObjectResult(Result<T>.Failure(ex.Message, ErrorCodes.InvalidInput));
+            return new BadRequestObjectResult(
+                Result<T>.Failure(ex.Message, ErrorCodes.InvalidInput)
+            );
         }
         catch (KeyNotFoundException ex)
         {
@@ -69,12 +85,17 @@ public abstract class BaseApiController : ControllerBase
         catch (UnauthorizedAccessException ex)
         {
             _logger.LogWarning("Unauthorized access attempt: {Message}", ex.Message);
-            return new UnauthorizedObjectResult(Result<T>.Failure(ex.Message, ErrorCodes.Unauthorized));
+            return new UnauthorizedObjectResult(
+                Result<T>.Failure(ex.Message, ErrorCodes.Unauthorized)
+            );
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unexpected error occurred during an API call");
-            return new ObjectResult(Result<T>.Failure(ex.Message, ErrorCodes.ServerError)) { StatusCode = 500 };
+            return new ObjectResult(Result<T>.Failure(ex.Message, ErrorCodes.ServerError))
+            {
+                StatusCode = 500,
+            };
         }
     }
 }

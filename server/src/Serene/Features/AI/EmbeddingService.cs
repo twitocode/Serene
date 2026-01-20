@@ -1,3 +1,4 @@
+using System.ClientModel;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Options;
@@ -5,7 +6,6 @@ using OpenAI;
 using OpenAI.Embeddings;
 using Pgvector;
 using Serene.Configuration;
-using System.ClientModel;
 
 namespace Serene.Features.AI;
 
@@ -24,15 +24,15 @@ public class EmbeddingService : IEmbeddingService
     public EmbeddingService(IOptions<AIOptions> options, HybridCache cache, IDistributedCache l2)
     {
         var apiKey = options.Value.OpenRouterApiKey;
-        
+
         if (string.IsNullOrWhiteSpace(apiKey))
         {
-             throw new ArgumentException("OPENROUTER_API_KEY not found in configuration");
+            throw new ArgumentException("OPENROUTER_API_KEY not found in configuration");
         }
 
         var clientOptions = new OpenAIClientOptions
         {
-            Endpoint = new Uri("https://openrouter.ai/api/v1")
+            Endpoint = new Uri("https://openrouter.ai/api/v1"),
         };
 
         var client = new OpenAIClient(new ApiKeyCredential(apiKey), clientOptions);
@@ -43,16 +43,16 @@ public class EmbeddingService : IEmbeddingService
 
     public async Task<Vector> GetEmbeddingAsync(string queryText)
     {
-        var options = new EmbeddingGenerationOptions
-        {
-            Dimensions = 1024
-        };
+        var options = new EmbeddingGenerationOptions { Dimensions = 1024 };
 
-        var embeddingFloats = await _cache.GetOrCreateAsync($"embeddings-{queryText}", async token =>
-        {
-            var response = await _client.GenerateEmbeddingAsync(queryText, options, token);
-            return response.Value.ToFloats();
-        });
+        var embeddingFloats = await _cache.GetOrCreateAsync(
+            $"embeddings-{queryText}",
+            async token =>
+            {
+                var response = await _client.GenerateEmbeddingAsync(queryText, options, token);
+                return response.Value.ToFloats();
+            }
+        );
 
         return new Vector(embeddingFloats);
     }

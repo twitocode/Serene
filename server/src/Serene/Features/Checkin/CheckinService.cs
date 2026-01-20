@@ -49,7 +49,7 @@ public class CheckinService : ICheckinService
                 PromptAnswer = x.PromptAnswer,
                 PromptQuestion = x.PromptQuestion,
                 SomaticState = x.SomaticState,
-                MoodSeverity = x.MoodSeverity
+                MoodSeverity = x.MoodSeverity,
             })
             .ToListAsync();
 
@@ -58,7 +58,9 @@ public class CheckinService : ICheckinService
 
     public async Task CompleteCheckinAsync(string userId, CompleteCheckinRequest dto)
     {
-        var user = await _context.Users.FindAsync(userId) ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
+        var user =
+            await _context.Users.FindAsync(userId)
+            ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
 
         var checkin = new Checkin
         {
@@ -69,7 +71,7 @@ public class CheckinService : ICheckinService
             PromptQuestion = dto.PromptQuestion,
             UserId = userId,
             SomaticState = dto.SomaticState,
-            DateCompleted = SystemClock.Instance.GetCurrentInstant()
+            DateCompleted = SystemClock.Instance.GetCurrentInstant(),
         };
 
         await _context.Checkins.AddAsync(checkin);

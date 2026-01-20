@@ -7,7 +7,8 @@ public class LocalDateModelBinder : IModelBinder
     public Task BindModelAsync(ModelBindingContext bindingContext)
     {
         var value = bindingContext.ValueProvider.GetValue(bindingContext.ModelName).FirstValue;
-        if (string.IsNullOrEmpty(value)) return Task.CompletedTask;
+        if (string.IsNullOrEmpty(value))
+            return Task.CompletedTask;
 
         var result = LocalDatePattern.Iso.Parse(value);
         if (result.Success)
@@ -16,7 +17,10 @@ public class LocalDateModelBinder : IModelBinder
         }
         else
         {
-            bindingContext.ModelState.TryAddModelError(bindingContext.ModelName, "Invalid date format.");
+            bindingContext.ModelState.TryAddModelError(
+                bindingContext.ModelName,
+                "Invalid date format."
+            );
         }
         return Task.CompletedTask;
     }

@@ -3,8 +3,6 @@ using Google.GenAI.Types;
 
 namespace Serene.Features.AI;
 
-
-
 public class GeminiService(Client genAiClient, ILogger<GeminiService> logger) : IAIService
 {
     private readonly Client _client = genAiClient;
@@ -42,11 +40,16 @@ public class GeminiService(Client genAiClient, ILogger<GeminiService> logger) : 
                 {
                     SystemInstruction = new Content
                     {
-                        Parts = [
+                        Parts =
+                        [
                             new Part { Text = systemPrompt },
-                            new Part { Text = "Whenever you are asked to generate a question of the day. Respond with JUST the question. nothing else" }
-                        ]
-                    }
+                            new Part
+                            {
+                                Text =
+                                    "Whenever you are asked to generate a question of the day. Respond with JUST the question. nothing else",
+                            },
+                        ],
+                    },
                 }
             );
 

@@ -12,8 +12,7 @@ namespace Serene.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:PostgresExtension:vector", ",,");
+            migrationBuilder.AlterDatabase().Annotation("Npgsql:PostgresExtension:vector", ",,");
 
             migrationBuilder.CreateTable(
                 name: "explore_content",
@@ -25,22 +24,24 @@ namespace Serene.Migrations
                     url = table.Column<string>(type: "text", nullable: false),
                     type = table.Column<int>(type: "integer", nullable: false),
                     embedding = table.Column<Vector>(type: "vector", nullable: true),
-                    created_at = table.Column<Instant>(type: "timestamp with time zone", nullable: false)
+                    created_at = table.Column<Instant>(
+                        type: "timestamp with time zone",
+                        nullable: false
+                    ),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_explore_content", x => x.id);
-                });
+                }
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "explore_content");
+            migrationBuilder.DropTable(name: "explore_content");
 
-            migrationBuilder.AlterDatabase()
-                .OldAnnotation("Npgsql:PostgresExtension:vector", ",,");
+            migrationBuilder.AlterDatabase().OldAnnotation("Npgsql:PostgresExtension:vector", ",,");
         }
     }
 }

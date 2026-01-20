@@ -1,0 +1,18 @@
+{
+  "tasks": [
+    {
+      "name": "Run csharpier",
+      "command": "csharpier",
+      "args": ["format", "${staged}"],
+      "include": [
+        "**/*.cs",
+        "**/*.csx",
+        "**/*.csproj",
+        "**/*.props",
+        "**/*.targets",
+        "**/*.xml",
+        "**/*.config"
+      ]
+    }
+  ]
+}

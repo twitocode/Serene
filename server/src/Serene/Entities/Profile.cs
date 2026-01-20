@@ -1,11 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Serene.Entities;
-
 
 [Table("profile")]
 public class Profile
@@ -48,7 +47,6 @@ public class Profile
     [Column("updated_at")]
     public Instant UpdatedAt { get; set; } = SystemClock.Instance.GetCurrentInstant();
 }
-
 
 [Table("safety_plan")]
 public class SafetyPlan

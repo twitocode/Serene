@@ -9,5 +9,4 @@ public class SchoolResponse
     public string RegionCode { get; set; } = string.Empty;
 
     public string UserId { get; set; } = string.Empty;
-
 }

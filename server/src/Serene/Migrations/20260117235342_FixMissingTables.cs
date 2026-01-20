@@ -18,7 +18,8 @@ namespace Serene.Migrations
                 nullable: true,
                 oldClrType: typeof(Vector),
                 oldType: "vector",
-                oldNullable: true);
+                oldNullable: true
+            );
         }
 
         /// <inheritdoc />
@@ -31,7 +32,8 @@ namespace Serene.Migrations
                 nullable: true,
                 oldClrType: typeof(Vector),
                 oldType: "vector(1024)",
-                oldNullable: true);
+                oldNullable: true
+            );
         }
     }
 }
