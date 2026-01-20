@@ -10,6 +10,7 @@ using Serene.Configuration;
 using Serene.Data;
 using Serene.Entities;
 using Serene.Jobs;
+using Serene.Services;
 
 namespace Serene.Extensions;
 
@@ -60,6 +61,9 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IEmbeddingService, EmbeddingService>();
         services.AddScoped<IExploreService, ExploreService>();
         services.AddScoped<IAIService, OpenAIService>();
+        services.AddScoped<IQuestionBankService, QuestionBankService>();
+        services.AddScoped<IQuestionPreparationService, QuestionPreparationService>();
+        services.AddScoped<IQuestionCache, QuestionCache>();
 
         services.AddScoped(x => new Client(
             apiKey: !string.IsNullOrEmpty(aiOptions.GeminiApiKey)
@@ -87,6 +91,14 @@ public static class ApplicationServiceExtensions
                 opts.ForJob(jobKey)
                     .WithIdentity("SendQOTDJob-trigger")
                     .WithCronSchedule("0 0 0 * * ?") // Run at midnight every day
+            );
+
+            var genJobKey = new JobKey("QuestionGenerationJob");
+            options.AddJob<QuestionGenerationJob>(opts => opts.WithIdentity(genJobKey));
+            options.AddTrigger(opts =>
+                opts.ForJob(genJobKey)
+                    .WithIdentity("QuestionGenerationJob-trigger")
+                    .WithCronSchedule("0 30 0 * * ?") // Run at 00:30 every day
             );
         });
 

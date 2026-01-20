@@ -20,6 +20,8 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<QuestionOfTheDay> QuestionsOfTheDay { get; set; }
     public DbSet<Post> Posts { get; set; }
     public DbSet<ExploreContent> ExploreContent { get; set; }
+    public DbSet<QuestionBank> QuestionBanks { get; set; }
+    public DbSet<QuestionGenerationSchedule> QuestionGenerationSchedules { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -8,6 +8,8 @@ using Serene.Common;
 using Serene.Data;
 using Serene.Entities;
 
+using Serene.Services;
+
 namespace Serene.Features.Community;
 
 public interface ICommunityService
@@ -22,19 +24,22 @@ public class CommunityService : ICommunityService
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<CommunityService> _logger;
-    private readonly IAIService _geminiService;
+    private readonly IQuestionPreparationService _preparationService;
+    private readonly IQuestionCache _qotdCache;
     private readonly HybridCache _cache;
 
     public CommunityService(
         ApplicationDbContext context,
         ILogger<CommunityService> logger,
-        IAIService geminiService,
+        IQuestionPreparationService preparationService,
+        IQuestionCache qotdCache,
         HybridCache cache
     )
     {
         _context = context;
         _logger = logger;
-        _geminiService = geminiService;
+        _preparationService = preparationService;
+        _qotdCache = qotdCache;
         _cache = cache;
     }
 
@@ -76,48 +81,8 @@ public class CommunityService : ICommunityService
     public async Task<QuestionOfTheDay?> CreateNewQOTD()
     {
         LocalDate today = SystemClock.Instance.GetCurrentInstant().InUtc().Date;
-
-        var existingQotd = await _context.QuestionsOfTheDay.FirstOrDefaultAsync(x =>
-            x.Day == today
-        );
-
-        if (existingQotd != null)
-        {
-            _logger.LogInformation("QOTD already exists for today: {date}", today);
-            return existingQotd;
-        }
-
-        try
-        {
-            string question = await _geminiService.GetDailyQuestionAsync();
-
-            var qotd = new QuestionOfTheDay { Question = question, Day = today };
-
-            _context.QuestionsOfTheDay.Add(qotd);
-            await _context.SaveChangesAsync();
-            _logger.LogInformation("QOTD created successfully for {date}: {id}", today, qotd.Id);
-            return qotd;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to create QOTD for {date}", today);
-
-            var retryQotd = await _context.QuestionsOfTheDay.FirstOrDefaultAsync(x =>
-                x.Day == today
-            );
-
-            if (retryQotd != null)
-            {
-                _logger.LogInformation(
-                    "QOTD found after retry for {date}: {id}",
-                    today,
-                    retryQotd.Id
-                );
-                return retryQotd;
-            }
-
-            throw;
-        }
+        await _preparationService.PrepareEmergencyQuestionAsync(today);
+        return await _qotdCache.GetQuestionAsync(today);
     }
 
     public async Task<QOTDResponse?> GetQOTDAsync(string? date)
@@ -143,24 +108,20 @@ public class CommunityService : ICommunityService
             targetDate = parseResult.Value;
         }
 
-        return await _cache.GetOrCreateAsync(
-            $"qotd-{targetDate:yyyy-MM-dd}",
-            async token =>
-            {
-                var qotd = await _context.QuestionsOfTheDay.FirstOrDefaultAsync(
-                    x => x.Day == targetDate,
-                    token
-                );
+        var qotd = await _qotdCache.GetQuestionAsync(targetDate);
 
-                if (qotd != null)
-                {
-                    return new QOTDResponse { QOTDId = qotd.Id, Question = qotd.Question };
-                }
+        if (qotd == null && targetDate == today)
+        {
+            await _preparationService.PrepareEmergencyQuestionAsync(today);
+            qotd = await _qotdCache.GetQuestionAsync(today);
+        }
 
-                return null;
-            },
-            options: new HybridCacheEntryOptions { Expiration = TimeSpan.FromHours(24) }
-        );
+        if (qotd != null)
+        {
+            return new QOTDResponse { QOTDId = qotd.Id, Question = qotd.Question };
+        }
+
+        return null;
     }
 
     public async Task<List<PostResponse>> GetResponsesAsync(string? date)

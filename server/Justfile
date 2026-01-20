@@ -6,7 +6,7 @@ run:
 
 # Run the server with hot reload
 dev:
-    dotnet watch run --project src/Serene/Serene.csproj
+    PORT=5173 && dotnet watch run --project src/Serene/Serene.csproj
 
 # Run all tests
 test:

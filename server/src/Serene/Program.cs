@@ -22,11 +22,14 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     //used for railway deploying
-    var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
-    builder.WebHost.UseKestrel(options =>
+    var port = Environment.GetEnvironmentVariable("PORT");
+    if (!string.IsNullOrEmpty(port))
     {
-        options.ListenAnyIP(int.Parse(port));
-    });
+        builder.WebHost.UseKestrel(options =>
+        {
+            options.ListenAnyIP(int.Parse(port));
+        });
+    }
 
     builder.Services.AddSerilog(
         (context, loggerConfiguration) =>
@@ -136,9 +139,16 @@ try
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
     builder
-        .Services.AddDataProtection()
-        .PersistKeysToFileSystem(new DirectoryInfo("/app/keys"))
-        .SetApplicationName("Serene");
+        .Services.AddHealthChecks()
+        .AddCheck<Serene.HealthChecks.QuestionSystemHealthCheck>("question_system");
+
+    if (builder.Environment.IsProduction())
+    {
+        builder
+            .Services.AddDataProtection()
+            .PersistKeysToFileSystem(new DirectoryInfo("/app/keys"))
+            .SetApplicationName("Serene");
+    }
 
     var app = builder.Build();
 
@@ -191,6 +201,7 @@ try
     app.UseAuthorization();
 
     app.MapControllers();
+    app.MapHealthChecks("/health");
 
     using (var scope = app.Services.CreateScope())
     {
