@@ -48,7 +48,7 @@ export function OnboardingFlow() {
           </AnimatePresence>
         </div>
 
-        <div className="pb-8 flex justify-center gap-2 bg-white">
+        <div className="pb-8 flex justify-center gap-2 bg-background">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <motion.div
               key={i}
