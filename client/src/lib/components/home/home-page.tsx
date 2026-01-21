@@ -1,5 +1,6 @@
 "use client";
 
+import { MochiDefault, MochiHappy } from "@/lib/components/common/mochi";
 import DateScroll from "@/lib/components/home/date-scroll";
 import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
@@ -9,7 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const suggestions = [
-  { id: "1", icon: Smile, title: "Talk to Koala" },
+  { id: "1", icon: MochiDefault, title: "Talk to Mochi" },
   { id: "2", icon: Flower2, title: "Daily Affirmations" },
   { id: "3", icon: Square, title: "Box Breathing" },
 ];
@@ -42,10 +43,7 @@ export default function HomePage() {
         transition={{ duration: 0.4, delay: 0.2 }}
         className="bg-gray-200 border-[1.5px] p-8 flex items-center justify-between "
       >
-        <Smile
-          className="w-32 h-32 text-black  fill-current"
-          strokeWidth={1.5}
-        />
+       <MochiHappy className="h-40 w-40"/>
 
         <div className="flex flex-col gap-4 items-start max-w-xs">
           <h2 className="text-3xl font-bold leading-tight text-black">

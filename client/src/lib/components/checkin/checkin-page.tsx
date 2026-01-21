@@ -1,12 +1,14 @@
 "use client";
 
 import CheckinFlow from "@/lib/components/checkin/checkin-flow";
+import { MochiDefault } from "@/lib/components/common/mochi";
 import DateScroll from "@/lib/components/home/date-scroll";
 import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
 import { Badge } from "@/lib/components/ui/badge";
 import { Button } from "@/lib/components/ui/button";
 import { getMoodFromLabel, getSeverityColor, MoodLabel } from "@/lib/data/moods";
 import { useCheckinsQuery } from "@/lib/hooks/queries/use-checkins";
+import { isToday } from "date-fns";
 import { Smile } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect } from "react";
@@ -48,15 +50,14 @@ export default function CheckinPage() {
       >
         {checkins?.length == 0 ? (
           <>
-            <Smile
-              className="w-32 h-32 text-primary  fill-current"
-              strokeWidth={1.5}
-            />
+            <MochiDefault className="rotate-25 h-40 w-40" />
 
             <div className="flex flex-col gap-4 items-start max-w-xs">
               <>
                 <h2 className="text-xl lg:text-3xl font-bold leading-tight text-secondary-foreground">
-                  Time to check in for the day
+                  {!isToday(displayDate)
+                    ? "Want to add another thought? "
+                    : "Time to check in for the day"}
                 </h2>
                 <Button
                   className="bg-primary text-primary-foreground  px-6 py-2 text-base font-medium hover:scale-105 transition active:scale-105"
@@ -69,15 +70,14 @@ export default function CheckinPage() {
           </>
         ) : (
           <>
-            <Smile
-              className="w-32 h-32 text-black  fill-current"
-              strokeWidth={1.5}
-            />
+            <MochiDefault className="rotate-25 h-40 w-40" />
 
             <div className="flex flex-col gap-4 items-start max-w-xs">
               <>
                 <h2 className="text-xl lg:text-3xl font-bold leading-tight text-black">
-                  Feeling something again?
+                  {!isToday(displayDate)
+                    ? "Want to add another thought? "
+                    : "Feeling something again?" }
                 </h2>
                 <Button
                   className="bg-black text-white hover:bg-gray-800 px-6 py-2 text-base font-medium hover:scale-105 transition active:scale-105"
@@ -95,7 +95,7 @@ export default function CheckinPage() {
           ?.sort(
             (a, b) =>
               Number(new Date(b.dateCompleted)) -
-              Number(new Date(a.dateCompleted))
+              Number(new Date(a.dateCompleted)),
           )
           .map((checkin) => {
             const formattedDate = new Intl.DateTimeFormat(navigator.language, {
@@ -104,7 +104,7 @@ export default function CheckinPage() {
             }).format(new Date(checkin.dateCompleted));
 
             const checkinMood = getMoodFromLabel(
-              checkin.moodLabel as MoodLabel
+              checkin.moodLabel as MoodLabel,
             );
             const severityClass = checkinMood
               ? getSeverityColor(checkinMood.severity)
