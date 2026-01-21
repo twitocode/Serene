@@ -4,31 +4,49 @@ import {
   Funnel_Sans,
   IBM_Plex_Mono,
   Inter,
+  Nunito,
   Playfair_Display,
 } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
+
+const yeastyFlavors = localFont({
+  src: "./fonts/Yeasty_Flavors.ttf",
+  variable: "--font-yeasty",
+});
 
 const inter = Inter({
   variable: "--font-sans",
+  subsets: ["latin"],
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-mono",
   weight: "400",
+  subsets: ["latin"],
 });
 
 const playfairDisplay = Playfair_Display({
   variable: "--font-serif",
   weight: "400",
+  subsets: ["latin"],
+});
+
+const nunito = Nunito({
+  variable: "--font-playful",
+  weight: ["400", "600", "700", "800"],
+  subsets: ["latin"],
 });
 
 const funnelSans = Funnel_Sans({
   variable: "--font-sans",
   weight: "400",
+  subsets: ["latin"],
 });
 const funnelDisplay = Funnel_Sans({
   variable: "--font-display",
   weight: "400",
+  subsets: ["latin"],
 });
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -47,7 +65,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head></head>
       <body
-        className={`${ibmPlexMono.variable} ${playfairDisplay.variable} ${funnelSans.variable} ${funnelDisplay.variable} antialiased`}
+        className={`${ibmPlexMono.variable} ${playfairDisplay.variable} ${funnelSans.variable} ${funnelDisplay.variable} ${yeastyFlavors.variable} antialiased `}
       >
         <Providers>{children}</Providers>
       </body>
