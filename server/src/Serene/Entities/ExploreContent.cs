@@ -35,6 +35,9 @@ public class ExploreContent
     [Column("embedding", TypeName = "vector(1024)")]
     public Vector? Embedding { get; set; }
 
+    [Column("school_id")]
+    public string? SchoolId { get; set; }
+
     [Column("created_at")]
     public Instant CreatedAt { get; set; } = SystemClock.Instance.GetCurrentInstant();
 }

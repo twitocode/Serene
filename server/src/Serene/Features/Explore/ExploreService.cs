@@ -11,6 +11,7 @@ namespace Serene.Features.Explore;
 public interface IExploreService
 {
     Task<List<ExploreContentResponse>> GetRecommendationsAsync(string userId);
+    Task<List<ExploreContentResponse>> GetSchoolResourcesAsync(string userId);
     Task<List<ExploreContentResponse>> GetAllContentAsync();
     Task<string> AddContentAsync(CreateExploreContentRequest request);
     Task UpdateContentAsync(string id, CreateExploreContentRequest request);
@@ -101,6 +102,32 @@ public class ExploreService : IExploreService
             .ToListAsync();
     }
 
+    public async Task<List<ExploreContentResponse>> GetSchoolResourcesAsync(string userId)
+    {
+        var user =
+            await _context.Users.Include(u => u.Profile).FirstOrDefaultAsync(u => u.Id == userId)
+            ?? throw new Exception("User not found");
+
+        var schoolId = user.Profile?.SchoolId;
+        if (string.IsNullOrEmpty(schoolId))
+        {
+            return new List<ExploreContentResponse>();
+        }
+
+        return await _context
+            .ExploreContent.Where(c => c.SchoolId == schoolId)
+            .OrderByDescending(c => c.CreatedAt)
+            .Select(c => new ExploreContentResponse
+            {
+                Id = c.Id,
+                Title = c.Title,
+                Description = c.Description,
+                Url = c.Url,
+                Type = c.Type.ToString(),
+            })
+            .ToListAsync();
+    }
+
     public async Task<string> AddContentAsync(CreateExploreContentRequest request)
     {
         var embedding = await _embeddingService.GetEmbeddingAsync(
@@ -114,6 +141,7 @@ public class ExploreService : IExploreService
             Url = request.Url,
             Type = Enum.Parse<ExploreContentType>(request.Type, true),
             Embedding = embedding,
+            SchoolId = request.SchoolId,
         };
 
         _context.ExploreContent.Add(content);
@@ -135,6 +163,7 @@ public class ExploreService : IExploreService
         content.Url = request.Url;
         content.Type = Enum.Parse<ExploreContentType>(request.Type, true);
         content.Embedding = embedding;
+        content.SchoolId = request.SchoolId;
 
         await _context.SaveChangesAsync();
     }

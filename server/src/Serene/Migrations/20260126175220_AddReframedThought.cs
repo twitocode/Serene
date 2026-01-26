@@ -14,15 +14,14 @@ namespace Serene.Migrations
                 name: "reframed_thought",
                 table: "checkins",
                 type: "text",
-                nullable: true);
+                nullable: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "reframed_thought",
-                table: "checkins");
+            migrationBuilder.DropColumn(name: "reframed_thought", table: "checkins");
         }
     }
 }

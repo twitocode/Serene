@@ -26,6 +26,17 @@ public class ExploreController : BaseApiController
         return await ExecuteWithResult(() => _exploreService.GetRecommendationsAsync(userId));
     }
 
+    [HttpGet("school")]
+    [Authorize]
+    public async Task<IActionResult> GetSchoolResources()
+    {
+        var userId = GetUserId();
+        if (userId == null)
+            return Unauthorized();
+
+        return await ExecuteWithResult(() => _exploreService.GetSchoolResourcesAsync(userId));
+    }
+
     [HttpGet("all")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetAllContent()
