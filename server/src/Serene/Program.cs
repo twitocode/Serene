@@ -43,7 +43,7 @@ try
             loggerConfiguration.ReadFrom.Configuration(builder.Configuration);
 
             loggerConfiguration.Enrich.FromLogContext();
-            loggerConfiguration.Enrich.WithProperty("Application", "YourAppName");
+            loggerConfiguration.Enrich.WithProperty("Application", "Serene");
             loggerConfiguration.Enrich.WithProperty(
                 "Environment",
                 Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
@@ -209,7 +209,11 @@ try
         try
         {
             await DbInitializer.InitializeAsync(services);
-            await DbInitializer.PromoteUserToAdminAsync(services, "test@test.com");
+            var adminEmail = Environment.GetEnvironmentVariable("ADMIN_EMAIL");
+            if (!string.IsNullOrEmpty(adminEmail))
+            {
+                await DbInitializer.PromoteUserToAdminAsync(services, adminEmail);
+            }
         }
         catch (Exception ex)
         {

@@ -51,14 +51,6 @@ public class User : IdentityUser
     public ICollection<Post> Posts { get; set; } = new List<Post>();
 }
 
-public enum Gender
-{
-    Male,
-    Female,
-    NonBinary,
-    PreferNotToSay,
-}
-
 [Table("verification")]
 public class Verification
 {

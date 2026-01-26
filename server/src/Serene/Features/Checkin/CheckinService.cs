@@ -4,6 +4,7 @@ using NodaTime.Extensions;
 using Serene.Common;
 using Serene.Data;
 using Serene.Entities;
+using Serene.Services;
 
 namespace Serene.Features.Checkins;
 
@@ -17,11 +18,17 @@ public class CheckinService : ICheckinService
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<CheckinService> _logger;
+    private readonly IEncryptionService _encryption;
 
-    public CheckinService(ApplicationDbContext context, ILogger<CheckinService> logger)
+    public CheckinService(
+        ApplicationDbContext context,
+        ILogger<CheckinService> logger,
+        IEncryptionService encryption
+    )
     {
         _context = context;
         _logger = logger;
+        _encryption = encryption;
     }
 
     public async Task<List<CheckinResponse>> GetCheckinAsync(string userId, LocalDate? date)
@@ -39,21 +46,19 @@ public class CheckinService : ICheckinService
             query = query.Where(x => x.DateCompleted >= startOfDay && x.DateCompleted < endOfDay);
         }
 
-        var checkins = await query
-            .Select(x => new CheckinResponse
-            {
-                DateCompleted = x.DateCompleted ?? x.CreatedAt,
-                Id = x.Id,
-                LingeringThoughts = x.LingeringThoughts,
-                MoodLabel = x.MoodLabel,
-                PromptAnswer = x.PromptAnswer,
-                PromptQuestion = x.PromptQuestion,
-                SomaticState = x.SomaticState,
-                MoodSeverity = x.MoodSeverity,
-            })
-            .ToListAsync();
+        var checkins = await query.ToListAsync();
 
-        return checkins;
+        return checkins.Select(x => new CheckinResponse
+        {
+            DateCompleted = x.DateCompleted ?? x.CreatedAt,
+            Id = x.Id,
+            LingeringThoughts = _encryption.Decrypt(x.LingeringThoughts),
+            MoodLabel = _encryption.Decrypt(x.MoodLabel) ?? x.MoodLabel,
+            PromptAnswer = _encryption.Decrypt(x.PromptAnswer),
+            PromptQuestion = x.PromptQuestion, // Not encrypted - needed for display
+            SomaticState = _encryption.DecryptJson<Dictionary<string, GridPoint>>(x.SomaticStateEncrypted) ?? x.SomaticState,
+            MoodSeverity = x.MoodSeverity,
+        }).ToList();
     }
 
     public async Task CompleteCheckinAsync(string userId, CompleteCheckinRequest dto)
@@ -62,19 +67,23 @@ public class CheckinService : ICheckinService
             await _context.Users.FindAsync(userId)
             ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
 
+        // Encrypt sensitive fields before saving
         var checkin = new Checkin
         {
-            LingeringThoughts = dto.LingeringThoughts,
-            MoodLabel = dto.MoodLabel,
+            LingeringThoughts = _encryption.Encrypt(dto.LingeringThoughts),
+            MoodLabel = _encryption.Encrypt(dto.MoodLabel) ?? dto.MoodLabel,
             MoodSeverity = dto.MoodSeverity,
-            PromptAnswer = dto.PromptAnswer,
-            PromptQuestion = dto.PromptQuestion,
+            PromptAnswer = _encryption.Encrypt(dto.PromptAnswer),
+            PromptQuestion = dto.PromptQuestion, // Not encrypted - needed for queries
             UserId = userId,
-            SomaticState = dto.SomaticState,
+            SomaticState = null, // Legacy field
+            SomaticStateEncrypted = _encryption.EncryptJson(dto.SomaticState),
             DateCompleted = SystemClock.Instance.GetCurrentInstant(),
         };
 
         await _context.Checkins.AddAsync(checkin);
         await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Checkin completed for user {UserId} with encrypted data", userId);
     }
 }

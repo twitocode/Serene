@@ -8,7 +8,10 @@ export function useCheckinsQuery(date: string) {
     queryKey: ["checkins", date],
     queryFn: async () => {
       const res = await apiFetch<Checkin[]>(`/checkin?date=${date}`);
-      return res.data!;
+      if (!res.isSuccess || !res.data) {
+        throw new Error(res.message ?? "Failed to fetch checkins");
+      }
+      return res.data;
     },
   });
 }

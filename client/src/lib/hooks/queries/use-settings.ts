@@ -11,9 +11,11 @@ export function useSettingsQuery() {
   return useQuery<Settings>({
     queryKey: ["settings"],
     queryFn: async () => {
-      // apiFetch automatically unwraps the 'data' property from the Result envelope.
       const res = await apiFetch<Settings>("/settings");
-      return res.data!;
+      if (!res.isSuccess || !res.data) {
+        throw new Error(res.message ?? "Failed to fetch settings");
+      }
+      return res.data;
     },
   });
 }
@@ -23,10 +25,14 @@ export function useUpdateSettingsMutation() {
 
   return useMutation({
     mutationFn: async (data: UpdateSettingsDto) => {
-      return apiFetch<Settings>("/users/settings", {
-        method: "PUT",
+      const res = await apiFetch<Settings>("/settings", {
+        method: "POST",
         body: JSON.stringify(data),
       });
+      if (!res.isSuccess || !res.data) {
+        throw new Error(res.message ?? "Failed to update settings");
+      }
+      return res.data;
     },
     onSuccess: (newSettings) => {
       queryClient.setQueryData(["settings"], newSettings);

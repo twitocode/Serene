@@ -35,6 +35,12 @@ public class Checkin
     [Column("somatic_state", TypeName = "jsonb")]
     public Dictionary<string, GridPoint>? SomaticState { get; set; }
 
+    /// <summary>
+    /// Encrypted JSON representation of SomaticState for secure storage.
+    /// </summary>
+    [Column("somatic_state_encrypted")]
+    public string? SomaticStateEncrypted { get; set; }
+
     [Column("date_completed")]
     public Instant? DateCompleted { get; set; }
 

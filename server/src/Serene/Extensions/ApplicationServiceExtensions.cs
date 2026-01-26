@@ -9,6 +9,7 @@ using Quartz.AspNetCore;
 using Serene.Configuration;
 using Serene.Data;
 using Serene.Entities;
+using Serene.Features.Trends;
 using Serene.Jobs;
 using Serene.Services;
 
@@ -60,10 +61,12 @@ public static class ApplicationServiceExtensions
         services.AddScoped<ICheckinService, CheckinService>();
         services.AddScoped<IEmbeddingService, EmbeddingService>();
         services.AddScoped<IExploreService, ExploreService>();
+        services.AddScoped<ITrendsService, TrendsService>();
         services.AddScoped<IAIService, OpenAIService>();
         services.AddScoped<IQuestionBankService, QuestionBankService>();
         services.AddScoped<IQuestionPreparationService, QuestionPreparationService>();
         services.AddScoped<IQuestionCache, QuestionCache>();
+        services.AddSingleton<IEncryptionService, EncryptionService>();
 
         services.AddScoped(x => new Client(
             apiKey: !string.IsNullOrEmpty(aiOptions.GeminiApiKey)

@@ -1,11 +1,7 @@
 "use client";
 
-import { ApiError } from "@/lib/helpers/api-fetch";
 import { useSettingsQuery } from "@/lib/hooks/queries/use-settings";
 import { usePasswordLockStore } from "@/lib/hooks/stores/lock-store";
-import { fetchUser } from "@/lib/server/get-user";
-import { User } from "@/lib/types/index";
-import { useQuery } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 import { PropsWithChildren, useEffect } from "react";
 
@@ -17,8 +13,10 @@ export default function StateLoader({ children }: PropsWithChildren) {
   const {setTheme} = useTheme();
 
   useEffect(() => {
-    setTheme(settings?.theme.toLowerCase() ?? "dark");
-  }, [])
+    if (settings?.theme) {
+      setTheme(settings.theme.toLowerCase());
+    }
+  }, [settings?.theme, setTheme]);
 
   const {
     lockInterval,
@@ -45,7 +43,6 @@ export default function StateLoader({ children }: PropsWithChildren) {
 
     const intervalId = setInterval(() => {
       tick();
-      console.log("Interval tick!");
 
       // Get the latest state value
       const currentLocked = usePasswordLockStore.getState().isLocked;

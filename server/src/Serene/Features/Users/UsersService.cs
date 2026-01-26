@@ -10,6 +10,8 @@ public interface IUsersService
     Task<UserResponse> GetUserProfileAsync(string userId);
     Task<SettingsResponse> UpdateSettingsAsync(string userId, UpdateUserSettingsDto dto);
     Task<bool> DoesUserExistAsync(string email);
+    Task<UserResponse> UpdateUserProfileAsync(string userId, UpdateUserProfileRequest dto);
+    Task ChangePasswordAsync(string userId, ChangePasswordRequest dto);
 }
 
 public class UsersService : IUsersService
@@ -169,5 +171,84 @@ public class UsersService : IUsersService
     {
         _logger.LogInformation("Checking if user exists with email: {Email}", email);
         return await _context.Users.AnyAsync(u => u.Email == email);
+    }
+
+    public async Task<UserResponse> UpdateUserProfileAsync(string userId, UpdateUserProfileRequest dto)
+    {
+        _logger.LogInformation("Updating profile for user: {UserId}", userId);
+
+        var user = await _context.Users
+            .Include(u => u.Profile)
+            .Include(u => u.Settings)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null)
+        {
+            _logger.LogWarning("Profile update failed: User {UserId} not found", userId);
+            throw new KeyNotFoundException("User not found");
+        }
+
+        if (dto.Name != null)
+        {
+            // Check if the new name is already taken by another user
+            var nameExists = await _context.Users
+                .AnyAsync(u => u.Name == dto.Name && u.Id != userId);
+            
+            if (nameExists)
+            {
+                _logger.LogWarning(
+                    "Profile update failed: Name '{Name}' already taken for user {UserId}", 
+                    dto.Name, 
+                    userId
+                );
+                throw new InvalidOperationException($"The name '{dto.Name}' is already taken. Please choose a different name.");
+            }
+
+            user.Name = dto.Name;
+            user.UpdatedAt = NodaTime.SystemClock.Instance.GetCurrentInstant();
+        }
+
+        await _context.SaveChangesAsync();
+        await _cache.RemoveByTagAsync($"profile-{userId}");
+
+        _logger.LogInformation("Profile updated for user: {UserId}", userId);
+        return await GetUserProfileAsync(userId);
+    }
+
+    public async Task ChangePasswordAsync(string userId, ChangePasswordRequest dto)
+    {
+        _logger.LogInformation("Changing password for user: {UserId}", userId);
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            _logger.LogWarning("Password change failed: User {UserId} not found", userId);
+            throw new KeyNotFoundException("User not found");
+        }
+
+        var hasPassword = await _userManager.HasPasswordAsync(user);
+        if (!hasPassword)
+        {
+            // User signed up with OAuth, set password for first time
+            var addResult = await _userManager.AddPasswordAsync(user, dto.NewPassword);
+            if (!addResult.Succeeded)
+            {
+                var errors = string.Join(", ", addResult.Errors.Select(e => e.Description));
+                _logger.LogError("Failed to add password for user {UserId}: {Errors}", userId, errors);
+                throw new InvalidOperationException(errors);
+            }
+            _logger.LogInformation("Password added for OAuth user: {UserId}", userId);
+            return;
+        }
+
+        var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            _logger.LogWarning("Password change failed for user {UserId}: {Errors}", userId, errors);
+            throw new InvalidOperationException(errors);
+        }
+
+        _logger.LogInformation("Password changed successfully for user: {UserId}", userId);
     }
 }

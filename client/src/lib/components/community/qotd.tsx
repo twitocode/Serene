@@ -2,14 +2,15 @@
 
 import { motion } from "motion/react";
 
+import { QOTDSkeleton } from "@/lib/components/community/qotd-skeleton";
 import { ResponseCard } from "@/lib/components/community/response-card";
 import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import { Separator } from "@/lib/components/ui/separator";
 import {
-  useQOTDQuery,
-  useQOTDResponseMutation,
-  useQOTDResponsesQuery,
+    useQOTDQuery,
+    useQOTDResponseMutation,
+    useQOTDResponsesQuery,
 } from "@/lib/hooks/queries/use-qotd";
 import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import { FormEventHandler, useEffect, useState } from "react";
@@ -18,9 +19,11 @@ export default function QuestionOfTheDay() {
   const today = new Date().toISOString().split("T")[0];
 
   const { data: user } = useUserQuery();
-  const { data: qotd } = useQOTDQuery();
-  const { data: responses = [] } = useQOTDResponsesQuery(today);
+  const { data: qotd, isPending: qotdPending } = useQOTDQuery();
+  const { data: responses = [], isPending: responsesPending } = useQOTDResponsesQuery(today);
   const mutation = useQOTDResponseMutation();
+
+  const isPending = qotdPending || responsesPending;
 
   const [hasPosted, setHasPosted] = useState(false);
   const [inputText, setInputText] = useState("");
@@ -44,11 +47,13 @@ export default function QuestionOfTheDay() {
 
   useEffect(() => {
     if (responses.find((x) => x.userId == user?.id) != null) {
-      console.log("posted");
       setHasPosted(true);
     }
-    console.log("not  posted");
-  }, [responses]);
+  }, [responses, user?.id]);
+
+  if (isPending) {
+    return <QOTDSkeleton />;
+  }
 
   return (
     <div className="min-h-full max-w-2xl mx-auto flex flex-col  px-4">

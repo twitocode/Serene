@@ -10,10 +10,10 @@ public class CheckinController : BaseApiController
 {
     private readonly ICheckinService _checkinService;
 
-    public CheckinController(ICheckinService onboardingService, ILogger<CheckinController> logger)
+    public CheckinController(ICheckinService checkinService, ILogger<CheckinController> logger)
         : base(logger)
     {
-        _checkinService = onboardingService;
+        _checkinService = checkinService;
     }
 
     [HttpGet]

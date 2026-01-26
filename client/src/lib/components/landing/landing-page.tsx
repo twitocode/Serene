@@ -8,7 +8,7 @@ export default function LandingPage() {
   return (
     <>
       <div className="relative min-h-screen overflow-hidden bg-background">
-        {/* Decorative organic blob shapes */}
+
         <div className="absolute top-20 left-10 w-64 h-64 blob blob-periwinkle opacity-30 animate-blob" />
         <div
           className="absolute top-40 right-20 w-48 h-48 blob blob-coral opacity-25 animate-blob"
@@ -23,7 +23,7 @@ export default function LandingPage() {
           style={{ animationDelay: "3s" }}
         />
 
-        {/* Decorative curved lines */}
+
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none opacity-20"
           viewBox="0 0 1000 800"

@@ -163,3 +163,21 @@ export interface ExploreContent {
   type: "Article" | "Video";
 }
 
+export enum ActivityCategory {
+  Mindfulness = "Mindfulness",
+  Movement = "Movement",
+  Creative = "Creative",
+  Social = "Social",
+  SelfCare = "Self-Care",
+  Learning = "Learning",
+}
+
+export interface Activity {
+  id: string;
+  title: string;
+  description: string;
+  category: ActivityCategory;
+  duration: string;
+  icon: string;
+}
+
