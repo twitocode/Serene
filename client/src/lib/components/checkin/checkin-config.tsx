@@ -2,6 +2,7 @@ import CheckinCompleteStep from "@/lib/components/checkin/checkin-complete-step"
 import LingeringStep from "@/lib/components/checkin/lingering-step";
 import MoodStep from "@/lib/components/checkin/mood-step";
 import PromptStep from "@/lib/components/checkin/prompt-step";
+import ReframingStep from "@/lib/components/checkin/reframing-step";
 import SomaticStep from "@/lib/components/checkin/somatic-step";
 import React from "react";
 
@@ -30,6 +31,10 @@ export const CHECKIN_STEPS: StepConfig[] = [
   },
   {
     step: 4,
+    component: ReframingStep,
+  },
+  {
+    step: 5,
     component: CheckinCompleteStep,
   },
 ];

@@ -114,6 +114,7 @@ export interface CompleteCheckinRequest {
   promptAnswer: string | null;
   somaticState: { [key: string]: GridPoint };
   lingeringThoughts: string | null;
+  reframedThought: string | null;
   moodLabel: string;
   promptQuestion: string;
   moodSeverity: number;

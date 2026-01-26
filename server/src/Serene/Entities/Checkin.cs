@@ -32,6 +32,9 @@ public class Checkin
     [Column("lingering_thoughts")]
     public string? LingeringThoughts { get; set; }
 
+    [Column("reframed_thought")]
+    public string? ReframedThought { get; set; }
+
     [Column("somatic_state", TypeName = "jsonb")]
     public Dictionary<string, GridPoint>? SomaticState { get; set; }
 

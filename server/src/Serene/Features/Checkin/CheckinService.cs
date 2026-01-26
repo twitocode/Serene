@@ -57,6 +57,7 @@ public class CheckinService : ICheckinService
                 DateCompleted = x.DateCompleted ?? x.CreatedAt,
                 Id = x.Id,
                 LingeringThoughts = _encryption.Decrypt(x.LingeringThoughts),
+                ReframedThought = _encryption.Decrypt(x.ReframedThought),
                 MoodLabel = _encryption.Decrypt(x.MoodLabel) ?? x.MoodLabel,
                 PromptAnswer = _encryption.Decrypt(x.PromptAnswer),
                 PromptQuestion = x.PromptQuestion, // Not encrypted - needed for display
@@ -78,6 +79,7 @@ public class CheckinService : ICheckinService
         var checkin = new Checkin
         {
             LingeringThoughts = _encryption.Encrypt(dto.LingeringThoughts),
+            ReframedThought = _encryption.Encrypt(dto.ReframedThought),
             MoodLabel = _encryption.Encrypt(dto.MoodLabel) ?? dto.MoodLabel,
             MoodSeverity = dto.MoodSeverity,
             PromptAnswer = _encryption.Encrypt(dto.PromptAnswer),

@@ -1,31 +1,32 @@
 import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
+import { Badge } from "@/lib/components/ui/badge";
 import { Button } from "@/lib/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/lib/components/ui/card";
-import { Badge } from "@/lib/components/ui/badge";
 import { Separator } from "@/lib/components/ui/separator";
+import { getMoodTypeColour, getSeverityColor } from "@/lib/data/moods";
 import { getCurrentDate } from "@/lib/helpers/get-current-date";
 import { useCompleteCheckinMutation } from "@/lib/hooks/queries/use-checkins";
 import {
-  Brain,
-  Heart,
-  CloudLightning,
-  Shield,
-  MessageCircle,
-  Activity,
+    Activity,
+    Brain,
+    CloudLightning,
+    Heart,
+    MessageCircle,
+    Shield,
 } from "lucide-react";
-import { getMoodTypeColour, getSeverityColor } from "@/lib/data/moods";
 
 export default function CheckinCompleteStep() {
   const {
     somaticState,
     selectedMood,
     lingeringThoughts,
+    reframedThought,
     promptAnswer,
     promptQuestion,
     goBack,
@@ -41,6 +42,7 @@ export default function CheckinCompleteStep() {
       if (!selectedMood) return;
       await completeCheckinMutation.mutateAsync({
         lingeringThoughts,
+        reframedThought,
         moodLabel: selectedMood.label,
         moodSeverity: selectedMood.severity,
         promptAnswer,
@@ -130,6 +132,19 @@ export default function CheckinCompleteStep() {
                 </p>
                 <p className="text-md whitespace-pre-wrap">
                   {lingeringThoughts}
+                </p>
+              </div>
+            </>
+          )}
+          {reframedThought && (
+            <>
+              <Separator />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">
+                  Reframed Perspective
+                </p>
+                <p className="text-md whitespace-pre-wrap text-emerald-600 dark:text-emerald-400">
+                  {reframedThought}
                 </p>
               </div>
             </>

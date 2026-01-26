@@ -21,6 +21,7 @@ export interface CheckinState {
   promptQuestion: string;
   somaticState: { [key: string]: GridPoint };
   lingeringThoughts: string | null;
+  reframedThought: string | null;
   moodLabel: string;
   moodSeverity: number;
 
@@ -28,6 +29,7 @@ export interface CheckinState {
   setSomaticState: (state: { [key: string]: GridPoint }) => void;
   setPromptAnswer: (answer: string) => void;
   setLingeringThoughts: (thoughts: string) => void;
+  setReframedThought: (thoughts: string) => void;
   setMoodSeverity: (severity: number) => void;
   randomizePrompt: () => void;
 
@@ -56,6 +58,7 @@ export const createCheckinStore = (initProps?: CheckinProps) => {
 
     promptAnswer: "",
     lingeringThoughts: "",
+    reframedThought: "",
     moodLabel: "",
     moodSeverity: -1,
     somaticState: {},
@@ -70,6 +73,7 @@ export const createCheckinStore = (initProps?: CheckinProps) => {
     setPromptAnswer: (answer: string) => set({ promptAnswer: answer }),
     setLingeringThoughts: (thoughts: string) =>
       set({ lingeringThoughts: thoughts }),
+    setReframedThought: (thoughts: string) => set({ reframedThought: thoughts }),
     setMoodSeverity: (severity: number) => set({ moodSeverity: severity }),
     randomizePrompt: () =>
       set((state) => ({
@@ -90,6 +94,7 @@ export const createCheckinStore = (initProps?: CheckinProps) => {
       set({
         promptAnswer: "",
         lingeringThoughts: "",
+        reframedThought: "",
         moodLabel: "",
         moodSeverity: -1,
         somaticState: {},

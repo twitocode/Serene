@@ -10,5 +10,6 @@ public class CompleteCheckinRequest
     public string? PromptAnswer { get; set; }
     public Dictionary<string, GridPoint> SomaticState { get; set; } = [];
     public string? LingeringThoughts { get; set; }
+    public string? ReframedThought { get; set; }
     public required int MoodSeverity { get; set; }
 }

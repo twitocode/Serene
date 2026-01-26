@@ -12,5 +12,6 @@ public class CheckinResponse
     public string? PromptAnswer { get; set; }
     public required Dictionary<string, GridPoint>? SomaticState { get; set; }
     public string? LingeringThoughts { get; set; }
+    public string? ReframedThought { get; set; }
     public required int MoodSeverity { get; set; }
 }
