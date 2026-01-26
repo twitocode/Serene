@@ -27,7 +27,7 @@ public class TrendsController : BaseApiController
             {
                 throw new UnauthorizedAccessException("User not authenticated");
             }
-            
+
             var targetYear = year ?? DateTime.UtcNow.Year;
             return await _trendsService.GetTrendsAsync(userId, targetYear);
         });
