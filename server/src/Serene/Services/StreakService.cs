@@ -48,39 +48,33 @@ public class StreakService : IStreakService
             return;
         }
 
-        // Convert check-in dates to local dates
         var checkinDates = completedCheckins
             .Select(instant => instant.InZone(zone).Date)
             .Distinct()
             .OrderByDescending(d => d)
             .ToList();
 
-        // Calculate current streak
-        int currentStreak = 1; // At minimum 1 since we just completed a check-in
+        int currentStreak = 1;
         var previousDate = today;
 
         foreach (var checkinDate in checkinDates.Skip(0))
         {
             if (checkinDate == previousDate)
             {
-                // Same day check-in, continue
                 previousDate = checkinDate.PlusDays(-1);
                 continue;
             }
             else if (checkinDate == previousDate.PlusDays(-1))
             {
-                // Consecutive day
                 currentStreak++;
                 previousDate = checkinDate.PlusDays(-1);
             }
             else
             {
-                // Gap in check-ins, streak breaks
                 break;
             }
         }
 
-        // Update profile
         profile.CurrentStreak = currentStreak;
         if (currentStreak > profile.LongestStreak)
         {

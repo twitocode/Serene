@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/lib/components/ui/ta
 import { useSettingsQuery, useUpdateSettingsMutation } from "@/lib/hooks/queries/use-settings";
 import { useChangePasswordMutation, useUpdateProfileMutation, useUserQuery } from "@/lib/hooks/queries/use-user";
 import { useForm } from "@tanstack/react-form";
-import { Check, Eye, EyeOff, KeyRound, Loader2, Palette, User } from "lucide-react";
+import { Check, Eye, EyeOff, KeyRound, Loader2, Lock, Palette, ShieldCheck, User } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -254,12 +254,134 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="security">
+        <TabsContent value="security" className="space-y-6">
           <Card className="card-organic border-0 shadow-lg">
             <CardHeader className="pb-4">
-              <CardTitle className="text-xl">Change Password</CardTitle>
+              <CardTitle className="text-xl">App Lock</CardTitle>
               <CardDescription>
-                Update your password to keep your account secure
+                Secure your application with a lock screen password
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
+                  <div className="space-y-1">
+                    <p className="font-medium text-foreground flex items-center gap-2">
+                       Status: 
+                      {settings?.passwordLock ? (
+                        <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                          <ShieldCheck className="size-4" /> Enabled
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground flex items-center gap-1">
+                           Disabled
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {settings?.passwordLock
+                        ? "Your app is protected with a password."
+                        : "Enable app lock to require a password when opening the app."}
+                    </p>
+                  </div>
+                  {settings?.passwordLock && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={async () => {
+                        try {
+                          await updateSettings.mutateAsync({ passwordLock: "" });
+                          toast.success("App lock removed");
+                        } catch (error) {
+                          toast.error("Failed to remove app lock");
+                        }
+                      }}
+                    >
+                      Remove Lock
+                    </Button>
+                  )}
+                </div>
+
+                <div className="pt-4 border-t border-border">
+                  <h3 className="text-sm font-medium mb-4">
+                    {settings?.passwordLock ? "Change Lock Password" : "Set Lock Password"}
+                  </h3>
+                  <form
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      const formData = new FormData(e.currentTarget);
+                      const password = formData.get("lockPassword") as string;
+                      const confirm = formData.get("confirmLockPassword") as string;
+
+                      if (!password) {
+                        toast.error("Please enter a password");
+                        return;
+                      }
+
+                      if (password !== confirm) {
+                        toast.error("Passwords do not match");
+                        return;
+                      }
+
+                      try {
+                        await updateSettings.mutateAsync({ passwordLock: password });
+                        toast.success(
+                          settings?.passwordLock
+                            ? "App lock password updated"
+                            : "App lock enabled"
+                        );
+                        // Reset form
+                        (e.target as HTMLFormElement).reset();
+                      } catch (error) {
+                        toast.error("Failed to update app lock");
+                      }
+                    }}
+                    className="space-y-4 max-w-md"
+                  >
+                    <div className="grid gap-2">
+                      <Label htmlFor="lockPassword">New Lock Password</Label>
+                      <Input
+                        id="lockPassword"
+                        name="lockPassword"
+                        type="password"
+                        placeholder="Enter lock password"
+                        minLength={4}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="confirmLockPassword">Confirm Lock Password</Label>
+                      <Input
+                        id="confirmLockPassword"
+                        name="confirmLockPassword"
+                        type="password"
+                        placeholder="Confirm lock password"
+                        minLength={4}
+                      />
+                    </div>
+                    <Button type="submit" disabled={updateSettings.isPending} className="btn-playful">
+                       {updateSettings.isPending ? (
+                        <>
+                          <Loader2 className="size-4 mr-2 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Lock className="size-4 mr-2" />
+                          {settings?.passwordLock ? "Update Password" : "Set Password"}
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="card-organic border-0 shadow-lg">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl">Change Account Password</CardTitle>
+              <CardDescription>
+                Update your account password to keep your account secure
               </CardDescription>
             </CardHeader>
             <CardContent>

@@ -8,8 +8,9 @@ import {
   SidebarTrigger,
 } from "@/lib/components/ui/sidebar";
 import { useSettingsQuery } from "@/lib/hooks/queries/use-settings";
+import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import { usePasswordLockStore } from "@/lib/hooks/stores/lock-store";
-import { Lock } from "lucide-react";
+import { Flame, Lock } from "lucide-react";
 import { PropsWithChildren } from "react";
 import { Toaster } from "sonner";
 
@@ -18,6 +19,7 @@ import { Toaster } from "sonner";
 export default function HomeLayout({ children }: PropsWithChildren) {
   const { setLockState, isLocked } = usePasswordLockStore();
   const { data: settings } = useSettingsQuery();
+  const { data: user } = useUserQuery();
 
   return !isLocked ? (
     <SidebarProvider className="h-svh overflow-hidden">
@@ -26,11 +28,16 @@ export default function HomeLayout({ children }: PropsWithChildren) {
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-background">
           <div className="flex items-center gap-2 px-4 justify-between w-full">
             <SidebarTrigger className="-ml-1" />
-            <div className="flex space-x-2">
+            <div className="flex gap-2">
+              <div className="flex items-center gap-2 bg-orange-500 text-white px-3 py-1.5 rounded-full shadow-md">
+                <Flame className="w-4 h-4" fill="currentColor" />
+                <span className="font-bold text-sm">
+                  {user?.profile?.currentStreak || 0} Days
+                </span>
+              </div>
               <ThemeToggle />
-              {settings?.passwordLock != null && (
+              {!!settings?.passwordLock && (
                 <>
-                  <Toaster />
                   <Button
                     className="hover:dark:bg-red-800 hover:bg-red-400 hover:text-foreground"
                     variant="outline"
@@ -40,6 +47,8 @@ export default function HomeLayout({ children }: PropsWithChildren) {
                   >
                     <Lock /> Lock Page
                   </Button>
+                  <Toaster/>
+
                 </>
               )}
             </div>
