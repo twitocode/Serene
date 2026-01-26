@@ -48,17 +48,21 @@ public class CheckinService : ICheckinService
 
         var checkins = await query.ToListAsync();
 
-        return checkins.Select(x => new CheckinResponse
-        {
-            DateCompleted = x.DateCompleted ?? x.CreatedAt,
-            Id = x.Id,
-            LingeringThoughts = _encryption.Decrypt(x.LingeringThoughts),
-            MoodLabel = _encryption.Decrypt(x.MoodLabel) ?? x.MoodLabel,
-            PromptAnswer = _encryption.Decrypt(x.PromptAnswer),
-            PromptQuestion = x.PromptQuestion, // Not encrypted - needed for display
-            SomaticState = _encryption.DecryptJson<Dictionary<string, GridPoint>>(x.SomaticStateEncrypted) ?? x.SomaticState,
-            MoodSeverity = x.MoodSeverity,
-        }).ToList();
+        return checkins
+            .Select(x => new CheckinResponse
+            {
+                DateCompleted = x.DateCompleted ?? x.CreatedAt,
+                Id = x.Id,
+                LingeringThoughts = _encryption.Decrypt(x.LingeringThoughts),
+                MoodLabel = _encryption.Decrypt(x.MoodLabel) ?? x.MoodLabel,
+                PromptAnswer = _encryption.Decrypt(x.PromptAnswer),
+                PromptQuestion = x.PromptQuestion, // Not encrypted - needed for display
+                SomaticState =
+                    _encryption.DecryptJson<Dictionary<string, GridPoint>>(x.SomaticStateEncrypted)
+                    ?? x.SomaticState,
+                MoodSeverity = x.MoodSeverity,
+            })
+            .ToList();
     }
 
     public async Task CompleteCheckinAsync(string userId, CompleteCheckinRequest dto)

@@ -14,15 +14,14 @@ namespace Serene.Migrations
                 name: "somatic_state_encrypted",
                 table: "checkins",
                 type: "text",
-                nullable: true);
+                nullable: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "somatic_state_encrypted",
-                table: "checkins");
+            migrationBuilder.DropColumn(name: "somatic_state_encrypted", table: "checkins");
         }
     }
 }
