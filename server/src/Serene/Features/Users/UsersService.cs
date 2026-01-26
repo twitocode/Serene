@@ -77,9 +77,8 @@ public class UsersService : IUsersService
                                     LongestStreak = u.Profile.LongestStreak,
                                     CurrentStreak = u.Profile.CurrentStreak,
                                     UserId = u.Id,
-                                    KoalaColour = u.Profile.KoalaColour,
-                                    KoalaName = u.Profile.KoalaName,
-                                    KoalaPronouns = u.Profile.KoalaPronouns,
+                                    MochiName = u.Profile.MochiName,
+                                    MochiPronouns = u.Profile.MochiPronouns,
 
                                     School =
                                         u.Profile.School != null

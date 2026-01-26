@@ -3,9 +3,8 @@ namespace Serene.Features.Users;
 public class ProfileResponse
 {
     public string Id { get; set; } = string.Empty;
-    public string? KoalaName { get; set; } = string.Empty;
-    public string? KoalaColour { get; set; } = string.Empty;
-    public string? KoalaPronouns { get; set; } = string.Empty;
+    public string? MochiName { get; set; } = string.Empty;
+    public string? MochiPronouns { get; set; } = string.Empty;
     public int CurrentStreak { get; set; }
     public int LongestStreak { get; set; }
 

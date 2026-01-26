@@ -13,16 +13,13 @@ public class Profile
     [Column("id")]
     public string Id { get; set; } = Guid.NewGuid().ToString();
 
-    [Column("koala_name")]
+    [Column("mochi_name")]
     [Required]
-    public string KoalaName { get; set; } = string.Empty;
+    public string MochiName { get; set; } = string.Empty;
 
-    [Column("koala_color")]
-    public string KoalaColour { get; set; } = "#5EEAD4";
-
-    [Column("koala_pronouns")]
+    [Column("mochi_pronouns")]
     [MaxLength(50)]
-    public string KoalaPronouns { get; set; } = "They/Them";
+    public string MochiPronouns { get; set; } = "They/Them";
 
     [Column("struggles")]
     public List<string> Struggles { get; set; } = new List<string>();

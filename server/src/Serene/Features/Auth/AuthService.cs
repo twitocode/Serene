@@ -104,7 +104,7 @@ public class AuthService : IAuthService
                 throw new Exception("Sign up failed: " + errors);
             }
 
-            var profile = new Profile { UserId = user.Id };
+            var profile = new Profile { UserId = user.Id, MochiName = "Mochi" };
 
             _context.Profiles.Add(profile);
             await _context.SaveChangesAsync();
@@ -198,7 +198,7 @@ public class AuthService : IAuthService
                     throw new Exception("Failed to create user: " + errors);
                 }
 
-                var profile = new Profile { UserId = user.Id };
+                var profile = new Profile { UserId = user.Id, MochiName = "Mochi" };
                 _context.Profiles.Add(profile);
                 await _context.SaveChangesAsync();
             }

@@ -2,69 +2,62 @@
 
 import { completeStep5 } from "@/lib/client/onboarding-client";
 import FormError from "@/lib/components/common/forms/form-error";
+import { MochiDefault as Mochi } from "@/lib/components/common/mochi";
 import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/lib/components/ui/select";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "@/lib/components/ui/tanstack-form";
 import { stepFiveSchema, StepFiveValues } from "@/lib/validation";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
-import { KoalaColorPicker } from "./koala-color-picker";
-import Penguin from "@/lib/components/penguin";
 
 export function StepFive() {
   const {
-    koalaName,
-    setKoalaName,
-    koalaColour,
-    setKoalaColor,
-    koalaPronouns,
-    setKoalaPronouns,
+    mochiName,
+    setMochiName,
+    mochiPronouns,
+    setMochiPronouns,
     goBack,
-    hasStarted,
     completeServerStep,
   } = useOnboardingStore((state) => state);
   const [serverError, setServerError] = useState("");
 
   const mutation = useMutation({
-    mutationFn: (values: { name: string; pronouns: string; color: string }) =>
-      completeStep5(values.name, values.pronouns, values.color),
+    mutationFn: (values: { name: string; pronouns: string }) =>
+      completeStep5(values.name, values.pronouns),
   });
 
   const form = useForm({
     defaultValues: {
-      koalaColour: hasStarted && koalaColour ? koalaColour : "#5EEAD4",
-      koalaName: hasStarted && koalaName ? koalaName : "",
-      koalaPronouns: hasStarted && koalaPronouns ? koalaPronouns : "",
+      mochiName: mochiName || "",
+      mochiPronouns: mochiPronouns || "",
     },
     validators: {
       onSubmit: stepFiveSchema,
     },
     onSubmit: async ({ value }) => {
-      setKoalaName(value.koalaName);
-      setKoalaColor(value.koalaColour);
-      setKoalaPronouns(value.koalaPronouns);
+      setMochiName(value.mochiName);
+      setMochiPronouns(value.mochiPronouns);
 
       const result = await mutation.mutateAsync({
-        name: value.koalaName,
-        pronouns: value.koalaPronouns || "They/Them",
-        color: value.koalaColour,
+        name: value.mochiName,
+        pronouns: value.mochiPronouns || "They/Them",
       });
       if (result.isSuccess) {
         completeServerStep();
@@ -92,19 +85,15 @@ export function StepFive() {
   return (
     <div className="text-center space-y-6 max-w-md w-full">
       <div className="space-y-2">
-        <h2 className="text-2xl font-semibold">Meet your koala companion!</h2>
+        <h2 className="text-2xl font-semibold">Meet Mochi!</h2>
         <p className="text-gray-500 text-sm">
-          Let&apos;s personalize your koala friend
+          Your new wellness companion.
         </p>
       </div>
 
-      <form.Subscribe selector={(state) => state.values.koalaColour}>
-        {(colour) => (
-          <div className="flex justify-center py-4">
-            <Penguin colour={colour} />
-          </div>
-        )}
-      </form.Subscribe>
+      <div className="flex justify-center py-4">
+        <Mochi className="h-40 w-40 drop-shadow-lg" />
+      </div>
 
       <Form>
         <form
@@ -115,14 +104,14 @@ export function StepFive() {
           className="space-y-4"
         >
           <div className="flex flex-col gap-4">
-            <form.Field name="koalaName">
+            <form.Field name="mochiName">
               {(field) => (
                 <FormField field={field}>
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Koala's name"
+                        placeholder="Mochi's name"
                         value={field.state.value}
                         onChange={(e) => {
                           field.handleChange(e.target.value);
@@ -146,37 +135,9 @@ export function StepFive() {
               )}
             </form.Field>
 
-            <form.Field name="koalaColour">
-              {(field) => (
-                <FormField field={field}>
-                  <FormItem>
-                    <FormLabel>Colour</FormLabel>
 
-                    <FormControl>
-                      <KoalaColorPicker
-                        value={field.state.value}
-                        onChange={(value) => {
-                          field.handleChange(value);
-                          if (field.state.meta.errorMap.onSubmit) {
-                            field.setMeta((prev) => ({
-                              ...prev,
-                              errorMap: {
-                                ...prev.errorMap,
-                                onSubmit: undefined,
-                              },
-                            }));
-                          }
-                        }}
-                        className="bg-gray-100 border-0"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </FormField>
-              )}
-            </form.Field>
 
-            <form.Field name="koalaPronouns">
+            <form.Field name="mochiPronouns">
               {(field) => (
                 <FormField field={field}>
                   <FormItem>

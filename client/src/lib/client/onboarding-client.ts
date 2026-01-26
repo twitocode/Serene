@@ -51,14 +51,12 @@ export async function completeStep4({
 }
 
 export async function completeStep5(
-  koalaName: string,
-  koalaPronouns: string,
-  koalaColour: string
+  mochiName: string,
+  mochiPronouns: string
 ): Promise<Result<{ success: boolean }>> {
   return completeOnboardingStep<{ success: boolean }>(5, {
-    koalaName,
-    koalaPronouns,
-    koalaColour,
+    mochiName,
+    mochiPronouns,
   });
 }
 

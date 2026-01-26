@@ -31,9 +31,8 @@ public class StepFourRequest
 
 public class StepFiveRequest
 {
-    public string KoalaName { get; set; } = string.Empty;
-    public string KoalaColour { get; set; } = "#5EEAD4";
-    public string? KoalaPronouns { get; set; }
+    public string MochiName { get; set; } = string.Empty;
+    public string? MochiPronouns { get; set; }
 }
 
 public class StepSixRequest

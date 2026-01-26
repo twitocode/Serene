@@ -77,9 +77,8 @@ public class OnboardingService : IOnboardingService
                         u.Profile != null && u.Profile.School != null
                             ? u.Profile.School.Name
                             : null,
-                    KoalaName = u.Profile != null ? u.Profile.KoalaName : null,
-                    KoalaColour = u.Profile != null ? u.Profile.KoalaColour : null,
-                    KoalaPronouns = u.Profile != null ? u.Profile.KoalaPronouns : null,
+                    MochiName = u.Profile != null ? u.Profile.MochiName : null,
+                    MochiPronouns = u.Profile != null ? u.Profile.MochiPronouns : null,
                     Struggles = u.Profile != null ? u.Profile.Struggles : new List<string>(),
                 })
                 .FirstOrDefaultAsync()
@@ -170,7 +169,7 @@ public class OnboardingService : IOnboardingService
             var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
             if (profile == null)
             {
-                profile = new Profile { UserId = userId, KoalaName = "Koala" };
+                profile = new Profile { UserId = userId, MochiName = "Mochi" };
                 _context.Profiles.Add(profile);
             }
 
@@ -208,13 +207,12 @@ public class OnboardingService : IOnboardingService
             var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
             if (profile == null)
             {
-                profile = new Profile { UserId = userId, KoalaName = "Koala" };
+                profile = new Profile { UserId = userId, MochiName = "Mochi" };
                 _context.Profiles.Add(profile);
             }
 
-            profile.KoalaName = dto.KoalaName;
-            profile.KoalaColour = dto.KoalaColour;
-            profile.KoalaPronouns = dto.KoalaPronouns ?? "They/Them";
+            profile.MochiName = dto.MochiName;
+            profile.MochiPronouns = dto.MochiPronouns ?? "They/Them";
 
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
@@ -248,7 +246,7 @@ public class OnboardingService : IOnboardingService
             var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
             if (profile == null)
             {
-                profile = new Profile { UserId = userId, KoalaName = "Koala" };
+                profile = new Profile { UserId = userId, MochiName = "Mochi" };
                 _context.Profiles.Add(profile);
             }
 

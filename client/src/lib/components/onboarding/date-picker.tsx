@@ -18,11 +18,20 @@ export function OnboardingDatePicker({
   onBlur: () => void;
 }) {
   const [open, setOpen] = useState(false);
-  const displayDate = value ? new Date(value) : undefined;
+  const displayDate = value
+    ? new Date(
+        new Date(value).getUTCFullYear(),
+        new Date(value).getUTCMonth(),
+        new Date(value).getUTCDate()
+      )
+    : undefined;
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {
-      onChange(selectedDate.toISOString().split("T")[0]);
+      const year = selectedDate.getFullYear();
+      const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
+      const day = String(selectedDate.getDate()).padStart(2, "0");
+      onChange(`${year}-${month}-${day}`);
     }
     setOpen(false);
     onBlur();

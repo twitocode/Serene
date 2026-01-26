@@ -54,24 +54,18 @@ export const stepFourSchema = z.object({
 });
 
 export const stepFiveSchema = z.object({
-  koalaName: z
+  mochiName: z
     .string()
-    .min(1, "Koala name is required")
-    .min(2, "Koala name must be at least 2 characters")
-    .max(30, "Koala name must be less than 30 characters")
+    .min(1, "Mochi name is required")
+    .min(2, "Mochi name must be at least 2 characters")
+    .max(30, "Mochi name must be less than 30 characters")
     .regex(
       /^[a-zA-Z\s'-]+$/,
-      "Koala name can only contain letters, spaces, hyphens, and apostrophes"
+      "Mochi name can only contain letters, spaces, hyphens, and apostrophes"
     ),
-  koalaColour: z
+  mochiPronouns: z
     .string()
-    .regex(
-      /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
-      "Please select a valid color for your koala"
-    ),
-  koalaPronouns: z
-    .string()
-    .regex(pronounsRegex, "Koala's pronouns were not provided")
+    .regex(pronounsRegex, "Mochi's pronouns were not provided")
 });
 
 export const stepSixSchema = z.object({

@@ -18,9 +18,8 @@ public class OnboardingStatusResponse
     // School Info
     public string? SchoolName { get; set; }
 
-    // Koala Info
-    public string? KoalaName { get; set; }
-    public string? KoalaColour { get; set; }
-    public string? KoalaPronouns { get; set; }
+    // Mochi Info
+    public string? MochiName { get; set; }
+    public string? MochiPronouns { get; set; }
     public List<string> Struggles { get; set; } = new List<string>();
 }

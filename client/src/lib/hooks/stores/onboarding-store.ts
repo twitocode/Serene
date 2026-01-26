@@ -1,5 +1,5 @@
-import { createStore } from "zustand/vanilla";
 import { ONBOARDING_STEPS } from "@/lib/components/onboarding/onboarding-config";
+import { createStore } from "zustand/vanilla";
 
 // 1. Define the props that might come from the Server (DB)
 export interface OnboardingProps {
@@ -11,9 +11,8 @@ export interface OnboardingProps {
   initialPronouns?: string;
   initialCountryCode?: string;
   initialSchool?: string;
-  initialKoalaName?: string;
-  initialKoalaColour?: string;
-  initialKoalaPronouns?: string;
+  initialMochiName?: string;
+  initialMochiPronouns?: string;
   initialStruggles?: string[];
 }
 
@@ -25,9 +24,8 @@ export interface OnboardingState {
   pronouns: string;
   countryCode: string;
   school: string;
-  koalaName: string;
-  koalaColour: string;
-  koalaPronouns: string;
+  mochiName: string;
+  mochiPronouns: string;
   struggles: string[];
 
   // Initial values from server (to check if already set)
@@ -37,9 +35,8 @@ export interface OnboardingState {
   initialPronouns: string;
   initialCountryCode: string;
   initialSchool: string;
-  initialKoalaName: string;
-  initialKoalaColour: string;
-  initialKoalaPronouns: string;
+  initialMochiName: string;
+  initialMochiPronouns: string;
   initialStruggles: string[];
 
   // Flow Control
@@ -54,9 +51,8 @@ export interface OnboardingState {
   setPronouns: (pronouns: string) => void;
   setCountryCode: (country: string) => void;
   setSchool: (school: string) => void;
-  setKoalaName: (name: string) => void;
-  setKoalaColor: (color: string) => void;
-  setKoalaPronouns: (pronouns: string) => void;
+  setMochiName: (name: string) => void;
+  setMochiPronouns: (pronouns: string) => void;
   setStruggles: (struggles: string[]) => void;
 
   goNext: () => void;
@@ -80,9 +76,8 @@ export const createOnboardingStore = (initProps?: OnboardingProps) => {
     pronouns: initProps?.initialPronouns || "",
     countryCode: initProps?.initialCountryCode || "",
     school: initProps?.initialSchool || "",
-    koalaName: initProps?.initialKoalaName || "",
-    koalaColour: initProps?.initialKoalaColour || "#5EEAD4",
-    koalaPronouns: initProps?.initialKoalaPronouns || "",
+    mochiName: initProps?.initialMochiName || "",
+    mochiPronouns: initProps?.initialMochiPronouns || "",
     struggles: initProps?.initialStruggles || [],
 
     // Initial State (preserved for comparison)
@@ -92,9 +87,8 @@ export const createOnboardingStore = (initProps?: OnboardingProps) => {
     initialPronouns: initProps?.initialPronouns || "",
     initialCountryCode: initProps?.initialCountryCode || "",
     initialSchool: initProps?.initialSchool || "",
-    initialKoalaName: initProps?.initialKoalaName || "",
-    initialKoalaColour: initProps?.initialKoalaColour || "#5EEAD4",
-    initialKoalaPronouns: initProps?.initialKoalaPronouns || "",
+    initialMochiName: initProps?.initialMochiName || "",
+    initialMochiPronouns: initProps?.initialMochiPronouns || "",
     initialStruggles: initProps?.initialStruggles || [],
 
     direction: 0,
@@ -109,9 +103,8 @@ export const createOnboardingStore = (initProps?: OnboardingProps) => {
     setPronouns: (pronouns) => set({ pronouns }),
     setCountryCode: (countryCode) => set({ countryCode }),
     setSchool: (school) => set({ school }),
-    setKoalaName: (koalaName) => set({ koalaName }),
-    setKoalaColor: (koalaColour) => set({ koalaColour }),
-    setKoalaPronouns: (koalaPronouns) => set({ koalaPronouns }),
+    setMochiName: (mochiName) => set({ mochiName }),
+    setMochiPronouns: (mochiPronouns) => set({ mochiPronouns }),
     setStruggles: (struggles) => set({ struggles }),
 
     goNext: () => {

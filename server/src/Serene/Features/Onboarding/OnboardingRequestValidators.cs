@@ -103,25 +103,19 @@ public class StepFiveRequestValidator : AbstractValidator<StepFiveRequest>
 {
     public StepFiveRequestValidator()
     {
-        RuleFor(x => x.KoalaName)
+        RuleFor(x => x.MochiName)
             .NotEmpty()
-            .WithMessage("Koala's name was not provided")
+            .WithMessage("Mochi's name was not provided")
             .MinimumLength(2)
-            .WithMessage("Koala's name must be at least 2 characters long")
+            .WithMessage("Mochi's name must be at least 2 characters long")
             .MaximumLength(30)
-            .WithMessage("Koala's name must be less than 30 characters long")
+            .WithMessage("Mochi's name must be less than 30 characters long")
             .Matches(@"^[a-zA-Z\s'-]+$")
-            .WithMessage("Koala name can only contain letters, spaces, hyphens, and apostrophes");
+            .WithMessage("Mochi name can only contain letters, spaces, hyphens, and apostrophes");
 
-        RuleFor(x => x.KoalaColour)
+        RuleFor(x => x.MochiPronouns)
             .NotEmpty()
-            .WithMessage("Koala's colour was not provided")
-            .Matches(@"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")
-            .WithMessage("Please select a valid color for your koala");
-
-        RuleFor(x => x.KoalaPronouns)
-            .NotEmpty()
-            .WithMessage("Koala's pronouns was not provided")
+            .WithMessage("Mochi's pronouns was not provided")
             .Matches(
                 @"^(She\s?[\/\-]\s?Her|He\s?[\/\-]\s?Him|They\s?[\/\-]\s?Them|Prefer not to say)$"
             )
