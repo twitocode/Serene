@@ -14,15 +14,14 @@ namespace Serene.Migrations
                 name: "school_id",
                 table: "explore_content",
                 type: "text",
-                nullable: true);
+                nullable: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "school_id",
-                table: "explore_content");
+            migrationBuilder.DropColumn(name: "school_id", table: "explore_content");
         }
     }
 }
