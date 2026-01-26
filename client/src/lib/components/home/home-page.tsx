@@ -4,8 +4,9 @@ import { MochiDefault, MochiHappy } from "@/lib/components/common/mochi";
 import DateScroll from "@/lib/components/home/date-scroll";
 import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
+import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import { motion } from "framer-motion";
-import { Flower2, Smile, Square } from "lucide-react";
+import { Flame, Flower2, Square } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -18,6 +19,7 @@ const suggestions = [
 export default function HomePage() {
   const router = useRouter();
   const { startCheckin } = useCheckinStore((s) => s);
+  const { data: user } = useUserQuery();
 
   const handleStartCheckin = () => {
     startCheckin();
@@ -27,13 +29,27 @@ export default function HomePage() {
   return (
     <div className="min-h-full max-w-2xl mx-auto flex flex-col gap-8  p-4">
       <div className="flex flex-col items-center gap-6 mt-4">
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-semibold font-serif"
-        >
-          good morning
-        </motion.h1>
+        <div className="flex items-center gap-4 w-full justify-between">
+          <div className="flex-1" />
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-4xl font-semibold font-serif"
+          >
+            good morning
+          </motion.h1>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-full shadow-md"
+          >
+            <Flame className="w-5 h-5" fill="currentColor" />
+            <span className="font-bold text-lg">
+              {user?.profile?.currentStreak || 0} Days
+            </span>
+          </motion.div>
+        </div>
       </div>
       <DateScroll readOnly />
 

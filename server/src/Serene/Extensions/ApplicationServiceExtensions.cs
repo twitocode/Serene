@@ -66,6 +66,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IQuestionBankService, QuestionBankService>();
         services.AddScoped<IQuestionPreparationService, QuestionPreparationService>();
         services.AddScoped<IQuestionCache, QuestionCache>();
+        services.AddScoped<IStreakService, StreakService>();
         services.AddSingleton<IEncryptionService, EncryptionService>();
 
         services.AddScoped(x => new Client(

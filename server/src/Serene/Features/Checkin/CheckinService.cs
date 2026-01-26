@@ -19,16 +19,19 @@ public class CheckinService : ICheckinService
     private readonly ApplicationDbContext _context;
     private readonly ILogger<CheckinService> _logger;
     private readonly IEncryptionService _encryption;
+    private readonly IStreakService _streakService;
 
     public CheckinService(
         ApplicationDbContext context,
         ILogger<CheckinService> logger,
-        IEncryptionService encryption
+        IEncryptionService encryption,
+        IStreakService streakService
     )
     {
         _context = context;
         _logger = logger;
         _encryption = encryption;
+        _streakService = streakService;
     }
 
     public async Task<List<CheckinResponse>> GetCheckinAsync(string userId, LocalDate? date)
@@ -87,6 +90,9 @@ public class CheckinService : ICheckinService
 
         await _context.Checkins.AddAsync(checkin);
         await _context.SaveChangesAsync();
+
+        // Update streak after successful check-in
+        await _streakService.UpdateStreakAsync(userId);
 
         _logger.LogInformation("Checkin completed for user {UserId} with encrypted data", userId);
     }
