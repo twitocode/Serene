@@ -1,5 +1,5 @@
 import MoodPicker from "@/lib/components/checkin/mood-picker";
-import Penguin from "@/lib/components/penguin";
+import { MochiDefault as Mochi } from "@/lib/components/common/mochi";
 import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import { useIsMobile } from "@/lib/hooks/use-mobile";
@@ -30,7 +30,7 @@ export default function MoodStep() {
       <div className="grid sm:grid-cols-2 gap-2">
         <div className="flex items-center justify-center">
           {/* Swap with imageUrl prop */}
-          <Penguin colour="red" />
+          <Mochi className="h-40 w-40" />
         </div>
         <div className="space-y-4 flex flex-col">
           <div className="flex flex-col">

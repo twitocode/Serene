@@ -11,3 +11,13 @@ export function useExploreRecommendations() {
     },
   });
 }
+
+export function useSchoolResourcesQuery() {
+  return useQuery<ExploreContent[]>({
+    queryKey: ["explore-school-resources"],
+    queryFn: async () => {
+      const res = await apiFetch<ExploreContent[]>("/explore/school");
+      return res.data || [];
+    },
+  });
+}

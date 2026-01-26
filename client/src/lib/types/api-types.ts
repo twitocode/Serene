@@ -30,9 +30,8 @@ export interface SettingsDto {
 
 export interface ProfileDto {
   id: string;
-  koalaName: string | null;
-  koalaColour: string | null;
-  koalaPronouns: string | null;
+  mochiName: string | null;
+  mochiPronouns: string | null;
   currentStreak: number;
   longestStreak: number;
   userId: string;
@@ -58,9 +57,8 @@ export interface OnboardingStatusDto {
   pronouns?: string | null;
   countryCode?: string | null;
   schoolName?: string | null;
-  koalaName?: string | null;
-  koalaColour?: string | null;
-  koalaPronouns?: string | null;
+  mochiName?: string | null;
+  mochiPronouns?: string | null;
 }
 
 export interface AuthResponseDto {

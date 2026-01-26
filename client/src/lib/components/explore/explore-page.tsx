@@ -4,7 +4,10 @@ import { ActivityCard } from "@/lib/components/explore/activity-card";
 import { ExploreSkeleton } from "@/lib/components/explore/explore-skeleton";
 import { ResourceCard } from "@/lib/components/explore/resource-card";
 import { getRandomActivities } from "@/lib/data/activities-data";
-import { useExploreRecommendations } from "@/lib/hooks/queries/use-explore";
+import {
+    useExploreRecommendations,
+    useSchoolResourcesQuery,
+} from "@/lib/hooks/queries/use-explore";
 import { Sprout } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo } from "react";
@@ -89,6 +92,40 @@ export default function ExplorePage() {
           </div>
         )}
       </section>
+
+      <section className="mt-12">
+        <SchoolResourcesSection />
+      </section>
     </div>
+  );
+}
+
+function SchoolResourcesSection() {
+  const { data: schoolResources, isPending } = useSchoolResourcesQuery();
+
+  if (isPending || !schoolResources || schoolResources.length === 0) {
+    return null;
+  }
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.3 }}
+        className="mb-6"
+      >
+        <h2 className="text-2xl font-semibold mb-2">From Your School</h2>
+        <p className="text-sm text-muted-foreground">
+          Resources and support available at your institution
+        </p>
+      </motion.div>
+
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {schoolResources.map((resource, index) => (
+          <ResourceCard key={resource.id} resource={resource} index={index} />
+        ))}
+      </div>
+    </>
   );
 }

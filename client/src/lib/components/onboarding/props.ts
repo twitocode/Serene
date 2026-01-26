@@ -12,12 +12,10 @@ export interface OnboardingStepProps {
   setCountry: (country: string) => void;
   school: string;
   setSchool: (school: string) => void;
-  koalaName: string;
-  setKoalaName: (koalaName: string) => void;
-  koalaColour: string;
-  setKoalaColor: (koalaColour: string) => void;
-  koalaPronouns: string;
-  setKoalaPronouns: (koalaPronouns: string) => void;
+  mochiName: string;
+  setMochiName: (mochiName: string) => void;
+  mochiPronouns: string;
+  setMochiPronouns: (mochiPronouns: string) => void;
   onNext: () => void;
   onBack: () => void;
 }

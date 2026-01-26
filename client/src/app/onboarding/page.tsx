@@ -51,9 +51,8 @@ export default async function OnboardingPage() {
           initialPronouns={rest.pronouns || ""}
           initialCountryCode={rest.countryCode || ""}
           initialSchool={rest.schoolName || ""}
-          initialKoalaName={rest.koalaName || ""}
-          initialKoalaColour={rest.koalaColour || "#5EEAD4"}
-          initialKoalaPronouns={rest.koalaPronouns || ""}
+          initialMochiName={rest.mochiName || ""}
+          initialMochiPronouns={rest.mochiPronouns || ""}
         >
           <OnboardingFlow />
         </OnboardingProvider>

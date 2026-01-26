@@ -52,9 +52,8 @@ export interface User extends IdentityUser {
 
 export interface Profile {
   id: string;
-  koalaName: string;
-  koalaColour: string;
-  koalaPronouns: string;
+  mochiName: string;
+  mochiPronouns: string;
   currentStreak: number;
   longestStreak: number;
   schoolId: string | null;
