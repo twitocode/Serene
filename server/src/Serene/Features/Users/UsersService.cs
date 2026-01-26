@@ -173,12 +173,15 @@ public class UsersService : IUsersService
         return await _context.Users.AnyAsync(u => u.Email == email);
     }
 
-    public async Task<UserResponse> UpdateUserProfileAsync(string userId, UpdateUserProfileRequest dto)
+    public async Task<UserResponse> UpdateUserProfileAsync(
+        string userId,
+        UpdateUserProfileRequest dto
+    )
     {
         _logger.LogInformation("Updating profile for user: {UserId}", userId);
 
-        var user = await _context.Users
-            .Include(u => u.Profile)
+        var user = await _context
+            .Users.Include(u => u.Profile)
             .Include(u => u.Settings)
             .FirstOrDefaultAsync(u => u.Id == userId);
 
@@ -191,17 +194,20 @@ public class UsersService : IUsersService
         if (dto.Name != null)
         {
             // Check if the new name is already taken by another user
-            var nameExists = await _context.Users
-                .AnyAsync(u => u.Name == dto.Name && u.Id != userId);
-            
+            var nameExists = await _context.Users.AnyAsync(u =>
+                u.Name == dto.Name && u.Id != userId
+            );
+
             if (nameExists)
             {
                 _logger.LogWarning(
-                    "Profile update failed: Name '{Name}' already taken for user {UserId}", 
-                    dto.Name, 
+                    "Profile update failed: Name '{Name}' already taken for user {UserId}",
+                    dto.Name,
                     userId
                 );
-                throw new InvalidOperationException($"The name '{dto.Name}' is already taken. Please choose a different name.");
+                throw new InvalidOperationException(
+                    $"The name '{dto.Name}' is already taken. Please choose a different name."
+                );
             }
 
             user.Name = dto.Name;
@@ -234,18 +240,30 @@ public class UsersService : IUsersService
             if (!addResult.Succeeded)
             {
                 var errors = string.Join(", ", addResult.Errors.Select(e => e.Description));
-                _logger.LogError("Failed to add password for user {UserId}: {Errors}", userId, errors);
+                _logger.LogError(
+                    "Failed to add password for user {UserId}: {Errors}",
+                    userId,
+                    errors
+                );
                 throw new InvalidOperationException(errors);
             }
             _logger.LogInformation("Password added for OAuth user: {UserId}", userId);
             return;
         }
 
-        var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+        var result = await _userManager.ChangePasswordAsync(
+            user,
+            dto.CurrentPassword,
+            dto.NewPassword
+        );
         if (!result.Succeeded)
         {
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            _logger.LogWarning("Password change failed for user {UserId}: {Errors}", userId, errors);
+            _logger.LogWarning(
+                "Password change failed for user {UserId}: {Errors}",
+                userId,
+                errors
+            );
             throw new InvalidOperationException(errors);
         }
 
