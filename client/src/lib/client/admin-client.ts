@@ -55,3 +55,17 @@ export async function scrapeContent(
     body: JSON.stringify({ url }),
   });
 }
+
+export interface FeedbackDto {
+  date: string;
+  userId: string;
+  message: string;
+}
+
+export interface FeedbackListResponse {
+  feedback: FeedbackDto[];
+}
+
+export async function getFeedback(): Promise<Result<FeedbackListResponse>> {
+  return await apiFetch<FeedbackListResponse>("/feedback");
+}

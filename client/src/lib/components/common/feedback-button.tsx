@@ -1,7 +1,9 @@
 import { Button } from "@/lib/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -31,6 +33,7 @@ const feedbackSchema = z.object({
 export default function FeedbackButton() {
   const [showSpinner, setShowSpinner] = useState(false);
   const [hasSent, setHasSent] = useState(false);
+  const [hasClicked, setHasClicked] = useState(false);
 
   const sendFeedbackMutation = useMutation({
     mutationFn: (input: FeedbackRequest) => {
@@ -70,15 +73,22 @@ export default function FeedbackButton() {
   return (
     <div className="absolute bottom-4 right-4">
       <Toaster />
-      <Dialog open={!hasSent}>
-        <DialogTrigger asChild onClick={() => setHasSent(false)}>
+      <Dialog open={!hasSent && hasClicked} defaultOpen={false}>
+        <DialogTrigger
+          asChild
+          onClick={() => {
+            setHasSent(false);
+            setHasClicked(true);
+          }}
+        >
           <Button>Give Feedback</Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent showCloseButton={false}>
           <DialogHeader>
             <DialogTitle className="mb-4">
               Provide some feedback for the website
             </DialogTitle>
+
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -114,13 +124,23 @@ export default function FeedbackButton() {
                     );
                   }}
                 </form.Field>
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={sendFeedbackMutation.isPending}
-                >
-                  {sendFeedbackMutation.isPending ? "Sending..." : "Send"}
-                </Button>
+                <DialogFooter className="sm:justify-start">
+                  <DialogClose asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setHasClicked(false)}
+                    >
+                      Close
+                    </Button>
+                  </DialogClose>
+                  <Button
+                    type="submit"
+                    disabled={sendFeedbackMutation.isPending}
+                  >
+                    {sendFeedbackMutation.isPending ? "Sending..." : "Send"}
+                  </Button>
+                </DialogFooter>
               </FieldGroup>
             </form>
           </DialogHeader>

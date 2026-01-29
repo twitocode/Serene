@@ -22,9 +22,15 @@ export default async function AdminLayout({
         <nav className="p-4 space-y-2">
           <a
             href="/admin/content"
-            className="block px-4 py-2 rounded-lg bg-gray-100 text-gray-900 font-medium"
+            className="block px-4 py-2 rounded-lg text-gray-900 hover:bg-gray-100 font-medium"
           >
             Content
+          </a>
+          <a
+            href="/admin/feedback"
+            className="block px-4 py-2 rounded-lg text-gray-900 hover:bg-gray-100 font-medium"
+          >
+            Feedback
           </a>
           <a
             href="/home"

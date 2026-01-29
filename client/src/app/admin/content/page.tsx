@@ -201,7 +201,9 @@ export default function ContentAdminPage() {
             ) : (
               content.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.title}</TableCell>
+                  <TableCell className="font-medium max-w-[300px] truncate">
+                    {item.title}
+                  </TableCell>
                   <TableCell>{item.type}</TableCell>
                   <TableCell className="max-w-md truncate">
                     {item.description}

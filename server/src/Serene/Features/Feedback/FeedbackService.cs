@@ -11,6 +11,7 @@ using Serene.Features.Feedback;
 public interface IFeedbackService
 {
     Task SendAsync(FeedbackRequest body, string uid);
+    Task<List<FeedbackDto>> GetFeedbackAsync();
 }
 
 public class FeedbackService : IFeedbackService
@@ -69,6 +70,42 @@ public class FeedbackService : IFeedbackService
                 }
             );
         }
+    }
+
+    public async Task<List<FeedbackDto>> GetFeedbackAsync()
+    {
+        var spreadsheet = await _sheetsService
+            .Spreadsheets.Get(_options.Value.FeedbackSheetId)
+            .ExecuteAsync();
+        var sheetName = spreadsheet.Sheets.FirstOrDefault()?.Properties.Title ?? "Sheet1";
+
+        var range = $"'{sheetName}'!A:C";
+        var request = _sheetsService.Spreadsheets.Values.Get(_options.Value.FeedbackSheetId, range);
+        var response = await request.ExecuteAsync();
+        var values = response.Values;
+
+        var result = new List<FeedbackDto>();
+        if (values != null && values.Count > 0)
+        {
+            foreach (var row in values)
+            {
+                // Assuming format: Date, UID, Message
+                if (row.Count >= 3)
+                {
+                    result.Add(new FeedbackDto
+                    {
+                        Date = row[0]?.ToString() ?? "",
+                        UserId = row[1]?.ToString() ?? "",
+                        Message = row[2]?.ToString() ?? ""
+                    });
+                }
+            }
+        }
+
+        // Newest first
+        result.Reverse();
+
+        return result;
     }
 
     public async Task SendAsync(FeedbackRequest body, string uid)

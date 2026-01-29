@@ -32,4 +32,15 @@ public class FeedbackController : BaseApiController
 
         return await ExecuteWithResult(() => _feedbackService.SendAsync(dto, uid));
     }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public async Task<IActionResult> GetFeedback()
+    {
+        return await ExecuteWithResult(async () =>
+        {
+            var feedback = await _feedbackService.GetFeedbackAsync();
+            return new FeedbackListResponse { Feedback = feedback };
+        });
+    }
 }
