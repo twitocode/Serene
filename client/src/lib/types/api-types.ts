@@ -126,3 +126,7 @@ export interface CheckinResponse {
   id: string;
   dateCompleted: string;
 }
+
+export interface FeedbackRequest {
+  message: string;
+}
