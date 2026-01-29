@@ -1,8 +1,12 @@
+using Google.Cloud.DiscoveryEngine.V1;
 using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using NodaTime;
 using Pgvector.EntityFrameworkCore;
+using Serene.Configuration;
 using Serene.Data;
 using Serene.Entities;
 
@@ -17,6 +21,7 @@ public interface IExploreService
     Task UpdateContentAsync(string id, CreateExploreContentRequest request);
     Task DeleteContentAsync(string id);
     Task<ScrapedContentResponse> ScrapeContentAsync(string url);
+    Task<int> PopulateFromSearchAsync(string query, int count);
 }
 
 public class ExploreService : IExploreService
@@ -25,18 +30,21 @@ public class ExploreService : IExploreService
     private readonly IEmbeddingService _embeddingService;
     private readonly ILogger<ExploreService> _logger;
     private readonly HybridCache _cache;
+    private readonly IOptions<GoogleOptions> _googleOptions;
 
     public ExploreService(
         ApplicationDbContext context,
         IEmbeddingService embeddingService,
         ILogger<ExploreService> logger,
-        HybridCache cache
+        HybridCache cache,
+        IOptions<GoogleOptions> googleOptions
     )
     {
         _context = context;
         _embeddingService = embeddingService;
         _logger = logger;
         _cache = cache;
+        _googleOptions = googleOptions;
     }
 
     public async Task<List<ExploreContentResponse>> GetRecommendationsAsync(string userId)
@@ -204,5 +212,84 @@ public class ExploreService : IExploreService
             Description = System.Net.WebUtility.HtmlDecode(description ?? "").Trim(),
             Type = type,
         };
+    }
+
+    public async Task<int> PopulateFromSearchAsync(string query, int count)
+    {
+        var projectId = _googleOptions.Value.VertexAIProjectId;
+        var location = _googleOptions.Value.VertexAILocation;
+        var dataStoreId = _googleOptions.Value.DataStoreId;
+
+        if (string.IsNullOrEmpty(projectId) || string.IsNullOrEmpty(dataStoreId))
+        {
+            throw new Exception("Vertex AI Search Project ID or Data Store ID is not configured.");
+        }
+
+        var client = await SearchServiceClient.CreateAsync();
+
+        var servingConfig = ServingConfigName.FromProjectLocationDataStoreServingConfig(
+            projectId,
+            location,
+            dataStoreId,
+            "default_search"
+        );
+
+        var request = new SearchRequest
+        {
+            ServingConfigAsServingConfigName = servingConfig,
+            Query = query,
+            PageSize = Math.Min(count, 10),
+            ContentSearchSpec = new SearchRequest.Types.ContentSearchSpec
+            {
+                ExtractiveContentSpec =
+                    new SearchRequest.Types.ContentSearchSpec.Types.ExtractiveContentSpec
+                    {
+                        MaxExtractiveAnswerCount = 1,
+                    },
+            },
+        };
+
+        var response = client.Search(request);
+
+        var addedCount = 0;
+        foreach (var result in response.Take(count))
+        {
+            var document = result.Document;
+            var uri = document.DerivedStructData.Fields.TryGetValue("link", out var linkValue)
+                ? linkValue.StringValue
+                : "";
+
+            if (string.IsNullOrEmpty(uri) || await _context.ExploreContent.AnyAsync(c => c.Url == uri))
+                continue;
+
+            var title = document.DerivedStructData.Fields.TryGetValue("title", out var titleValue)
+                ? titleValue.StringValue
+                : "";
+            var snippet = document.DerivedStructData.Fields.TryGetValue(
+                "snippet",
+                out var snippetValue
+            )
+                ? snippetValue.StringValue
+                : "";
+
+            var scraped = await ScrapeContentAsync(uri);
+
+            await AddContentAsync(
+                new CreateExploreContentRequest
+                {
+                    Title = string.IsNullOrEmpty(scraped.Title) ? title : scraped.Title,
+                    Description = string.IsNullOrEmpty(scraped.Description)
+                        ? snippet
+                        : scraped.Description,
+                    Url = uri,
+                    Type = scraped.Type,
+                    Tags = query,
+                }
+            );
+
+            addedCount++;
+        }
+
+        return addedCount;
     }
 }

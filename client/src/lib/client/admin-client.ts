@@ -56,6 +56,16 @@ export async function scrapeContent(
   });
 }
 
+export async function populateContent(
+  query: string,
+  count: number
+): Promise<Result<number>> {
+  return await apiFetch<number>("/explore/populate", {
+    method: "POST",
+    body: JSON.stringify({ query, count }),
+  });
+}
+
 export interface FeedbackDto {
   date: string;
   userId: string;

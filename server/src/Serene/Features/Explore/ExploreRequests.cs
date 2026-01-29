@@ -14,3 +14,9 @@ public class ScrapeRequest
 {
     public string Url { get; set; } = string.Empty;
 }
+
+public class PopulateExploreRequest
+{
+    public string Query { get; set; } = string.Empty;
+    public int Count { get; set; } = 10;
+}

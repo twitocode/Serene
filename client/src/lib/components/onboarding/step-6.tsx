@@ -17,32 +17,7 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
-
-const STRUGGLES = [
-  "Anxiety",
-  "Depression",
-  "Trauma",
-  "Suicidal Thoughts",
-  "Grief",
-  "Academic Burnout",
-  "Imposter Syndrome",
-  "Procrastination",
-  "Perfectionism",
-  "Loneliness",
-  "Social Anxiety",
-  "Relationships",
-  "Roommate Conflict",
-  "Identity & Belonging",
-  "Family Pressure",
-  "Discrimination",
-  "Sleep Issues",
-  "Body Image",
-  "Eating Disorder",
-  "Chronic Pain",
-  "Financial Stress",
-  "Substance Use",
-  "Other",
-];
+import { STRUGGLES } from "@/lib/data";
 
 export function StepSix() {
   const { struggles, setStruggles, goBack, hasStarted } = useOnboardingStore(

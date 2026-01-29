@@ -24,7 +24,7 @@ public static class ApplicationServiceExtensions
     {
         var aiOptions = new AIOptions
         {
-            GeminiApiKey = config["GEMINI_API_KEY"] ?? string.Empty,
+            GeminiApiKey = config["Authentication:Google:ApiKey"] ?? string.Empty,
             OpenRouterApiKey = config["OPENROUTER_API_KEY"] ?? string.Empty,
         };
         var corsOptions = config.GetSection(CorsOptions.SectionName).Get<CorsOptions>();
@@ -69,6 +69,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IStreakService, StreakService>();
         services.AddScoped<IFeedbackService, FeedbackService>();
         services.AddSingleton<IEncryptionService, EncryptionService>();
+        services.AddHttpClient();
 
         services.AddScoped(x => new Client(
             apiKey: !string.IsNullOrEmpty(aiOptions.GeminiApiKey)

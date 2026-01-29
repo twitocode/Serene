@@ -325,3 +325,29 @@ export const colleges: Omit<School, "id">[] = [
 ];
 
 export const schools: Omit<School, "id">[] = [...universities, ...colleges];
+
+export const STRUGGLES = [
+  "Anxiety",
+  "Depression",
+  "Trauma",
+  "Suicidal Thoughts",
+  "Grief",
+  "Academic Burnout",
+  "Imposter Syndrome",
+  "Procrastination",
+  "Perfectionism",
+  "Loneliness",
+  "Social Anxiety",
+  "Relationships",
+  "Roommate Conflict",
+  "Identity & Belonging",
+  "Family Pressure",
+  "Discrimination",
+  "Sleep Issues",
+  "Body Image",
+  "Eating Disorder",
+  "Chronic Pain",
+  "Financial Stress",
+  "Substance Use",
+  "Other",
+];

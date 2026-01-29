@@ -7,6 +7,7 @@ import {
   updateContent,
   deleteContent,
   scrapeContent,
+  populateContent,
   CreateExploreContentRequest,
 } from "@/lib/client/admin-client";
 import { ExploreContent } from "@/lib/types";
@@ -36,7 +37,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/lib/components/ui/select";
-import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -49,14 +50,18 @@ import {
   AlertDialogTitle,
 } from "@/lib/components/ui/alert-dialog";
 
+import { STRUGGLES } from "@/lib/data";
+
 export default function ContentAdminPage() {
   const [content, setContent] = useState<ExploreContent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isPopulateDialogOpen, setIsPopulateDialogOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ExploreContent | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isScraping, setIsScraping] = useState(false);
+  const [isPopulating, setIsPopulating] = useState(false);
 
   const [formData, setFormData] = useState<CreateExploreContentRequest>({
     title: "",
@@ -64,6 +69,11 @@ export default function ContentAdminPage() {
     url: "",
     type: "Article",
     tags: "",
+  });
+
+  const [populateData, setPopulateData] = useState({
+    query: "",
+    count: 10,
   });
 
   const fetchContent = async () => {
@@ -101,6 +111,21 @@ export default function ContentAdminPage() {
       toast.error("Failed to scrape content");
     }
     setIsScraping(false);
+  };
+
+  const handlePopulate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsPopulating(true);
+
+    const res = await populateContent(populateData.query, populateData.count);
+    if (res.isSuccess) {
+      toast.success(`Successfully populated ${res.data} items`);
+      fetchContent();
+      setIsPopulateDialogOpen(false);
+    } else {
+      toast.error("Failed to populate content");
+    }
+    setIsPopulating(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -170,9 +195,14 @@ export default function ContentAdminPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold tracking-tight">Content Management</h2>
-        <Button onClick={openAddDialog}>
-          <Plus className="mr-2 h-4 w-4" /> Add Content
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setIsPopulateDialogOpen(true)}>
+            <Search className="mr-2 h-4 w-4" /> Populate from Search
+          </Button>
+          <Button onClick={openAddDialog}>
+            <Plus className="mr-2 h-4 w-4" /> Add Content
+          </Button>
+        </div>
       </div>
 
       <div className="border rounded-lg">
@@ -324,6 +354,70 @@ export default function ContentAdminPage() {
               <Button type="submit" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Save
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isPopulateDialogOpen} onOpenChange={setIsPopulateDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Populate from Search</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handlePopulate} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="struggle">Select Topic (Optional)</Label>
+              <Select
+                onValueChange={(value) =>
+                  setPopulateData({ ...populateData, query: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a struggle" />
+                </SelectTrigger>
+                <SelectContent>
+                  {STRUGGLES.map((struggle) => (
+                    <SelectItem key={struggle} value={struggle}>
+                      {struggle}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="query">Search Query</Label>
+              <Input
+                id="query"
+                required
+                value={populateData.query}
+                onChange={(e) =>
+                  setPopulateData({ ...populateData, query: e.target.value })
+                }
+                placeholder="e.g. mental health resources for students"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="count">Count (Max 10)</Label>
+              <Input
+                id="count"
+                type="number"
+                min="1"
+                max="10"
+                required
+                value={populateData.count}
+                onChange={(e) =>
+                  setPopulateData({
+                    ...populateData,
+                    count: parseInt(e.target.value),
+                  })
+                }
+              />
+            </div>
+            <div className="flex justify-end pt-4">
+              <Button type="submit" disabled={isPopulating}>
+                {isPopulating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Populate
               </Button>
             </div>
           </form>

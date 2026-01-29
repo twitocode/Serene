@@ -15,7 +15,7 @@ public static class ConfigurationExtensions
 
         services.Configure<AIOptions>(options =>
         {
-            options.GeminiApiKey = config["GEMINI_API_KEY"] ?? string.Empty;
+            options.GeminiApiKey = config["Authentication:Google:ApiKey"] ?? string.Empty;
             options.OpenRouterApiKey = config["OPENROUTER_API_KEY"] ?? string.Empty;
         });
 

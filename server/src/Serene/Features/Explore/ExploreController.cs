@@ -86,4 +86,13 @@ public class ExploreController : BaseApiController
     {
         return await ExecuteWithResult(() => _exploreService.ScrapeContentAsync(request.Url));
     }
+
+    [HttpPost("populate")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> PopulateFromSearch([FromBody] PopulateExploreRequest request)
+    {
+        return await ExecuteWithResult(() =>
+            _exploreService.PopulateFromSearchAsync(request.Query, request.Count)
+        );
+    }
 }
