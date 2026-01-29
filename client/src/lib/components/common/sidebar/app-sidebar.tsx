@@ -7,9 +7,18 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "@/lib/components/ui/sidebar";
-import { CompassIcon, Handshake, History, Home, HouseHeart, Library, ListMusic, Navigation2, Pencil, TrendingUp } from "lucide-react";
+import {
+  CompassIcon,
+  Handshake,
+  History,
+  HouseHeart,
+  Pencil,
+  ShieldUser,
+  TrendingUp,
+} from "lucide-react";
 import * as React from "react";
 
+import FeedbackButton from "@/lib/components/common/feedback-button";
 import NavMain from "./nav-main";
 import { NavUser } from "./nav-user";
 
@@ -20,17 +29,28 @@ const data = {
     image: "/avatars/shadcn.jpg",
   },
   navMain: [
-    { title: "Home", url: "/home", icon: HouseHeart },
-    { title: "Checkin", url: "/home/checkin", icon: Pencil, isActive: true },
-    { title: "Community", url: "/home/community", icon: Handshake },
-    { title: "Explore", url: "/home/explore", icon: CompassIcon },
-    { title: "Trends", url: "/home/trends", icon: TrendingUp },
-    { title: "History", url: "/home/history", icon: History },
+    { title: "Home", url: "/home", icon: HouseHeart, role: "User" },
+    {
+      title: "Checkin",
+      url: "/home/checkin",
+      icon: Pencil,
+      isActive: true,
+      role: "User",
+    },
+    {
+      title: "Community",
+      url: "/home/community",
+      icon: Handshake,
+      role: "User",
+    },
+    { title: "Explore", url: "/home/explore", icon: CompassIcon, role: "User" },
+    { title: "Trends", url: "/home/trends", icon: TrendingUp, role: "User" },
+    { title: "History", url: "/home/history", icon: History, role: "User" },
+    { title: "Admin", url: "/admin/content", icon: ShieldUser, role: "Admin" },
   ],
 };
 
-type SidebarLayoutProps = React.ComponentProps<typeof Sidebar> & {
-};
+type SidebarLayoutProps = React.ComponentProps<typeof Sidebar> & {};
 
 export default function AppSidebar({ ...props }: SidebarLayoutProps) {
   return (
@@ -42,7 +62,9 @@ export default function AppSidebar({ ...props }: SidebarLayoutProps) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser/>
+        <FeedbackButton />
+
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );

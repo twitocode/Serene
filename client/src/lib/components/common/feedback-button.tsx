@@ -71,7 +71,7 @@ export default function FeedbackButton() {
   });
 
   return (
-    <div className="absolute bottom-4 right-4">
+    <div className="">
       <Toaster />
       <Dialog open={!hasSent && hasClicked} defaultOpen={false}>
         <DialogTrigger
@@ -81,7 +81,7 @@ export default function FeedbackButton() {
             setHasClicked(true);
           }}
         >
-          <Button>Give Feedback</Button>
+          <Button variant="outline">Give Feedback</Button>
         </DialogTrigger>
         <DialogContent showCloseButton={false}>
           <DialogHeader>
