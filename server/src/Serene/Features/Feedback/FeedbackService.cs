@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
@@ -6,7 +7,6 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.Extensions.Options;
 using Serene.Data;
 using Serene.Features.Feedback;
-using System.Text.Json;
 
 public interface IFeedbackService
 {
@@ -54,10 +54,10 @@ public class FeedbackService : IFeedbackService
             var googleCredential = GoogleCredential
                 .FromStream(stream)
                 .CreateScoped(SheetsService.Scope.Spreadsheets);
-            
+
             _logger.LogInformation(
-                "Initializing FeedbackService. SheetId: {SheetId}, ServiceAccountEmail: {Email}", 
-                options.Value.FeedbackSheetId, 
+                "Initializing FeedbackService. SheetId: {SheetId}, ServiceAccountEmail: {Email}",
+                options.Value.FeedbackSheetId,
                 email
             );
 
@@ -73,10 +73,11 @@ public class FeedbackService : IFeedbackService
 
     public async Task SendAsync(FeedbackRequest body, string uid)
     {
-        // 1. Get the spreadsheet metadata to find the correct sheet name
-        var spreadsheet = await _sheetsService.Spreadsheets.Get(_options.Value.FeedbackSheetId).ExecuteAsync();
+        var spreadsheet = await _sheetsService
+            .Spreadsheets.Get(_options.Value.FeedbackSheetId)
+            .ExecuteAsync();
         var sheetName = spreadsheet.Sheets.FirstOrDefault()?.Properties.Title ?? "Sheet1";
-        
+
         _logger.LogInformation("Detected Sheet Name: {SheetName}", sheetName);
 
         var values = new List<IList<object>>
@@ -85,7 +86,6 @@ public class FeedbackService : IFeedbackService
         };
 
         var valueRange = new ValueRange { Values = values };
-        // Wrap sheet name in single quotes to handle spaces or special characters
         var range = $"'{sheetName}'!A:C";
 
         var appendRequest = _sheetsService.Spreadsheets.Values.Append(
