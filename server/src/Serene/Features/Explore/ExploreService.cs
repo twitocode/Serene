@@ -259,7 +259,10 @@ public class ExploreService : IExploreService
                 ? linkValue.StringValue
                 : "";
 
-            if (string.IsNullOrEmpty(uri) || await _context.ExploreContent.AnyAsync(c => c.Url == uri))
+            if (
+                string.IsNullOrEmpty(uri)
+                || await _context.ExploreContent.AnyAsync(c => c.Url == uri)
+            )
                 continue;
 
             var title = document.DerivedStructData.Fields.TryGetValue("title", out var titleValue)

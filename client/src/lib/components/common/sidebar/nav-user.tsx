@@ -21,21 +21,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/lib/components/ui/sidebar";
-import { ApiError } from "@/lib/helpers/api-fetch";
 import { useUserQuery } from "@/lib/hooks/queries/use-user";
-import { fetchUser } from "@/lib/server/get-user";
-import { User } from "@/lib/types/index";
-import { useQuery } from "@tanstack/react-query";
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
-import { useTheme } from "next-themes";
+import { BadgeCheck, ChevronsUpDown, LogOut, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 type NavUserProps = {
@@ -44,8 +32,7 @@ type NavUserProps = {
 
 export function NavUser({}: NavUserProps) {
   const sidebar = useSidebar();
-  const { data: user } = useUserQuery()
-  const {setTheme} =useTheme();
+  const { data: user } = useUserQuery();
 
   return (
     <SidebarMenu>
@@ -118,9 +105,8 @@ export function NavUser({}: NavUserProps) {
             <DropdownMenuItem
               onClick={async () => {
                 await auth.signOut();
-                setTheme("light")
                 // window.location.reload();
-                window.location.href = "/"
+                window.location.href = "/";
               }}
             >
               <LogOut className="mr-2 h-4 w-4" />

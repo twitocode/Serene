@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -11,9 +10,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/lib/components/ui/dropdown-menu";
+import {
+  useSettingsQuery,
+  useUpdateSettingsMutation,
+} from "@/lib/hooks/queries/use-settings";
+import { toast } from "sonner";
 
 export function ThemeToggle() {
   const { setTheme } = useTheme();
+  const updateSettings = useUpdateSettingsMutation();
+  const { data: settings } = useSettingsQuery();
+
+  const changeTheme = async (theme: "Light" | "Dark" | "System") => {
+    try {
+      await updateSettings.mutateAsync({ theme: theme.toLowerCase() });
+      setTheme(theme.toLowerCase());
+      toast.error(`Theme changed to ${theme}`);
+    } catch {
+      setTheme(settings?.theme.toLowerCase() ?? "light");
+      toast.error("Could not change your theme for some reason");
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -25,13 +42,13 @@ export function ThemeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
+        <DropdownMenuItem onClick={() => changeTheme("Light")}>
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
+        <DropdownMenuItem onClick={() => changeTheme("Dark")}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
+        <DropdownMenuItem onClick={() => changeTheme("System")}>
           System
         </DropdownMenuItem>
       </DropdownMenuContent>
