@@ -92,12 +92,14 @@ public class FeedbackService : IFeedbackService
                 // Assuming format: Date, UID, Message
                 if (row.Count >= 3)
                 {
-                    result.Add(new FeedbackDto
-                    {
-                        Date = row[0]?.ToString() ?? "",
-                        UserId = row[1]?.ToString() ?? "",
-                        Message = row[2]?.ToString() ?? ""
-                    });
+                    result.Add(
+                        new FeedbackDto
+                        {
+                            Date = row[0]?.ToString() ?? "",
+                            UserId = row[1]?.ToString() ?? "",
+                            Message = row[2]?.ToString() ?? "",
+                        }
+                    );
                 }
             }
         }
