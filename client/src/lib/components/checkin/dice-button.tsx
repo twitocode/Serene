@@ -13,7 +13,7 @@ export const DiceButton = ({ onRoll }: { onRoll: () => void }) => {
 
     controls.start({
       rotate: [0, 360],
-      scale: [1, 1.2, 1],
+      scale: [1, 1.15, 1],
       transition: { duration: 0.6, ease: "easeInOut" },
     });
 
@@ -26,14 +26,14 @@ export const DiceButton = ({ onRoll }: { onRoll: () => void }) => {
   return (
     <motion.button
       type="button"
-      className="inline-flex items-center justify-center cursor-pointer text-indigo-600 bg-transparent border-none p-0 focus:outline-none"
+      className="inline-flex items-center justify-center rounded-2xl border border-border/80 bg-accent/40 p-4 text-primary shadow-sm transition-colors hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       animate={controls}
-      whileHover={!isRolling ? { scale: 1.1 } : {}}
-      whileTap={!isRolling ? { scale: 0.9 } : {}}
+      whileHover={!isRolling ? { scale: 1.05 } : {}}
+      whileTap={!isRolling ? { scale: 0.96 } : {}}
       onClick={handleRoll}
-      aria-label="Roll dice for new prompt"
+      aria-label="Roll dice for a new prompt"
     >
-      <Dices size={32} />
+      <Dices className="size-8" strokeWidth={1.75} />
     </motion.button>
   );
 };

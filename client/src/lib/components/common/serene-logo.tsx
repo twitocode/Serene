@@ -1,24 +1,40 @@
 import { MochiDefault } from "@/lib/components/common/mochi";
+import { cn } from "@/lib/utils";
 
 export default function SereneLogo({
   noText = false,
   noLogo = false,
   sidebar = false,
   className = "",
-  iconSize = 8,
-  textSize = "xl",
+  textSize = "text-xl",
+}: {
+  noText?: boolean;
+  noLogo?: boolean;
+  sidebar?: boolean;
+  className?: string;
+  textSize?: string;
 }) {
   return (
     <div
-      className={` flex items-center text-xl space-x-4 ${className} hover:scale-105 transition ease-in duration-75`}
+      className={cn(
+        "flex items-center gap-3 transition-transform duration-200 hover:opacity-90",
+        className,
+      )}
     >
       {!noLogo && (
         <MochiDefault
-          className={`h-${iconSize} text-sidebar-primary flex aspect-square items-center justify-center rounded-lg`}
+          className={cn("shrink-0 text-primary", sidebar ? "size-7" : "size-9")}
         />
       )}
       {!noText && (
-        <span className={`font-yeasty text-${textSize} `}>Serene</span>
+        <span
+          className={cn(
+            "font-serif font-semibold tracking-tight text-foreground",
+            textSize,
+          )}
+        >
+          Serene
+        </span>
       )}
     </div>
   );

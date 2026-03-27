@@ -31,7 +31,7 @@ export default function HomeLock() {
             exit={{ opacity: 0, y: -30, filter: "blur(5px)" }}
             transition={{ delay: 0.3, duration: 0.4 }}
           >
-            <SereneLogo iconSize={10} textSize="4xl" />
+            <SereneLogo textSize="text-4xl" className="gap-4" />
           </motion.section>
           <motion.section
             className="flex items-center flex-col justify-center space-y-8"

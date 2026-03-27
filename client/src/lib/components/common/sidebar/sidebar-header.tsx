@@ -1,26 +1,20 @@
-// SidebarMenu.tsx
 "use client";
 
-import SereneLogo from "@/lib/components/common/serene-logo"; // React version of your logo
-import {
-  SidebarMenu,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/lib/components/ui/sidebar"; // React version of your sidebar
-import { useIsMobile } from "@/lib/hooks/use-mobile";
+import SereneLogo from "@/lib/components/common/serene-logo";
+import { SidebarMenu, SidebarMenuItem } from "@/lib/components/ui/sidebar";
 
 export default function SidebarMenuComponent() {
-  const sidebar = useSidebar();
-  const isMobile = useIsMobile();
-
   return (
-    <SidebarMenu className="p-2">
-      <SidebarMenuItem className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground flex gap-2">
-        <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
+    <SidebarMenu className="gap-0">
+      <SidebarMenuItem className="flex items-center gap-3 rounded-xl px-1 py-0.5">
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/15">
           <SereneLogo noText sidebar />
         </div>
-        <div className="grid flex-1 text-left text-sm leading-tight">
-          <SereneLogo noLogo />
+        <div className="min-w-0 flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
+          <SereneLogo noLogo textSize="text-lg" />
+          <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
+            Mental wellness for students
+          </p>
         </div>
       </SidebarMenuItem>
     </SidebarMenu>

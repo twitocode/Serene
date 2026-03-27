@@ -2,74 +2,103 @@
 import Footer from "@/lib/components/common/footer";
 import { Navbar } from "@/lib/components/common/navbar";
 import { Button } from "@/lib/components/ui/button";
+import { Heart, Leaf, Shield } from "lucide-react";
 import Link from "next/link";
+
+const pillars = [
+  {
+    title: "Evidence-informed",
+    body: "Tools grounded in CBT and mindfulness — explained in plain language, without jargon.",
+    icon: Leaf,
+  },
+  {
+    title: "Student-first",
+    body: "Built around academic stress, social life, and the rhythms of campus — not generic advice.",
+    icon: Heart,
+  },
+  {
+    title: "Privacy-minded",
+    body: "Your reflections stay yours. We design for trust, clarity, and control.",
+    icon: Shield,
+  },
+];
 
 export default function LandingPage() {
   return (
     <>
-      <div className="relative min-h-screen overflow-hidden bg-background">
-
-        <div className="absolute top-20 left-10 w-64 h-64 blob blob-periwinkle opacity-30 animate-blob" />
+      <div className="relative min-h-screen overflow-hidden mesh-sanctuary paper-grain">
         <div
-          className="absolute top-40 right-20 w-48 h-48 blob blob-coral opacity-25 animate-blob"
+          className="absolute top-24 left-[8%] size-72 blob blob-sanctuary opacity-20 animate-blob"
+          aria-hidden
+        />
+        <div
+          className="absolute top-36 right-[5%] size-56 blob blob-warm opacity-15 animate-blob"
           style={{ animationDelay: "2s" }}
+          aria-hidden
         />
         <div
-          className="absolute bottom-40 left-1/4 w-56 h-56 blob blob-lime opacity-20 animate-blob"
+          className="absolute bottom-32 left-[20%] size-64 blob blob-mist opacity-25 animate-blob"
           style={{ animationDelay: "4s" }}
-        />
-        <div
-          className="absolute bottom-20 right-1/3 w-40 h-40 blob blob-sage opacity-25 animate-blob"
-          style={{ animationDelay: "3s" }}
+          aria-hidden
         />
 
-
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none opacity-20"
-          viewBox="0 0 1000 800"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0,400 Q250,300 500,400 T1000,400"
-            stroke="#EB937F"
-            strokeWidth="2"
-            fill="none"
-          />
-          <path
-            d="M0,500 Q250,400 500,500 T1000,500"
-            stroke="#7F9DEB"
-            strokeWidth="2"
-            fill="none"
-          />
-        </svg>
-
-        <div className="relative z-10 mx-8 md:mx-20 lg:mx-40 mt-5 space-y-70 pb-20">
+        <div className="relative z-10 mx-auto max-w-6xl px-5 pb-24 pt-8 md:px-10 lg:px-12">
           <Navbar />
-          <section className="flex flex-col items-center justify-center space-y-6 mx-4 md:mx-20 lg:mx-30 pt-10">
-            <h1 className="font-extrabold text-5xl md:text-6xl lg:text-7xl xl:text-9xl text-center text-slate leading-tight font-yeasty">
-              find your <span className="text-navy">calm</span>
-            </h1>
-            <p className="text-center text-lg md:text-xl text-sage max-w-2xl leading-relaxed">
-              Navigate academic stress with CBT-backed tools, track your
-              wellness patterns, and build a safety plan—all with a companion
-              who&apos;s got your back.
+          <section className="mx-auto mt-16 flex max-w-3xl flex-col items-center text-center md:mt-24">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-primary">
+              Mental wellness for students
             </p>
-            <Link href="/signup">
-              <Button
-                size="lg"
-                className="text-lg px-10 py-6 h-auto shadow-lg hover:shadow-xl"
-              >
-                Get Started
-              </Button>
-            </Link>
+            <h1 className="font-serif text-[clamp(2.5rem,6vw,4.25rem)] font-semibold leading-[1.08] tracking-tight text-foreground">
+              A gentler way through{" "}
+              <span className="text-primary">stressful semesters</span>
+            </h1>
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
+              Track how you feel over time, learn skills that fit student life, and
+              check in with a companion that meets you where you are; no pressure to
+              be &ldquo;fine.&rdquo;
+            </p>
+            <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
+              <Link href="/signup">
+                <Button
+                  size="lg"
+                  className="btn-playful h-12 min-w-[200px] px-8 text-base shadow-md"
+                >
+                  Begin quietly
+                </Button>
+              </Link>
+              <Link href="/login">
+                <Button variant="ghost" className="h-12 text-muted-foreground">
+                  I already have an account
+                </Button>
+              </Link>
+            </div>
           </section>
 
-          <section className="text-center space-y-6">
-            <h2 className="font-bold text-3xl md:text-4xl text-slate">
-              A Student&apos;s Companion
-            </h2>
-            <p className="text-sage max-w-xl mx-auto">
-              Designed with care for the ups and downs of student life.
+          <section className="mx-auto mt-28 grid max-w-5xl gap-6 md:grid-cols-3 md:gap-8">
+            {pillars.map(({ title, body, icon: Icon }) => (
+              <div
+                key={title}
+                className="card-organic flex flex-col gap-4 border-border/70 bg-card/90 p-6 shadow-sm backdrop-blur-sm"
+              >
+                <div className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  <Icon className="size-5" strokeWidth={2} />
+                </div>
+                <h2 className="font-serif text-lg font-semibold text-foreground">
+                  {title}
+                </h2>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {body}
+                </p>
+              </div>
+            ))}
+          </section>
+
+          <section className="mx-auto mt-24 max-w-2xl text-center">
+            <blockquote className="font-serif text-xl font-medium italic leading-relaxed text-foreground md:text-2xl">
+              &ldquo;You don&apos;t have to carry everything alone.&rdquo;
+            </blockquote>
+            <p className="mt-4 text-sm text-muted-foreground">
+              — The idea behind Serene
             </p>
           </section>
         </div>

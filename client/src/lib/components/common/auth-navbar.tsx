@@ -17,22 +17,24 @@ export function AuthNavbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex justify-between w-full items-center">
-      <div>
-        <Link href="/" className="hover:opacity-75">
-          <SereneLogo />
-        </Link>
-      </div>
+    <nav className="flex w-full items-center justify-between gap-4 py-2">
+      <Link href="/" className="hover:opacity-90">
+        <SereneLogo />
+      </Link>
       <NavigationMenu viewport={isMobile}>
         <NavigationMenuList>
           <NavigationMenuItem>
-            {pathname == "/login" ? (
+            {pathname === "/login" ? (
               <Link href="/signup">
-                <Button>Sign Up</Button>
+                <Button size="sm" className="font-medium">
+                  Sign up
+                </Button>
               </Link>
             ) : (
               <Link href="/login">
-                <Button>Login</Button>
+                <Button variant="secondary" size="sm" className="font-medium">
+                  Log in
+                </Button>
               </Link>
             )}
           </NavigationMenuItem>

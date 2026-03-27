@@ -8,21 +8,20 @@ import { Badge } from "@/lib/components/ui/badge";
 import { Button } from "@/lib/components/ui/button";
 import { getMoodFromLabel, getSeverityColor, MoodLabel } from "@/lib/data/moods";
 import { useCheckinsQuery } from "@/lib/hooks/queries/use-checkins";
+import { cn } from "@/lib/utils";
 import { isToday } from "date-fns";
-import { Smile } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect } from "react";
 
 export default function CheckinPage() {
-  const { displayDate, startCheckin, isCheckingIn, changeDate, cancel } = useCheckinStore(
-    (s) => s
-  );
+  const { displayDate, startCheckin, isCheckingIn, changeDate, cancel } =
+    useCheckinStore((s) => s);
 
   useEffect(() => {
     return () => {
       cancel();
-    }
-  }, [])
+    };
+  }, [cancel]);
 
   const { data: checkins } = useCheckinsQuery(displayDate);
 
@@ -33,105 +32,113 @@ export default function CheckinPage() {
   return isCheckingIn ? (
     <CheckinFlow />
   ) : (
-    <div className="min-h-full max-w-2xl mx-auto flex flex-col gap-8  p-4">
-      <motion.h1
-        initial={{ opacity: 0, y: -20 }}
+    <div className="mx-auto flex min-h-full max-w-2xl flex-col gap-8 px-4 py-6 md:py-8">
+      <motion.header
+        initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-4xl font-semibold text-center mt-4 font-serif"
+        className="text-center"
       >
-        Checkin
-      </motion.h1>
+        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+          Daily rhythm
+        </p>
+        <h1 className="font-serif text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+          Check-in
+        </h1>
+        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+          Pick a day, reflect, and leave when you&apos;re ready.
+        </p>
+      </motion.header>
+
       <DateScroll selectedDate={displayDate} changeSelectedDate={changeDate} />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
-        className="border-[1.5px] p-8 flex items-center justify-between"
+
+      <motion.section
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, delay: 0.05 }}
+        className="card-organic relative overflow-hidden border-border/80 bg-card p-6 shadow-md md:p-8"
       >
-        {checkins?.length == 0 ? (
-          <>
-            <MochiDefault className="rotate-25 h-40 w-40" />
+        <div className="pointer-events-none absolute -right-12 -top-12 size-40 rounded-full bg-primary/10 blur-3xl" />
+        <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex justify-center md:justify-start">
+            <MochiDefault className="size-36 md:size-40" />
+          </div>
+          <div className="flex max-w-md flex-col items-center gap-4 text-center md:items-start md:text-left">
+            <h2 className="font-serif text-2xl font-semibold leading-snug text-foreground md:text-3xl">
+              {!isToday(displayDate)
+                ? "Add another check-in for this day?"
+                : checkins?.length === 0
+                  ? "Ready to check in?"
+                  : "Want to check in again?"}
+            </h2>
+            <Button
+              size="lg"
+              className="btn-playful w-full sm:w-auto"
+              onClick={onStartCheckin}
+            >
+              {checkins?.length === 0 ? "Start check-in" : "Check in again"}
+            </Button>
+          </div>
+        </div>
+      </motion.section>
 
-            <div className="flex flex-col gap-4 items-start max-w-xs">
-              <>
-                <h2 className="text-xl lg:text-3xl font-bold leading-tight text-secondary-foreground">
-                  {!isToday(displayDate)
-                    ? "Want to add another thought? "
-                    : "Time to check in for the day"}
-                </h2>
-                <Button
-                  className="bg-primary text-primary-foreground  px-6 py-2 text-base font-medium hover:scale-105 transition active:scale-105"
-                  onClick={onStartCheckin}
+      <div className="flex flex-col gap-3">
+        <h3 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+          Logged this day
+        </h3>
+        {checkins && checkins.length > 0 ? (
+          checkins
+            .sort(
+              (a, b) =>
+                Number(new Date(b.dateCompleted)) -
+                Number(new Date(a.dateCompleted)),
+            )
+            .map((checkin) => {
+              const formattedDate = new Intl.DateTimeFormat(
+                navigator.language,
+                {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                },
+              ).format(new Date(checkin.dateCompleted));
+
+              const checkinMood = getMoodFromLabel(
+                checkin.moodLabel as MoodLabel,
+              );
+              const severityClass = checkinMood
+                ? getSeverityColor(checkinMood.severity)
+                : "";
+
+              return (
+                <motion.div
+                  key={checkin.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35 }}
+                  className="card-organic flex flex-col justify-between gap-3 border-border/80 p-4 sm:flex-row sm:items-center"
                 >
-                  Talk about it
-                </Button>
-              </>
-            </div>
-          </>
-        ) : (
-          <>
-            <MochiDefault className="rotate-25 h-40 w-40" />
-
-            <div className="flex flex-col gap-4 items-start max-w-xs">
-              <>
-                <h2 className="text-xl lg:text-3xl font-bold leading-tight text-black">
-                  {!isToday(displayDate)
-                    ? "Want to add another thought? "
-                    : "Feeling something again?" }
-                </h2>
-                <Button
-                  className="bg-black text-white hover:bg-gray-800 px-6 py-2 text-base font-medium hover:scale-105 transition active:scale-105"
-                  onClick={onStartCheckin}
-                >
-                  Checkin again
-                </Button>
-              </>
-            </div>
-          </>
-        )}
-      </motion.div>
-      <div className="gap-4 flex flex-col">
-        {checkins
-          ?.sort(
-            (a, b) =>
-              Number(new Date(b.dateCompleted)) -
-              Number(new Date(a.dateCompleted)),
-          )
-          .map((checkin) => {
-            const formattedDate = new Intl.DateTimeFormat(navigator.language, {
-              dateStyle: "medium", // e.g., "Jan 9, 2026"
-              timeStyle: "short", // e.g., "1:58 PM"
-            }).format(new Date(checkin.dateCompleted));
-
-            const checkinMood = getMoodFromLabel(
-              checkin.moodLabel as MoodLabel,
-            );
-            const severityClass = checkinMood
-              ? getSeverityColor(checkinMood.severity)
-              : "";
-
-            return (
-              <motion.div
-                key={checkin.id}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="border flex items-center justify-between p-4 hover:scale-105 transition ease-in-out"
-              >
-                <p className="text-muted-foreground" suppressHydrationWarning>
-                  {formattedDate}
-                </p>
-                <div className="flex items-center">
+                  <p
+                    className="text-sm text-muted-foreground"
+                    suppressHydrationWarning
+                  >
+                    {formattedDate}
+                  </p>
                   <Badge
                     variant="outline"
-                    className={`text-lg px-4 py-0 ${severityClass}`}
+                    className={cn(
+                      "w-fit text-sm font-medium tabular-nums",
+                      severityClass,
+                    )}
                   >
                     {checkin.moodLabel}
                   </Badge>
-                </div>
-              </motion.div>
-            );
-          })}
+                </motion.div>
+              );
+            })
+        ) : (
+          <p className="rounded-2xl border border-dashed border-border/80 bg-muted/15 py-8 text-center text-sm text-muted-foreground">
+            No check-ins for this date yet.
+          </p>
+        )}
       </div>
     </div>
   );

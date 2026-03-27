@@ -1,9 +1,8 @@
-import { DiceButton } from "@/lib/components/checkin/dice-button";
 import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import { ButtonGroup } from "@/lib/components/ui/button-group";
 import { Textarea } from "@/lib/components/ui/textarea";
-import { FormEventHandler, useState } from "react";
+import { FormEventHandler } from "react";
 
 export default function LingeringStep() {
   const { goBack, goNext, lingeringThoughts, setLingeringThoughts } =
@@ -17,30 +16,41 @@ export default function LingeringStep() {
   return (
     <form
       onSubmit={onSubmit}
-      className="flex flex-col justify-center items-center p-4 gap-10 w-full md:w-1/2"
+      className="flex w-full max-w-xl flex-col gap-8 pb-8"
     >
-      <h1 className="font-serif text-2xl md:text-4xl text-center">
-        Do you have any other lingering thoughts?
-      </h1>
+      <div className="space-y-3 text-center">
+        <p className="text-xs font-semibold uppercase tracking-widest text-primary">
+          Step 4 of 6
+        </p>
+        <h1 className="font-serif text-2xl font-semibold leading-snug text-foreground md:text-3xl">
+          Anything else on your mind?
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Lingering thoughts, worries, or things you don&apos;t want to forget —
+          optional, but naming them can help.
+        </p>
+      </div>
+
       <Textarea
-        placeholder="Type in your response here"
-        id="response"
-        className="h-10 resize-none"
-        rows={40}
+        placeholder="Type here if you’d like…"
+        id="lingering"
+        className="min-h-[180px] resize-y rounded-xl border-border/80 bg-card text-base leading-relaxed"
+        rows={8}
         value={lingeringThoughts || ""}
         onChange={(e) => setLingeringThoughts(e.target.value)}
       />
 
-      <ButtonGroup className="gap-1 w-full grid grid-cols-2">
+      <ButtonGroup className="grid w-full grid-cols-2 gap-3">
         <Button
           onClick={goBack}
           type="button"
           size="lg"
-          className="px-10 text-lg"
+          variant="outline"
+          className="h-12 rounded-xl"
         >
           Back
         </Button>
-        <Button type="submit" size="lg" className="px-10 text-lg">
+        <Button type="submit" size="lg" className="h-12 rounded-xl">
           Next
         </Button>
       </ButtonGroup>

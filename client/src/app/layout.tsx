@@ -1,38 +1,28 @@
 import Providers from "@/lib/components/providers";
 import type { Metadata } from "next";
 import {
-  Funnel_Sans,
   IBM_Plex_Mono,
-  Playfair_Display,
+  Lora,
+  Plus_Jakarta_Sans,
 } from "next/font/google";
-import localFont from "next/font/local";
 import "./globals.css";
 
-const yeastyFlavors = localFont({
-  src: "./fonts/Yeasty_Flavors.ttf",
-  variable: "--font-yeasty",
-});
-
 const ibmPlexMono = IBM_Plex_Mono({
-  variable: "--font-mono",
-  weight: "400",
+  variable: "--font-family-mono",
+  weight: ["400", "500"],
   subsets: ["latin"],
 });
 
-const playfairDisplay = Playfair_Display({
-  variable: "--font-serif",
-  weight: "400",
+const lora = Lora({
+  variable: "--font-family-serif",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
 });
 
-const funnelSans = Funnel_Sans({
-  variable: "--font-sans",
-  weight: "400",
-  subsets: ["latin"],
-});
-const funnelDisplay = Funnel_Sans({
-  variable: "--font-display",
-  weight: "400",
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-family-sans",
+  weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
 });
 export const metadata: Metadata = {
@@ -52,7 +42,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${ibmPlexMono.variable} ${playfairDisplay.variable} ${funnelSans.variable} ${funnelDisplay.variable} ${yeastyFlavors.variable} antialiased `}
+        className={`${ibmPlexMono.variable} ${lora.variable} ${plusJakarta.variable} font-sans antialiased`}
       >
         <Providers>{children}</Providers>
       </body>

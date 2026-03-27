@@ -20,9 +20,11 @@ export default async function layout({
   }
 
   return (
-    <div className="mx-5 lg:mx-40 mt-5">
-      <AuthNavbar />
-      {children}
+    <div className="relative min-h-svh mesh-sanctuary">
+      <div className="mx-auto max-w-lg px-5 pb-16 pt-6 md:max-w-xl md:px-8 lg:max-w-2xl">
+        <AuthNavbar />
+        <div className="mt-10">{children}</div>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import FeedbackButton from "@/lib/components/common/feedback-button";
+import { MochiWhisper } from "@/lib/components/common/mochi-whisper";
 import AppSidebar from "@/lib/components/common/sidebar/app-sidebar";
 import { ThemeToggle } from "@/lib/components/common/theme-toggle";
 import { Button } from "@/lib/components/ui/button";
@@ -12,7 +12,7 @@ import {
 import { useSettingsQuery } from "@/lib/hooks/queries/use-settings";
 import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import { usePasswordLockStore } from "@/lib/hooks/stores/lock-store";
-import { Flame, Lock } from "lucide-react";
+import { Leaf, Lock } from "lucide-react";
 import { PropsWithChildren } from "react";
 import { Toaster } from "sonner";
 
@@ -25,36 +25,50 @@ export default function HomeLayout({ children }: PropsWithChildren) {
     <>
       <SidebarProvider className="h-svh overflow-hidden">
         <AppSidebar />
-        <SidebarInset className="flex flex-col h-full overflow-hidden">
-          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-background">
-            <div className="flex items-center gap-2 px-4 justify-between w-full">
-              <SidebarTrigger className="-ml-1" />
-              <div className="flex gap-2">
-                <div className="flex items-center gap-2 bg-orange-500 text-white px-3 py-1.5 rounded-full shadow-md">
-                  <Flame className="w-4 h-4" fill="currentColor" />
-                  <span className="font-bold text-sm">
-                    {user?.profile?.currentStreak || 0} Days
-                  </span>
-                </div>
-                <ThemeToggle />
-                {!!settings?.passwordLock && (
-                  <>
-                    <Button
-                      className="hover:dark:bg-red-800 hover:bg-red-400 hover:text-foreground"
-                      variant="outline"
-                      onClick={() => {
-                        setLockState(true);
-                      }}
-                    >
-                      <Lock /> Lock Page
-                    </Button>
-                    <Toaster />
-                  </>
-                )}
+        <SidebarInset className="relative flex h-full flex-col overflow-hidden">
+          <div
+            className="pointer-events-none absolute inset-0 -z-10 mesh-sanctuary opacity-90"
+            aria-hidden
+          />
+          <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border/60 bg-background/80 px-3 backdrop-blur-md transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4">
+            <SidebarTrigger className="-ml-0.5 text-muted-foreground hover:text-foreground" />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                Serene
+              </p>
+              <p className="truncate text-sm font-semibold text-foreground">
+                Your wellness space
+              </p>
+            </div>
+            <div className="flex shrink-0 items-center gap-2">
+              <div className="flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-primary shadow-sm">
+                <Leaf className="size-3.5" strokeWidth={2.5} />
+                <span className="text-xs font-semibold tabular-nums">
+                  {user?.profile?.currentStreak ?? 0}{" "}
+                  <span className="font-normal text-primary/80">day streak</span>
+                </span>
               </div>
+              <ThemeToggle />
+              {!!settings?.passwordLock && (
+                <>
+                  <Button
+                    className="hidden sm:inline-flex"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setLockState(true);
+                    }}
+                  >
+                    <Lock className="size-4" />
+                    Lock
+                  </Button>
+                  <Toaster />
+                </>
+              )}
             </div>
           </header>
-          <div className="flex-1 overflow-y-auto">{children}</div>
+          <div className="relative flex-1 overflow-y-auto">{children}</div>
+          <MochiWhisper />
         </SidebarInset>
       </SidebarProvider>
     </>

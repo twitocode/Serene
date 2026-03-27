@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback } from "@/lib/components/ui/avatar";
 import { QOTDAnswerDto } from "@/lib/types/api-types";
+import { cn } from "@/lib/utils";
 import { Star } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -11,30 +12,42 @@ export const ResponseCard = ({
   isMe?: boolean;
 }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
+    <motion.article
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="bg-secondary bg-opacity-20 text-secondary-foreground p-6  w-full flex flex-col gap-3 border-[1.5px] shadow-sm"
+      transition={{ duration: 0.35 }}
+      className={cn(
+        "card-organic w-full border-border/80 p-5 shadow-sm",
+        isMe
+          ? "border-primary/25 bg-primary/5 ring-1 ring-primary/10"
+          : "bg-card/90 backdrop-blur-sm",
+      )}
     >
-      <div className="flex items-center gap-3">
-        <Avatar>
+      <div className="mb-3 flex items-center gap-3">
+        <Avatar className="size-10 border border-border/60">
           <AvatarFallback
-            className={`${isMe ? "bg-orange-400" : "bg-gray-400"} text-white`}
+            className={cn(
+              "text-sm font-medium",
+              isMe
+                ? "bg-primary/15 text-primary"
+                : "bg-muted text-muted-foreground",
+            )}
           >
             {isMe ? (
-              <Star className="w-5 h-5 fill-current" />
+              <Star className="size-4 fill-current" strokeWidth={0} />
             ) : (
-              response.username?.[0] || "?"
+              (response.username?.[0] ?? "?").toUpperCase()
             )}
           </AvatarFallback>
         </Avatar>
 
-        <span className="font-medium text-lg">
+        <span className="font-medium text-foreground">
           {isMe ? "You" : response.username || "Anonymous"}
         </span>
       </div>
-      <p className="text-base leading-relaxed">{response.answer}</p>
-    </motion.div>
+      <p className="text-sm leading-relaxed text-foreground/90 md:text-base">
+        {response.answer}
+      </p>
+    </motion.article>
   );
 };

@@ -13,14 +13,35 @@ import { useTrends } from "@/lib/hooks/queries/use-trends";
 import { motion } from "motion/react";
 import { useState } from "react";
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+function SectionLabel({ children }: { children: string }) {
+  return (
+    <p className="mb-3 text-center text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+      {children}
+    </p>
+  );
+}
 
 function TrendsSkeleton() {
   return (
-    <div className="space-y-6 p-4">
-      <Skeleton className="h-48 w-full rounded-2xl" />
-      <Skeleton className="h-56 w-full rounded-2xl" />
-      <Skeleton className="h-32 w-full rounded-2xl" />
+    <div className="space-y-4 px-1">
+      <Skeleton className="h-44 w-full rounded-2xl" />
+      <Skeleton className="h-52 w-full rounded-2xl" />
+      <Skeleton className="h-36 w-full rounded-2xl" />
     </div>
   );
 }
@@ -30,61 +51,58 @@ export default function TrendsPage() {
   const [year, setYear] = useState(currentYear);
   const { data: trends, isPending } = useTrends(year);
 
-  // Mock exercise data - in a real app this would come from the backend
   const mockExerciseMonths = MONTHS.map((name, index) => ({
     name,
-    completed: index === 0, // Only January is completed in the mock
+    completed: index === 0,
   }));
 
   return (
-    <div className="min-h-full flex flex-col  max-w-2xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="px-4 pt-8 pb-4"
-      >
-        <h1 className="text-4xl font-semibold text-center font-serif mb-2">Trends</h1>
-        <p className="text-center text-muted-foreground">
-          Your wellness insights over time
-        </p>
-      </motion.div>
+    <div className="relative flex min-h-full flex-col">
+      <div className="mx-auto w-full max-w-3xl flex-1 px-4 pb-36 pt-6 md:px-6 md:pt-8">
+        <motion.header
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 text-center md:mb-10"
+        >
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+            Insights
+          </p>
+          <h1 className="font-serif text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+            Trends
+          </h1>
+          <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+            Patterns from your check-ins and reflections — no judgment, just
+            clarity.
+          </p>
+        </motion.header>
 
-      <div className="flex-1 overflow-y-auto pb-20">
         {isPending ? (
           <TrendsSkeleton />
         ) : (
-          <div className="space-y-8 px-4">
+          <div className="flex flex-col gap-10 md:gap-12">
             <section>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.1 }}
-              >
-                <h2 className="text-xs font-medium text-muted-foreground tracking-widest text-center mb-4">
-                  GENERAL INSIGHTS
-                </h2>
-              </motion.div>
-              <div className="space-y-4">
+              <SectionLabel>General</SectionLabel>
+              <div className="flex flex-col gap-4">
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15 }}
+                  transition={{ delay: 0.05 }}
                 >
                   <TopActivitiesChart activities={trends?.topActivities || []} />
                 </motion.div>
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
+                  transition={{ delay: 0.1 }}
                 >
                   <MoodBreakdownChart
                     data={trends?.moodBreakdown || { thisYear: [], previousYear: [] }}
                   />
                 </motion.div>
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25 }}
+                  transition={{ delay: 0.15 }}
                 >
                   <MoodCalendar calendar={trends?.moodCalendar || []} />
                 </motion.div>
@@ -92,78 +110,52 @@ export default function TrendsPage() {
             </section>
 
             <section>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                <h2 className="text-xs font-medium text-muted-foreground tracking-widest text-center mb-4">
-                  EMOTIONS
-                </h2>
-              </motion.div>
-              <div className="space-y-4">
+              <SectionLabel>Emotions</SectionLabel>
+              <div className="flex flex-col gap-4">
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.35 }}
+                  transition={{ delay: 0.2 }}
                 >
                   <TopEmotionsChart
                     data={trends?.moodBreakdown || { thisYear: [], previousYear: [] }}
                   />
                 </motion.div>
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
+                  transition={{ delay: 0.25 }}
                 >
-                  <InfluenceCard title="What makes you shine" type="positive" items={[]} />
+                  <InfluenceCard title="What lifts you" type="positive" items={[]} />
                 </motion.div>
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.45 }}
+                  transition={{ delay: 0.3 }}
                 >
-                  <InfluenceCard title="What makes you down" type="negative" items={[]} />
+                  <InfluenceCard title="What weighs on you" type="negative" items={[]} />
                 </motion.div>
               </div>
             </section>
 
             <section>
+              <SectionLabel>Habits</SectionLabel>
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 }}
               >
-                <h2 className="text-xs font-medium text-muted-foreground tracking-widest text-center mb-4">
-                  HABITS
-                </h2>
+                <EnergyLevelChart energyLevels={trends?.energyLevels || []} />
               </motion.div>
-              <div className="space-y-4">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.55 }}
-                >
-                  <EnergyLevelChart energyLevels={trends?.energyLevels || []} />
-                </motion.div>
-              </div>
             </section>
 
-            <section className="pb-4">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-              >
-                <h2 className="text-xs font-medium text-muted-foreground tracking-widest text-center mb-4">
-                  EXERCISES
-                </h2>
-              </motion.div>
-              <div className="space-y-4">
+            <section className="pb-2">
+              <SectionLabel>Exercises</SectionLabel>
+              <div className="flex flex-col gap-4">
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.65 }}
+                  transition={{ delay: 0.4 }}
                 >
                   <ExerciseCard
                     title="Writing"
@@ -173,9 +165,9 @@ export default function TrendsPage() {
                   />
                 </motion.div>
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 }}
+                  transition={{ delay: 0.45 }}
                 >
                   <ExerciseCard
                     title="Breathing"
@@ -185,13 +177,13 @@ export default function TrendsPage() {
                   />
                 </motion.div>
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.75 }}
+                  transition={{ delay: 0.5 }}
                 >
                   <ExerciseCard
                     title="Meditation"
-                    subtitle="Months when you did meditation"
+                    subtitle="Months when you meditated"
                     tabs={["Months", "Sessions", "Duration"]}
                     months={mockExerciseMonths}
                   />
@@ -202,8 +194,10 @@ export default function TrendsPage() {
         )}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 md:left-[var(--sidebar-width)] bg-background border-t border-border">
-        <YearSelector year={year} onYearChange={setYear} />
+      <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-border/80 bg-background/90 backdrop-blur-md md:left-[var(--sidebar-width)]">
+        <div className="mx-auto max-w-3xl">
+          <YearSelector year={year} onYearChange={setYear} />
+        </div>
       </div>
     </div>
   );
