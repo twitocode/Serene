@@ -20,10 +20,12 @@ public class ActivityController : BaseApiController
     [Authorize]
     public async Task<IActionResult> GetActivities(
         [ModelBinder(typeof(LocalDateModelBinder))] LocalDate? from,
-        [ModelBinder(typeof(LocalDateModelBinder))] LocalDate? to)
+        [ModelBinder(typeof(LocalDateModelBinder))] LocalDate? to
+    )
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
         return await ExecuteWithResult(() => _activityService.GetActivitiesAsync(userId, from, to));
     }
 
@@ -32,17 +34,24 @@ public class ActivityController : BaseApiController
     public async Task<IActionResult> CreateActivity([FromBody] CreateActivityRequest body)
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
         return await ExecuteWithResult(() => _activityService.CreateActivityAsync(userId, body));
     }
 
     [HttpPost("{id}/complete")]
     [Authorize]
-    public async Task<IActionResult> CompleteActivity(string id, [FromBody] CompleteActivityRequest body)
+    public async Task<IActionResult> CompleteActivity(
+        string id,
+        [FromBody] CompleteActivityRequest body
+    )
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
-        return await ExecuteWithResult(() => _activityService.CompleteActivityAsync(userId, id, body));
+        if (userId == null)
+            return Unauthorized();
+        return await ExecuteWithResult(() =>
+            _activityService.CompleteActivityAsync(userId, id, body)
+        );
     }
 
     [HttpDelete("{id}")]
@@ -50,7 +59,8 @@ public class ActivityController : BaseApiController
     public async Task<IActionResult> DeleteActivity(string id)
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
         return await ExecuteWithResult(async () =>
         {
             await _activityService.DeleteActivityAsync(userId, id);

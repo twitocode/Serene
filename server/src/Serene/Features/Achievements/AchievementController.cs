@@ -10,7 +10,10 @@ public class AchievementController : BaseApiController
 {
     private readonly IAchievementService _achievementService;
 
-    public AchievementController(IAchievementService achievementService, ILogger<AchievementController> logger)
+    public AchievementController(
+        IAchievementService achievementService,
+        ILogger<AchievementController> logger
+    )
         : base(logger)
     {
         _achievementService = achievementService;
@@ -21,7 +24,8 @@ public class AchievementController : BaseApiController
     public async Task<IActionResult> GetAchievements()
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
         return await ExecuteWithResult(() => _achievementService.GetAllAchievementsAsync(userId));
     }
 }

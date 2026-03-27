@@ -1,4 +1,5 @@
 import Providers from "@/lib/components/providers";
+import { Toaster } from "@/lib/components/ui/sonner";
 import type { Metadata } from "next";
 import {
   IBM_Plex_Mono,
@@ -45,6 +46,7 @@ export default function RootLayout({
         className={`${ibmPlexMono.variable} ${lora.variable} ${plusJakarta.variable} font-sans antialiased`}
       >
         <Providers>{children}</Providers>
+        <Toaster position="top-right" />
       </body>
     </html>
   );

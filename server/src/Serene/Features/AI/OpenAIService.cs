@@ -82,8 +82,8 @@ public class OpenAIService(ChatClient genAiClient, ILogger<GeminiService> logger
                Personalization, Labeling, Discounting the Positive, Magnification
             2. Write one short, warm Socratic question (1-2 sentences) that gently 
                challenges the thought without invalidating the student's feelings.
-            3. Suggest a balanced alternative thought (1-2 sentences) — not toxic positivity, 
-               but a genuinely kinder and more realistic perspective.
+            3. Suggest a balanced alternative thought (1-2 sentences). Avoid toxic positivity,
+               but offer a genuinely kinder and more realistic perspective.
 
             SAFETY: If the input mentions self-harm, suicide, or imminent danger, 
             return: {"distortion":"Crisis","socraticQuestion":"","suggestedReframe":"Please reach out to a crisis helpline or trusted person right now. You deserve support."}
@@ -96,7 +96,8 @@ public class OpenAIService(ChatClient genAiClient, ILogger<GeminiService> logger
         {
             Distortion = "Unknown",
             SocraticQuestion = "What evidence do you have for and against this thought?",
-            SuggestedReframe = "It's okay to feel this way. Consider whether there's a more balanced perspective.",
+            SuggestedReframe =
+                "It's okay to feel this way. Consider whether there's a more balanced perspective.",
         };
 
         try
@@ -118,18 +119,24 @@ public class OpenAIService(ChatClient genAiClient, ILogger<GeminiService> logger
             }
 
             string text = string.Join(
-                string.Empty,
-                response.Content.Select(static c => c.Text ?? string.Empty)
-            ).Trim();
+                    string.Empty,
+                    response.Content.Select(static c => c.Text ?? string.Empty)
+                )
+                .Trim();
 
             _logger.LogInformation("Reframe response: {response}", text);
 
             string jsonPayload = ExtractJsonObject(text);
-            var parsed = JsonSerializer.Deserialize<ReframeResponse>(jsonPayload, ReframeJsonOptions);
+            var parsed = JsonSerializer.Deserialize<ReframeResponse>(
+                jsonPayload,
+                ReframeJsonOptions
+            );
 
-            if (parsed is null
+            if (
+                parsed is null
                 || string.IsNullOrWhiteSpace(parsed.Distortion)
-                || string.IsNullOrWhiteSpace(parsed.SuggestedReframe))
+                || string.IsNullOrWhiteSpace(parsed.SuggestedReframe)
+            )
             {
                 _logger.LogWarning(
                     "Reframe JSON parse incomplete after extraction. Payload length: {Len}",

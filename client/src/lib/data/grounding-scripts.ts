@@ -14,13 +14,13 @@ export const BODY_SCAN_STEPS: BodyScanStep[] = [
   {
     region: "Feet",
     instruction:
-      "Bring your attention to the soles of your feet. Notice any warmth, tingling, or pressure. Don't try to change anything — just observe.",
+      "Bring your attention to the soles of your feet. Notice any warmth, tingling, or pressure. Don't try to change anything. Just observe.",
     durationMs: 12000,
   },
   {
     region: "Lower legs",
     instruction:
-      "Move your awareness up to your calves and shins. Notice whatever is there — tension, heaviness, or nothing at all. All of it is fine.",
+      "Move your awareness up to your calves and shins. Notice whatever is there. Tension, heaviness, or nothing at all. All of it is fine.",
     durationMs: 12000,
   },
   {
@@ -44,7 +44,7 @@ export const BODY_SCAN_STEPS: BodyScanStep[] = [
   {
     region: "Hands & arms",
     instruction:
-      "Shift your attention to your fingertips, palms, wrists, and arms. Notice any sensations — warmth, coolness, pulsing.",
+      "Shift your attention to your fingertips, palms, wrists, and arms. Notice any sensations. Warmth, coolness, or pulsing.",
     durationMs: 12000,
   },
   {

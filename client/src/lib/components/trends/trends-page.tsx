@@ -8,7 +8,8 @@ import { MoodCalendar } from "@/lib/components/trends/mood-calendar";
 import { TopActivitiesChart } from "@/lib/components/trends/top-activities-chart";
 import { TopEmotionsChart } from "@/lib/components/trends/top-emotions-chart";
 import { YearSelector } from "@/lib/components/trends/year-selector";
-import { Skeleton } from "@/lib/components/ui/skeleton";
+import { SectionLabel } from "@/lib/components/trends/section-label";
+import { TrendsSkeleton } from "@/lib/components/trends/trends-skeleton";
 import { useTrends } from "@/lib/hooks/queries/use-trends";
 import { motion } from "motion/react";
 import { useState } from "react";
@@ -27,24 +28,6 @@ const MONTHS = [
   "Nov",
   "Dec",
 ];
-
-function SectionLabel({ children }: { children: string }) {
-  return (
-    <p className="mb-3 text-center text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-      {children}
-    </p>
-  );
-}
-
-function TrendsSkeleton() {
-  return (
-    <div className="space-y-4 px-1">
-      <Skeleton className="h-44 w-full rounded-2xl" />
-      <Skeleton className="h-52 w-full rounded-2xl" />
-      <Skeleton className="h-36 w-full rounded-2xl" />
-    </div>
-  );
-}
 
 export default function TrendsPage() {
   const currentYear = new Date().getFullYear();

@@ -32,14 +32,7 @@ export default function HomeLayout({ children }: PropsWithChildren) {
           />
           <header className="flex h-14 min-h-14 shrink-0 items-center gap-3 border-b border-border/60 bg-background/80 px-3 backdrop-blur-md md:px-4">
             <SidebarTrigger className="-ml-0.5 text-muted-foreground hover:text-foreground md:hidden" />
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                Serene
-              </p>
-              <p className="truncate text-sm font-semibold text-foreground">
-                Your wellness space
-              </p>
-            </div>
+           <div className="flex-1"></div>
             <div className="flex shrink-0 items-center gap-2">
               <div className="flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-primary shadow-sm">
                 <Leaf className="size-3.5" strokeWidth={2.5} />
@@ -62,7 +55,6 @@ export default function HomeLayout({ children }: PropsWithChildren) {
                     <Lock className="size-4" />
                     Lock
                   </Button>
-                  <Toaster />
                 </>
               )}
             </div>

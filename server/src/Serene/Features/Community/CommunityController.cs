@@ -56,7 +56,8 @@ public class CommunityController : BaseApiController
     public async Task<IActionResult> GetInterests()
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
         return await ExecuteWithResult(() => _peerMatchService.GetInterestsAsync(userId));
     }
 
@@ -65,8 +66,11 @@ public class CommunityController : BaseApiController
     public async Task<IActionResult> UpdateInterests([FromBody] UpdateInterestsRequest body)
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
-        return await ExecuteWithResult(() => _peerMatchService.UpdateInterestsAsync(userId, body.Interests));
+        if (userId == null)
+            return Unauthorized();
+        return await ExecuteWithResult(() =>
+            _peerMatchService.UpdateInterestsAsync(userId, body.Interests)
+        );
     }
 
     [HttpGet("peers/match")]
@@ -74,7 +78,8 @@ public class CommunityController : BaseApiController
     public async Task<IActionResult> GetPeerMatch()
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
         return await ExecuteWithResult(() => _peerMatchService.GetCurrentMatchAsync(userId));
     }
 }

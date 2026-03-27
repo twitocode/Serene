@@ -88,7 +88,7 @@ public static class ApplicationServiceExtensions
                     ? aiOptions.OpenRouterApiKey
                     : throw new ArgumentException("OpenRouter API key not found in environment")
             ),
-            model: "openai/gpt-oss-20b",
+            model: "google/gemini-2.5-flash",
             options: new OpenAIClientOptions { Endpoint = new Uri("https://openrouter.ai/api/v1") }
         ));
 

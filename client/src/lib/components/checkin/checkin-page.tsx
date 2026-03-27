@@ -10,8 +10,18 @@ import { getMoodFromLabel, getSeverityColor, MoodLabel } from "@/lib/data/moods"
 import { useCheckinsQuery } from "@/lib/hooks/queries/use-checkins";
 import { cn } from "@/lib/utils";
 import { isToday } from "date-fns";
+import { Activity, MessageCircle } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/lib/components/ui/dialog";
+import { Separator } from "@/lib/components/ui/separator";
 
 export default function CheckinPage() {
   const { displayDate, startCheckin, isCheckingIn, changeDate, cancel } =
@@ -109,29 +119,119 @@ export default function CheckinPage() {
                 : "";
 
               return (
-                <motion.div
-                  key={checkin.id}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.35 }}
-                  className="card-organic flex flex-col justify-between gap-3 border-border/80 p-4 sm:flex-row sm:items-center"
-                >
-                  <p
-                    className="text-sm text-muted-foreground"
-                    suppressHydrationWarning
-                  >
-                    {formattedDate}
-                  </p>
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      "w-fit text-sm font-medium tabular-nums",
-                      severityClass,
-                    )}
-                  >
-                    {checkin.moodLabel}
-                  </Badge>
-                </motion.div>
+                <Dialog key={checkin.id}>
+                  <DialogTrigger asChild>
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35 }}
+                      className="card-organic flex cursor-pointer flex-col justify-between gap-3 border-border/80 p-4 transition-colors hover:bg-muted/40 sm:flex-row sm:items-center"
+                    >
+                      <p
+                        className="text-sm text-muted-foreground"
+                        suppressHydrationWarning
+                      >
+                        {formattedDate}
+                      </p>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "w-fit text-sm font-medium tabular-nums",
+                          severityClass,
+                        )}
+                      >
+                        {checkin.moodLabel}
+                      </Badge>
+                    </motion.div>
+                  </DialogTrigger>
+                  <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-[500px]">
+                    <DialogHeader>
+                      <DialogTitle className="font-serif text-xl">
+                        Check-in Details
+                      </DialogTitle>
+                      <DialogDescription suppressHydrationWarning>
+                        {formattedDate}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex flex-col gap-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-medium text-muted-foreground">
+                          Mood:
+                        </span>
+                        <Badge
+                          variant="outline"
+                          className={cn("text-sm font-medium", severityClass)}
+                        >
+                          {checkin.moodLabel}
+                        </Badge>
+                      </div>
+
+                      {(checkin.lingeringThoughts || checkin.reframedThought) && (
+                        <div className="space-y-4 rounded-xl border border-border/60 bg-muted/20 p-4">
+                          <h4 className="flex items-center gap-2 font-serif text-base font-medium">
+                            <MessageCircle className="size-4 text-primary" />
+                            Thoughts &amp; reframe
+                          </h4>
+                          {checkin.lingeringThoughts && (
+                            <div className="space-y-1.5">
+                              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                What weighed on you
+                              </p>
+                              <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                                {checkin.lingeringThoughts}
+                              </p>
+                            </div>
+                          )}
+                          {checkin.lingeringThoughts && checkin.reframedThought && (
+                            <Separator className="bg-border/60" />
+                          )}
+                          {checkin.reframedThought && (
+                            <div className="space-y-1.5">
+                              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                A kinder angle
+                              </p>
+                              <p className="whitespace-pre-wrap text-sm leading-relaxed text-primary">
+                                {checkin.reframedThought}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {checkin.somaticState &&
+                        Object.keys(checkin.somaticState).length > 0 && (
+                          <div className="space-y-4 rounded-xl border border-border/60 bg-muted/20 p-4">
+                            <h4 className="flex items-center gap-2 font-serif text-base font-medium">
+                              <Activity className="size-4 text-primary" />
+                              Body check-in
+                            </h4>
+                            <div className="flex flex-col gap-3">
+                              {Object.entries(checkin.somaticState).map(
+                                ([part, data]) => (
+                                  <div key={part} className="flex flex-col gap-1.5">
+                                    <span className="text-sm font-medium capitalize text-foreground">
+                                      {part}
+                                    </span>
+                                    <div className="flex flex-wrap gap-1.5">
+                                      {data.sensations.map((s) => (
+                                        <Badge
+                                          key={s}
+                                          variant="secondary"
+                                          className="font-normal"
+                                        >
+                                          {s}
+                                        </Badge>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ),
+                              )}
+                            </div>
+                          </div>
+                        )}
+                    </div>
+                  </DialogContent>
+                </Dialog>
               );
             })
         ) : (

@@ -29,7 +29,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/lib/components/ui/tooltip";
-import { Toaster } from "@/lib/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { apiFetch } from "@/lib/helpers/api-fetch";
 import { FeedbackRequest } from "@/lib/types/api-types";
@@ -105,7 +104,6 @@ export default function FeedbackButton() {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <Toaster />
         <Dialog
           open={open}
           onOpenChange={(next) => {

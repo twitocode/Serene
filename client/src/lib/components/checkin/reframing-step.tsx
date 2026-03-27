@@ -174,7 +174,7 @@ export default function ReframingStep() {
 
       {!hasThoughts && !isPending && (
         <p className="text-center text-sm text-muted-foreground">
-          Nothing to reframe — that&apos;s okay. You can skip this step or
+          Nothing to reframe. That&apos;s okay. You can skip this step or
           write a kind thought for yourself.
         </p>
       )}

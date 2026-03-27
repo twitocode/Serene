@@ -11,7 +11,11 @@ public interface IActivityService
 {
     Task<List<ActivityResponse>> GetActivitiesAsync(string userId, LocalDate? from, LocalDate? to);
     Task<ActivityResponse> CreateActivityAsync(string userId, CreateActivityRequest dto);
-    Task<ActivityResponse> CompleteActivityAsync(string userId, string activityId, CompleteActivityRequest dto);
+    Task<ActivityResponse> CompleteActivityAsync(
+        string userId,
+        string activityId,
+        CompleteActivityRequest dto
+    );
     Task DeleteActivityAsync(string userId, string activityId);
 }
 
@@ -26,7 +30,11 @@ public class ActivityService : IActivityService
         _achievementService = achievementService;
     }
 
-    public async Task<List<ActivityResponse>> GetActivitiesAsync(string userId, LocalDate? from, LocalDate? to)
+    public async Task<List<ActivityResponse>> GetActivitiesAsync(
+        string userId,
+        LocalDate? from,
+        LocalDate? to
+    )
     {
         var query = _context.ScheduledActivities.Where(a => a.UserId == userId);
 
@@ -42,7 +50,10 @@ public class ActivityService : IActivityService
             .ToListAsync();
     }
 
-    public async Task<ActivityResponse> CreateActivityAsync(string userId, CreateActivityRequest dto)
+    public async Task<ActivityResponse> CreateActivityAsync(
+        string userId,
+        CreateActivityRequest dto
+    )
     {
         var parseResult = LocalDatePattern.Iso.Parse(dto.ScheduledDate);
         if (!parseResult.Success)
@@ -62,11 +73,16 @@ public class ActivityService : IActivityService
         return MapToResponse(activity);
     }
 
-    public async Task<ActivityResponse> CompleteActivityAsync(string userId, string activityId, CompleteActivityRequest dto)
+    public async Task<ActivityResponse> CompleteActivityAsync(
+        string userId,
+        string activityId,
+        CompleteActivityRequest dto
+    )
     {
-        var activity = await _context.ScheduledActivities
-            .FirstOrDefaultAsync(a => a.Id == activityId && a.UserId == userId)
-            ?? throw new KeyNotFoundException("Activity not found");
+        var activity =
+            await _context.ScheduledActivities.FirstOrDefaultAsync(a =>
+                a.Id == activityId && a.UserId == userId
+            ) ?? throw new KeyNotFoundException("Activity not found");
 
         activity.Completed = true;
         activity.CompletedAt = SystemClock.Instance.GetCurrentInstant();
@@ -82,23 +98,25 @@ public class ActivityService : IActivityService
 
     public async Task DeleteActivityAsync(string userId, string activityId)
     {
-        var activity = await _context.ScheduledActivities
-            .FirstOrDefaultAsync(a => a.Id == activityId && a.UserId == userId)
-            ?? throw new KeyNotFoundException("Activity not found");
+        var activity =
+            await _context.ScheduledActivities.FirstOrDefaultAsync(a =>
+                a.Id == activityId && a.UserId == userId
+            ) ?? throw new KeyNotFoundException("Activity not found");
 
         _context.ScheduledActivities.Remove(activity);
         await _context.SaveChangesAsync();
     }
 
-    private static ActivityResponse MapToResponse(ScheduledActivity a) => new()
-    {
-        Id = a.Id,
-        Title = a.Title,
-        Category = a.Category,
-        ScheduledDate = a.ScheduledDate.ToString(),
-        Completed = a.Completed,
-        CompletedAt = a.CompletedAt?.ToString(),
-        MoodBefore = a.MoodBefore,
-        MoodAfter = a.MoodAfter,
-    };
+    private static ActivityResponse MapToResponse(ScheduledActivity a) =>
+        new()
+        {
+            Id = a.Id,
+            Title = a.Title,
+            Category = a.Category,
+            ScheduledDate = a.ScheduledDate.ToString(),
+            Completed = a.Completed,
+            CompletedAt = a.CompletedAt?.ToString(),
+            MoodBefore = a.MoodBefore,
+            MoodAfter = a.MoodAfter,
+        };
 }

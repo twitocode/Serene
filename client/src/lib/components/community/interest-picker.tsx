@@ -78,7 +78,7 @@ export default function InterestPicker({ onComplete }: InterestPickerProps) {
 
       <p className="text-xs text-muted-foreground">
         {selected.length} of 8 selected
-        {selected.length < 3 && " — pick at least 3"}
+        {selected.length < 3 && " (pick at least 3)"}
       </p>
 
       <Button

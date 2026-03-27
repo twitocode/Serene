@@ -74,11 +74,14 @@ public class GeminiService(Client genAiClient, ILogger<GeminiService> logger) : 
 
     public Task<ReframeResponse> ReframeLingering(string lingeringThoughts)
     {
-        return Task.FromResult(new ReframeResponse
-        {
-            Distortion = "Unknown",
-            SocraticQuestion = "What evidence do you have for and against this thought?",
-            SuggestedReframe = "It's okay to feel this way. Consider whether there's a more balanced perspective.",
-        });
+        return Task.FromResult(
+            new ReframeResponse
+            {
+                Distortion = "Unknown",
+                SocraticQuestion = "What evidence do you have for and against this thought?",
+                SuggestedReframe =
+                    "It's okay to feel this way. Consider whether there's a more balanced perspective.",
+            }
+        );
     }
 }

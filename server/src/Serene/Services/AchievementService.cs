@@ -36,29 +36,30 @@ public class AchievementService : IAchievementService
     public async Task<List<AchievementWithStatus>> GetAllAchievementsAsync(string userId)
     {
         var achievements = await _context.Achievements.ToListAsync();
-        var userAchievements = await _context.UserAchievements
-            .Where(ua => ua.UserId == userId)
+        var userAchievements = await _context
+            .UserAchievements.Where(ua => ua.UserId == userId)
             .ToDictionaryAsync(ua => ua.AchievementId, ua => ua.UnlockedAt);
 
-        return achievements.Select(a => new AchievementWithStatus
-        {
-            Id = a.Id,
-            Slug = a.Slug,
-            Title = a.Title,
-            Description = a.Description,
-            Points = a.Points,
-            Unlocked = userAchievements.ContainsKey(a.Id),
-            UnlockedAt = userAchievements.GetValueOrDefault(a.Id),
-        })
-        .OrderByDescending(a => a.Unlocked)
-        .ThenBy(a => a.Points)
-        .ToList();
+        return achievements
+            .Select(a => new AchievementWithStatus
+            {
+                Id = a.Id,
+                Slug = a.Slug,
+                Title = a.Title,
+                Description = a.Description,
+                Points = a.Points,
+                Unlocked = userAchievements.ContainsKey(a.Id),
+                UnlockedAt = userAchievements.GetValueOrDefault(a.Id),
+            })
+            .OrderByDescending(a => a.Unlocked)
+            .ThenBy(a => a.Points)
+            .ToList();
     }
 
     public async Task CheckAndGrantAchievementsAsync(string userId)
     {
-        var existing = await _context.UserAchievements
-            .Where(ua => ua.UserId == userId)
+        var existing = await _context
+            .UserAchievements.Where(ua => ua.UserId == userId)
             .Select(ua => ua.Achievement.Slug)
             .ToHashSetAsync();
 
@@ -69,15 +70,18 @@ public class AchievementService : IAchievementService
         var currentStreak = profile?.CurrentStreak ?? 0;
         var longestStreak = profile?.LongestStreak ?? 0;
 
-        var activityCount = await _context.ScheduledActivities
-            .CountAsync(a => a.UserId == userId && a.Completed);
+        var activityCount = await _context.ScheduledActivities.CountAsync(a =>
+            a.UserId == userId && a.Completed
+        );
 
-        var reframeCount = await _context.Checkins
-            .CountAsync(c => c.UserId == userId && c.ReframedThought != null && c.ReframedThought != "");
+        var reframeCount = await _context.Checkins.CountAsync(c =>
+            c.UserId == userId && c.ReframedThought != null && c.ReframedThought != ""
+        );
 
         foreach (var achievement in allAchievements)
         {
-            if (existing.Contains(achievement.Slug)) continue;
+            if (existing.Contains(achievement.Slug))
+                continue;
 
             bool earned = achievement.Slug switch
             {
@@ -100,12 +104,14 @@ public class AchievementService : IAchievementService
 
             if (earned)
             {
-                _context.UserAchievements.Add(new UserAchievement
-                {
-                    UserId = userId,
-                    AchievementId = achievement.Id,
-                });
-                _logger.LogInformation("Granted achievement {Slug} to user {UserId}", achievement.Slug, userId);
+                _context.UserAchievements.Add(
+                    new UserAchievement { UserId = userId, AchievementId = achievement.Id }
+                );
+                _logger.LogInformation(
+                    "Granted achievement {Slug} to user {UserId}",
+                    achievement.Slug,
+                    userId
+                );
             }
         }
 
