@@ -4,7 +4,7 @@ import { ButtonGroup } from "@/lib/components/ui/button-group";
 import { Textarea } from "@/lib/components/ui/textarea";
 import { FormEventHandler } from "react";
 
-export default function LingeringStep() {
+export default function WeighingStep() {
   const { goBack, goNext, lingeringThoughts, setLingeringThoughts } =
     useCheckinStore((s) => s);
 
@@ -20,20 +20,20 @@ export default function LingeringStep() {
     >
       <div className="space-y-3 text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-primary">
-          Step 4 of 6
+          Step 3 of 5
         </p>
         <h1 className="font-serif text-2xl font-semibold leading-snug text-foreground md:text-3xl">
-          Anything else on your mind?
+          What&apos;s weighing on you?
         </h1>
         <p className="text-sm text-muted-foreground">
-          Lingering thoughts, worries, or things you don&apos;t want to forget.
-          Optional, but naming them can help.
+          Describe the situation and the thought that keeps coming back.
+          This helps Mochi understand what to work with in the next step.
         </p>
       </div>
 
       <Textarea
-        placeholder="Type here if you’d like…"
-        id="lingering"
+        placeholder="e.g. I have an exam tomorrow and I keep thinking I'm going to fail no matter how much I study…"
+        id="weighing"
         className="min-h-[180px] resize-y rounded-xl border-border/80 bg-card text-base leading-relaxed"
         rows={8}
         value={lingeringThoughts || ""}

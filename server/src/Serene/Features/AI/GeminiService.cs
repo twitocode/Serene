@@ -1,5 +1,6 @@
 using Google.GenAI;
 using Google.GenAI.Types;
+using Serene.Features.Checkins;
 
 namespace Serene.Features.AI;
 
@@ -69,5 +70,15 @@ public class GeminiService(Client genAiClient, ILogger<GeminiService> logger) : 
             _logger.LogError(ex, "Error generating QOTD from Gemini");
             return "What is one small thing you can do for yourself today?";
         }
+    }
+
+    public Task<ReframeResponse> ReframeLingering(string lingeringThoughts)
+    {
+        return Task.FromResult(new ReframeResponse
+        {
+            Distortion = "Unknown",
+            SocraticQuestion = "What evidence do you have for and against this thought?",
+            SuggestedReframe = "It's okay to feel this way. Consider whether there's a more balanced perspective.",
+        });
     }
 }

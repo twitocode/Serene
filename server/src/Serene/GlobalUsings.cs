@@ -1,3 +1,4 @@
+global using Serene.Features.Activities;
 global using Serene.Features.AI;
 global using Serene.Features.Auth;
 global using Serene.Features.Checkins;

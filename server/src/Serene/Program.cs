@@ -209,6 +209,10 @@ try
         try
         {
             await DbInitializer.InitializeAsync(services);
+
+            var context = services.GetRequiredService<ApplicationDbContext>();
+            await AchievementSeedData.SeedAchievementsAsync(context);
+
             var adminEmail = Environment.GetEnvironmentVariable("ADMIN_EMAIL");
             if (!string.IsNullOrEmpty(adminEmail))
             {

@@ -3,7 +3,6 @@ import HomeLock from "@/lib/components/home/home-lock";
 import StateLoader from "@/lib/components/home/state-loader";
 import { ThemeProvider } from "@/lib/components/providers/theme-provider";
 import { CheckinProvider } from "@/lib/components/providers/zustand-provider";
-import { getRandomPrompt } from "@/lib/data/prompts";
 import { getSession } from "@/lib/get-session";
 import { apiFetch } from "@/lib/helpers/api-fetch";
 import { getCurrentDate } from "@/lib/helpers/get-current-date";
@@ -48,7 +47,6 @@ export default async function layout({
       <StateLoader>
         <CheckinProvider
           initialDisplayDate={getCurrentDate()}
-          initialPromptQuestion={getRandomPrompt().question}
         >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <HomeLayout>{children}</HomeLayout>

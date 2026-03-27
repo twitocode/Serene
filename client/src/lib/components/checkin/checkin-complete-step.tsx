@@ -26,8 +26,6 @@ export default function CheckinCompleteStep() {
     selectedMood,
     lingeringThoughts,
     reframedThought,
-    promptAnswer,
-    promptQuestion,
     goBack,
     complete: resetStore,
     displayDate,
@@ -43,8 +41,6 @@ export default function CheckinCompleteStep() {
         reframedThought,
         moodLabel: selectedMood.label,
         moodSeverity: selectedMood.severity,
-        promptAnswer,
-        promptQuestion,
         somaticState,
       });
       resetStore();
@@ -70,7 +66,7 @@ export default function CheckinCompleteStep() {
     <div className="mx-auto flex w-full max-w-xl flex-col gap-6 pb-10 self-center">
       <div className="space-y-2 text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-primary">
-          Step 6 of 6
+          Step 5 of 5
         </p>
         <h1 className="font-serif text-2xl font-semibold text-foreground md:text-3xl">
           Review & save
@@ -104,54 +100,41 @@ export default function CheckinCompleteStep() {
         </CardContent>
       </Card>
 
-      <Card className="border-border/80 bg-card/95 shadow-sm">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 font-serif text-lg">
-            <MessageCircle className="size-5 text-primary" />
-            Reflection
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <p className="text-sm font-medium italic text-muted-foreground">
-              &ldquo;{promptQuestion}&rdquo;
-            </p>
-            <p className="whitespace-pre-wrap text-sm leading-relaxed md:text-base">
-              {promptAnswer || (
-                <span className="italic text-muted-foreground">
-                  No response provided.
-                </span>
-              )}
-            </p>
-          </div>
-          {lingeringThoughts ? (
-            <>
-              <Separator className="bg-border/60" />
+      {(lingeringThoughts || reframedThought) ? (
+        <Card className="border-border/80 bg-card/95 shadow-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 font-serif text-lg">
+              <MessageCircle className="size-5 text-primary" />
+              Thoughts &amp; reframe
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {lingeringThoughts ? (
               <div className="space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Lingering thoughts
+                  What&apos;s weighing on you
                 </p>
                 <p className="whitespace-pre-wrap text-sm leading-relaxed md:text-base">
                   {lingeringThoughts}
                 </p>
               </div>
-            </>
-          ) : null}
-          {reframedThought ? (
-            <>
-              <Separator className="bg-border/60" />
-              <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Reframe
-                </p>
-                <p className="whitespace-pre-wrap text-sm leading-relaxed text-primary md:text-base">
-                  {reframedThought}
-                </p>
-              </div>
-            </>
-          ) : null}
-        </CardContent>
-      </Card>
+            ) : null}
+            {reframedThought ? (
+              <>
+                {lingeringThoughts ? <Separator className="bg-border/60" /> : null}
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    A kinder angle
+                  </p>
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-primary md:text-base">
+                    {reframedThought}
+                  </p>
+                </div>
+              </>
+            ) : null}
+          </CardContent>
+        </Card>
+      ) : null}
 
       <Card className="border-border/80 bg-card/95 shadow-sm">
         <CardHeader className="pb-2">

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;
+using Serene.Features.AI;
 
 namespace Serene.Features.Checkins;
 
@@ -9,11 +10,17 @@ namespace Serene.Features.Checkins;
 public class CheckinController : BaseApiController
 {
     private readonly ICheckinService _checkinService;
+    private readonly IAIService _aiService;
 
-    public CheckinController(ICheckinService checkinService, ILogger<CheckinController> logger)
+    public CheckinController(
+        ICheckinService checkinService,
+        IAIService aiService,
+        ILogger<CheckinController> logger
+    )
         : base(logger)
     {
         _checkinService = checkinService;
+        _aiService = aiService;
     }
 
     [HttpGet]
@@ -37,5 +44,12 @@ public class CheckinController : BaseApiController
             return Unauthorized();
 
         return await ExecuteWithResult(() => _checkinService.CompleteCheckinAsync(userId, body));
+    }
+
+    [HttpPost("reframe")]
+    [Authorize]
+    public async Task<IActionResult> Reframe([FromBody] ReframeRequest body)
+    {
+        return await ExecuteWithResult(() => _aiService.ReframeLingering(body.LingeringThoughts));
     }
 }

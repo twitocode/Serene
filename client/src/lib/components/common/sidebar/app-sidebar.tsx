@@ -8,6 +8,7 @@ import {
   SidebarHeader,
 } from "@/lib/components/ui/sidebar";
 import {
+  Activity,
   CompassIcon,
   Handshake,
   History,
@@ -15,6 +16,7 @@ import {
   Pencil,
   ShieldUser,
   TrendingUp,
+  Trophy,
 } from "lucide-react";
 import * as React from "react";
 
@@ -34,6 +36,8 @@ const sections: NavSection[] = [
   {
     label: "Connect & grow",
     items: [
+      { title: "Activities", url: "/home/activities", icon: Activity, role: "User" },
+      { title: "Achievements", url: "/home/achievements", icon: Trophy, role: "User" },
       { title: "Community", url: "/home/community", icon: Handshake, role: "User" },
       { title: "Explore", url: "/home/explore", icon: CompassIcon, role: "User" },
       { title: "Trends", url: "/home/trends", icon: TrendingUp, role: "User" },

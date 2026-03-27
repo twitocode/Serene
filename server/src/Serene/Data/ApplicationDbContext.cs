@@ -22,6 +22,9 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<ExploreContent> ExploreContent { get; set; }
     public DbSet<QuestionBank> QuestionBanks { get; set; }
     public DbSet<QuestionGenerationSchedule> QuestionGenerationSchedules { get; set; }
+    public DbSet<UserInterest> UserInterests { get; set; } = null!;
+    public DbSet<PeerMatch> PeerMatches { get; set; } = null!;
+    public DbSet<ScheduledActivity> ScheduledActivities { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -98,5 +101,19 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .WithMany()
             .HasForeignKey(p => p.QotdId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder
+            .Entity<PeerMatch>()
+            .HasOne(pm => pm.User)
+            .WithMany()
+            .HasForeignKey(pm => pm.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder
+            .Entity<PeerMatch>()
+            .HasOne(pm => pm.MatchedUser)
+            .WithMany()
+            .HasForeignKey(pm => pm.MatchedUserId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

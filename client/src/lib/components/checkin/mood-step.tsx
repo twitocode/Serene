@@ -32,7 +32,7 @@ export default function MoodStep() {
           </div>
           <div className="min-w-0 flex-1 space-y-2 text-center sm:text-left">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-              Step 1 of 6
+              Step 1 of 5
             </p>
             <h1 className="font-serif text-2xl font-semibold leading-snug text-foreground md:text-3xl">
               How are you right now?

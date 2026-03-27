@@ -10,8 +10,8 @@ public class CompleteCheckinRequestValidator : AbstractValidator<CompleteCheckin
         //TODO: have a custom list of labels
         RuleFor(x => x.MoodLabel).NotEmpty().WithMessage("You did not enter in a mood label");
         RuleFor(x => x.PromptQuestion)
-            .NotEmpty()
-            .WithMessage("You did not provide a prompt question");
+            .MaximumLength(500)
+            .WithMessage("Prompt question is too long");
         RuleFor(x => x.LingeringThoughts)
             .MaximumLength(2000)
             .WithMessage("Lingering thoughts is too long, max 2000 characters");

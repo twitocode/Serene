@@ -1,4 +1,5 @@
 import FemaleBody from "@/lib/components/checkin/bodies/female-body";
+import GroundingSheet from "@/lib/components/checkin/grounding/grounding-sheet";
 import MaleBody from "@/lib/components/checkin/bodies/male-body";
 import {
   BodyPart,
@@ -46,6 +47,7 @@ export default function SomaticStep() {
   const [currentSensations, setCurrentSensations] = useState<string[]>([]);
   const [customSensation, setCustomSensation] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [groundingOpen, setGroundingOpen] = useState(false);
   const isMobile = useIsMobile();
 
   const handleBodyClick = (e: React.MouseEvent<SVGSVGElement>) => {
@@ -79,6 +81,10 @@ export default function SomaticStep() {
       }
 
       setSomaticState(newState);
+
+      if (currentSensations.length > 0) {
+        setGroundingOpen(true);
+      }
     }
     setIsOpen(false);
     setCustomSensation("");
@@ -238,6 +244,7 @@ export default function SomaticStep() {
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
+      <GroundingSheet open={groundingOpen} onOpenChange={setGroundingOpen} />
     </div>
   );
 }

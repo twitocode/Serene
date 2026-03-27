@@ -1,5 +1,9 @@
 import { Activity, ActivityCategory } from "@/lib/types";
 
+export const ACTIVITY_CATEGORIES = Object.values(ActivityCategory).map(
+  (cat) => ({ category: cat }),
+);
+
 export const WELLNESS_ACTIVITIES: Activity[] = [
   {
     id: "mindful-1",

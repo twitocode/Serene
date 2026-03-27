@@ -9,6 +9,8 @@ using Quartz.AspNetCore;
 using Serene.Configuration;
 using Serene.Data;
 using Serene.Entities;
+using Serene.Features.Activities;
+using Serene.Features.Community;
 using Serene.Features.Trends;
 using Serene.Jobs;
 using Serene.Services;
@@ -58,6 +60,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IUsersService, UsersService>();
         services.AddScoped<ISettingsService, SettingsService>();
         services.AddScoped<ICommunityService, CommunityService>();
+        services.AddScoped<IPeerMatchService, PeerMatchService>();
         services.AddScoped<ICheckinService, CheckinService>();
         services.AddScoped<IEmbeddingService, EmbeddingService>();
         services.AddScoped<IExploreService, ExploreService>();
@@ -68,6 +71,8 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IQuestionCache, QuestionCache>();
         services.AddScoped<IStreakService, StreakService>();
         services.AddScoped<IFeedbackService, FeedbackService>();
+        services.AddScoped<IActivityService, ActivityService>();
+        services.AddScoped<IAchievementService, AchievementService>();
         services.AddSingleton<IEncryptionService, EncryptionService>();
         services.AddHttpClient();
 

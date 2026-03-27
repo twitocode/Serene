@@ -123,10 +123,12 @@ export interface Checkin {
   user: User;
   moodLabel: string;
   moodSeverity: number;
-  promptQuestion: string;
+  promptQuestion: string | null;
   promptAnswer: string | null;
   dateCompleted: string;
   somaticState: { [key: string]: GridPoint } | null;
+  lingeringThoughts: string | null;
+  reframedThought: string | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -49,6 +49,7 @@ public class User : IdentityUser
         new List<UserAchievement>();
     public ICollection<Checkin> Checkins { get; set; } = new List<Checkin>();
     public ICollection<Post> Posts { get; set; } = new List<Post>();
+    public ICollection<UserInterest> Interests { get; set; } = new List<UserInterest>();
 }
 
 [Table("verification")]

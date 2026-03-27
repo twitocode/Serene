@@ -19,6 +19,10 @@ public class Achievement
     [Required]
     public string Title { get; set; } = string.Empty;
 
+    [Column("description")]
+    [MaxLength(300)]
+    public string Description { get; set; } = string.Empty;
+
     [Column("points")]
     public int Points { get; set; } = 0;
 }

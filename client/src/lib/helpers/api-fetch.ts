@@ -52,8 +52,20 @@ export async function apiFetch<T = void>(
 
     const json = await response.json().catch(() => null);
 
-    if (json && typeof json === "object" && "isSuccess" in json) {
-      return json as Result<T>;
+    if (json && typeof json === "object") {
+      const envelope = json as Record<string, unknown>;
+      const isSuccess = envelope.isSuccess ?? envelope.IsSuccess;
+      if (typeof isSuccess === "boolean") {
+        return {
+          isSuccess,
+          data: (envelope.data ?? envelope.Data) as T | null,
+          message: (envelope.message ?? envelope.Message) as string | undefined,
+          errorCode: (envelope.errorCode ?? envelope.ErrorCode) as
+            | string
+            | undefined,
+          errors: envelope.errors as Record<string, string[]> | undefined,
+        };
+      }
     }
 
     // ASP.NET ProblemDetails (RFC 7807)

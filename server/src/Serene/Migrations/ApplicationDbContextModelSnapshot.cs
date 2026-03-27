@@ -165,6 +165,12 @@ namespace Serene.Migrations
                         .HasColumnType("text")
                         .HasColumnName("id");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("description");
+
                     b.Property<int>("Points")
                         .HasColumnType("integer")
                         .HasColumnName("points");
@@ -291,6 +297,49 @@ namespace Serene.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("explore_content");
+                });
+
+            modelBuilder.Entity("Serene.Entities.PeerMatch", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<Instant>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<LocalDate>("MatchDate")
+                        .HasColumnType("date")
+                        .HasColumnName("match_date");
+
+                    b.Property<string>("MatchedUserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("matched_user_id");
+
+                    b.Property<string>("SharedInterest")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("shared_interest");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MatchedUserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("peer_matches");
                 });
 
             modelBuilder.Entity("Serene.Entities.Post", b =>
@@ -543,6 +592,60 @@ namespace Serene.Migrations
                     b.ToTable("safety_plan");
                 });
 
+            modelBuilder.Entity("Serene.Entities.ScheduledActivity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("category");
+
+                    b.Property<bool>("Completed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("completed");
+
+                    b.Property<Instant?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_at");
+
+                    b.Property<Instant>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int?>("MoodAfter")
+                        .HasColumnType("integer")
+                        .HasColumnName("mood_after");
+
+                    b.Property<int?>("MoodBefore")
+                        .HasColumnType("integer")
+                        .HasColumnName("mood_before");
+
+                    b.Property<LocalDate>("ScheduledDate")
+                        .HasColumnType("date")
+                        .HasColumnName("scheduled_date");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("title");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("scheduled_activities");
+                });
+
             modelBuilder.Entity("Serene.Entities.School", b =>
                 {
                     b.Property<string>("Id")
@@ -742,6 +845,34 @@ namespace Serene.Migrations
                     b.ToTable("user_achievements");
                 });
 
+            modelBuilder.Entity("Serene.Entities.UserInterest", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<Instant>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Interest")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("interest");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("user_interests");
+                });
+
             modelBuilder.Entity("Serene.Entities.Verification", b =>
                 {
                     b.Property<string>("Id")
@@ -837,6 +968,25 @@ namespace Serene.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Serene.Entities.PeerMatch", b =>
+                {
+                    b.HasOne("Serene.Entities.User", "MatchedUser")
+                        .WithMany()
+                        .HasForeignKey("MatchedUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Serene.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("MatchedUser");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Serene.Entities.Post", b =>
                 {
                     b.HasOne("Serene.Entities.QuestionOfTheDay", "QuestionOfTheDay")
@@ -888,6 +1038,17 @@ namespace Serene.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Serene.Entities.ScheduledActivity", b =>
+                {
+                    b.HasOne("Serene.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Serene.Entities.Settings", b =>
                 {
                     b.HasOne("Serene.Entities.User", "User")
@@ -918,6 +1079,17 @@ namespace Serene.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Serene.Entities.UserInterest", b =>
+                {
+                    b.HasOne("Serene.Entities.User", "User")
+                        .WithMany("Interests")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Serene.Entities.QuestionOfTheDay", b =>
                 {
                     b.Navigation("Responses");
@@ -926,6 +1098,8 @@ namespace Serene.Migrations
             modelBuilder.Entity("Serene.Entities.User", b =>
                 {
                     b.Navigation("Checkins");
+
+                    b.Navigation("Interests");
 
                     b.Navigation("Posts");
 

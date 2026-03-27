@@ -20,18 +20,21 @@ public class CheckinService : ICheckinService
     private readonly ILogger<CheckinService> _logger;
     private readonly IEncryptionService _encryption;
     private readonly IStreakService _streakService;
+    private readonly IAchievementService _achievementService;
 
     public CheckinService(
         ApplicationDbContext context,
         ILogger<CheckinService> logger,
         IEncryptionService encryption,
-        IStreakService streakService
+        IStreakService streakService,
+        IAchievementService achievementService
     )
     {
         _context = context;
         _logger = logger;
         _encryption = encryption;
         _streakService = streakService;
+        _achievementService = achievementService;
     }
 
     public async Task<List<CheckinResponse>> GetCheckinAsync(string userId, LocalDate? date)
@@ -83,9 +86,9 @@ public class CheckinService : ICheckinService
             MoodLabel = _encryption.Encrypt(dto.MoodLabel) ?? dto.MoodLabel,
             MoodSeverity = dto.MoodSeverity,
             PromptAnswer = _encryption.Encrypt(dto.PromptAnswer),
-            PromptQuestion = dto.PromptQuestion, // Not encrypted - needed for queries
+            PromptQuestion = dto.PromptQuestion ?? string.Empty,
             UserId = userId,
-            SomaticState = null, // Legacy field
+            SomaticState = null,
             SomaticStateEncrypted = _encryption.EncryptJson(dto.SomaticState),
             DateCompleted = SystemClock.Instance.GetCurrentInstant(),
         };
@@ -95,6 +98,8 @@ public class CheckinService : ICheckinService
 
         // Update streak after successful check-in
         await _streakService.UpdateStreakAsync(userId);
+
+        await _achievementService.CheckAndGrantAchievementsAsync(userId);
 
         _logger.LogInformation("Checkin completed for user {UserId} with encrypted data", userId);
     }

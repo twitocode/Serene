@@ -109,19 +109,17 @@ export interface QOTDAnswerDto {
 
 
 export interface CompleteCheckinRequest {
-  promptAnswer: string | null;
   somaticState: { [key: string]: GridPoint };
   lingeringThoughts: string | null;
   reframedThought: string | null;
   moodLabel: string;
-  promptQuestion: string;
   moodSeverity: number;
 }
 
 export interface CheckinResponse {
   lingeringThoughts: string | null;
+  reframedThought: string | null;
   moodLabel: string;
-  promptQuestion: string;
   moodSeverity: number;
   id: string;
   dateCompleted: string;
@@ -129,4 +127,57 @@ export interface CheckinResponse {
 
 export interface FeedbackRequest {
   message: string;
+}
+
+export interface ReframeRequest {
+  lingeringThoughts: string;
+}
+
+export interface ReframeResponse {
+  distortion: string;
+  socraticQuestion: string;
+  suggestedReframe: string;
+}
+
+export interface UpdateInterestsRequest {
+  interests: string[];
+}
+
+export interface PeerMatchResponse {
+  matchId: string;
+  anonymousName: string;
+  sharedInterest: string;
+  matchDate: string;
+}
+
+export interface ActivityResponse {
+  id: string;
+  title: string;
+  category: string;
+  scheduledDate: string;
+  completed: boolean;
+  completedAt: string | null;
+  moodBefore: number | null;
+  moodAfter: number | null;
+}
+
+export interface CreateActivityRequest {
+  title: string;
+  category?: string;
+  scheduledDate: string;
+}
+
+export interface CompleteActivityRequest {
+  moodBefore?: number;
+  moodAfter?: number;
+}
+
+export interface AchievementWithStatus {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  points: number;
+  unlocked: boolean;
+  unlockedAt: string | null;
 }

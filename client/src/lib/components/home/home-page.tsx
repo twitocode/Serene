@@ -1,5 +1,6 @@
 "use client";
 
+import RecentBadges from "@/lib/components/achievements/recent-badges";
 import { MochiDefault, MochiHappy } from "@/lib/components/common/mochi";
 import DateScroll from "@/lib/components/home/date-scroll";
 import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
@@ -124,6 +125,8 @@ export default function HomePage() {
           })}
         </div>
       </div>
+
+      <RecentBadges />
     </div>
   );
 }
