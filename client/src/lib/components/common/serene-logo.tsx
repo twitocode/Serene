@@ -23,7 +23,12 @@ export default function SereneLogo({
     >
       {!noLogo && (
         <MochiDefault
-          className={cn("shrink-0 text-primary", sidebar ? "size-7" : "size-9")}
+          className={cn(
+            "shrink-0 text-primary",
+            sidebar
+              ? "size-7 max-h-7 max-w-7 group-data-[collapsible=icon]:size-6 group-data-[collapsible=icon]:max-h-6 group-data-[collapsible=icon]:max-w-6"
+              : "size-9",
+          )}
         />
       )}
       {!noText && (

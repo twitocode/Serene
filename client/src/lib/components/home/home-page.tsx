@@ -70,8 +70,8 @@ export default function HomePage() {
               Stressed about exams or deadlines?
             </h2>
             <p className="text-sm text-muted-foreground">
-              A short guided check-in can help name what you&apos;re carrying — no
-              judgment, at your pace.
+              A short guided check-in can help name what you&apos;re carrying, at
+              your pace, with no judgment.
             </p>
             <Button
               onClick={handleStartCheckin}

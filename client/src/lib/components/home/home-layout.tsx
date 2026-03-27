@@ -30,8 +30,8 @@ export default function HomeLayout({ children }: PropsWithChildren) {
             className="pointer-events-none absolute inset-0 -z-10 mesh-sanctuary opacity-90"
             aria-hidden
           />
-          <header className="flex h-14 shrink-0 items-center gap-3 border-b border-border/60 bg-background/80 px-3 backdrop-blur-md transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4">
-            <SidebarTrigger className="-ml-0.5 text-muted-foreground hover:text-foreground" />
+          <header className="flex h-14 min-h-14 shrink-0 items-center gap-3 border-b border-border/60 bg-background/80 px-3 backdrop-blur-md md:px-4">
+            <SidebarTrigger className="-ml-0.5 text-muted-foreground hover:text-foreground md:hidden" />
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-medium uppercase tracking-widest text-muted-foreground">
                 Serene

@@ -55,13 +55,13 @@ export default function AppSidebar({ ...props }: SidebarLayoutProps) {
       className="border-r border-sidebar-border/80 bg-sidebar/95 backdrop-blur-sm"
       {...props}
     >
-      <SidebarHeader className="border-b border-sidebar-border/60 pb-3">
+      <SidebarHeader className="h-14 min-h-14 shrink-0 flex-row items-center gap-0 border-b border-sidebar-border/60 px-2 py-0 group-data-[collapsible=icon]:border-sidebar-border/40 group-data-[collapsible=icon]:px-1.5">
         <AppSidebarHeader />
       </SidebarHeader>
-      <SidebarContent className="gap-6 px-2 py-4">
+      <SidebarContent className="gap-5 px-2 py-3 group-data-[collapsible=icon]:gap-3 group-data-[collapsible=icon]:px-1.5 group-data-[collapsible=icon]:py-2">
         <NavMain sections={sections} />
       </SidebarContent>
-      <SidebarFooter className="gap-3 border-t border-sidebar-border/60 pt-3">
+      <SidebarFooter className="gap-2 border-t border-sidebar-border/60 pt-2 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-1.5 group-data-[collapsible=icon]:pt-2">
         <FeedbackButton />
         <NavUser />
       </SidebarFooter>

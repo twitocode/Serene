@@ -22,7 +22,7 @@ export default function ReframingStep() {
   return (
     <form
       onSubmit={onSubmit}
-      className="flex w-full max-w-xl flex-col gap-8 pb-8"
+      className="mx-auto flex w-full max-w-xl flex-col gap-8 pb-8"
     >
       <div className="space-y-4 text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-primary">

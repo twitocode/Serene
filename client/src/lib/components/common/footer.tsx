@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="flex flex-col items-center gap-3 text-center md:items-start md:text-left">
           <SereneLogo className="text-primary-foreground [&_span]:text-primary-foreground" />
           <p className="max-w-xs text-sm leading-relaxed text-primary-foreground/85">
-            A calm corner for checking in, reflecting, and growing — one day at a
+            A calm corner for checking in, reflecting, and growing, one day at a
             time.
           </p>
         </div>

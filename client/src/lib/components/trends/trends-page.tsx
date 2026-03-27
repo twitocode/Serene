@@ -71,7 +71,7 @@ export default function TrendsPage() {
             Trends
           </h1>
           <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-            Patterns from your check-ins and reflections — no judgment, just
+            Patterns from your check-ins and reflections: no judgment, just
             clarity.
           </p>
         </motion.header>

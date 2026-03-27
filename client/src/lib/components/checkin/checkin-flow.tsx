@@ -29,14 +29,16 @@ export default function CheckinFlow() {
               transition={{
                 opacity: { duration: 0.2 },
               }}
-              className="flex min-h-0 w-full flex-1 flex-col"
+              className="flex w-full flex-1 flex-col items-center"
             >
-              {(() => {
-                const activeConfig = CHECKIN_STEPS.find((a) => a.step === step);
-                if (!activeConfig) return null;
-                const ActiveComponent = activeConfig.component;
-                return <ActiveComponent />;
-              })()}
+              <div className="flex w-full max-w-xl flex-1 flex-col">
+                {(() => {
+                  const activeConfig = CHECKIN_STEPS.find((a) => a.step === step);
+                  if (!activeConfig) return null;
+                  const ActiveComponent = activeConfig.component;
+                  return <ActiveComponent />;
+                })()}
+              </div>
             </motion.div>
           </AnimatePresence>
         </div>

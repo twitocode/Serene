@@ -23,7 +23,7 @@ export const PROMPTS: Prompt[] = [
   },
   {
     question:
-      "Scan your body right now: where are you holding onto 'deadline tension'—your jaw, shoulders, or hands?",
+      "Scan your body right now: where are you holding onto 'deadline tension'? Your jaw, shoulders, or hands?",
   },
   {
     question:
@@ -43,7 +43,7 @@ export const PROMPTS: Prompt[] = [
   },
   {
     question:
-      "Your 'social battery'—is it currently in the green, yellow, or red?",
+      "Your 'social battery': is it currently in the green, yellow, or red?",
   },
   {
     question:
@@ -66,7 +66,7 @@ export const PROMPTS: Prompt[] = [
   },
   {
     question:
-      "Think about your last 'win'—no matter how small. Did you take a second to actually feel good about it?",
+      "Think about your last 'win,' no matter how small. Did you take a second to actually feel good about it?",
   },
   {
     question:
@@ -78,7 +78,7 @@ export const PROMPTS: Prompt[] = [
   },
   {
     question:
-      "What is a 'small joy' you've experienced today—a good coffee, a funny meme, or a short walk?",
+      "What is a 'small joy' you've experienced today? A good coffee, a funny meme, or a short walk?",
   },
   {
     question:
@@ -110,7 +110,7 @@ export const PROMPTS: Prompt[] = [
   },
   {
     question:
-      "How does your body feel after that last caffeine hit—energized, or just anxious?",
+      "How does your body feel after that last caffeine hit: energized, or just anxious?",
   },
   {
     question:

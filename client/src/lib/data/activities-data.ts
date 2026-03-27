@@ -72,7 +72,8 @@ export const WELLNESS_ACTIVITIES: Activity[] = [
   {
     id: "creative-1",
     title: "Free Drawing",
-    description: "Grab some paper and draw whatever comes to mind—no judgment, just expression.",
+    description:
+      "Grab some paper and draw whatever comes to mind: no judgment, just expression.",
     category: ActivityCategory.Creative,
     duration: "15 min",
     icon: "palette",
@@ -130,7 +131,8 @@ export const WELLNESS_ACTIVITIES: Activity[] = [
   {
     id: "social-4",
     title: "Write a Letter",
-    description: "Write a heartfelt letter to someone special—you can send it or keep it for yourself.",
+    description:
+      "Write a heartfelt letter to someone special. You can send it or keep it for yourself.",
     category: ActivityCategory.Social,
     duration: "20 min",
     icon: "mail",
@@ -148,7 +150,8 @@ export const WELLNESS_ACTIVITIES: Activity[] = [
   {
     id: "selfcare-2",
     title: "Skincare Routine",
-    description: "Pamper yourself with a full skincare routine—cleanse, mask, moisturize.",
+    description:
+      "Pamper yourself with a full skincare routine: cleanse, mask, moisturize.",
     category: ActivityCategory.SelfCare,
     duration: "20 min",
     icon: "droplet",
@@ -190,7 +193,8 @@ export const WELLNESS_ACTIVITIES: Activity[] = [
   {
     id: "learning-3",
     title: "Practice a New Skill",
-    description: "Spend time learning something new—an instrument, language, or craft.",
+    description:
+      "Spend time learning something new, like an instrument, language, or craft.",
     category: ActivityCategory.Learning,
     duration: "30 min",
     icon: "target",

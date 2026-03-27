@@ -4,6 +4,7 @@ import {
   CarouselItem,
   type CarouselApi,
 } from "@/lib/components/ui/carousel";
+import { formatLocalDateKey } from "@/lib/helpers/get-current-date";
 import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useState } from "react";
 
@@ -48,7 +49,7 @@ export default function DateScroll({
     if (!api) return;
 
     const selectedIndex = calendarDays.findIndex(
-      (item) => item.fullDate.toISOString().split("T")[0] === selectedDate
+      (item) => formatLocalDateKey(item.fullDate) === selectedDate
     );
 
     const targetIndex =
@@ -73,11 +74,11 @@ export default function DateScroll({
         {calendarDays.map((item) => {
           const isToday = item.fullDate.toDateString() === todayString;
           const isSelected =
-            selectedDate === item.fullDate.toISOString().split("T")[0];
+            selectedDate === formatLocalDateKey(item.fullDate);
 
           return (
             <CarouselItem
-              key={item.fullDate.toISOString()}
+              key={formatLocalDateKey(item.fullDate)}
               className="pl-2 basis-auto"
             >
               <button
@@ -101,9 +102,7 @@ export default function DateScroll({
                 )}
                 onClick={() =>
                   !readOnly &&
-                  changeSelectedDate?.(
-                    item.fullDate.toISOString().split("T")[0]
-                  )
+                  changeSelectedDate?.(formatLocalDateKey(item.fullDate))
                 }
               >
                 <span className="text-[10px] uppercase tracking-wider font-semibold opacity-70 leading-none mb-1">

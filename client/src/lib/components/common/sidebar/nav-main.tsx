@@ -39,13 +39,16 @@ export default function NavMain({ sections }: { sections: NavSection[] }) {
   return (
     <>
       {sections.map((section) => (
-        <SidebarGroup key={section.label ?? section.items[0]?.url ?? "nav"}>
+        <SidebarGroup
+          key={section.label ?? section.items[0]?.url ?? "nav"}
+          className="group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:p-1.5"
+        >
           {section.label ? (
-            <SidebarGroupLabel className="text-[0.65rem] uppercase tracking-widest text-muted-foreground/90">
+            <SidebarGroupLabel className="px-1 text-[0.65rem] uppercase tracking-widest text-muted-foreground/90">
               {section.label}
             </SidebarGroupLabel>
           ) : null}
-          <SidebarMenu className="gap-0.5">
+          <SidebarMenu className="gap-0.5 group-data-[collapsible=icon]:items-center">
             {section.items.map((item) => {
               if (item.role === "Admin" && !user?.roles.includes("Admin")) {
                 return null;
@@ -55,20 +58,23 @@ export default function NavMain({ sections }: { sections: NavSection[] }) {
                 <Link
                   href={item.url}
                   key={item.title}
+                  className="block min-w-0 w-full group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:w-auto"
                   onClick={() => isMobile && setOpenMobile(false)}
                 >
-                  <SidebarMenuItem>
+                  <SidebarMenuItem className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center">
                     <SidebarMenuButton
                       tooltip={item.title}
                       className={cn(
-                        "rounded-xl transition-colors",
+                        "rounded-xl transition-colors group-data-[collapsible=icon]:justify-center",
                         active
                           ? "bg-primary/15 text-primary shadow-sm hover:bg-primary/20 hover:text-primary"
                           : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                       )}
                     >
                       {item.icon && <item.icon className="size-4 shrink-0" />}
-                      <span className="font-medium">{item.title}</span>
+                      <span className="font-medium group-data-[collapsible=icon]:hidden">
+                        {item.title}
+                      </span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </Link>

@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/lib/components/ui/button";
 import {
   Dialog,
@@ -9,7 +11,6 @@ import {
   DialogTrigger,
 } from "@/lib/components/ui/dialog";
 import { FieldGroup } from "@/lib/components/ui/field";
-import { Toaster } from "@/lib/components/ui/sonner";
 import {
   FormControl,
   FormField,
@@ -17,11 +18,24 @@ import {
   FormLabel,
   FormMessage,
 } from "@/lib/components/ui/tanstack-form";
+import {
+  SidebarMenu,
+  SidebarMenuItem,
+  useSidebar,
+} from "@/lib/components/ui/sidebar";
 import { Textarea } from "@/lib/components/ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/lib/components/ui/tooltip";
+import { Toaster } from "@/lib/components/ui/sonner";
+import { cn } from "@/lib/utils";
 import { apiFetch } from "@/lib/helpers/api-fetch";
 import { FeedbackRequest } from "@/lib/types/api-types";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
+import { MessageSquarePlus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
@@ -31,9 +45,9 @@ const feedbackSchema = z.object({
 });
 
 export default function FeedbackButton() {
-  const [showSpinner, setShowSpinner] = useState(false);
-  const [hasSent, setHasSent] = useState(false);
-  const [hasClicked, setHasClicked] = useState(false);
+  const [open, setOpen] = useState(false);
+  const { state, isMobile } = useSidebar();
+  const collapsed = state === "collapsed" && !isMobile;
 
   const sendFeedbackMutation = useMutation({
     mutationFn: (input: FeedbackRequest) => {
@@ -44,8 +58,7 @@ export default function FeedbackButton() {
     },
     onSettled: () => {
       toast("Feedback sent. Thank you!");
-      setShowSpinner(false);
-      setHasSent(true);
+      setOpen(false);
     },
   });
 
@@ -57,11 +70,9 @@ export default function FeedbackButton() {
       onSubmit: feedbackSchema,
     },
     onSubmit: async ({ value }) => {
-      setShowSpinner(true);
-
       if (value.message === "") {
         toast("Feedback sent. Thank you!");
-        setHasSent(true);
+        setOpen(false);
         return;
       }
       await sendFeedbackMutation.mutateAsync({
@@ -70,24 +81,57 @@ export default function FeedbackButton() {
     },
   });
 
+  const triggerButton = (
+    <Button
+      type="button"
+      variant="outline"
+      size={collapsed ? "icon" : "default"}
+      className={cn(
+        "shrink-0",
+        collapsed
+          ? "size-8 rounded-lg"
+          : "h-9 w-full justify-center px-3 text-sm font-medium",
+      )}
+      aria-label={collapsed ? "Give feedback" : undefined}
+    >
+      {collapsed ? (
+        <MessageSquarePlus className="size-4" strokeWidth={2} />
+      ) : (
+        "Give feedback"
+      )}
+    </Button>
+  );
+
   return (
-    <div className="">
-      <Toaster />
-      <Dialog open={!hasSent && hasClicked} defaultOpen={false}>
-        <DialogTrigger
-          asChild
-          onClick={() => {
-            setHasSent(false);
-            setHasClicked(true);
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <Toaster />
+        <Dialog
+          open={open}
+          onOpenChange={(next) => {
+            setOpen(next);
+            if (!next) form.reset();
           }}
         >
-          <Button variant="outline">Give Feedback</Button>
-        </DialogTrigger>
-        <DialogContent showCloseButton={false}>
-          <DialogHeader>
-            <DialogTitle className="mb-4">
-              Provide some feedback for the website
-            </DialogTitle>
+          {collapsed ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DialogTrigger asChild>{triggerButton}</DialogTrigger>
+              </TooltipTrigger>
+              <TooltipContent side="right" align="center">
+                Give feedback
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <DialogTrigger asChild>{triggerButton}</DialogTrigger>
+          )}
+
+          <DialogContent showCloseButton={false}>
+            <DialogHeader>
+              <DialogTitle className="mb-4">
+                Provide some feedback for the website
+              </DialogTitle>
+            </DialogHeader>
 
             <form
               onSubmit={(e) => {
@@ -104,11 +148,11 @@ export default function FeedbackButton() {
                     return (
                       <FormField field={field}>
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>Your feedback</FormLabel>
                           <FormControl>
                             <Textarea
-                              placeholder="Type in your response here"
-                              id="response"
+                              placeholder="Type your feedback here"
+                              id="feedback-response"
                               name={field.name}
                               value={field.state.value}
                               onBlur={field.handleBlur}
@@ -116,6 +160,7 @@ export default function FeedbackButton() {
                                 field.handleChange(e.target.value)
                               }
                               aria-invalid={isInvalid}
+                              className="min-h-[120px]"
                             />
                           </FormControl>
                           <FormMessage />
@@ -126,26 +171,19 @@ export default function FeedbackButton() {
                 </form.Field>
                 <DialogFooter className="sm:justify-start">
                   <DialogClose asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setHasClicked(false)}
-                    >
+                    <Button type="button" variant="outline">
                       Close
                     </Button>
                   </DialogClose>
-                  <Button
-                    type="submit"
-                    disabled={sendFeedbackMutation.isPending}
-                  >
+                  <Button type="submit" disabled={sendFeedbackMutation.isPending}>
                     {sendFeedbackMutation.isPending ? "Sending..." : "Send"}
                   </Button>
                 </DialogFooter>
               </FieldGroup>
             </form>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
-    </div>
+          </DialogContent>
+        </Dialog>
+      </SidebarMenuItem>
+    </SidebarMenu>
   );
 }

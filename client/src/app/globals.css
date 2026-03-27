@@ -85,7 +85,7 @@
   --radius: 0.875rem;
 }
 
-/* Mochi: body #7CAAFA · cheeks #EC4ECC — light */
+/* Mochi: body #7CAAFA, cheeks #EC4ECC (light) */
 :root {
   --mochi-body: #7caafa;
   --mochi-cheek: #ec4ecc;
@@ -144,7 +144,7 @@
   --tracking-normal: 0em;
 }
 
-/* Mochi — dark */
+/* Mochi palette (dark) */
 .dark {
   --mochi-body: #7caafa;
   --mochi-cheek: #ec4ecc;

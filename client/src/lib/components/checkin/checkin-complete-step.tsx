@@ -10,7 +10,6 @@ import {
 } from "@/lib/components/ui/card";
 import { Separator } from "@/lib/components/ui/separator";
 import { getMoodTypeColour, getSeverityColor } from "@/lib/data/moods";
-import { getCurrentDate } from "@/lib/helpers/get-current-date";
 import { useCompleteCheckinMutation } from "@/lib/hooks/queries/use-checkins";
 import {
   Activity,
@@ -31,10 +30,10 @@ export default function CheckinCompleteStep() {
     promptQuestion,
     goBack,
     complete: resetStore,
+    displayDate,
   } = useCheckinStore((s) => s);
-  const today = getCurrentDate();
 
-  const completeCheckinMutation = useCompleteCheckinMutation(today);
+  const completeCheckinMutation = useCompleteCheckinMutation(displayDate);
 
   const complete = async () => {
     try {
@@ -68,7 +67,7 @@ export default function CheckinCompleteStep() {
     : "";
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 pb-10">
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 pb-10 self-center">
       <div className="space-y-2 text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-primary">
           Step 6 of 6
@@ -161,7 +160,7 @@ export default function CheckinCompleteStep() {
             Body check-in
           </CardTitle>
           <CardDescription>
-            From your somatic step — shown here for your review only.
+            From your somatic step, shown here for your review only.
           </CardDescription>
         </CardHeader>
         <CardContent>

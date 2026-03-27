@@ -8,12 +8,12 @@ import Link from "next/link";
 const pillars = [
   {
     title: "Evidence-informed",
-    body: "Tools grounded in CBT and mindfulness — explained in plain language, without jargon.",
+    body: "Tools grounded in CBT and mindfulness, explained in plain language, without jargon.",
     icon: Leaf,
   },
   {
     title: "Student-first",
-    body: "Built around academic stress, social life, and the rhythms of campus — not generic advice.",
+    body: "Built around academic stress, social life, and the rhythms of campus, not generic advice.",
     icon: Heart,
   },
   {
@@ -98,7 +98,7 @@ export default function LandingPage() {
               &ldquo;You don&apos;t have to carry everything alone.&rdquo;
             </blockquote>
             <p className="mt-4 text-sm text-muted-foreground">
-              — The idea behind Serene
+              The idea behind Serene
             </p>
           </section>
         </div>

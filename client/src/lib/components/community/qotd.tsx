@@ -7,6 +7,7 @@ import { ResponseCard } from "@/lib/components/community/response-card";
 import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import { Separator } from "@/lib/components/ui/separator";
+import { getCurrentDate } from "@/lib/helpers/get-current-date";
 import {
   useQOTDQuery,
   useQOTDResponseMutation,
@@ -16,7 +17,7 @@ import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import { FormEventHandler, useEffect, useState } from "react";
 
 export default function QuestionOfTheDay() {
-  const today = new Date().toISOString().split("T")[0];
+  const today = getCurrentDate();
 
   const { data: user } = useUserQuery();
   const { data: qotd, isPending: qotdPending } = useQOTDQuery();
@@ -70,7 +71,7 @@ export default function QuestionOfTheDay() {
           Community
         </h1>
         <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-          Share honestly — everyone&apos;s here to listen, not to judge.
+          Share honestly. Everyone&apos;s here to listen, not to judge.
         </p>
       </motion.header>
 
@@ -96,7 +97,7 @@ export default function QuestionOfTheDay() {
               placeholder={
                 mutation.isPending
                   ? "Submitting..."
-                  : "Write a thought — short is okay"
+                    : "Write a thought (short is okay)"
               }
               className="h-12 flex-1 rounded-xl border-border/80 bg-background px-4 text-base shadow-none"
             />
@@ -138,7 +139,7 @@ export default function QuestionOfTheDay() {
             ) : (
               <p className="rounded-2xl border border-dashed border-border/80 bg-muted/20 py-12 text-center text-sm text-muted-foreground">
                 {responses.length === 0
-                  ? "No responses yet — you can be the first."
+                  ? "No responses yet. You can be the first."
                   : "You're the only one who's shared so far. Others may join later today."}
               </p>
             )}

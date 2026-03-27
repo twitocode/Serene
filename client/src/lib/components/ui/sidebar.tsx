@@ -73,9 +73,14 @@ function SidebarProvider({
   // We use openProp and setOpenProp for control from outside the component.
   const [_open, _setOpen] = React.useState(defaultOpen);
   const open = openProp ?? _open;
+  /** Desktop: sidebar stays expanded; mobile: user can open/close the sheet. */
+  const openEffective = isMobile ? open : true;
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
       const openState = typeof value === "function" ? value(open) : value;
+      if (!isMobile && !openState) {
+        return;
+      }
       if (setOpenProp) {
         setOpenProp(openState);
       } else {
@@ -85,13 +90,15 @@ function SidebarProvider({
       // This sets the cookie to keep the sidebar state.
       document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
     },
-    [setOpenProp, open]
+    [setOpenProp, open, isMobile]
   );
 
-  // Helper to toggle the sidebar.
+  // Helper to toggle the sidebar (mobile sheet only on desktop we keep it open).
   const toggleSidebar = React.useCallback(() => {
-    return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
-  }, [isMobile, setOpen, setOpenMobile]);
+    if (isMobile) {
+      setOpenMobile((o) => !o);
+    }
+  }, [isMobile, setOpenMobile]);
 
   // Adds a keyboard shortcut to toggle the sidebar.
   React.useEffect(() => {
@@ -111,19 +118,19 @@ function SidebarProvider({
 
   // We add a state so that we can do data-state="expanded" or "collapsed".
   // This makes it easier to style the sidebar with Tailwind classes.
-  const state = open ? "expanded" : "collapsed";
+  const state = openEffective ? "expanded" : "collapsed";
 
   const contextValue = React.useMemo<SidebarContextProps>(
     () => ({
       state,
-      open,
+      open: openEffective,
       setOpen,
       isMobile,
       openMobile,
       setOpenMobile,
       toggleSidebar,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
+    [state, openEffective, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
   );
 
   return (

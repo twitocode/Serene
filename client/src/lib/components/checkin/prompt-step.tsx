@@ -23,7 +23,7 @@ export default function PromptStep() {
   return (
     <form
       onSubmit={onSubmit}
-      className="flex w-full max-w-xl flex-col gap-8 pb-8"
+      className="mx-auto flex w-full max-w-xl flex-col gap-8 pb-8"
     >
       <div className="space-y-3 text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-primary">
@@ -33,7 +33,7 @@ export default function PromptStep() {
           {promptQuestion}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Write freely — a few sentences or a list is enough.
+          Write freely: a few sentences or a list is enough.
         </p>
       </div>
 
