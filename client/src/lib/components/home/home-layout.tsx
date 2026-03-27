@@ -45,7 +45,7 @@ export default function HomeLayout({ children }: PropsWithChildren) {
               {!!settings?.passwordLock && (
                 <>
                   <Button
-                    className="hidden sm:inline-flex"
+                    className=" sm:inline-flex"
                     variant="outline"
                     size="sm"
                     onClick={() => {

@@ -14,6 +14,7 @@ import {
   History,
   HouseHeart,
   Pencil,
+  School,
   ShieldUser,
   TrendingUp,
   Trophy,
@@ -30,22 +31,54 @@ const sections: NavSection[] = [
     items: [
       { title: "Home", url: "/home", icon: HouseHeart, role: "User" },
       { title: "Check-in", url: "/home/checkin", icon: Pencil, role: "User" },
-      { title: "History", url: "/home/history", icon: History, role: "User" },
+      // { title: "History", url: "/home/history", icon: History, role: "User" },
     ],
   },
   {
     label: "Connect & grow",
     items: [
-      { title: "Activities", url: "/home/activities", icon: Activity, role: "User" },
-      { title: "Achievements", url: "/home/achievements", icon: Trophy, role: "User" },
-      { title: "Community", url: "/home/community", icon: Handshake, role: "User" },
-      { title: "Explore", url: "/home/explore", icon: CompassIcon, role: "User" },
-      { title: "Trends", url: "/home/trends", icon: TrendingUp, role: "User" },
+      {
+        title: "Activities",
+        url: "/home/activities",
+        icon: Activity,
+        role: "User",
+      },
+      {
+        title: "Your School",
+        url: "/home/schools",
+        icon: School,
+        role: "User",
+      },
+      {
+        title: "Achievements",
+        url: "/home/achievements",
+        icon: Trophy,
+        role: "User",
+      },
+      {
+        title: "Community",
+        url: "/home/community",
+        icon: Handshake,
+        role: "User",
+      },
+      {
+        title: "Explore",
+        url: "/home/explore",
+        icon: CompassIcon,
+        role: "User",
+      },
+      //hidden for now because it doesnt really work
+      // { title: "Trends", url: "/home/trends", icon: TrendingUp, role: "User" },
     ],
   },
   {
     items: [
-      { title: "Admin", url: "/admin/content", icon: ShieldUser, role: "Admin" },
+      {
+        title: "Admin",
+        url: "/admin/content",
+        icon: ShieldUser,
+        role: "Admin",
+      },
     ],
   },
 ];

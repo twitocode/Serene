@@ -80,8 +80,8 @@ export function SecuritySettings() {
                 </p>
                 <p className="text-sm text-muted-foreground">
                   {settings?.passwordLock
-                    ? "Your app is protected with a password."
-                    : "Enable app lock to require a password when opening the app."}
+                    ? "Serene is protected with a password."
+                    : "Enable app lock to require a password when opening Serene."}
                 </p>
               </div>
               {settings?.passwordLock && (

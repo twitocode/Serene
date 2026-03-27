@@ -46,7 +46,7 @@ export default function PeerMatchCard() {
       transition={{ delay: 0.15 }}
     >
       <Card className="border-primary/20 bg-primary/5 shadow-sm">
-        <CardHeader className="pb-3">
+        <CardHeader className="">
           <div className="flex items-center gap-2">
             <Handshake className="size-5 text-primary" />
             <CardTitle className="font-serif text-lg">
