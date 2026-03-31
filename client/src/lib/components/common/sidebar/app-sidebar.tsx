@@ -30,7 +30,6 @@ const sections: NavSection[] = [
     items: [
       { title: "Home", url: "/home", icon: HouseHeart, role: "User" },
       { title: "Check-in", url: "/home/checkin", icon: Pencil, role: "User" },
-      { title: "History", url: "/home/history", icon: History, role: "User" },
     ],
   },
   {

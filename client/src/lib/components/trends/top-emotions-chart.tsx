@@ -1,78 +1,83 @@
 "use client";
 
+import { Group } from "@visx/group";
+import { Bar } from "@visx/shape";
+import { scaleBand, scaleLinear } from "@visx/scale";
+import { ParentSize } from "@visx/responsive";
 import { TrendCard } from "@/lib/components/trends/trend-card";
-import { MoodBreakdownData } from "@/lib/hooks/queries/use-trends";
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
 interface TopEmotionsChartProps {
-  data: MoodBreakdownData;
+  data: {
+    thisYear: { moodLabel: string; count: number }[];
+  };
 }
 
-const COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
+interface EmotionDataItem {
+  moodLabel: string;
+  count: number;
+}
 
-export function TopEmotionsChart({ data }: TopEmotionsChartProps) {
-  const hasData = data.thisYear.length > 0;
+function EmotionsChart({ data, width, height }: { data: EmotionDataItem[], width: number, height: number }) {
+  const xScale = scaleBand<string>({
+    range: [0, width],
+    domain: data.map((d) => d.moodLabel),
+    padding: 0.3,
+  });
 
-  const chartData = hasData
-    ? data.thisYear.slice(0, 5).map((item) => ({
-        name: item.moodLabel,
-        value: item.count,
-      }))
-    : [{ name: "No data", value: 1 }];
+  const yScale = scaleLinear<number>({
+    range: [height, 0],
+    domain: [0, Math.max(...data.map((d) => d.count), 1)],
+  });
 
   return (
-    <TrendCard title="Your top emotions this year" subtitle="Based on your evening reflections and mood check-ins">
-      <div className="flex items-center gap-6">
-        <div className="w-28 h-28">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={chartData}
-                cx="50%"
-                cy="50%"
-                innerRadius={35}
-                outerRadius={50}
-                paddingAngle={hasData ? 2 : 0}
-                dataKey="value"
-                stroke="none"
-              >
-                {chartData.map((_, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={hasData ? COLORS[index % COLORS.length] : "var(--muted)"}
-                  />
-                ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
+    <svg width={width} height={height}>
+      <Group>
+        {data.map((d) => {
+          const barWidth = xScale.bandwidth();
+          const barHeight = height - (yScale(d.count) || 0);
+          const barX = xScale(d.moodLabel);
+          const barY = height - barHeight;
+          return (
+            <Bar
+              key={`emotion-bar-${d.moodLabel}`}
+              x={barX}
+              y={barY}
+              width={barWidth}
+              height={barHeight}
+              fill="#71717a"
+              rx={4}
+            />
+          );
+        })}
+      </Group>
+    </svg>
+  );
+}
+
+export function TopEmotionsChart({ data }: TopEmotionsChartProps) {
+  const hasData = data && data.thisYear && data.thisYear.length > 0;
+  const sortedEmotions = hasData ? [...data.thisYear].sort((a, b) => b.count - a.count).slice(0, 5) : [];
+
+  return (
+    <TrendCard title="Top Emotions" subtitle="The feelings you've experienced most frequently">
+      {hasData ? (
+        <div className="h-40 relative">
+          <ParentSize>
+            {({ width, height }) => (
+              <EmotionsChart data={sortedEmotions} width={width} height={height} />
+            )}
+          </ParentSize>
+          <div className="flex justify-between mt-2 px-2">
+             {sortedEmotions.map(e => (
+               <span key={e.moodLabel} className="text-[10px] text-muted-foreground uppercase tracking-wider">{e.moodLabel}</span>
+             ))}
+          </div>
         </div>
-        <div className="flex-1">
-          {hasData ? (
-            <div className="space-y-1">
-              {data.thisYear.slice(0, 3).map((emotion, index) => (
-                <div key={index} className="flex items-center gap-2 text-sm">
-                  <div
-                    className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                  />
-                  <span className="text-foreground capitalize">{emotion.moodLabel}</span>
-                  <span className="text-muted-foreground">({emotion.count})</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-sm text-muted-foreground">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-2 h-2 rounded-full bg-muted" />
-                <span>No data yet</span>
-              </div>
-              <p className="text-xs">
-                Complete your evening reflections and mood check-ins to understand your emotions
-              </p>
-            </div>
-          )}
+      ) : (
+        <div className="h-40 flex items-center justify-center text-sm text-muted-foreground">
+          No emotion data yet.
         </div>
-      </div>
+      )}
     </TrendCard>
   );
 }

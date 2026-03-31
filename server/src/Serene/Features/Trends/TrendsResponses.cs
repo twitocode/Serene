@@ -9,6 +9,9 @@ public record TrendsResponse
     public List<MoodCalendarMonth> MoodCalendar { get; init; } = [];
     public List<TopActivityItem> TopActivities { get; init; } = [];
     public List<EnergyLevelPoint> EnergyLevels { get; init; } = [];
+    public SomaticData SomaticData { get; init; } = new();
+    public List<ActivityImpactItem> ActivityImpact { get; init; } = [];
+    public CommunityStats CommunityStats { get; init; } = new();
 }
 
 public record MoodBreakdownData
@@ -50,4 +53,29 @@ public record EnergyLevelPoint
     public int Month { get; init; }
     public string MonthName { get; init; } = string.Empty;
     public double AverageLevel { get; init; }
+}
+
+public record SomaticData
+{
+    public Dictionary<string, int> PartCounts { get; init; } = [];
+    public List<SensationCount> TopSensations { get; init; } = [];
+}
+
+public record SensationCount
+{
+    public string Sensation { get; init; } = string.Empty;
+    public int Count { get; init; }
+}
+
+public record ActivityImpactItem
+{
+    public string Activity { get; init; } = string.Empty;
+    public double MoodImprovement { get; init; }
+}
+
+public record CommunityStats
+{
+    public int AnswersCount { get; init; }
+    public int MatchesCount { get; init; }
+    public int SupportCount { get; init; }
 }

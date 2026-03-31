@@ -1,66 +1,87 @@
 "use client";
 
+import { Group } from "@visx/group";
+import { Pie } from "@visx/shape";
+import { scaleOrdinal } from "@visx/scale";
+import { ParentSize } from "@visx/responsive";
 import { TrendCard } from "@/lib/components/trends/trend-card";
 import { TopActivityItem } from "@/lib/hooks/queries/use-trends";
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
 interface TopActivitiesChartProps {
   activities: TopActivityItem[];
 }
 
-const COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
+const COLORS = ["#71717a", "#a1a1aa", "#d4d4d8", "#e4e4e7", "#f4f4f5"];
+
+const getColor = scaleOrdinal({
+  domain: [0, 1, 2, 3, 4],
+  range: COLORS,
+});
+
+function PieChart({ activities, width, height }: { activities: TopActivityItem[], width: number, height: number }) {
+  const innerRadius = Math.min(width, height) / 3;
+  const outerRadius = Math.min(width, height) / 2;
+  const centerY = height / 2;
+  const centerX = width / 2;
+
+  return (
+    <svg width={width} height={height}>
+      <Group top={centerY} left={centerX}>
+        <Pie
+          data={activities}
+          pieValue={(d) => d.count}
+          outerRadius={outerRadius}
+          innerRadius={innerRadius}
+          cornerRadius={3}
+          padAngle={0.02}
+        >
+          {(pie) => {
+            return pie.arcs.map((arc, index) => {
+              const arcPath = pie.path(arc) || "";
+              return (
+                <g key={`arc-${index}`}>
+                  <path d={arcPath} fill={getColor(index)} />
+                </g>
+              );
+            });
+          }}
+        </Pie>
+      </Group>
+    </svg>
+  );
+}
 
 export function TopActivitiesChart({ activities }: TopActivitiesChartProps) {
-  const hasData = activities.length > 0;
-
-  // Transform data for the ring chart
-  const chartData = hasData
-    ? activities.map((item) => ({
-        name: item.activity,
-        value: item.count,
-        percentage: item.percentage,
-      }))
-    : [{ name: "No data", value: 1 }];
+  const hasData = activities && activities.length > 0;
+  const displayActivities = hasData ? activities : [];
 
   return (
     <TrendCard title="Your top activities this year" subtitle="Your daily focus from Morning Preparation">
       <div className="flex items-center gap-6">
-        <div className="w-28 h-28">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={chartData}
-                cx="50%"
-                cy="50%"
-                innerRadius={35}
-                outerRadius={50}
-                paddingAngle={hasData ? 2 : 0}
-                dataKey="value"
-                stroke="none"
-              >
-                {chartData.map((_, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={hasData ? COLORS[index % COLORS.length] : "var(--muted)"}
-                  />
-                ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
+        <div className="w-28 h-28 relative">
+          {hasData ? (
+            <ParentSize>
+              {({ width, height }) => (
+                <PieChart activities={displayActivities} width={width} height={height} />
+              )}
+            </ParentSize>
+          ) : (
+            <div className="w-full h-full rounded-full border-4 border-muted flex items-center justify-center">
+              <span className="text-[10px] text-muted-foreground text-center px-2">No data</span>
+            </div>
+          )}
         </div>
         <div className="flex-1 space-y-2">
           {hasData ? (
-            activities.slice(0, 3).map((activity, index) => (
+            displayActivities.slice(0, 3).map((activity, index) => (
               <div key={index} className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
                   <div
                     className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                    style={{ backgroundColor: getColor(index) }}
                   />
                   <span className="text-foreground truncate max-w-[120px]">
-                    {activity.activity.length > 20
-                      ? activity.activity.substring(0, 20) + "..."
-                      : activity.activity}
+                    {activity.activity}
                   </span>
                 </div>
                 <span className="text-primary font-medium">{activity.percentage}%</span>

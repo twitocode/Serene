@@ -5,7 +5,7 @@ using Serene.Features.Shared;
 namespace Serene.Features.Trends;
 
 [ApiController]
-[Route("api/trends")]
+[Route("trends")]
 [Authorize]
 public class TrendsController : BaseApiController
 {

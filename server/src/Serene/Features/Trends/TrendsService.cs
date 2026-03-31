@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
 using Serene.Data;
+using Serene.Services;
 
 namespace Serene.Features.Trends;
 
@@ -13,6 +14,7 @@ public class TrendsService : ITrendsService
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<TrendsService> _logger;
+    private readonly IEncryptionService _encryption;
 
     private static readonly string[] MonthNames =
     [
@@ -30,10 +32,11 @@ public class TrendsService : ITrendsService
         "Dec",
     ];
 
-    public TrendsService(ApplicationDbContext context, ILogger<TrendsService> logger)
+    public TrendsService(ApplicationDbContext context, ILogger<TrendsService> logger, IEncryptionService encryption)
     {
         _context = context;
         _logger = logger;
+        _encryption = encryption;
     }
 
     public async Task<TrendsResponse> GetTrendsAsync(string userId, int year)
@@ -59,6 +62,17 @@ public class TrendsService : ITrendsService
             )
             .ToListAsync();
 
+        // Decrypt mood labels for correct grouping
+        foreach (var c in thisYearCheckins)
+        {
+            c.MoodLabel = _encryption.Decrypt(c.MoodLabel) ?? c.MoodLabel;
+        }
+
+        foreach (var c in prevYearCheckins)
+        {
+            c.MoodLabel = _encryption.Decrypt(c.MoodLabel) ?? c.MoodLabel;
+        }
+
         // Calculate mood breakdown
         var moodBreakdown = new MoodBreakdownData
         {
@@ -68,7 +82,7 @@ public class TrendsService : ITrendsService
                 {
                     MoodLabel = g.Key,
                     Count = g.Count(),
-                    AverageSeverity = g.Average(c => c.MoodSeverity),
+                    AverageSeverity = g.Average(c => (double)c.MoodSeverity),
                 })
                 .OrderByDescending(m => m.Count)
                 .ToList(),
@@ -78,7 +92,7 @@ public class TrendsService : ITrendsService
                 {
                     MoodLabel = g.Key,
                     Count = g.Count(),
-                    AverageSeverity = g.Average(c => c.MoodSeverity),
+                    AverageSeverity = g.Average(c => (double)c.MoodSeverity),
                 })
                 .OrderByDescending(m => m.Count)
                 .ToList(),
@@ -161,11 +175,66 @@ public class TrendsService : ITrendsService
                     MonthName = MonthNames[month - 1],
                     AverageLevel =
                         monthCheckins.Count > 0
-                            ? Math.Round(monthCheckins.Average(c => c.MoodSeverity), 1)
+                            ? Math.Round(monthCheckins.Average(c => (double)c.MoodSeverity), 1)
                             : 0,
                 };
             })
             .ToList();
+
+        // New calculations
+        var somaticPartCounts = new Dictionary<string, int>();
+        var sensationCounts = new Dictionary<string, int>();
+
+        foreach (var c in thisYearCheckins)
+        {
+            var somaticState = _encryption.DecryptJson<Dictionary<string, Serene.Entities.GridPoint>>(c.SomaticStateEncrypted);
+            if (somaticState != null)
+            {
+                foreach (var entry in somaticState)
+                {
+                    somaticPartCounts[entry.Key] = somaticPartCounts.GetValueOrDefault(entry.Key) + 1;
+                    foreach (var sensation in entry.Value.Sensations)
+                    {
+                        sensationCounts[sensation] = sensationCounts.GetValueOrDefault(sensation) + 1;
+                    }
+                }
+            }
+        }
+
+        var somaticData = new SomaticData
+        {
+            PartCounts = somaticPartCounts,
+            TopSensations = sensationCounts
+                .OrderByDescending(s => s.Value)
+                .Take(5)
+                .Select(s => new SensationCount { Sensation = s.Key, Count = s.Value })
+                .ToList()
+        };
+
+        var activityImpact = thisYearCheckins
+            .Where(c => !string.IsNullOrEmpty(c.PromptQuestion))
+            .GroupBy(c => c.PromptQuestion)
+            .Select(g => new ActivityImpactItem
+            {
+                Activity = g.Key,
+                MoodImprovement = Math.Round(g.Average(c => (double)c.MoodSeverity) * 10, 1) // Using 0-10 scale as % for now
+            })
+            .OrderByDescending(a => a.MoodImprovement)
+            .Take(5)
+            .ToList();
+
+        var answersCount = await _context.Posts.CountAsync(p => p.UserId == userId);
+        var matchesCount = await _context.PeerMatches.CountAsync(m => m.UserId == userId || m.MatchedUserId == userId);
+        
+        // Support count - still placeholder as not implemented in schema, but will return 0 for now
+        var supportCount = 0;
+
+        var communityStats = new CommunityStats
+        {
+            AnswersCount = answersCount,
+            MatchesCount = matchesCount,
+            SupportCount = supportCount
+        };
 
         return new TrendsResponse
         {
@@ -174,6 +243,9 @@ public class TrendsService : ITrendsService
             MoodCalendar = moodCalendar,
             TopActivities = topActivities,
             EnergyLevels = energyLevels,
+            SomaticData = somaticData,
+            ActivityImpact = activityImpact,
+            CommunityStats = communityStats
         };
     }
 }

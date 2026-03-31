@@ -7,6 +7,25 @@ export interface TrendsResponse {
   moodCalendar: MoodCalendarMonth[];
   topActivities: TopActivityItem[];
   energyLevels: EnergyLevelPoint[];
+  somaticData?: SomaticData;
+  activityImpact?: ActivityImpactItem[];
+  communityStats?: CommunityStats;
+}
+
+export interface CommunityStats {
+  answersCount: number;
+  matchesCount: number;
+  supportCount: number;
+}
+
+export interface SomaticData {
+  partCounts: Record<string, number>;
+  topSensations: { sensation: string; count: number }[];
+}
+
+export interface ActivityImpactItem {
+  activity: string;
+  moodImprovement: number;
 }
 
 export interface MoodBreakdownData {

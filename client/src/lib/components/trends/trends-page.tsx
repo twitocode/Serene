@@ -1,12 +1,12 @@
 "use client";
 
-import { EnergyLevelChart } from "@/lib/components/trends/energy-level-chart";
-import { ExerciseCard } from "@/lib/components/trends/exercise-card";
-import { InfluenceCard } from "@/lib/components/trends/influence-card";
 import { MoodBreakdownChart } from "@/lib/components/trends/mood-breakdown-chart";
 import { MoodCalendar } from "@/lib/components/trends/mood-calendar";
 import { TopActivitiesChart } from "@/lib/components/trends/top-activities-chart";
 import { TopEmotionsChart } from "@/lib/components/trends/top-emotions-chart";
+import { SomaticTrends } from "@/lib/components/trends/somatic-trends";
+import { ActivityImpactChart } from "@/lib/components/trends/activity-impact-chart";
+import { SocialTrends } from "@/lib/components/trends/social-trends";
 import { YearSelector } from "@/lib/components/trends/year-selector";
 import { SectionLabel } from "@/lib/components/trends/section-label";
 import { TrendsSkeleton } from "@/lib/components/trends/trends-skeleton";
@@ -14,30 +14,21 @@ import { useTrends } from "@/lib/hooks/queries/use-trends";
 import { motion } from "motion/react";
 import { useState } from "react";
 
-const MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
-
 export default function TrendsPage() {
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState(currentYear);
-  const { data: trends, isPending } = useTrends(year);
+  const { data: trends, isPending, isError, error } = useTrends(year);
 
-  const mockExerciseMonths = MONTHS.map((name, index) => ({
-    name,
-    completed: index === 0,
-  }));
+  if (isError) {
+    return (
+      <div className="flex h-full items-center justify-center p-8">
+        <div className="text-center">
+          <p className="text-destructive font-semibold">Failed to load trends</p>
+          <p className="text-sm text-muted-foreground">{(error as Error)?.message || "An unexpected error occurred."}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex min-h-full flex-col">
@@ -63,116 +54,85 @@ export default function TrendsPage() {
           <TrendsSkeleton />
         ) : (
           <div className="flex flex-col gap-10 md:gap-12">
-            <section>
-              <SectionLabel>General</SectionLabel>
-              <div className="flex flex-col gap-4">
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 }}
-                >
-                  <TopActivitiesChart activities={trends?.topActivities || []} />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  <MoodBreakdownChart
-                    data={trends?.moodBreakdown || { thisYear: [], previousYear: [] }}
-                  />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15 }}
-                >
-                  <MoodCalendar calendar={trends?.moodCalendar || []} />
-                </motion.div>
+            {!trends ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">No trend data available for {year}.</p>
               </div>
-            </section>
+            ) : (
+              <>
+                <section>
+                  <SectionLabel>General</SectionLabel>
+                  <div className="flex flex-col gap-4">
+                    <motion.div
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.05 }}
+                    >
+                      <TopActivitiesChart activities={trends.topActivities || []} />
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                    >
+                      <MoodBreakdownChart
+                        data={trends.moodBreakdown || { thisYear: [], previousYear: [] }}
+                      />
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.15 }}
+                    >
+                      <MoodCalendar calendar={trends.moodCalendar || []} />
+                    </motion.div>
+                  </div>
+                </section>
 
-            <section>
-              <SectionLabel>Emotions</SectionLabel>
-              <div className="flex flex-col gap-4">
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <TopEmotionsChart
-                    data={trends?.moodBreakdown || { thisYear: [], previousYear: [] }}
-                  />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25 }}
-                >
-                  <InfluenceCard title="What lifts you" type="positive" items={[]} />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <InfluenceCard title="What weighs on you" type="negative" items={[]} />
-                </motion.div>
-              </div>
-            </section>
+                <section>
+                  <SectionLabel>Emotions & Body</SectionLabel>
+                  <div className="flex flex-col gap-4">
+                    <motion.div
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      <TopEmotionsChart
+                        data={trends.moodBreakdown || { thisYear: [], previousYear: [] }}
+                      />
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.25 }}
+                    >
+                      <SomaticTrends data={trends.somaticData} />
+                    </motion.div>
+                  </div>
+                </section>
 
-            <section>
-              <SectionLabel>Habits</SectionLabel>
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.35 }}
-              >
-                <EnergyLevelChart energyLevels={trends?.energyLevels || []} />
-              </motion.div>
-            </section>
+                <section>
+                  <SectionLabel>Impact & Community</SectionLabel>
+                  <div className="flex flex-col gap-4">
+                    <motion.div
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.35 }}
+                    >
+                      <ActivityImpactChart data={trends.activityImpact} />
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <SocialTrends data={trends.communityStats} />
+                    </motion.div>
 
-            <section className="pb-2">
-              <SectionLabel>Exercises</SectionLabel>
-              <div className="flex flex-col gap-4">
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                >
-                  <ExerciseCard
-                    title="Writing"
-                    subtitle="Months when you wrote"
-                    tabs={["Months", "Words", "Cloud"]}
-                    months={mockExerciseMonths}
-                  />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.45 }}
-                >
-                  <ExerciseCard
-                    title="Breathing"
-                    subtitle="Days when you did breathing exercises"
-                    tabs={["Months", "Sessions", "Duration"]}
-                    months={mockExerciseMonths}
-                  />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <ExerciseCard
-                    title="Meditation"
-                    subtitle="Months when you meditated"
-                    tabs={["Months", "Sessions", "Duration"]}
-                    months={mockExerciseMonths}
-                  />
-                </motion.div>
-              </div>
-            </section>
+                  </div>
+                </section>
+              </>
+            )}
           </div>
         )}
       </div>
