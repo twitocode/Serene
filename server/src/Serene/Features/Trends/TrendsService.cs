@@ -32,7 +32,11 @@ public class TrendsService : ITrendsService
         "Dec",
     ];
 
-    public TrendsService(ApplicationDbContext context, ILogger<TrendsService> logger, IEncryptionService encryption)
+    public TrendsService(
+        ApplicationDbContext context,
+        ILogger<TrendsService> logger,
+        IEncryptionService encryption
+    )
     {
         _context = context;
         _logger = logger;
@@ -187,15 +191,19 @@ public class TrendsService : ITrendsService
 
         foreach (var c in thisYearCheckins)
         {
-            var somaticState = _encryption.DecryptJson<Dictionary<string, Serene.Entities.GridPoint>>(c.SomaticStateEncrypted);
+            var somaticState = _encryption.DecryptJson<
+                Dictionary<string, Serene.Entities.GridPoint>
+            >(c.SomaticStateEncrypted);
             if (somaticState != null)
             {
                 foreach (var entry in somaticState)
                 {
-                    somaticPartCounts[entry.Key] = somaticPartCounts.GetValueOrDefault(entry.Key) + 1;
+                    somaticPartCounts[entry.Key] =
+                        somaticPartCounts.GetValueOrDefault(entry.Key) + 1;
                     foreach (var sensation in entry.Value.Sensations)
                     {
-                        sensationCounts[sensation] = sensationCounts.GetValueOrDefault(sensation) + 1;
+                        sensationCounts[sensation] =
+                            sensationCounts.GetValueOrDefault(sensation) + 1;
                     }
                 }
             }
@@ -208,7 +216,7 @@ public class TrendsService : ITrendsService
                 .OrderByDescending(s => s.Value)
                 .Take(5)
                 .Select(s => new SensationCount { Sensation = s.Key, Count = s.Value })
-                .ToList()
+                .ToList(),
         };
 
         var activityImpact = thisYearCheckins
@@ -217,15 +225,17 @@ public class TrendsService : ITrendsService
             .Select(g => new ActivityImpactItem
             {
                 Activity = g.Key,
-                MoodImprovement = Math.Round(g.Average(c => (double)c.MoodSeverity) * 10, 1) // Using 0-10 scale as % for now
+                MoodImprovement = Math.Round(g.Average(c => (double)c.MoodSeverity) * 10, 1), // Using 0-10 scale as % for now
             })
             .OrderByDescending(a => a.MoodImprovement)
             .Take(5)
             .ToList();
 
         var answersCount = await _context.Posts.CountAsync(p => p.UserId == userId);
-        var matchesCount = await _context.PeerMatches.CountAsync(m => m.UserId == userId || m.MatchedUserId == userId);
-        
+        var matchesCount = await _context.PeerMatches.CountAsync(m =>
+            m.UserId == userId || m.MatchedUserId == userId
+        );
+
         // Support count - still placeholder as not implemented in schema, but will return 0 for now
         var supportCount = 0;
 
@@ -233,7 +243,7 @@ public class TrendsService : ITrendsService
         {
             AnswersCount = answersCount,
             MatchesCount = matchesCount,
-            SupportCount = supportCount
+            SupportCount = supportCount,
         };
 
         return new TrendsResponse
@@ -245,7 +255,7 @@ public class TrendsService : ITrendsService
             EnergyLevels = energyLevels,
             SomaticData = somaticData,
             ActivityImpact = activityImpact,
-            CommunityStats = communityStats
+            CommunityStats = communityStats,
         };
     }
 }
