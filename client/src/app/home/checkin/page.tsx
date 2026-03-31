@@ -1,28 +1,28 @@
+import {
+	dehydrate,
+	HydrationBoundary,
+	QueryClient,
+} from "@tanstack/react-query";
+import type { Metadata } from "next";
 import CheckinPage from "@/lib/components/checkin/checkin-page";
 import { apiFetch } from "@/lib/helpers/api-fetch";
 import { getCurrentDate } from "@/lib/helpers/get-current-date";
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
-import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Checkin | Serene",
+	title: "Checkin | Serene",
 };
 export default async function page() {
-  const queryClient = new QueryClient();
+	const queryClient = new QueryClient();
 
-  const today = getCurrentDate();
-  await queryClient.prefetchQuery({
-    queryKey: ["checkins", today],
-    queryFn: async () => (await apiFetch(`/checkin?date=${today}`)).data!,
-  });
+	const today = getCurrentDate();
+	await queryClient.prefetchQuery({
+		queryKey: ["checkins", today],
+		queryFn: async () => (await apiFetch(`/checkin?date=${today}`)).data!,
+	});
 
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <CheckinPage />
-    </HydrationBoundary>
-  );
+	return (
+		<HydrationBoundary state={dehydrate(queryClient)}>
+			<CheckinPage />
+		</HydrationBoundary>
+	);
 }

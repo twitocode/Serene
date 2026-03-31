@@ -1,35 +1,35 @@
 import { FEMALE_ZONES } from "@/lib/components/checkin/somatic-utils";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
 } from "@/lib/components/ui/tooltip";
-import { GridPoint } from "@/lib/types/index";
+import type { GridPoint } from "@/lib/types/index";
 
 interface Props {
-  onClick: (e: React.MouseEvent<SVGSVGElement>) => void;
-  somaticState?: { [key: string]: GridPoint };
-  selectedPart?: string | null;
+	onClick: (e: React.MouseEvent<SVGSVGElement>) => void;
+	somaticState?: { [key: string]: GridPoint };
+	selectedPart?: string | null;
 }
 
 export default function FemaleBody({
-  onClick,
-  somaticState = {},
-  selectedPart,
+	onClick,
+	somaticState = {},
+	selectedPart,
 }: Props) {
-  // Parts that have data but are not currently being edited
-  const savedParts = Object.keys(somaticState).filter(
-    (p) => p !== selectedPart
-  );
+	// Parts that have data but are not currently being edited
+	const savedParts = Object.keys(somaticState).filter(
+		(p) => p !== selectedPart,
+	);
 
-  const getSeverityColor = (count: number) => {
-    if (count >= 4) return "fill-red-500";
-    if (count >= 2) return "fill-orange-500";
-    return "fill-yellow-400";
-  };
+	const getSeverityColor = (count: number) => {
+		if (count >= 4) return "fill-red-500";
+		if (count >= 2) return "fill-orange-500";
+		return "fill-yellow-400";
+	};
 
-  // Using backticks to handle the multi-line string safely
-  const femalePathData = `M736.728,849.786c-0.634-1.435-13.566-15.425-33.487-23.292c-4.568-1.94-4.545,2.705-16.944-34.925
+	// Using backticks to handle the multi-line string safely
+	const femalePathData = `M736.728,849.786c-0.634-1.435-13.566-15.425-33.487-23.292c-4.568-1.94-4.545,2.705-16.944-34.925
     c-26.957-72.647-5.661-112.736-51.135-200.791c-6.888-14.322-9.901-24.921-16.16-50.12c-25.397-104.478-6.032-90.98-15.87-135.251
     c-17.961-63.049-50.754-59.498-71.782-59.155c-16.944,0.378-45.224-11.699-52.936-19.746
     c-10.555-11.486-17.912-20.548-11.679-58.855c0,0,7.037-12.141,9.078-34.125c9.284,11.287,24.572-33.84,16.065-42.691
@@ -79,107 +79,107 @@ export default function FemaleBody({
     c8.972-4.798-12.718-39.688-17.595-54.417c-0.965-3.063-4.944-21.351-3.12-23.398c7.957,6.403,7.23,9.154,11.332,13.86
     c3.389,3.791,10.938,9.509,16.127,8.599c1.626,1.207,4.048,0.321,4.944-1.381C760.056,877.198,745.651,870.24,736.728,849.786z`;
 
-  return (
-    <svg
-      onClick={onClick}
-      role="img"
-      aria-label="Female body diagram for selecting areas of discomfort"
-      version="1.1"
-      id="Layer_1"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
-      viewBox="0 0 837.483 1819.369"
-      className="dark:stroke-white stroke-black max-h-full max-w-full cursor-pointer"
-      preserveAspectRatio="xMidYMid meet"
-    >
-      <defs>
-        <pattern
-          id="dots-female"
-          x="0"
-          y="0"
-          width="20"
-          height="20"
-          patternUnits="userSpaceOnUse"
-        >
-          <circle
-            cx="10"
-            cy="10"
-            r="3"
-            fill="currentColor"
-            className="text-muted-foreground/20"
-          />
-        </pattern>
+	return (
+		<svg
+			onClick={onClick}
+			role="img"
+			aria-label="Female body diagram for selecting areas of discomfort"
+			version="1.1"
+			id="Layer_1"
+			xmlns="http://www.w3.org/2000/svg"
+			xmlnsXlink="http://www.w3.org/1999/xlink"
+			viewBox="0 0 837.483 1819.369"
+			className="dark:stroke-white stroke-black max-h-full max-w-full cursor-pointer"
+			preserveAspectRatio="xMidYMid meet"
+		>
+			<defs>
+				<pattern
+					id="dots-female"
+					x="0"
+					y="0"
+					width="20"
+					height="20"
+					patternUnits="userSpaceOnUse"
+				>
+					<circle
+						cx="10"
+						cy="10"
+						r="3"
+						fill="currentColor"
+						className="text-muted-foreground/20"
+					/>
+				</pattern>
 
-        {/* Create a blur filter to soften the rectangular zones */}
-        <filter id="glow-blur" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="40" />
-        </filter>
+				{/* Create a blur filter to soften the rectangular zones */}
+				<filter id="glow-blur" x="-50%" y="-50%" width="200%" height="200%">
+					<feGaussianBlur in="SourceGraphic" stdDeviation="40" />
+				</filter>
 
-        <clipPath id="body-clip-female">
-          <path d={femalePathData} />
-        </clipPath>
-      </defs>
+				<clipPath id="body-clip-female">
+					<path d={femalePathData} />
+				</clipPath>
+			</defs>
 
-      {/* 1. The Body Outline/Dots */}
-      <path
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="5"
-        className="pointer-events-auto cursor-pointer hover:stroke-primary transition-colors duration-300"
-        d={femalePathData}
-      />
+			{/* 1. The Body Outline/Dots */}
+			<path
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="5"
+				className="pointer-events-auto cursor-pointer hover:stroke-primary transition-colors duration-300"
+				d={femalePathData}
+			/>
 
-      {/* 2. The Highlight Zone */}
-      {/* Saved Parts (Severity Color) */}
-      {savedParts.map((part) => {
-        const sensations = somaticState[part]?.sensations || [];
-        const count = sensations.length;
-        const colorClass = getSeverityColor(count);
+			{/* 2. The Highlight Zone */}
+			{/* Saved Parts (Severity Color) */}
+			{savedParts.map((part) => {
+				const sensations = somaticState[part]?.sensations || [];
+				const count = sensations.length;
+				const colorClass = getSeverityColor(count);
 
-        return (
-          <Tooltip key={part}>
-            <TooltipTrigger asChild>
-              <g>
-                {FEMALE_ZONES[part]?.map((zone) => (
-                  <rect
-                    key={`saved-${part}-${zone.x}-${zone.y}`}
-                    x={`${zone.x}%`}
-                    y={`${zone.y}%`}
-                    width={`${zone.width}%`}
-                    height={`${zone.height}%`}
-                    className={`${colorClass} transition-all duration-500 opacity-60`}
-                    clipPath="url(#body-clip-female)"
-                    filter="url(#glow-blur)"
-                    style={{ pointerEvents: "all", cursor: "pointer" }}
-                  />
-                ))}
-              </g>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="font-semibold text-lg">{part}</p>
-              <div className="text-md text-muted-foreground">
-                {sensations.join(", ")}
-              </div>
-            </TooltipContent>
-          </Tooltip>
-        );
-      })}
+				return (
+					<Tooltip key={part}>
+						<TooltipTrigger asChild>
+							<g>
+								{FEMALE_ZONES[part]?.map((zone) => (
+									<rect
+										key={`saved-${part}-${zone.x}-${zone.y}`}
+										x={`${zone.x}%`}
+										y={`${zone.y}%`}
+										width={`${zone.width}%`}
+										height={`${zone.height}%`}
+										className={`${colorClass} transition-all duration-500 opacity-60`}
+										clipPath="url(#body-clip-female)"
+										filter="url(#glow-blur)"
+										style={{ pointerEvents: "all", cursor: "pointer" }}
+									/>
+								))}
+							</g>
+						</TooltipTrigger>
+						<TooltipContent>
+							<p className="font-semibold text-lg">{part}</p>
+							<div className="text-md text-muted-foreground">
+								{sensations.join(", ")}
+							</div>
+						</TooltipContent>
+					</Tooltip>
+				);
+			})}
 
-      {/* Currently Selected Part (Primary) */}
-      {selectedPart &&
-        FEMALE_ZONES[selectedPart]?.map((zone) => (
-          <rect
-            key={`selected-${selectedPart}-${zone.x}-${zone.y}`}
-            x={`${zone.x}%`}
-            y={`${zone.y}%`}
-            width={`${zone.width}%`}
-            height={`${zone.height}%`}
-            className="fill-primary animate-pulse-strong transition-all duration-500"
-            clipPath="url(#body-clip-female)"
-            filter="url(#glow-blur)"
-            style={{ pointerEvents: "none" }}
-          />
-        ))}
-    </svg>
-  );
+			{/* Currently Selected Part (Primary) */}
+			{selectedPart &&
+				FEMALE_ZONES[selectedPart]?.map((zone) => (
+					<rect
+						key={`selected-${selectedPart}-${zone.x}-${zone.y}`}
+						x={`${zone.x}%`}
+						y={`${zone.y}%`}
+						width={`${zone.width}%`}
+						height={`${zone.height}%`}
+						className="fill-primary animate-pulse-strong transition-all duration-500"
+						clipPath="url(#body-clip-female)"
+						filter="url(#glow-blur)"
+						style={{ pointerEvents: "none" }}
+					/>
+				))}
+		</svg>
+	);
 }

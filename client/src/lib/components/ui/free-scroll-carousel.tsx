@@ -1,37 +1,37 @@
 "use client";
 
-import * as React from "react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  type CarouselApi,
-} from "./carousel";
+import type * as React from "react";
 import { useIsMobile } from "@/lib/hooks/use-mobile";
+import {
+	Carousel,
+	type CarouselApi,
+	CarouselContent,
+	CarouselItem,
+	CarouselNext,
+	CarouselPrevious,
+} from "./carousel";
 
 function FreeScrollCarousel({
-  opts,
-  ...props
+	opts,
+	...props
 }: React.ComponentProps<typeof Carousel>) {
-  const isMobile = useIsMobile();
-  return (
-    <Carousel
-      opts={{
-        ...opts,
-        dragFree: !isMobile,
-      }}
-      {...props}
-    />
-  );
+	const isMobile = useIsMobile();
+	return (
+		<Carousel
+			opts={{
+				...opts,
+				dragFree: !isMobile,
+			}}
+			{...props}
+		/>
+	);
 }
 
 export {
-  FreeScrollCarousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  type CarouselApi,
+	type CarouselApi,
+	CarouselContent,
+	CarouselItem,
+	CarouselNext,
+	CarouselPrevious,
+	FreeScrollCarousel,
 };

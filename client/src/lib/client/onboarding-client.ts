@@ -1,67 +1,70 @@
 import { apiFetch } from "@/lib/helpers/api-fetch";
-import { Result } from "@/lib/types/api-types";
-import { School } from "@/lib/types/index";
-
+import type { Result } from "@/lib/types/api-types";
+import type { School } from "@/lib/types/index";
 
 export async function completeOnboardingStep<T>(
-  step: number,
-  data: Record<string, unknown>
+	step: number,
+	data: Record<string, unknown>,
 ): Promise<Result<T>> {
-  console.log(`trying to submit step ${step}`);
+	console.log(`trying to submit step ${step}`);
 
-  return await apiFetch<T>(`/users/onboarding/step${step}`, {
-    method: "POST",
-    body: JSON.stringify(data),
-    cache: "no-store",
-  });
+	return await apiFetch<T>(`/users/onboarding/step${step}`, {
+		method: "POST",
+		body: JSON.stringify(data),
+		cache: "no-store",
+	});
 }
 
 export async function completeStep1(
-  name: string
+	name: string,
 ): Promise<Result<{ success: boolean }>> {
-  return completeOnboardingStep<{ success: boolean }>(1, { name });
+	return completeOnboardingStep<{ success: boolean }>(1, { name });
 }
 
 export async function completeStep2(
-  dateOfBirth: string,
-  gender: string,
-  pronouns: string
+	dateOfBirth: string,
+	gender: string,
+	pronouns: string,
 ): Promise<Result<{ success: boolean }>> {
-  return completeOnboardingStep<{ success: boolean }>(2, { dateOfBirth, gender, pronouns });
+	return completeOnboardingStep<{ success: boolean }>(2, {
+		dateOfBirth,
+		gender,
+		pronouns,
+	});
 }
 
 export async function completeStep3(
-  countryCode: string
+	countryCode: string,
 ): Promise<Result<{ success: boolean }>> {
-  return completeOnboardingStep<{ success: boolean }>(3, { countryCode });
+	return completeOnboardingStep<{ success: boolean }>(3, { countryCode });
 }
 
 export async function completeStep4({
-  name,
-  city,
-  countryCode,
-  regionCode,
+	name,
+	city,
+	countryCode,
+	regionCode,
 }: Omit<School, "id">): Promise<Result<{ success: boolean }>> {
-  return completeOnboardingStep<{ success: boolean }>(4, {
-    name,
-    city,
-    countryCode,
-    regionCode,
-  });
+	return completeOnboardingStep<{ success: boolean }>(4, {
+		name,
+		city,
+		countryCode,
+		regionCode,
+	});
 }
 
 export async function completeStep5(
-  mochiName: string,
-  mochiPronouns: string
+	mochiName: string,
+	mochiPronouns: string,
 ): Promise<Result<{ success: boolean }>> {
-  return completeOnboardingStep<{ success: boolean }>(5, {
-    mochiName,
-    mochiPronouns,
-  });
+	return completeOnboardingStep<{ success: boolean }>(5, {
+		mochiName,
+		mochiPronouns,
+	});
 }
 
 export async function completeStep6(
-  struggles: string[]
+	struggles: string[],
 ): Promise<Result<{ success: boolean }>> {
-  return completeOnboardingStep<{ success: boolean }>(6, { struggles });
+	return completeOnboardingStep<{ success: boolean }>(6, { struggles });
 }

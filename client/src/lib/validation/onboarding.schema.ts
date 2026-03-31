@@ -1,86 +1,83 @@
-import { SUPPORTED_COUNTRY_CODES } from "@/lib/get-country-codes";
 import { z } from "zod";
+import { SUPPORTED_COUNTRY_CODES } from "@/lib/get-country-codes";
 
 export const stepOneSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Name is required")
-    .min(2, "Name must be at least 2 characters")
-    .max(50, "Name must be less than 50 characters")
-    .regex(/^[a-zA-Z\s-]+$/, "Name can only contain letters, spaces, hyphens"),
+	name: z
+		.string()
+		.min(1, "Name is required")
+		.min(2, "Name must be at least 2 characters")
+		.max(50, "Name must be less than 50 characters")
+		.regex(/^[a-zA-Z\s-]+$/, "Name can only contain letters, spaces, hyphens"),
 });
 
 const pronounsRegex =
-  /^(She\s?[\/\-]\s?Her|He\s?[\/\-]\s?Him|They\s?[\/\-]\s?Them|Prefer not to say)$/i;
+	/^(She\s?[\/\-]\s?Her|He\s?[\/\-]\s?Him|They\s?[\/\-]\s?Them|Prefer not to say)$/i;
 
 export const stepTwoSchema = z.object({
-  dateOfBirth: z
-    .string()
-    .min(1, "Date of birth is required")
-    .refine((date) => {
-      const birthDate = new Date(date);
-      const today = new Date();
-      const age = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
-      const dayDiff = today.getDate() - birthDate.getDate();
-      
-      const actualAge = monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
-      
-      return actualAge >= 13 && actualAge <= 120;
-    }, "You must greater than 13 years old"),
-  gender: z.enum(["Male", "Female", "Non-Binary", "Prefer not to say"], {
-    message: "Please select a gender",
-  }),
-  pronouns: z.string().regex(pronounsRegex, "Invalid pronouns")
+	dateOfBirth: z
+		.string()
+		.min(1, "Date of birth is required")
+		.refine((date) => {
+			const birthDate = new Date(date);
+			const today = new Date();
+			const age = today.getFullYear() - birthDate.getFullYear();
+			const monthDiff = today.getMonth() - birthDate.getMonth();
+			const dayDiff = today.getDate() - birthDate.getDate();
+
+			const actualAge =
+				monthDiff < 0 || (monthDiff === 0 && dayDiff < 0) ? age - 1 : age;
+
+			return actualAge >= 13 && actualAge <= 120;
+		}, "You must greater than 13 years old"),
+	gender: z.enum(["Male", "Female", "Non-Binary", "Prefer not to say"], {
+		message: "Please select a gender",
+	}),
+	pronouns: z.string().regex(pronounsRegex, "Invalid pronouns"),
 });
 
 export const stepThreeSchema = z.object({
-  countryCode: z.string().min(1, "Country is required"),
+	countryCode: z.string().min(1, "Country is required"),
 });
 
 export const stepFourSchema = z.object({
-  name: z
-    .string(),
-    // .min(1, "School is required")
-    // .min(2, "School name must be at least 2 characters")
-    // .max(100, "School name must be less than 100 characters"),
-  countryCode: z.enum(SUPPORTED_COUNTRY_CODES, {
-    error: () => ({ message: "Please select a supported country" }),
-  }),
-  city: z.string("City not provided"),
-  regionCode: z
-    .string("Region code not provided")
-    // .length(3, "Not a region code"),
+	name: z.string(),
+	// .min(1, "School is required")
+	// .min(2, "School name must be at least 2 characters")
+	// .max(100, "School name must be less than 100 characters"),
+	countryCode: z.enum(SUPPORTED_COUNTRY_CODES, {
+		error: () => ({ message: "Please select a supported country" }),
+	}),
+	city: z.string("City not provided"),
+	regionCode: z.string("Region code not provided"),
+	// .length(3, "Not a region code"),
 });
 
 export const stepFiveSchema = z.object({
-  mochiName: z
-    .string()
-    .min(1, "Mochi name is required")
-    .min(2, "Mochi name must be at least 2 characters")
-    .max(30, "Mochi name must be less than 30 characters")
-    .regex(
-      /^[a-zA-Z\s'-]+$/,
-      "Mochi name can only contain letters, spaces, hyphens, and apostrophes"
-    ),
-  mochiPronouns: z
-    .string()
-    .regex(pronounsRegex, "Mochi's pronouns were not provided")
+	mochiName: z
+		.string()
+		.min(1, "Mochi name is required")
+		.min(2, "Mochi name must be at least 2 characters")
+		.max(30, "Mochi name must be less than 30 characters")
+		.regex(
+			/^[a-zA-Z\s'-]+$/,
+			"Mochi name can only contain letters, spaces, hyphens, and apostrophes",
+		),
+	mochiPronouns: z
+		.string()
+		.regex(pronounsRegex, "Mochi's pronouns were not provided"),
 });
 
 export const stepSixSchema = z.object({
-  struggles: z
-    .array(z.string())
-    .min(1, "Please select at least one item")
+	struggles: z.array(z.string()).min(1, "Please select at least one item"),
 });
 
 export const onboardingFormSchema = z.object({
-  ...stepOneSchema.shape,
-  ...stepTwoSchema.shape,
-  ...stepThreeSchema.shape,
-  ...stepFourSchema.shape,
-  ...stepFiveSchema.shape,
-  ...stepSixSchema.shape,
+	...stepOneSchema.shape,
+	...stepTwoSchema.shape,
+	...stepThreeSchema.shape,
+	...stepFourSchema.shape,
+	...stepFiveSchema.shape,
+	...stepSixSchema.shape,
 });
 
 export type StepOneSchema = z.infer<typeof stepOneSchema>;

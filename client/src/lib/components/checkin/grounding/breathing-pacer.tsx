@@ -1,118 +1,124 @@
 "use client";
 
-import { Button } from "@/lib/components/ui/button";
-import {
-  BOX_BREATHING_CYCLE,
-  BREATHING_TOTAL_CYCLES,
-} from "@/lib/data/grounding-scripts";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Button } from "@/lib/components/ui/button";
+import {
+	BOX_BREATHING_CYCLE,
+	BREATHING_TOTAL_CYCLES,
+} from "@/lib/data/grounding-scripts";
 
 interface BreathingPacerProps {
-  onComplete: () => void;
+	onComplete: () => void;
 }
 
 export default function BreathingPacer({ onComplete }: BreathingPacerProps) {
-  const [phaseIndex, setPhaseIndex] = useState(0);
-  const [cycle, setCycle] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const [countdown, setCountdown] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+	const [phaseIndex, setPhaseIndex] = useState(0);
+	const [cycle, setCycle] = useState(0);
+	const [isRunning, setIsRunning] = useState(false);
+	const [countdown, setCountdown] = useState(0);
+	const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const phase = BOX_BREATHING_CYCLE[phaseIndex % BOX_BREATHING_CYCLE.length];
-  const phaseSec = Math.round((phase?.durationMs ?? 4000) / 1000);
-  const isExpanding = phaseIndex % BOX_BREATHING_CYCLE.length === 0;
-  const isHolding =
-    phaseIndex % BOX_BREATHING_CYCLE.length === 1 ||
-    phaseIndex % BOX_BREATHING_CYCLE.length === 3;
-  const finished = cycle >= BREATHING_TOTAL_CYCLES;
+	const phase = BOX_BREATHING_CYCLE[phaseIndex % BOX_BREATHING_CYCLE.length];
+	const phaseSec = Math.round((phase?.durationMs ?? 4000) / 1000);
+	const isExpanding = phaseIndex % BOX_BREATHING_CYCLE.length === 0;
+	const isHolding =
+		phaseIndex % BOX_BREATHING_CYCLE.length === 1 ||
+		phaseIndex % BOX_BREATHING_CYCLE.length === 3;
+	const finished = cycle >= BREATHING_TOTAL_CYCLES;
 
-  const advancePhase = useCallback(() => {
-    setPhaseIndex((prev) => {
-      const next = prev + 1;
-      if (next % BOX_BREATHING_CYCLE.length === 0) {
-        setCycle((c) => c + 1);
-      }
-      return next;
-    });
-  }, []);
+	const advancePhase = useCallback(() => {
+		setPhaseIndex((prev) => {
+			const next = prev + 1;
+			if (next % BOX_BREATHING_CYCLE.length === 0) {
+				setCycle((c) => c + 1);
+			}
+			return next;
+		});
+	}, []);
 
-  useEffect(() => {
-    if (!isRunning || finished) return;
+	useEffect(() => {
+		if (!isRunning || finished) return;
 
-    setCountdown(phaseSec);
-    timerRef.current = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          advancePhase();
-          return phaseSec;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+		setCountdown(phaseSec);
+		timerRef.current = setInterval(() => {
+			setCountdown((prev) => {
+				if (prev <= 1) {
+					advancePhase();
+					return phaseSec;
+				}
+				return prev - 1;
+			});
+		}, 1000);
 
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [isRunning, phaseIndex, finished, phaseSec, advancePhase]);
+		return () => {
+			if (timerRef.current) clearInterval(timerRef.current);
+		};
+	}, [isRunning, finished, phaseSec, advancePhase]);
 
-  useEffect(() => {
-    if (finished && isRunning) {
-      setIsRunning(false);
-    }
-  }, [finished, isRunning]);
+	useEffect(() => {
+		if (finished && isRunning) {
+			setIsRunning(false);
+		}
+	}, [finished, isRunning]);
 
-  const circleScale = isExpanding ? 1.6 : isHolding ? (phaseIndex % BOX_BREATHING_CYCLE.length === 1 ? 1.6 : 1) : 1;
+	const circleScale = isExpanding
+		? 1.6
+		: isHolding
+			? phaseIndex % BOX_BREATHING_CYCLE.length === 1
+				? 1.6
+				: 1
+			: 1;
 
-  return (
-    <div className="flex flex-col items-center gap-8 py-4">
-      <div className="relative flex items-center justify-center">
-        <motion.div
-          animate={{ scale: isRunning && !finished ? circleScale : 1 }}
-          transition={{ duration: phaseSec, ease: "easeInOut" }}
-          className="flex size-48 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/30"
-        >
-          <motion.div
-            animate={{ scale: isRunning && !finished ? circleScale : 1 }}
-            transition={{ duration: phaseSec, ease: "easeInOut" }}
-            className="flex size-32 items-center justify-center rounded-full bg-primary/20"
-          >
-            <span className="text-center text-sm font-medium text-primary">
-              {!isRunning && !finished && "Tap start"}
-              {isRunning && !finished && phase?.label}
-              {finished && "Done"}
-            </span>
-          </motion.div>
-        </motion.div>
-      </div>
+	return (
+		<div className="flex flex-col items-center gap-8 py-4">
+			<div className="relative flex items-center justify-center">
+				<motion.div
+					animate={{ scale: isRunning && !finished ? circleScale : 1 }}
+					transition={{ duration: phaseSec, ease: "easeInOut" }}
+					className="flex size-48 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/30"
+				>
+					<motion.div
+						animate={{ scale: isRunning && !finished ? circleScale : 1 }}
+						transition={{ duration: phaseSec, ease: "easeInOut" }}
+						className="flex size-32 items-center justify-center rounded-full bg-primary/20"
+					>
+						<span className="text-center text-sm font-medium text-primary">
+							{!isRunning && !finished && "Tap start"}
+							{isRunning && !finished && phase?.label}
+							{finished && "Done"}
+						</span>
+					</motion.div>
+				</motion.div>
+			</div>
 
-      {isRunning && !finished && (
-        <p className="text-2xl font-semibold tabular-nums text-foreground">
-          {countdown}
-        </p>
-      )}
+			{isRunning && !finished && (
+				<p className="text-2xl font-semibold tabular-nums text-foreground">
+					{countdown}
+				</p>
+			)}
 
-      <p className="text-xs text-muted-foreground">
-        {finished
-          ? "Great work. Take a moment before continuing."
-          : `Cycle ${Math.min(cycle + 1, BREATHING_TOTAL_CYCLES)} of ${BREATHING_TOTAL_CYCLES}`}
-      </p>
+			<p className="text-xs text-muted-foreground">
+				{finished
+					? "Great work. Take a moment before continuing."
+					: `Cycle ${Math.min(cycle + 1, BREATHING_TOTAL_CYCLES)} of ${BREATHING_TOTAL_CYCLES}`}
+			</p>
 
-      {!isRunning && !finished && (
-        <Button
-          onClick={() => setIsRunning(true)}
-          size="lg"
-          className="rounded-xl"
-        >
-          Start breathing
-        </Button>
-      )}
+			{!isRunning && !finished && (
+				<Button
+					onClick={() => setIsRunning(true)}
+					size="lg"
+					className="rounded-xl"
+				>
+					Start breathing
+				</Button>
+			)}
 
-      {finished && (
-        <Button onClick={onComplete} size="lg" className="rounded-xl">
-          Done
-        </Button>
-      )}
-    </div>
-  );
+			{finished && (
+				<Button onClick={onComplete} size="lg" className="rounded-xl">
+					Done
+				</Button>
+			)}
+		</div>
+	);
 }

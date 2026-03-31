@@ -1,19 +1,19 @@
-import { useRef, useCallback, RefObject } from "react";
+import { type RefObject, useCallback, useRef } from "react";
 
 export const useScrollToBottom = <T extends HTMLElement = HTMLDivElement>(): [
-  RefObject<T | null>,
-  () => void
+	RefObject<T | null>,
+	() => void,
 ] => {
-  const containerRef = useRef<T>(null);
+	const containerRef = useRef<T>(null);
 
-  const scrollToBottom = useCallback(() => {
-    if (containerRef.current) {
-      containerRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-      });
-    }
-  }, []);
+	const scrollToBottom = useCallback(() => {
+		if (containerRef.current) {
+			containerRef.current.scrollIntoView({
+				behavior: "smooth",
+				block: "end",
+			});
+		}
+	}, []);
 
-  return [containerRef, scrollToBottom];
+	return [containerRef, scrollToBottom];
 };

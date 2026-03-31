@@ -1,183 +1,182 @@
-import { GridPoint } from "@/lib/types/index";
+import type { GridPoint } from "@/lib/types/index";
 
 export interface Result<T = void> {
-  isSuccess: boolean;
-  data: T | null;
-  message?: string | null;
-  errorCode?: string | null;
-  errors?: Record<string, string[]> | null;
+	isSuccess: boolean;
+	data: T | null;
+	message?: string | null;
+	errorCode?: string | null;
+	errors?: Record<string, string[]> | null;
 }
 
 export interface UserDto {
-  id: string;
-  email?: string | null;
-  name?: string | null;
-  image?: string | null;
-  emailConfirmed: boolean;
-  createdAt: string;
-  updatedAt: string;
-  settings?: SettingsDto | null;
+	id: string;
+	email?: string | null;
+	name?: string | null;
+	image?: string | null;
+	emailConfirmed: boolean;
+	createdAt: string;
+	updatedAt: string;
+	settings?: SettingsDto | null;
 }
 
 export interface SettingsDto {
-  id: string;
-  theme?: string | null;
-  passwordLock?: string | null;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
+	id: string;
+	theme?: string | null;
+	passwordLock?: string | null;
+	userId: string;
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface ProfileDto {
-  id: string;
-  mochiName: string | null;
-  mochiPronouns: string | null;
-  currentStreak: number;
-  longestStreak: number;
-  userId: string;
-  schoolId: string;
+	id: string;
+	mochiName: string | null;
+	mochiPronouns: string | null;
+	currentStreak: number;
+	longestStreak: number;
+	userId: string;
+	schoolId: string;
 }
 
 export interface SchoolDto {
-  id: string;
-  city: string;
-  name: string;
-  countryCode: string;
-  regionCode: string;
-  userId: string;
+	id: string;
+	city: string;
+	name: string;
+	countryCode: string;
+	regionCode: string;
+	userId: string;
 }
 
 export interface OnboardingStatusDto {
-  step: number;
-  completed: boolean;
-  started: boolean;
-  name?: string | null;
-  dateOfBirth?: string;
-  gender?: string | null;
-  pronouns?: string | null;
-  countryCode?: string | null;
-  schoolName?: string | null;
-  mochiName?: string | null;
-  mochiPronouns?: string | null;
+	step: number;
+	completed: boolean;
+	started: boolean;
+	name?: string | null;
+	dateOfBirth?: string;
+	gender?: string | null;
+	pronouns?: string | null;
+	countryCode?: string | null;
+	schoolName?: string | null;
+	mochiName?: string | null;
+	mochiPronouns?: string | null;
 }
 
 export interface AuthResponseDto {
-  token: string;
-  user: UserDto;
+	token: string;
+	user: UserDto;
 }
 
 export interface CheckEmailResponseDto {
-  exists: boolean;
-  hasPassword: boolean;
-  providers: string[];
+	exists: boolean;
+	hasPassword: boolean;
+	providers: string[];
 }
 
 export interface EmailSignUpDto {
-  email: string;
-  password: string;
-  name: string;
+	email: string;
+	password: string;
+	name: string;
 }
 
 export interface EmailSignInDto {
-  email: string;
-  password: string;
+	email: string;
+	password: string;
 }
 
 export interface CheckEmailDto {
-  email: string;
+	email: string;
 }
 
 export interface GoogleLoginDto {
-  idToken: string;
+	idToken: string;
 }
 
 export interface QOTDPostDto {
-  qotdId: string;
-  response: string;
+	qotdId: string;
+	response: string;
 }
 
 export interface QOTDResponseDto {
-  qotdId: string;
-  question: string;
+	qotdId: string;
+	question: string;
 }
 
 export interface QOTDAnswerDto {
-  userId: string;
-  username: string;
-  answer: string;
+	userId: string;
+	username: string;
+	answer: string;
 }
 
-
 export interface CompleteCheckinRequest {
-  somaticState: { [key: string]: GridPoint };
-  lingeringThoughts: string | null;
-  reframedThought: string | null;
-  moodLabel: string;
-  moodSeverity: number;
+	somaticState: { [key: string]: GridPoint };
+	lingeringThoughts: string | null;
+	reframedThought: string | null;
+	moodLabel: string;
+	moodSeverity: number;
 }
 
 export interface CheckinResponse {
-  lingeringThoughts: string | null;
-  reframedThought: string | null;
-  moodLabel: string;
-  moodSeverity: number;
-  id: string;
-  dateCompleted: string;
+	lingeringThoughts: string | null;
+	reframedThought: string | null;
+	moodLabel: string;
+	moodSeverity: number;
+	id: string;
+	dateCompleted: string;
 }
 
 export interface FeedbackRequest {
-  message: string;
+	message: string;
 }
 
 export interface ReframeRequest {
-  lingeringThoughts: string;
+	lingeringThoughts: string;
 }
 
 export interface ReframeResponse {
-  distortion: string;
-  socraticQuestion: string;
-  suggestedReframe: string;
+	distortion: string;
+	socraticQuestion: string;
+	suggestedReframe: string;
 }
 
 export interface UpdateInterestsRequest {
-  interests: string[];
+	interests: string[];
 }
 
 export interface PeerMatchResponse {
-  matchId: string;
-  anonymousName: string;
-  sharedInterest: string;
-  matchDate: string;
+	matchId: string;
+	anonymousName: string;
+	sharedInterest: string;
+	matchDate: string;
 }
 
 export interface ActivityResponse {
-  id: string;
-  title: string;
-  category: string;
-  scheduledDate: string;
-  completed: boolean;
-  completedAt: string | null;
-  moodBefore: number | null;
-  moodAfter: number | null;
+	id: string;
+	title: string;
+	category: string;
+	scheduledDate: string;
+	completed: boolean;
+	completedAt: string | null;
+	moodBefore: number | null;
+	moodAfter: number | null;
 }
 
 export interface CreateActivityRequest {
-  title: string;
-  category?: string;
-  scheduledDate: string;
+	title: string;
+	category?: string;
+	scheduledDate: string;
 }
 
 export interface CompleteActivityRequest {
-  moodBefore?: number;
-  moodAfter?: number;
+	moodBefore?: number;
+	moodAfter?: number;
 }
 
 export interface AchievementWithStatus {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  points: number;
-  unlocked: boolean;
-  unlockedAt: string | null;
+	id: string;
+	slug: string;
+	title: string;
+	description: string;
+	points: number;
+	unlocked: boolean;
+	unlockedAt: string | null;
 }

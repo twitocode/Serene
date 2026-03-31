@@ -1,9 +1,9 @@
+import type { Metadata } from "next";
 import ExplorePage from "@/lib/components/explore/explore-page";
-import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Explore | Serene",
+	title: "Explore | Serene",
 };
 export default function page() {
-  return <ExplorePage />;
+	return <ExplorePage />;
 }
