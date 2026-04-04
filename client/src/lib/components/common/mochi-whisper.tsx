@@ -86,7 +86,7 @@ export function MochiWhisper() {
 							: { type: "spring", stiffness: 420, damping: 32 }
 					}
 					className={cn(
-						"fixed bottom-4 right-4 z-[100] flex w-[min(22rem,calc(100vw-1.5rem))] gap-3 rounded-2xl border border-border/80 bg-card/95 p-4 shadow-lg backdrop-blur-md md:bottom-6 md:right-6",
+						"fixed bottom-4 right-4 z-[100] flex w-[min(22rem,calc(100vw-1.5rem))] gap-3 card-glass p-4 shadow-xl md:bottom-6 md:right-6",
 						"max-md:left-4 max-md:right-4 max-md:w-auto",
 					)}
 					role="status"

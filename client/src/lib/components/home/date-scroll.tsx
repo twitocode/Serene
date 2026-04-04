@@ -84,18 +84,18 @@ export default function DateScroll({
 								type="button"
 								disabled={readOnly}
 								className={cn(
-									"flex flex-col items-center justify-center min-w-[64px] h-20 rounded-2xl transition-all border-[1.5px] select-none",
+									"flex flex-col items-center justify-center min-w-[64px] h-20 rounded-2xl transition-all duration-200 border-[1.5px] select-none",
 									{
-										"bg-primary text-primary-foreground shadow-lg border-primary scale-105":
+										"bg-primary text-primary-foreground shadow-lg shadow-primary/20 border-primary scale-105":
 											isSelected,
 
-										"border-primary text-primary font-bold":
+										"border-primary/40 text-primary font-bold bg-primary/5":
 											isToday && !isSelected,
 
-										"border-transparent hover:bg-muted/50 cursor-pointer":
+										"border-transparent hover:bg-muted/60 hover:border-border/50 cursor-pointer":
 											!isSelected && !isToday && !readOnly,
 
-										"cursor-default border-transparent opacity-80":
+										"cursor-default border-transparent opacity-70":
 											readOnly && !isSelected && !isToday,
 									},
 								)}

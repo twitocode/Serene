@@ -2,13 +2,13 @@
 
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
-import { GalleryVerticalEnd } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import GoogleButton from "@/lib/components/auth/google-button";
 import FormError from "@/lib/components/common/forms/form-error";
+import SereneLogo from "@/lib/components/common/serene-logo";
 import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import { Separator } from "@/lib/components/ui/separator";
@@ -130,14 +130,10 @@ export function LoginForm({
 
 	return (
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
-			<div className="flex flex-col items-center gap-2 text-center">
-				<div className="flex flex-col items-center gap-2 font-medium">
-					<div className="flex size-8 items-center justify-center rounded-md">
-						<GalleryVerticalEnd className="size-6" />
-					</div>
-				</div>
+			<div className="flex flex-col items-center gap-3 text-center">
+				<SereneLogo noText />
 
-				<h1 className="text-xl font-bold">
+				<h1 className="font-serif text-2xl font-semibold tracking-tight">
 					{step === 1 ? "Welcome Back" : "Enter Password"}
 				</h1>
 				<FormDescription>

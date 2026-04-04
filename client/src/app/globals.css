@@ -353,29 +353,122 @@
 
 .btn-playful {
 	transition:
-		transform 0.2s ease,
-		box-shadow 0.2s ease;
+		transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+		box-shadow 0.25s ease,
+		filter 0.25s ease;
 }
 
 .btn-playful:hover {
-	transform: translateY(-2px);
-	box-shadow: var(--shadow-md);
+	transform: translateY(-3px) scale(1.015);
+	box-shadow:
+		var(--shadow-md),
+		0 8px 24px -6px rgb(124 170 250 / 0.2);
 }
 
 .btn-playful:active {
-	transform: translateY(0);
+	transform: translateY(-1px) scale(0.99);
+	transition-duration: 0.08s;
 }
 
 .card-organic {
 	border-radius: 1.25rem;
 	border: 1px solid var(--border);
 	box-shadow: var(--shadow-sm);
+	transition:
+		box-shadow 0.3s ease,
+		border-color 0.3s ease,
+		transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card-organic:hover {
+	box-shadow:
+		var(--shadow-md),
+		0 0 0 1px rgb(124 170 250 / 0.06);
+}
+
+.card-glass {
+	border-radius: 1.5rem;
+	border: 1px solid rgb(124 170 250 / 0.15);
+	background: rgb(252 253 255 / 0.7);
+	box-shadow:
+		var(--shadow-sm),
+		inset 0 1px 0 rgb(255 255 255 / 0.6);
+	backdrop-filter: blur(16px) saturate(1.6);
+}
+
+.dark .card-glass {
+	border-color: rgb(124 170 250 / 0.1);
+	background: rgb(24 27 38 / 0.65);
+	box-shadow:
+		var(--shadow-sm),
+		inset 0 1px 0 rgb(255 255 255 / 0.04);
 }
 
 .focus-playful:focus-visible {
 	outline: 3px solid var(--primary);
 	outline-offset: 2px;
 	border-radius: inherit;
+}
+
+/* Shimmer accent line */
+@keyframes shimmer {
+	0% { background-position: -200% 0; }
+	100% { background-position: 200% 0; }
+}
+
+.shimmer-border {
+	position: relative;
+	overflow: hidden;
+}
+
+.shimmer-border::after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		var(--mochi-body) 30%,
+		var(--mochi-cheek) 70%,
+		transparent 100%
+	);
+	background-size: 200% 100%;
+	animation: shimmer 4s ease-in-out infinite;
+	opacity: 0.5;
+}
+
+/* Gentle breathing glow for hero elements */
+@keyframes breathe {
+	0%, 100% { opacity: 0.4; transform: scale(1); }
+	50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+.animate-breathe {
+	animation: breathe 6s ease-in-out infinite;
+}
+
+/* Soft ring pulse on focus-within for cards */
+@keyframes ring-pulse {
+	0%, 100% { box-shadow: 0 0 0 0 rgb(124 170 250 / 0.3); }
+	50% { box-shadow: 0 0 0 6px rgb(124 170 250 / 0); }
+}
+
+/* Decorative quote marks */
+.quote-decorative::before {
+	content: "\201C";
+	position: absolute;
+	top: -0.15em;
+	left: -0.05em;
+	font-size: 5em;
+	line-height: 1;
+	font-family: var(--font-family-serif), Georgia, serif;
+	color: var(--mochi-body);
+	opacity: 0.12;
+	pointer-events: none;
+	user-select: none;
 }
 
 @keyframes scroll {
@@ -389,4 +482,38 @@
 
 .animate-scroll {
 	animation: scroll var(--duration) linear infinite;
+}
+
+/* Pill tag hover lift */
+.pill-interactive {
+	transition:
+		transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+		box-shadow 0.2s ease,
+		background-color 0.2s ease;
+}
+
+.pill-interactive:hover {
+	transform: translateY(-1px);
+	box-shadow: var(--shadow-xs);
+}
+
+/* Gradient text utility */
+.text-gradient-mochi {
+	background: linear-gradient(135deg, var(--mochi-body) 0%, var(--mochi-cheek) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+/* Soft divider with gradient fade */
+.divider-soft {
+	height: 1px;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		var(--border) 20%,
+		var(--border) 80%,
+		transparent 100%
+	);
+	border: none;
 }
