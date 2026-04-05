@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2, Pencil, Plus, Search, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
 	addContent,

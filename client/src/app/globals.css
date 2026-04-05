@@ -410,36 +410,6 @@
 	border-radius: inherit;
 }
 
-/* Shimmer accent line */
-@keyframes shimmer {
-	0% { background-position: -200% 0; }
-	100% { background-position: 200% 0; }
-}
-
-.shimmer-border {
-	position: relative;
-	overflow: hidden;
-}
-
-.shimmer-border::after {
-	content: "";
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	height: 2px;
-	background: linear-gradient(
-		90deg,
-		transparent 0%,
-		var(--mochi-body) 30%,
-		var(--mochi-cheek) 70%,
-		transparent 100%
-	);
-	background-size: 200% 100%;
-	animation: shimmer 4s ease-in-out infinite;
-	opacity: 0.5;
-}
-
 /* Gentle breathing glow for hero elements */
 @keyframes breathe {
 	0%, 100% { opacity: 0.4; transform: scale(1); }

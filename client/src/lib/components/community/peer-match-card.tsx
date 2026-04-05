@@ -53,48 +53,52 @@ export default function PeerMatchCard() {
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ delay: 0.15 }}
 		>
-			<Card className="border-primary/20 bg-primary/5 shadow-sm">
-				<CardHeader className="pb-3">
-					<div className="flex items-center gap-2">
-						<Handshake className="size-5 text-primary" />
-						<CardTitle className="font-serif text-lg">
-							Your wellness buddy
-						</CardTitle>
-					</div>
-				</CardHeader>
-				<CardContent className="space-y-3">
-					<div className="flex items-center gap-3">
-						<div className="flex size-10 items-center justify-center rounded-full bg-primary/15 text-sm font-bold text-primary">
+			<div className="card-organic border-border/80 bg-card/95 p-6 shadow-sm backdrop-blur-sm md:p-8">
+				<div className="mb-6 flex items-center gap-2">
+					<Handshake className="size-5 text-primary" strokeWidth={2.5} />
+					<h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+						Your wellness buddy
+					</h3>
+				</div>
+
+				<div className="space-y-6">
+					<div className="flex items-center gap-4">
+						<div className="flex size-14 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary ring-1 ring-primary/15">
 							{match.anonymousName
 								.split(" ")
 								.map((w) => w[0])
 								.join("")}
 						</div>
-						<div>
-							<p className="font-medium text-foreground">
+						<div className="space-y-1">
+							<p className="font-serif text-2xl font-semibold text-foreground md:text-3xl">
 								{match.anonymousName}
 							</p>
-							<div className="flex items-center gap-1.5">
-								<Sparkles className="size-3 text-primary" />
-								<Badge variant="secondary" className="text-xs">
+							<div className="flex items-center gap-2">
+								<Badge
+									variant="secondary"
+									className="rounded-full bg-primary/8 text-primary border-primary/10 px-2.5 py-0.5 text-xs"
+								>
+									<Sparkles className="mr-1 size-3" />
 									{match.sharedInterest}
 								</Badge>
 							</div>
 						</div>
 					</div>
-					<div className="rounded-lg border border-border/60 bg-card px-4 py-3">
-						<p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+
+					<div className="rounded-2xl border border-border/60 bg-muted/20 px-5 py-4">
+						<p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80">
 							Conversation starter
 						</p>
-						<p className="mt-1 text-sm leading-relaxed text-foreground">
+						<p className="mt-2 text-base leading-relaxed text-foreground">
 							{getStarter(match.sharedInterest)}
 						</p>
 					</div>
-					<p className="text-xs text-muted-foreground">
-						Matched this week based on shared interests. Fully anonymous.
+
+					<p className="text-center text-xs text-muted-foreground/70 italic">
+						Matched based on shared interests. Fully anonymous.
 					</p>
-				</CardContent>
-			</Card>
+				</div>
+			</div>
 		</motion.div>
 	);
 }

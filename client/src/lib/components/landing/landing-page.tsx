@@ -1,11 +1,11 @@
 "use client";
-import { motion } from "motion/react";
-import { ArrowRight, Heart, Leaf, Shield, Sparkles } from "lucide-react";
-import Link from "next/link";
 import Footer from "@/lib/components/common/footer";
+import { MochiHappy } from "@/lib/components/common/mochi";
 import { Navbar } from "@/lib/components/common/navbar";
-import { MochiDefault, MochiHappy } from "@/lib/components/common/mochi";
 import { Button } from "@/lib/components/ui/button";
+import { ArrowRight, Heart, Leaf, Shield, Sparkles } from "lucide-react";
+import { motion } from "motion/react";
+import Link from "next/link";
 
 const pillars = [
 	{
@@ -28,14 +28,9 @@ const pillars = [
 	},
 ];
 
-const features = [
-	{ label: "Mood check-ins", emoji: "🌿" },
-	{ label: "Guided breathing", emoji: "🫧" },
-	{ label: "Body scan", emoji: "✨" },
-	{ label: "Thought reframing", emoji: "💭" },
-	{ label: "Community Q\u0026A", emoji: "🤝" },
-	{ label: "Trend tracking", emoji: "📈" },
-];
+const features = []
+
+
 
 const stagger = {
 	container: {
@@ -82,10 +77,7 @@ export default function LandingPage() {
 						className="mx-auto mt-20 flex max-w-3xl flex-col items-center text-center md:mt-28"
 					>
 						{/* Mochi companion — floating softly above the headline */}
-						<motion.div
-							variants={stagger.item}
-							className="relative mb-6"
-						>
+						<motion.div variants={stagger.item} className="relative mb-6">
 							<MochiHappy className="size-20 drop-shadow-md md:size-24 animate-float" />
 							<div
 								className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-3 w-16 rounded-full bg-primary/10 blur-md"
@@ -93,13 +85,7 @@ export default function LandingPage() {
 							/>
 						</motion.div>
 
-						<motion.p
-							variants={stagger.item}
-							className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-primary shadow-sm"
-						>
-							<Sparkles className="size-3.5" />
-							Mental wellness for students
-						</motion.p>
+					
 
 						<motion.h1
 							variants={stagger.item}
@@ -107,9 +93,7 @@ export default function LandingPage() {
 						>
 							A gentler way through{" "}
 							<span className="relative">
-								<span className="text-gradient-mochi">
-									stressful semesters
-								</span>
+								<span className="text-gradient-mochi">stressful semesters</span>
 								<svg
 									className="absolute -bottom-2 left-0 w-full opacity-30"
 									viewBox="0 0 200 8"
@@ -143,7 +127,7 @@ export default function LandingPage() {
 							className="mt-7 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg"
 						>
 							Track how you feel over time, learn skills that fit student life,
-							and check in with a companion that meets you where you are&mdash;no
+							and check in with a companion that meets you where you are, no
 							pressure to be &ldquo;fine.&rdquo;
 						</motion.p>
 
@@ -161,7 +145,10 @@ export default function LandingPage() {
 								</Button>
 							</Link>
 							<Link href="/login">
-								<Button variant="ghost" className="h-13 text-muted-foreground hover:text-foreground">
+								<Button
+									variant="ghost"
+									className="h-13 text-muted-foreground hover:text-foreground"
+								>
 									I already have an account
 								</Button>
 							</Link>

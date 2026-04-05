@@ -1,17 +1,5 @@
 "use client";
 
-import {
-	Activity,
-	CompassIcon,
-	Handshake,
-	History,
-	HouseHeart,
-	Pencil,
-	ShieldUser,
-	TrendingUp,
-	Trophy,
-} from "lucide-react";
-import type * as React from "react";
 import FeedbackButton from "@/lib/components/common/feedback-button";
 import AppSidebarHeader from "@/lib/components/common/sidebar/sidebar-header";
 import {
@@ -20,6 +8,17 @@ import {
 	SidebarFooter,
 	SidebarHeader,
 } from "@/lib/components/ui/sidebar";
+import {
+	Activity,
+	CompassIcon,
+	Handshake,
+	HouseHeart,
+	Pencil,
+	ShieldUser,
+	TrendingUp,
+	Trophy,
+} from "lucide-react";
+import type * as React from "react";
 import NavMain, { type NavSection } from "./nav-main";
 import { NavUser } from "./nav-user";
 
@@ -58,7 +57,8 @@ const sections: NavSection[] = [
 				icon: CompassIcon,
 				role: "User",
 			},
-			{ title: "Trends", url: "/home/trends", icon: TrendingUp, role: "User" },
+      // TODO: re-add trends later
+			// { title: "Trends", url: "/home/trends", icon: TrendingUp, role: "User" },
 		],
 	},
 	{

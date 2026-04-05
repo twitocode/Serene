@@ -74,17 +74,9 @@ function SidebarProvider({
   const [_open, _setOpen] = React.useState(defaultOpen)
   const open = openProp ?? _open
 
-  // Use a ref so setOpen doesn't need 'open' as a dep — prevents recreating
-  // the callback (and the context value) on every open-state change, which
-  // was the root cause of the infinite re-render loop with Tooltip.
-  const openRef = React.useRef(open)
-  React.useEffect(() => {
-    openRef.current = open
-  }, [open])
-
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
-      const openState = typeof value === "function" ? value(openRef.current) : value
+      const openState = typeof value === "function" ? value(open) : value
       if (setOpenProp) {
         setOpenProp(openState)
       } else {
@@ -94,7 +86,7 @@ function SidebarProvider({
       // This sets the cookie to keep the sidebar state.
       document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
     },
-    [setOpenProp]
+    [setOpenProp, open]
   )
 
   // Helper to toggle the sidebar.
@@ -544,13 +536,12 @@ function SidebarMenuButton({
   return (
     <Tooltip>
       <TooltipTrigger asChild>{button}</TooltipTrigger>
-      {(state === "collapsed" && !isMobile) && (
-        <TooltipContent
-          side="right"
-          align="center"
-          {...tooltip}
-        />
-      )}
+      <TooltipContent
+        side="right"
+        align="center"
+        hidden={state !== "collapsed" || isMobile}
+        {...tooltip}
+      />
     </Tooltip>
   )
 }

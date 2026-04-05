@@ -1,0 +1,8 @@
+┌ shadcn add sidebar (dry run)
+│
+├ src/lib/components/ui/sidebar.tsx (overwrite)
+│ ┌──────────────────────────────────────────────
+│ │   Formatting-only changes (spacing, quotes, semicolons).
+│ └──────────────────────────────────────────────
+│
+└ Run without --dry-run to apply.

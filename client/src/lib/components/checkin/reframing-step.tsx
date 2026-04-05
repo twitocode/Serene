@@ -14,7 +14,7 @@ import {
 	CardTitle,
 } from "@/lib/components/ui/card";
 import { Textarea } from "@/lib/components/ui/textarea";
-import { useReframeMutation } from "@/lib/hooks/queries/use-reframe";
+import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import type { ReframeResponse } from "@/lib/types/api-types";
 
 export default function ReframingStep() {
@@ -25,6 +25,9 @@ export default function ReframingStep() {
 		setReframedThought,
 		lingeringThoughts,
 	} = useCheckinStore((s) => s);
+
+	const { data: user } = useUserQuery();
+	const mochiName = user?.profile?.mochiName || "Mochi";
 
 	const { mutate, data, isPending, isError, error } = useReframeMutation();
 	const hasRequestedRef = useRef(false);
@@ -93,7 +96,7 @@ export default function ReframingStep() {
 						<MochiDefault className="size-16" />
 					</motion.div>
 					<p className="text-sm text-muted-foreground">
-						Mochi is thinking about this...
+						{mochiName} is thinking about this...
 					</p>
 				</motion.div>
 			)}
@@ -109,7 +112,7 @@ export default function ReframingStep() {
 							<div className="flex items-center gap-2">
 								<Sparkles className="size-4 text-primary" />
 								<CardTitle className="text-sm font-semibold text-primary">
-									Mochi&apos;s insight
+									{mochiName}&apos;s insight
 								</CardTitle>
 							</div>
 							<CardDescription className="flex items-center gap-2 pt-1">
@@ -189,7 +192,7 @@ export default function ReframingStep() {
 			/>
 
 			<p className="text-center text-xs text-muted-foreground">
-				Mochi is a wellness tool, not a therapist. This exercise is for
+				{mochiName} is a wellness tool, not a therapist. This exercise is for
 				self-reflection only.
 			</p>
 

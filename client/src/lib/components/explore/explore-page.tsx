@@ -4,8 +4,9 @@ import { Sprout } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo } from "react";
 import { ActivityCard } from "@/lib/components/explore/activity-card";
-import { ExploreSkeleton } from "@/lib/components/explore/explore-skeleton";
+import { ResourceCardSkeleton } from "@/lib/components/explore/explore-skeleton";
 import { ResourceCard } from "@/lib/components/explore/resource-card";
+import { Skeleton } from "@/lib/components/ui/skeleton";
 import { getRandomActivities } from "@/lib/data/activities-data";
 import {
 	useExploreRecommendations,
@@ -16,10 +17,6 @@ export default function ExplorePage() {
 	const { data: recommendations, isPending } = useExploreRecommendations();
 
 	const randomActivities = useMemo(() => getRandomActivities(4), []);
-
-	if (isPending) {
-		return <ExploreSkeleton />;
-	}
 
 	return (
 		<div className="min-h-full max-w-6xl mx-auto px-4 py-8">
@@ -69,7 +66,13 @@ export default function ExplorePage() {
 					</p>
 				</motion.div>
 
-				{!recommendations || recommendations.length === 0 ? (
+				{isPending ? (
+					<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+						{Array.from({ length: 6 }).map((_, i) => (
+							<ResourceCardSkeleton key={i} />
+						))}
+					</div>
+				) : !recommendations || recommendations.length === 0 ? (
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
@@ -109,7 +112,7 @@ export default function ExplorePage() {
 function SchoolResourcesSection() {
 	const { data: schoolResources, isPending } = useSchoolResourcesQuery();
 
-	if (isPending || !schoolResources || schoolResources.length === 0) {
+	if (!isPending && (!schoolResources || schoolResources.length === 0)) {
 		return null;
 	}
 
@@ -128,9 +131,15 @@ function SchoolResourcesSection() {
 			</motion.div>
 
 			<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-				{schoolResources.map((resource, index) => (
-					<ResourceCard key={resource.id} resource={resource} index={index} />
-				))}
+				{isPending ? (
+					Array.from({ length: 3 }).map((_, i) => (
+						<ResourceCardSkeleton key={i} />
+					))
+				) : (
+					schoolResources?.map((resource, index) => (
+						<ResourceCard key={resource.id} resource={resource} index={index} />
+					))
+				)}
 			</div>
 		</>
 	);

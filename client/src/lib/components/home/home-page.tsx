@@ -1,41 +1,15 @@
 "use client";
 
-import { motion } from "motion/react";
-import { ArrowRight, Flower2, Sparkles, Wind } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import RecentBadges from "@/lib/components/achievements/recent-badges";
 import { MochiDefault, MochiHappy } from "@/lib/components/common/mochi";
 import DateScroll from "@/lib/components/home/date-scroll";
 import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
-
-const suggestions = [
-	{
-		id: "1",
-		icon: MochiDefault,
-		title: "Talk to Mochi",
-		hint: "Companion chat",
-		gradient: "from-primary/12 to-primary/4",
-		hoverRing: "group-hover:ring-primary/25",
-	},
-	{
-		id: "2",
-		icon: Flower2,
-		title: "Daily affirmations",
-		hint: "Gentle words",
-		gradient: "from-warm/12 to-warm/4",
-		hoverRing: "group-hover:ring-warm/25",
-	},
-	{
-		id: "3",
-		icon: Wind,
-		title: "Box breathing",
-		hint: "Ground your body",
-		gradient: "from-primary/12 to-warm/6",
-		hoverRing: "group-hover:ring-primary/25",
-	},
-];
+import { useUserQuery } from "@/lib/hooks/queries/use-user";
+import { ArrowRight, Flower2, Sparkles, Wind } from "lucide-react";
+import { motion } from "motion/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function getGreeting(): string {
 	const hour = new Date().getHours();
@@ -61,11 +35,41 @@ const stagger = {
 export default function HomePage() {
 	const router = useRouter();
 	const { startCheckin } = useCheckinStore((s) => s);
+	const { data: user } = useUserQuery();
 
 	const handleStartCheckin = () => {
 		startCheckin();
 		router.push("/home/checkin");
 	};
+
+	const mochiName = user?.profile?.mochiName || "Mochi";
+
+	const suggestions = [
+		{
+			id: "1",
+			icon: MochiDefault,
+			title: `Talk to ${mochiName}`,
+			hint: "Companion chat",
+			gradient: "from-primary/12 to-primary/4",
+			hoverRing: "group-hover:ring-primary/25",
+		},
+		{
+			id: "2",
+			icon: Flower2,
+			title: "Daily affirmations",
+			hint: "Gentle words",
+			gradient: "from-warm/12 to-warm/4",
+			hoverRing: "group-hover:ring-warm/25",
+		},
+		{
+			id: "3",
+			icon: Wind,
+			title: "Box breathing",
+			hint: "Ground your body",
+			gradient: "from-primary/12 to-warm/6",
+			hoverRing: "group-hover:ring-primary/25",
+		},
+	];
 
 	return (
 		<div className="relative mx-auto flex min-h-full max-w-2xl flex-col gap-10 px-4 py-6 md:py-10">
@@ -92,7 +96,7 @@ export default function HomePage() {
 					variants={stagger.item}
 					className="max-w-md text-sm leading-relaxed text-muted-foreground"
 				>
-					However you feel right now is valid. Take a breath&mdash;this space is
+					However you feel right now is valid. Take a breath, this space is
 					yours.
 				</motion.p>
 			</motion.div>
@@ -104,7 +108,7 @@ export default function HomePage() {
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5, delay: 0.1 }}
-				className="card-glass shimmer-border relative overflow-hidden p-6 shadow-md md:p-8"
+				className="card-glass relative overflow-hidden p-6 shadow-md md:p-8"
 			>
 				{/* Ambient glow blobs */}
 				<div className="pointer-events-none absolute -right-20 -top-20 size-56 rounded-full bg-primary/10 blur-3xl animate-breathe" />

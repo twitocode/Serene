@@ -80,13 +80,13 @@ export function NavUser({}: NavUserProps) {
 						</DropdownMenuLabel>
 
 						<DropdownMenuSeparator />
-
+{/* TODO: add subscriptions
 						<DropdownMenuGroup>
 							<DropdownMenuItem>
 								<Sparkles className="mr-2 h-4 w-4" />
 								Upgrade to Pro
 							</DropdownMenuItem>
-						</DropdownMenuGroup>
+						</DropdownMenuGroup> */}
 
 						<DropdownMenuSeparator />
 

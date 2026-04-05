@@ -1,6 +1,7 @@
-import { Github, Heart } from "lucide-react";
-import Link from "next/link";
 import SereneLogo from "@/lib/components/common/serene-logo";
+import { Heart } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer() {
 	return (
@@ -19,7 +20,7 @@ export default function Footer() {
 				<div className="flex flex-col items-center gap-3 text-center md:items-start md:text-left">
 					<SereneLogo className="text-primary-foreground [&_span]:text-primary-foreground" />
 					<p className="max-w-xs text-sm leading-relaxed text-primary-foreground/80">
-						A calm corner for checking in, reflecting, and growing&mdash;one day at a
+						A calm corner for checking in, reflecting, and growing, one day at a
 						time.
 					</p>
 				</div>
@@ -30,7 +31,12 @@ export default function Footer() {
 						target="_blank"
 						rel="noreferrer"
 					>
-						<Github className="size-4" />
+						<Image
+							height="32"
+							width="32"
+							alt="Github Logo"
+							src="https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/[ICON SLUG].svg"
+						/>
 						Source on GitHub
 					</Link>
 					<span className="inline-flex items-center gap-1.5 text-xs text-primary-foreground/60">

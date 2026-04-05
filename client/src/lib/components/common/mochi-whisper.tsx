@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { MochiHappy } from "@/lib/components/common/mochi";
 import { Button } from "@/lib/components/ui/button";
 import { pickMochiWhisper } from "@/lib/data/mochi-whispers";
+import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import { cn } from "@/lib/utils";
 
 /** First visit: ~1.5–3 min. Later: ~4–9 min between whispers. */
@@ -22,6 +23,9 @@ export function MochiWhisper() {
 	const reduceMotion = useReducedMotion();
 	const prevMessageRef = useRef<string | undefined>(undefined);
 	const nextTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const { data: user } = useUserQuery();
+
+	const mochiName = user?.profile?.mochiName || "Mochi";
 
 	const clearNextTimer = useCallback(() => {
 		if (nextTimerRef.current != null) {
@@ -98,7 +102,7 @@ export function MochiWhisper() {
 					</div>
 					<div className="min-w-0 flex-1 pt-0.5">
 						<p className="text-xs font-semibold uppercase tracking-wider text-primary">
-							Mochi
+							{mochiName}
 						</p>
 						<p className="mt-1 text-sm leading-relaxed text-foreground">
 							{message}

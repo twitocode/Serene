@@ -20,18 +20,43 @@ function getIconComponent(iconName: string): LucideIcon {
 }
 
 export function ActivityCard({ activity, index = 0 }: ActivityCardProps) {
-	const categoryColors: Record<string, { bg: string; text: string }> = {
-		Mindfulness: { bg: "bg-periwinkle/20", text: "text-periwinkle" },
-		Movement: { bg: "bg-lime/20", text: "text-lime" },
-		Creative: { bg: "bg-coral/20", text: "text-coral" },
-		Social: { bg: "bg-sage/20", text: "text-sage" },
-		"Self-Care": { bg: "bg-[#f0a694]/20", text: "text-[#f0a694]" },
-		Learning: { bg: "bg-navy/20", text: "text-navy" },
+	const categoryColors: Record<string, { bg: string; text: string; border: string }> = {
+		Mindfulness: { 
+			bg: "bg-periwinkle/15 dark:bg-periwinkle/25", 
+			text: "text-periwinkle",
+			border: "border-periwinkle/20 dark:border-periwinkle/30"
+		},
+		Movement: { 
+			bg: "bg-lime/15 dark:bg-lime/25", 
+			text: "text-lime",
+			border: "border-lime/20 dark:border-lime/30"
+		},
+		Creative: { 
+			bg: "bg-coral/15 dark:bg-coral/25", 
+			text: "text-coral",
+			border: "border-coral/20 dark:border-coral/30"
+		},
+		Social: { 
+			bg: "bg-sage/15 dark:bg-sage/25", 
+			text: "text-sage",
+			border: "border-sage/20 dark:border-sage/30"
+		},
+		"Self-Care": { 
+			bg: "bg-[#f0a694]/15 dark:bg-[#f0a694]/25", 
+			text: "text-[#f0a694]",
+			border: "border-[#f0a694]/20 dark:border-[#f0a694]/30"
+		},
+		Learning: { 
+			bg: "bg-red/15 dark:bg-red/20", 
+			text: "text-red",
+			border: "border-red/20 dark:border-red/30"
+		},
 	};
 
 	const colors = categoryColors[activity.category] || {
 		bg: "bg-muted",
 		text: "text-muted-foreground",
+		border: "border-border"
 	};
 
 	const IconComponent = getIconComponent(activity.icon);
@@ -41,16 +66,14 @@ export function ActivityCard({ activity, index = 0 }: ActivityCardProps) {
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ delay: index * 0.1, duration: 0.3 }}
-			className="group relative bg-card rounded-3xl p-6 border border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+			className="group relative bg-card rounded-3xl p-6 border border-border hover:bg-periwinkle/[0.04] dark:hover:bg-periwinkle/[0.08] hover:border-periwinkle/40 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer"
 		>
-			<div className="absolute -top-3 -right-3 w-12 h-12 bg-background border-2 border-border rounded-full flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+			<div className="absolute -top-3 -right-3 w-12 h-12 bg-background border-2 border-border rounded-full flex items-center justify-center shadow-md group-hover:scale-110 group-hover:border-periwinkle/50 transition-all">
 				<IconComponent className="w-5 h-5 text-primary" />
 			</div>
 
 			<div className="flex items-center gap-2 mb-3">
-				<span
-					className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${colors.bg} ${colors.text}`}
-				>
+				<span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${colors.bg} ${colors.text} ${colors.border}`}>
 					{activity.category}
 				</span>
 				<span className="text-xs text-muted-foreground">

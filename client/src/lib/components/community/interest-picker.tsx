@@ -64,12 +64,12 @@ export default function InterestPicker({ onComplete }: InterestPickerProps) {
 	};
 
 	return (
-		<div className="space-y-5">
+		<div className="flex flex-col gap-6">
 			<div>
-				<h3 className="font-serif text-lg font-semibold text-foreground">
+				<h3 className="mt-3 font-serif text-2xl font-semibold leading-snug text-foreground md:text-3xl">
 					What are you into?
 				</h3>
-				<p className="text-sm text-muted-foreground">
+				<p className="mt-2 text-sm text-muted-foreground">
 					Pick 3-8 interests. We&apos;ll match you with someone who shares them.
 				</p>
 			</div>

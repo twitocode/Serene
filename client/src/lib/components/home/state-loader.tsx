@@ -16,22 +16,26 @@ export default function StateLoader({ children }: PropsWithChildren) {
 		}
 	}, [settings?.theme, setTheme]);
 
-	const { lockInterval, tick, setLockState, startInterval } =
-		usePasswordLockStore();
+	const lockIntervalRunning = usePasswordLockStore(
+		(state) => state.lockInterval.isRunning,
+	);
+	const tick = usePasswordLockStore((state) => state.tick);
+	const setLockState = usePasswordLockStore((state) => state.setLockState);
+	const startInterval = usePasswordLockStore((state) => state.startInterval);
 
 	const timeout = 1000 * 60 * 60;
 
 	useEffect(() => {
 		usePasswordLockStore.persist.rehydrate();
 
-		if (!lockInterval.isRunning && settings?.passwordLock) {
+		if (!lockIntervalRunning && settings?.passwordLock) {
 			startInterval();
 		}
-	}, [settings?.passwordLock, lockInterval.isRunning, startInterval]);
+	}, [settings?.passwordLock, lockIntervalRunning, startInterval]);
 
 	useEffect(() => {
 		if (!settings?.passwordLock) return;
-		if (!lockInterval.isRunning) return;
+		if (!lockIntervalRunning) return;
 
 		const intervalId = setInterval(() => {
 			tick();
@@ -41,23 +45,17 @@ export default function StateLoader({ children }: PropsWithChildren) {
 			setLockState(!currentLocked);
 		}, timeout);
 
-		usePasswordLockStore.setState({
+		usePasswordLockStore.setState((state) => ({
 			lockInterval: {
-				...lockInterval,
+				...state.lockInterval,
 				intervalId: intervalId as unknown as number,
 			},
-		});
+		}));
 
 		return () => {
 			clearInterval(intervalId);
 		};
-	}, [
-		lockInterval.isRunning,
-		tick,
-		lockInterval,
-		settings?.passwordLock,
-		setLockState,
-	]);
+	}, [lockIntervalRunning, tick, settings?.passwordLock, setLockState]);
 
 	return <div>{children}</div>;
 }
