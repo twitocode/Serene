@@ -1,6 +1,6 @@
 "use client";
 
-import { BadgeCheck, ChevronsUpDown, LogOut, Sparkles } from "lucide-react";
+import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import {
@@ -80,15 +80,6 @@ export function NavUser({}: NavUserProps) {
 						</DropdownMenuLabel>
 
 						<DropdownMenuSeparator />
-{/* TODO: add subscriptions
-						<DropdownMenuGroup>
-							<DropdownMenuItem>
-								<Sparkles className="mr-2 h-4 w-4" />
-								Upgrade to Pro
-							</DropdownMenuItem>
-						</DropdownMenuGroup> */}
-
-						<DropdownMenuSeparator />
 
 						<DropdownMenuGroup>
 							<Link href="/home/account">
@@ -104,7 +95,6 @@ export function NavUser({}: NavUserProps) {
 						<DropdownMenuItem
 							onClick={async () => {
 								await auth.signOut();
-								// window.location.reload();
 								window.location.href = "/";
 							}}
 						>

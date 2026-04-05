@@ -64,10 +64,11 @@ export default function PasswordLock() {
 					exit={{ width: 0, opacity: 0 }}
 					transition={{ delay: 0.1, duration: 0.3 }}
 					whileFocus={{ scale: 1.02 }}
+					className="flex items-center"
 				>
 					<Input
 						type="password"
-						className="font-bold text-9xl bg-secondary"
+						className="font-bold text-4xl sm:text-6xl md:text-9xl bg-secondary h-auto py-2"
 						onChange={handleUnlock}
 						onFocus={(e) => {
 							e.target.parentElement?.classList.add("scale-105");

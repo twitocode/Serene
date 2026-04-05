@@ -3,12 +3,6 @@
 import { Handshake, Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 import { Badge } from "@/lib/components/ui/badge";
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from "@/lib/components/ui/card";
 import { usePeerMatchQuery } from "@/lib/hooks/queries/use-peers";
 
 const CONVERSATION_STARTERS: Record<string, string> = {

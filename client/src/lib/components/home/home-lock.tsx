@@ -41,7 +41,7 @@ export default function HomeLock() {
 						transition={{ delay: 0.5, duration: 0.4 }}
 					>
 						<motion.h2
-							className="font-medium font-sans text-5xl"
+							className="font-medium font-sans text-2xl md:text-3xl md:text-5xl text-center"
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0, filter: "blur(8px)" }}
