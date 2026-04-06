@@ -152,6 +152,17 @@ try
 
     var app = builder.Build();
 
+    if (app.Environment.IsProduction())
+    {
+        var publicUrl = PublicApplicationUrlMiddleware.GetConfiguredPublicUrl(app.Configuration);
+        if (string.IsNullOrWhiteSpace(publicUrl))
+        {
+            Log.Warning(
+                "Google OAuth will use the API host as redirect_uri. Set PublicApplicationUrl, FRONTEND_URL, or NEXT_PUBLIC_SITE_URL on the API to your Next.js origin (e.g. https://your-app.vercel.app) and register that origin's /signin-google in Google Cloud Console."
+            );
+        }
+    }
+
     app.UseForwardedHeaders();
 
     app.UseMiddleware<PublicApplicationUrlMiddleware>();

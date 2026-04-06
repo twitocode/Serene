@@ -36,9 +36,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
 				} as React.CSSProperties
 			}
 			toastOptions={{
-				error: {
-					className: "font-medium",
-				},
+
+				 
 			}}
 			{...props}
 		/>
