@@ -11,7 +11,7 @@ namespace Serene.Features.Checkins;
 public interface ICheckinService
 {
     Task<List<CheckinResponse>> GetCheckinAsync(string userId, LocalDate? date);
-    Task CompleteCheckinAsync(string userId, CompleteCheckinRequest dto);
+    Task CompleteCheckinAsync(string userId, LocalDate? date, CompleteCheckinRequest dto);
 }
 
 public class CheckinService : ICheckinService
@@ -72,11 +72,18 @@ public class CheckinService : ICheckinService
             .ToList();
     }
 
-    public async Task CompleteCheckinAsync(string userId, CompleteCheckinRequest dto)
+    public async Task CompleteCheckinAsync(string userId, LocalDate? date, CompleteCheckinRequest dto)
     {
         var user =
             await _context.Users.FindAsync(userId)
             ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
+
+        var instant = SystemClock.Instance.GetCurrentInstant();
+        if (date.HasValue)
+        {
+            var zone = DateTimeZoneProviders.Tzdb.GetSystemDefault();
+            instant = date.Value.At(new LocalTime(12, 0)).InZoneStrictly(zone).ToInstant();
+        }
 
         // Encrypt sensitive fields before saving
         var checkin = new Checkin
@@ -90,7 +97,7 @@ public class CheckinService : ICheckinService
             UserId = userId,
             SomaticState = null,
             SomaticStateEncrypted = _encryption.EncryptJson(dto.SomaticState),
-            DateCompleted = SystemClock.Instance.GetCurrentInstant(),
+            DateCompleted = instant,
         };
 
         await _context.Checkins.AddAsync(checkin);

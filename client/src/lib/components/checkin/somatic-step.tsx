@@ -113,8 +113,8 @@ export default function SomaticStep() {
 	);
 
 	return (
-		<div className="flex flex-col md:grid md:grid-cols-2 h-full">
-			<div className="flex flex-col items-center justify-center">
+		<div className="flex flex-col md:grid md:grid-cols-2 h-full gap-2 md:gap-0">
+			<div className="flex flex-col items-center justify-center shrink-0 pt-4 md:pt-0 z-10">
 				<h1 className="text-center font-medium text-xl">
 					Have you felt any physical discomfort lately?
 				</h1>
@@ -132,7 +132,7 @@ export default function SomaticStep() {
 					</ButtonGroup>
 				)}
 			</div>
-			<div className="max-h-[60vh] md:max-h-full w-full flex justify-center items-center px-4">
+			<div className="flex-1 min-h-0 max-h-[55vh] md:max-h-full w-full flex justify-center items-center px-4 mx-auto max-w-sm md:max-w-none">
 				{user?.gender === "Female" ? (
 					<FemaleBody
 						onClick={handleBodyClick}
@@ -148,14 +148,16 @@ export default function SomaticStep() {
 				)}
 			</div>
 			{isMobile && (
-				<ButtonGroup className="gap-1 grid grid-cols-2 w-full">
-					<Button size="lg" className="px-10 text-lg" onClick={goBack}>
-						Back
-					</Button>
-					<Button size="lg" className="px-10 text-lg" onClick={goNext}>
-						{Object.keys(somaticState).length === 0 ? "Skip" : "Next"}
-					</Button>
-				</ButtonGroup>
+				<div className="shrink-0 pb-4 px-4 z-10">
+					<ButtonGroup className="gap-1 grid grid-cols-2 w-full">
+						<Button size="lg" className="px-10 text-lg" onClick={goBack}>
+							Back
+						</Button>
+						<Button size="lg" className="px-10 text-lg" onClick={goNext}>
+							{Object.keys(somaticState).length === 0 ? "Skip" : "Next"}
+						</Button>
+					</ButtonGroup>
+				</div>
 			)}
 			<Drawer
 				open={isOpen}

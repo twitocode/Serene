@@ -79,17 +79,19 @@ export default function CheckinPage() {
 					<div className="flex max-w-md flex-col items-center gap-4 text-center md:items-start md:text-left">
 						<h2 className="font-serif text-2xl font-semibold leading-snug text-foreground md:text-3xl">
 							{!isToday(displayDate)
-								? "Add another check-in for this day?"
-								: checkins?.length === 0
-									? "Ready to check in?"
-									: "Want to check in again?"}
+								? checkins && checkins.length > 0
+									? "Want to make another check-in for this date?"
+									: "Forgot to make a check-in this day?"
+								: checkins && checkins.length > 0
+									? "Want to make another check-in?"
+									: "Feeling down? How about checking in?"}
 						</h2>
 						<Button
 							size="lg"
 							className="btn-playful w-full sm:w-auto"
 							onClick={onStartCheckin}
 						>
-							{checkins?.length === 0 ? "Start check-in" : "Check in again"}
+							{checkins && checkins.length > 0 ? "Check in again" : (isToday(displayDate) ? "Start check-in" : "Add check-in")}
 						</Button>
 					</div>
 				</div>

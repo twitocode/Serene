@@ -37,13 +37,13 @@ public class CheckinController : BaseApiController
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CompleteCheckin([FromBody] CompleteCheckinRequest body)
+    public async Task<IActionResult> CompleteCheckin([ModelBinder(typeof(LocalDateModelBinder))] LocalDate? date, [FromBody] CompleteCheckinRequest body)
     {
         var userId = GetUserId();
         if (userId == null)
             return Unauthorized();
 
-        return await ExecuteWithResult(() => _checkinService.CompleteCheckinAsync(userId, body));
+        return await ExecuteWithResult(() => _checkinService.CompleteCheckinAsync(userId, date, body));
     }
 
     [HttpPost("reframe")]

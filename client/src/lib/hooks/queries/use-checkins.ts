@@ -21,7 +21,7 @@ export function useCompleteCheckinMutation(date: string) {
 
 	return useMutation({
 		mutationFn: async (data: CompleteCheckinRequest) => {
-			return apiFetch("/checkin", {
+			return apiFetch(`/checkin?date=${date}`, {
 				method: "POST",
 				body: JSON.stringify(data),
 			});

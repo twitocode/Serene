@@ -16,6 +16,7 @@ import {
 import { Textarea } from "@/lib/components/ui/textarea";
 import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import type { ReframeResponse } from "@/lib/types/api-types";
+import { useReframeMutation } from "@/lib/hooks/queries/use-reframe";
 
 export default function ReframingStep() {
 	const {

@@ -179,11 +179,11 @@ export default function CheckinCompleteStep() {
 				</CardContent>
 			</Card>
 
-			<div className="flex flex-col gap-3 pt-2 sm:flex-row">
+			<div className="flex flex-col gap-3 pt-6 sm:flex-row shrink-0 mt-4 pb-8">
 				<Button
 					variant="outline"
 					size="lg"
-					className="h-12 flex-1 rounded-xl"
+					className="min-h-14 flex-1 rounded-xl shrink-0 text-lg"
 					onClick={goBack}
 					type="button"
 				>
@@ -191,7 +191,7 @@ export default function CheckinCompleteStep() {
 				</Button>
 				<Button
 					size="lg"
-					className="h-12 flex-1 rounded-xl"
+					className="min-h-14 flex-1 rounded-xl shrink-0 text-lg"
 					onClick={complete}
 					disabled={completeCheckinMutation.isPending}
 					type="button"
