@@ -79,7 +79,7 @@ function BarChart({
 						barGroups.map((barGroup) => (
 							<Group
 								key={`bar-group-${barGroup.index}-${barGroup.x0}`}
-								left={barGroup.x0}
+								left={barGroup.x0 ?? 0}
 							>
 								{barGroup.bars.map((bar) => (
 									<rect

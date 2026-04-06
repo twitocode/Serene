@@ -3,21 +3,21 @@
 import { getMySchool, updateMySchool } from "@/lib/client/school-client";
 import { Button } from "@/lib/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
 } from "@/lib/components/ui/select";
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
+	Tabs,
+	TabsContent,
+	TabsList,
+	TabsTrigger,
 } from "@/lib/components/ui/tabs";
 import { colleges, schools, universities } from "@/lib/data";
 import type { School } from "@/lib/types";
-import { GraduationCap, Loader2 } from "lucide-react";
+import { Check, GraduationCap, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -75,23 +75,28 @@ export function SchoolSettings() {
 		setIsSaving(false);
 	};
 
-  console.log(currentSchool)
+	console.log(currentSchool);
 
-	const matchedSchool = currentSchool ? schools.find((s) => s.name === currentSchool.name) : null;
+	const matchedSchool = currentSchool
+		? schools.find((s) => s.name === currentSchool.name)
+		: null;
 	const displayLogo = matchedSchool?.logo;
 
 	return (
 		<div className="space-y-4">
 			{isLoading ? (
 				<div className="flex items-center gap-2 text-sm text-muted-foreground">
-					<Loader2 className="h-4 w-4 animate-spin" /> Loading current
-					school...
+					<Loader2 className="h-4 w-4 animate-spin" /> Loading current school...
 				</div>
 			) : (
 				<div className="space-y-3">
 					<div className="flex items-center gap-3 rounded-lg border bg-card p-4">
 						{displayLogo ? (
-							<img src={displayLogo} alt="" className="h-10 w-auto object-contain rounded-md bg-white shrink-0" />
+							<img
+								src={displayLogo}
+								alt=""
+								className="h-10 w-auto object-contain rounded-md bg-white shrink-0"
+							/>
 						) : (
 							<div className="flex size-10 items-center justify-center rounded-md bg-primary/10 shrink-0">
 								<GraduationCap className="size-5 text-primary" />
@@ -120,10 +125,7 @@ export function SchoolSettings() {
 						</TabsList>
 
 						<TabsContent value="universities" className="mt-4">
-							<Select
-								value={selectedSchool}
-								onValueChange={setSelectedSchool}
-							>
+							<Select value={selectedSchool} onValueChange={setSelectedSchool}>
 								<SelectTrigger className="w-full bg-background border-input">
 									<SelectValue placeholder="Select University" />
 								</SelectTrigger>
@@ -131,7 +133,13 @@ export function SchoolSettings() {
 									{universities.map(({ name, logo }) => (
 										<SelectItem key={name} value={name!}>
 											<div className="flex items-center gap-2">
-												{logo && <img src={logo} alt="" className="w-5 h-5 object-contain" />}
+												{logo && (
+													<img
+														src={logo}
+														alt=""
+														className="w-5 h-5 object-contain"
+													/>
+												)}
 												<span>{name}</span>
 											</div>
 										</SelectItem>
@@ -141,10 +149,7 @@ export function SchoolSettings() {
 						</TabsContent>
 
 						<TabsContent value="colleges" className="mt-4">
-							<Select
-								value={selectedSchool}
-								onValueChange={setSelectedSchool}
-							>
+							<Select value={selectedSchool} onValueChange={setSelectedSchool}>
 								<SelectTrigger className="w-full bg-background border-input">
 									<SelectValue placeholder="Select College" />
 								</SelectTrigger>
@@ -152,7 +157,13 @@ export function SchoolSettings() {
 									{colleges.map(({ name, logo }) => (
 										<SelectItem key={name} value={name!}>
 											<div className="flex items-center gap-2">
-												{logo && <img src={logo} alt="" className="w-5 h-5 object-contain" />}
+												{logo && (
+													<img
+														src={logo}
+														alt=""
+														className="w-5 h-5 object-contain"
+													/>
+												)}
 												<span>{name}</span>
 											</div>
 										</SelectItem>
@@ -172,9 +183,14 @@ export function SchoolSettings() {
 						className="mt-4"
 					>
 						{isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-						{selectedSchool === currentSchool?.name && currentSchool
-							? "Current School"
-							: "Update School"}
+						{selectedSchool === currentSchool?.name && currentSchool ? (
+							"Current School"
+						) : (
+							<>
+								<Check className="size-4" />
+								<span>Update School</span>
+							</>
+						)}
 					</Button>
 				</div>
 			)}

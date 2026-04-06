@@ -194,7 +194,7 @@ export function StepFive() {
 								{([canSubmit, isSubmitting]) => (
 									<Button
 										type="submit"
-										className="bg-black hover:bg-gray-800 flex-1"
+										className="flex-1"
 										disabled={!canSubmit || isSubmitting || mutation.isPending}
 									>
 										{mutation.isPending ? "Validating..." : "Next"}

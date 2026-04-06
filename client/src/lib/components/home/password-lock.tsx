@@ -68,7 +68,7 @@ export default function PasswordLock() {
 				>
 					<Input
 						type="password"
-						className="font-bold text-4xl sm:text-6xl md:text-9xl bg-secondary h-auto py-2"
+						className="font-bold text-2xl bg-secondary h-auto py-2"
 						onChange={handleUnlock}
 						onFocus={(e) => {
 							e.target.parentElement?.classList.add("scale-105");

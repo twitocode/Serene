@@ -23,7 +23,7 @@ export function Navbar() {
 				<NavigationMenuList>
 					<NavigationMenuItem>
 						<Link href="/login">
-							<Button variant="secondary" size="sm" className="font-medium">
+							<Button variant="" size="sm" className="font-bold">
 								Log in
 							</Button>
 						</Link>

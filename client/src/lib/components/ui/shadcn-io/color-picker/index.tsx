@@ -139,7 +139,7 @@ export const ColorPicker = ({
 		>
 			<div
 				className={cn("flex size-full flex-col gap-4", className)}
-				{...(props as HTMLAttributes<HTMLDivElement>)}
+				{...props}
 			/>
 		</ColorPickerContext.Provider>
 	);
@@ -212,7 +212,7 @@ export const ColorPickerSelection = memo(
 				style={{
 					background: backgroundGradient,
 				}}
-				{...(props as HTMLAttributes<HTMLDivElement>)}
+				{...props}
 			>
 				<div
 					className="-translate-x-1/2 -translate-y-1/2 pointer-events-none absolute h-4 w-4 rounded-full border-2 border-white"
@@ -244,7 +244,7 @@ export const ColorPickerHue = ({
 			onValueChange={([hue]) => setHue(hue)}
 			step={1}
 			value={[hue]}
-			{...(props as HTMLAttributes<HTMLDivElement>)}
+			{...props}
 		>
 			<Slider.Track className="relative my-0.5 h-3 w-full grow rounded-full bg-[linear-gradient(90deg,#FF0000,#FFFF00,#00FF00,#00FFFF,#0000FF,#FF00FF,#FF0000)]">
 				<Slider.Range className="absolute h-full" />
@@ -269,7 +269,7 @@ export const ColorPickerAlpha = ({
 			onValueChange={([alpha]) => setAlpha(alpha)}
 			step={1}
 			value={[alpha]}
-			{...(props as HTMLAttributes<HTMLDivElement>)}
+			{...props}
 		>
 			<Slider.Track
 				className="relative my-0.5 h-3 w-full grow rounded-full"
@@ -318,7 +318,7 @@ export const ColorPickerEyeDropper = ({
 			size="icon"
 			variant="outline"
 			type="button"
-			{...(props as HTMLAttributes<HTMLDivElement>)}
+			{...props}
 		>
 			<PipetteIcon size={16} />
 		</Button>
@@ -339,7 +339,7 @@ export const ColorPickerOutput = ({
 		<Select onValueChange={setMode} value={mode}>
 			<SelectTrigger
 				className="h-8 w-20 shrink-0 text-xs"
-				{...(props as HTMLAttributes<HTMLDivElement>)}
+				{...props}
 			>
 				<SelectValue placeholder="Mode" />
 			</SelectTrigger>
@@ -362,7 +362,7 @@ const PercentageInput = ({ className, ...props }: PercentageInputProps) => {
 			<Input
 				readOnly
 				type="text"
-				{...(props as HTMLAttributes<HTMLDivElement>)}
+				{...props}
 				className={cn(
 					"h-8 w-[3.25rem] rounded-l-none bg-secondary px-2 text-xs shadow-none",
 					className,
@@ -393,7 +393,7 @@ export const ColorPickerFormat = ({
 					"-space-x-px relative flex w-full items-center rounded-md shadow-sm",
 					className,
 				)}
-				{...(props as HTMLAttributes<HTMLDivElement>)}
+				{...props}
 			>
 				<Input
 					className="h-8 rounded-r-none bg-secondary px-2 text-xs shadow-none"
@@ -418,7 +418,7 @@ export const ColorPickerFormat = ({
 					"-space-x-px flex items-center rounded-md shadow-sm",
 					className,
 				)}
-				{...(props as HTMLAttributes<HTMLDivElement>)}
+				{...props}
 			>
 				{rgb.map((value, index) => (
 					<Input
@@ -447,14 +447,13 @@ export const ColorPickerFormat = ({
 		return (
 			<div
 				className={cn("w-full rounded-md shadow-sm", className)}
-				{...(props as HTMLAttributes<HTMLDivElement>)}
+				{...props}
 			>
 				<Input
 					className="h-8 w-full bg-secondary px-2 text-xs shadow-none"
 					readOnly
 					type="text"
 					value={`rgba(${rgb.join(", ")}, ${alpha}%)`}
-					{...(props as HTMLAttributes<HTMLDivElement>)}
 				/>
 			</div>
 		);
@@ -472,7 +471,7 @@ export const ColorPickerFormat = ({
 					"-space-x-px flex items-center rounded-md shadow-sm",
 					className,
 				)}
-				{...(props as HTMLAttributes<HTMLDivElement>)}
+				{...props}
 			>
 				{hsl.map((value, index) => (
 					<Input

@@ -7,12 +7,14 @@ export default function SereneLogo({
 	sidebar = false,
 	className = "",
 	textSize = "text-xl",
+	float = false,
 }: {
 	noText?: boolean;
 	noLogo?: boolean;
 	sidebar?: boolean;
 	className?: string;
 	textSize?: string;
+	float?: boolean;
 }) {
 	return (
 		<div
@@ -25,6 +27,7 @@ export default function SereneLogo({
 				<MochiDefault
 					className={cn(
 						"shrink-0 text-primary",
+						float && "animate-float",
 						sidebar
 							? "size-7 max-h-7 max-w-7 group-data-[collapsible=icon]:size-6 group-data-[collapsible=icon]:max-h-6 group-data-[collapsible=icon]:max-w-6"
 							: "size-9",

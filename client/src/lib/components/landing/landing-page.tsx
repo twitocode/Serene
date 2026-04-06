@@ -3,7 +3,7 @@ import Footer from "@/lib/components/common/footer";
 import { MochiHappy } from "@/lib/components/common/mochi";
 import { Navbar } from "@/lib/components/common/navbar";
 import { Button } from "@/lib/components/ui/button";
-import { ArrowRight, Heart, Leaf, Shield, Sparkles } from "lucide-react";
+import { ArrowRight, Heart, Leaf, Shield } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
 
@@ -28,10 +28,6 @@ const pillars = [
 	},
 ];
 
-const features = []
-
-
-
 const stagger = {
 	container: {
 		animate: { transition: { staggerChildren: 0.08, delayChildren: 0.15 } },
@@ -46,23 +42,23 @@ export default function LandingPage() {
 	return (
 		<>
 			<div className="relative min-h-screen overflow-hidden mesh-sanctuary paper-grain">
-				{/* Decorative blobs — larger, more layered */}
+				{/* Decorative blobs — subtle, layered */}
 				<div
-					className="absolute top-16 left-[5%] size-80 blob blob-sanctuary opacity-[0.18] animate-blob"
+					className="absolute top-16 left-[5%] size-80 blob blob-sanctuary opacity-[0.08] animate-blob"
 					aria-hidden
 				/>
 				<div
-					className="absolute top-28 right-[3%] size-64 blob blob-warm opacity-[0.12] animate-blob"
+					className="absolute top-28 right-[3%] size-64 blob blob-warm opacity-[0.05] animate-blob"
 					style={{ animationDelay: "2s" }}
 					aria-hidden
 				/>
 				<div
-					className="absolute bottom-24 left-[15%] size-72 blob blob-mist opacity-[0.22] animate-blob"
+					className="absolute bottom-24 left-[15%] size-72 blob blob-mist opacity-[0.1] animate-blob"
 					style={{ animationDelay: "4s" }}
 					aria-hidden
 				/>
 				<div
-					className="absolute top-[60%] right-[12%] size-48 blob blob-sanctuary opacity-[0.08] animate-breathe"
+					className="absolute top-[60%] right-[12%] size-48 blob blob-sanctuary opacity-[0.04] animate-breathe"
 					aria-hidden
 				/>
 
@@ -84,8 +80,6 @@ export default function LandingPage() {
 								aria-hidden
 							/>
 						</motion.div>
-
-					
 
 						<motion.h1
 							variants={stagger.item}
@@ -138,10 +132,10 @@ export default function LandingPage() {
 							<Link href="/signup">
 								<Button
 									size="lg"
-									className="btn-playful group h-13 min-w-[220px] px-8 text-base shadow-md"
+									className="btn-playful group h-12 min-w-55 px-2 text-base shadow-md font-bold"
 								>
-									Begin quietly
-									<ArrowRight className="ml-2 size-4 transition-transform duration-200 group-hover:translate-x-1" />
+									Get Started
+									<ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1" />
 								</Button>
 							</Link>
 							<Link href="/login">
@@ -153,27 +147,6 @@ export default function LandingPage() {
 								</Button>
 							</Link>
 						</motion.div>
-					</motion.section>
-
-					{/* Feature pills — horizontal scroll on mobile */}
-					<motion.section
-						initial={{ opacity: 0, y: 24 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						viewport={{ once: true, margin: "-60px" }}
-						transition={{ duration: 0.5, delay: 0.1 }}
-						className="mx-auto mt-20 max-w-2xl"
-					>
-						<div className="flex flex-wrap items-center justify-center gap-2.5">
-							{features.map((f) => (
-								<span
-									key={f.label}
-									className="pill-interactive inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/80 px-4 py-2 text-sm font-medium text-foreground shadow-2xs backdrop-blur-sm"
-								>
-									<span className="text-base leading-none">{f.emoji}</span>
-									{f.label}
-								</span>
-							))}
-						</div>
 					</motion.section>
 
 					{/* Pillars */}
@@ -218,10 +191,8 @@ export default function LandingPage() {
 								&ldquo;You don&apos;t have to carry everything alone.&rdquo;
 							</blockquote>
 						</div>
-						<div className="divider-soft mx-auto mt-6 max-w-[120px]" />
-						<p className="mt-4 text-sm font-medium tracking-wide text-muted-foreground">
-							The idea behind Serene
-						</p>
+						<div className="divider-soft mx-auto mt-6 max-w-30" />
+					
 					</motion.section>
 				</div>
 			</div>

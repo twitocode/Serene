@@ -1,6 +1,4 @@
 "use client";
-import { Leaf, Lock } from "lucide-react";
-import type { PropsWithChildren } from "react";
 import { MochiWhisper } from "@/lib/components/common/mochi-whisper";
 import AppSidebar from "@/lib/components/common/sidebar/app-sidebar";
 import { ThemeToggle } from "@/lib/components/common/theme-toggle";
@@ -13,6 +11,8 @@ import {
 import { useSettingsQuery } from "@/lib/hooks/queries/use-settings";
 import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import { usePasswordLockStore } from "@/lib/hooks/stores/lock-store";
+import { Leaf, Lock } from "lucide-react";
+import type { PropsWithChildren } from "react";
 
 export default function HomeLayout({ children }: PropsWithChildren) {
 	const { setLockState, isLocked } = usePasswordLockStore();
@@ -35,26 +35,22 @@ export default function HomeLayout({ children }: PropsWithChildren) {
 							<Leaf className="size-3.5 animate-pulse" strokeWidth={2.5} />
 							<span className="text-xs font-semibold tabular-nums">
 								{user?.profile?.currentStreak ?? 0}{" "}
-								<span className="font-normal text-primary/80">
-									day streak
-								</span>
+								<span className="font-normal text-primary/80">day streak</span>
 							</span>
 						</div>
 						<ThemeToggle />
 						{!!settings?.passwordLock && (
-							<>
-								<Button
-									className="hidden rounded-full sm:inline-flex"
-									variant="outline"
-									size="sm"
-									onClick={() => {
-										setLockState(true);
-									}}
-								>
-									<Lock className="size-4" />
-									Lock
-								</Button>
-							</>
+							<Button
+								className="rounded-full sm:inline-flex"
+								variant="outline"
+								size="sm"
+								onClick={() => {
+									setLockState(true);
+								}}
+							>
+								<Lock className="size-4" />
+								Lock
+							</Button>
 						)}
 					</div>
 				</header>

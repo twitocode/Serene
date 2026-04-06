@@ -1,5 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Serene.Configuration;
 
@@ -9,7 +11,8 @@ public static class IdentityServiceExtensions
 {
     public static IServiceCollection AddIdentityServices(
         this IServiceCollection services,
-        IConfiguration config
+        IConfiguration config,
+        IWebHostEnvironment environment
     )
     {
         var jwtOptions = config.GetSection(JwtOptions.SectionName).Get<JwtOptions>();
@@ -19,6 +22,12 @@ public static class IdentityServiceExtensions
             throw new Exception("JWT Configuration missing");
         if (googleOptions == null)
             throw new Exception("Google Configuration missing");
+
+        var isDev = environment.IsDevelopment();
+        var externalSameSite = isDev ? SameSiteMode.Lax : SameSiteMode.None;
+        var externalSecure = isDev
+            ? CookieSecurePolicy.SameAsRequest
+            : CookieSecurePolicy.Always;
 
         services
             .AddAuthentication(options =>
@@ -32,8 +41,8 @@ public static class IdentityServiceExtensions
                 {
                     o.Cookie.Name = ".Serene.External";
                     o.Cookie.Path = "/";
-                    o.Cookie.SameSite = SameSiteMode.None;
-                    o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    o.Cookie.SameSite = externalSameSite;
+                    o.Cookie.SecurePolicy = externalSecure;
                     o.Cookie.HttpOnly = true;
                 }
             )
@@ -81,8 +90,8 @@ public static class IdentityServiceExtensions
                 o.SignInScheme = "ExternalCookie";
                 o.CorrelationCookie.Name = ".Serene.Correlation";
                 o.CorrelationCookie.Path = "/";
-                o.CorrelationCookie.SameSite = SameSiteMode.None;
-                o.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+                o.CorrelationCookie.SameSite = externalSameSite;
+                o.CorrelationCookie.SecurePolicy = externalSecure;
                 o.CallbackPath = "/signin-google";
             });
 

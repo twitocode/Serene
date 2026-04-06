@@ -55,7 +55,7 @@ try
 
     builder.Services.AddConfigurationBindings(builder.Configuration);
     builder.Services.AddDatabaseServices(builder.Configuration);
-    builder.Services.AddIdentityServices(builder.Configuration);
+    builder.Services.AddIdentityServices(builder.Configuration, builder.Environment);
     builder.Services.AddApplicationServices(builder.Configuration);
 
     builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -152,18 +152,9 @@ try
 
     var app = builder.Build();
 
-    app.Use(
-        (context, next) =>
-        {
-            if (context.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto))
-            {
-                context.Request.Scheme = proto.ToString();
-            }
-            return next();
-        }
-    );
-
     app.UseForwardedHeaders();
+
+    app.UseMiddleware<PublicApplicationUrlMiddleware>();
 
     if (app.Environment.IsDevelopment())
     {

@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Hosting;
 using Serene.Common;
 using Serene.Data;
 using Serene.Entities;
@@ -14,20 +16,27 @@ namespace Serene.Features.Auth;
 public class AuthController : BaseApiController
 {
     private readonly IAuthService _authService;
+    private readonly IWebHostEnvironment _environment;
 
-    public AuthController(IAuthService authService, ILogger<AuthController> logger)
+    public AuthController(
+        IAuthService authService,
+        IWebHostEnvironment environment,
+        ILogger<AuthController> logger
+    )
         : base(logger)
     {
         _authService = authService;
+        _environment = environment;
     }
 
     private CookieOptions GetCookieOptions()
     {
+        var dev = _environment.IsDevelopment();
         return new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
+            Secure = !dev,
+            SameSite = dev ? SameSiteMode.Lax : SameSiteMode.None,
             Expires = DateTime.UtcNow.AddDays(7),
             Path = "/",
         };

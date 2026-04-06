@@ -127,12 +127,12 @@ export function ProfileSettings() {
 							>
 								{updateProfile.isPending ? (
 									<>
-										<Loader2 className="size-4 mr-2 animate-spin" />
+										<Loader2 className="size-4 animate-spin" />
 										Saving...
 									</>
 								) : (
 									<>
-										<Check className="size-4 mr-2" />
+										<Check className="size-4" />
 										Save Changes
 									</>
 								)}

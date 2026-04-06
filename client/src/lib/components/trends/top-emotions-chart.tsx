@@ -43,7 +43,7 @@ function EmotionsChart({
 				{data.map((d) => {
 					const barWidth = xScale.bandwidth();
 					const barHeight = height - (yScale(d.count) || 0);
-					const barX = xScale(d.moodLabel);
+					const barX = xScale(d.moodLabel) ?? 0;
 					const barY = height - barHeight;
 					return (
 						<Bar

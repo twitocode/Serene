@@ -38,6 +38,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
+			<head>
+				<link rel="icon" href="/favicons/favicon-32x32.png" sizes="any" />
+			</head>
 			<body
 				className={`${ibmPlexMono.variable} ${lora.variable} ${plusJakarta.variable} font-sans antialiased`}
 			>

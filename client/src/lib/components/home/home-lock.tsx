@@ -11,7 +11,7 @@ export default function HomeLock() {
 		<AnimatePresence>
 			{preferences.isLocked && (
 				<motion.div
-					className="fixed inset-0 z-50 grid grid-rows-3 h-screen py-20 px-20 bg-background"
+					className="fixed inset-0 z-50 grid grid-rows-3 h-screen py-20 px-10 md:px-20 bg-background"
 					initial={{ opacity: 0, scale: 0.95 }}
 					animate={{ opacity: 1, scale: 1 }}
 					exit={{
@@ -31,17 +31,17 @@ export default function HomeLock() {
 						exit={{ opacity: 0, y: -30, filter: "blur(5px)" }}
 						transition={{ delay: 0.3, duration: 0.4 }}
 					>
-						<SereneLogo textSize="text-4xl" className="gap-4" />
+						<SereneLogo float textSize="text-4xl" className="gap-4" />
 					</motion.section>
 					<motion.section
-						className="flex items-center flex-col justify-center space-y-8"
+						className="flex items-center flex-col justify-center space-y-8 "
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: 30, filter: "blur(5px)" }}
 						transition={{ delay: 0.5, duration: 0.4 }}
 					>
 						<motion.h2
-							className="font-medium font-sans text-2xl md:text-3xl md:text-5xl text-center"
+							className="font-medium font-sans text-xl md:text-3xl text-center"
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0, filter: "blur(8px)" }}

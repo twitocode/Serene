@@ -9,7 +9,7 @@ export function IntermediateStepOne() {
 			<h1 className="text-3xl font-semibold">
 				We just have some quick questions for you
 			</h1>
-			<Button onClick={goNext} className="bg-black hover:bg-gray-800 px-8">
+			<Button onClick={goNext} className="px-8">
 				Get Started
 			</Button>
 		</div>

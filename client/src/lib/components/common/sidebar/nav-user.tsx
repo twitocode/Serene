@@ -58,7 +58,7 @@ export function NavUser({}: NavUserProps) {
 					</DropdownMenuTrigger>
 
 					<DropdownMenuContent
-						className="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-none font-sans"
+						className="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-lg font-sans"
 						side={sidebar.isMobile ? "bottom" : "right"}
 						align="end"
 						sideOffset={4}
@@ -85,7 +85,7 @@ export function NavUser({}: NavUserProps) {
 							<Link href="/home/account" onClick={() => sidebar.isMobile && sidebar.setOpenMobile(false)}>
 								<DropdownMenuItem>
 									<BadgeCheck className="mr-2 h-4 w-4" />
-									Account
+									Account Settings
 								</DropdownMenuItem>
 							</Link>
 						</DropdownMenuGroup>

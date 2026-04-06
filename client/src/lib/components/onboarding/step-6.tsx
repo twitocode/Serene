@@ -100,8 +100,8 @@ export function StepSix() {
 															className={cn(
 																"px-4 py-2 rounded-full border transition-colors text-sm",
 																isSelected
-																	? "bg-black text-white border-black"
-																	: "bg-white text-black border-gray-300 hover:border-gray-400",
+																	? "bg-primary text-primary-foreground border-primary"
+																	: "bg-background text-foreground border-border hover:border-primary/50",
 															)}
 														>
 															{struggle}
@@ -134,7 +134,7 @@ export function StepSix() {
 								{([canSubmit, isSubmitting]) => (
 									<Button
 										type="submit"
-										className="bg-black hover:bg-gray-800 flex-1"
+										className="flex-1"
 										disabled={!canSubmit || isSubmitting || mutation.isPending}
 									>
 										{mutation.isPending ? "Finalizing..." : "Complete"}

@@ -31,7 +31,7 @@ export function AuthNavbar() {
 							</Link>
 						) : (
 							<Link href="/login">
-								<Button variant="secondary" size="sm" className="font-medium">
+								<Button size="sm" className="font-medium">
 									Log in
 								</Button>
 							</Link>

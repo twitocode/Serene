@@ -38,7 +38,7 @@ function ImpactChart({
 					const barWidth = xScale(d.moodImprovement);
 					const barHeight = yScale.bandwidth();
 					const barX = 0;
-					const barY = yScale(d.activity);
+					const barY = yScale(d.activity) ?? 0;
 					return (
 						<Group key={`impact-${d.activity}`}>
 							<Bar

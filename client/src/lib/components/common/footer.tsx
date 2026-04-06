@@ -16,15 +16,15 @@ export default function Footer() {
 				aria-hidden
 			/>
 
-			<div className="relative mx-auto flex max-w-6xl flex-col items-center gap-8 px-5 py-16 md:flex-row md:justify-between md:px-10">
+			<div className="relative mx-auto flex max-w-6xl flex-col items-center gap-8 px-5 py-8 md:flex-row md:justify-between md:px-10">
 				<div className="flex flex-col items-center gap-3 text-center md:items-start md:text-left">
 					<SereneLogo className="text-primary-foreground [&_span]:text-primary-foreground" />
-					<p className="max-w-xs text-sm leading-relaxed text-primary-foreground/80">
-						A calm corner for checking in, reflecting, and growing, one day at a
-						time.
-					</p>
+					
 				</div>
 				<div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-3">
+					<span className="inline-flex items-center gap-1.5 text-xs text-primary-foreground/60">
+						Made with <Heart className="size-3 fill-current" /> for students
+					</span>
 					<Link
 						href="https://github.com/twitocode/serene"
 						className="pill-interactive inline-flex items-center gap-2 rounded-full border border-primary-foreground/20 bg-primary-foreground/10 px-5 py-2.5 text-sm font-medium backdrop-blur-sm transition-colors hover:bg-primary-foreground/20"
@@ -32,16 +32,14 @@ export default function Footer() {
 						rel="noreferrer"
 					>
 						<Image
-							height="32"
-							width="32"
+							height="20"
+							width="20"
 							alt="Github Logo"
-							src="https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/[ICON SLUG].svg"
+
+							src="https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/github.svg"
 						/>
-						Source on GitHub
+						<span className="font-medium">Source on GitHub</span>
 					</Link>
-					<span className="inline-flex items-center gap-1.5 text-xs text-primary-foreground/60">
-						Made with <Heart className="size-3 fill-current" /> for students
-					</span>
 				</div>
 			</div>
 		</footer>
