@@ -10,7 +10,10 @@ public class AdminSchoolController : BaseApiController
 {
     private readonly ISchoolService _schoolService;
 
-    public AdminSchoolController(ISchoolService schoolService, ILogger<AdminSchoolController> logger)
+    public AdminSchoolController(
+        ISchoolService schoolService,
+        ILogger<AdminSchoolController> logger
+    )
         : base(logger)
     {
         _schoolService = schoolService;
@@ -29,9 +32,14 @@ public class AdminSchoolController : BaseApiController
     }
 
     [HttpPost("{schoolId}/resources")]
-    public async Task<IActionResult> AddSchoolResource(string schoolId, [FromBody] CreateSchoolResourceRequest request)
+    public async Task<IActionResult> AddSchoolResource(
+        string schoolId,
+        [FromBody] CreateSchoolResourceRequest request
+    )
     {
-        return await ExecuteWithResult(() => _schoolService.AddSchoolResourceAsync(schoolId, request));
+        return await ExecuteWithResult(() =>
+            _schoolService.AddSchoolResourceAsync(schoolId, request)
+        );
     }
 
     [HttpDelete("resources/{resourceId}")]

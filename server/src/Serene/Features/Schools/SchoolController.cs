@@ -21,7 +21,8 @@ public class SchoolController : BaseApiController
     public async Task<IActionResult> GetMySchool()
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
 
         return await ExecuteWithResult(() => _schoolService.GetSchoolByUserIdAsync(userId));
     }
@@ -30,17 +31,24 @@ public class SchoolController : BaseApiController
     public async Task<IActionResult> UpdateMySchool([FromBody] InstantiateSchoolRequest request)
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
 
         return await ExecuteWithResult(() => _schoolService.UpdateUserSchoolAsync(userId, request));
     }
 
     [HttpPost("{schoolId}/clubs")]
-    public async Task<IActionResult> AddSchoolClub(string schoolId, [FromBody] CreateSchoolClubRequest request)
+    public async Task<IActionResult> AddSchoolClub(
+        string schoolId,
+        [FromBody] CreateSchoolClubRequest request
+    )
     {
         var userId = GetUserId();
-        if (userId == null) return Unauthorized();
+        if (userId == null)
+            return Unauthorized();
 
-        return await ExecuteWithResult(() => _schoolService.AddSchoolClubAsync(schoolId, userId, request));
+        return await ExecuteWithResult(() =>
+            _schoolService.AddSchoolClubAsync(schoolId, userId, request)
+        );
     }
 }
