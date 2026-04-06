@@ -676,6 +676,90 @@ namespace Serene.Migrations
                     b.ToTable("school");
                 });
 
+            modelBuilder.Entity("Serene.Entities.SchoolClub", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Links")
+                        .HasColumnType("text")
+                        .HasColumnName("links");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<string>("SchoolId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("school_id");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("summary");
+
+                    b.Property<string>("Tags")
+                        .HasColumnType("text")
+                        .HasColumnName("tags");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("school_club");
+                });
+
+            modelBuilder.Entity("Serene.Entities.SchoolResource", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<string>("SchoolId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("school_id");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("type");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("url");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolId");
+
+                    b.ToTable("school_resource");
+                });
+
             modelBuilder.Entity("Serene.Entities.Settings", b =>
                 {
                     b.Property<string>("Id")
@@ -1049,6 +1133,36 @@ namespace Serene.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Serene.Entities.SchoolClub", b =>
+                {
+                    b.HasOne("Serene.Entities.School", "School")
+                        .WithMany("SchoolClubs")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Serene.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("School");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Serene.Entities.SchoolResource", b =>
+                {
+                    b.HasOne("Serene.Entities.School", "School")
+                        .WithMany("SchoolResources")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("School");
+                });
+
             modelBuilder.Entity("Serene.Entities.Settings", b =>
                 {
                     b.HasOne("Serene.Entities.User", "User")
@@ -1093,6 +1207,13 @@ namespace Serene.Migrations
             modelBuilder.Entity("Serene.Entities.QuestionOfTheDay", b =>
                 {
                     b.Navigation("Responses");
+                });
+
+            modelBuilder.Entity("Serene.Entities.School", b =>
+                {
+                    b.Navigation("SchoolClubs");
+
+                    b.Navigation("SchoolResources");
                 });
 
             modelBuilder.Entity("Serene.Entities.User", b =>

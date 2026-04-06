@@ -4,6 +4,7 @@ import type { User } from "@/lib/types/index";
 
 interface UpdateProfileRequest {
 	name?: string;
+	struggles?: string[];
 }
 
 interface ChangePasswordRequest {

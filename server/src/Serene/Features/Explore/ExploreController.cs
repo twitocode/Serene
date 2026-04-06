@@ -80,6 +80,17 @@ public class ExploreController : BaseApiController
         });
     }
 
+    [HttpDelete("all")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteAllContent()
+    {
+        return await ExecuteWithResult(async () =>
+        {
+            await _exploreService.DeleteAllContentAsync();
+            return new { success = true };
+        });
+    }
+
     [HttpPost("scrape")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> ScrapeContent([FromBody] ScrapeRequest request)

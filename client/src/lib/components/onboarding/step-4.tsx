@@ -148,9 +148,12 @@ export function StepFour() {
 														<SelectValue placeholder="Select School" />
 													</SelectTrigger>
 													<SelectContent>
-														{universities.map(({ name }) => (
+														{universities.map(({ name, logo }) => (
 															<SelectItem key={name} value={name!}>
-																{name}
+																<div className="flex items-center gap-2">
+																	{logo && <img src={logo} alt="" className="w-5 h-5 object-contain" />}
+																	<span>{name}</span>
+																</div>
 															</SelectItem>
 														))}
 													</SelectContent>
@@ -182,9 +185,12 @@ export function StepFour() {
 														<SelectValue placeholder="Select College" />
 													</SelectTrigger>
 													<SelectContent>
-														{colleges.map(({ name }) => (
+														{colleges.map(({ name, logo }) => (
 															<SelectItem key={name} value={name!}>
-																{name}
+																<div className="flex items-center gap-2">
+																	{logo && <img src={logo} alt="" className="w-5 h-5 object-contain" />}
+																	<span>{name}</span>
+																</div>
 															</SelectItem>
 														))}
 													</SelectContent>

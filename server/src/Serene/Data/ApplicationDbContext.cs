@@ -25,6 +25,8 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public DbSet<UserInterest> UserInterests { get; set; } = null!;
     public DbSet<PeerMatch> PeerMatches { get; set; } = null!;
     public DbSet<ScheduledActivity> ScheduledActivities { get; set; } = null!;
+    public DbSet<SchoolClub> SchoolClubs { get; set; } = null!;
+    public DbSet<SchoolResource> SchoolResources { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -115,5 +117,26 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .WithMany()
             .HasForeignKey(pm => pm.MatchedUserId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder
+            .Entity<SchoolClub>()
+            .HasOne(sc => sc.School)
+            .WithMany(s => s.SchoolClubs)
+            .HasForeignKey(sc => sc.SchoolId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder
+            .Entity<SchoolClub>()
+            .HasOne(sc => sc.User)
+            .WithMany()
+            .HasForeignKey(sc => sc.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder
+            .Entity<SchoolResource>()
+            .HasOne(sr => sr.School)
+            .WithMany(s => s.SchoolResources)
+            .HasForeignKey(sr => sr.SchoolId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

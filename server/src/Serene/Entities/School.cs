@@ -24,4 +24,7 @@ public class School
 
     [Column("city")]
     public string? City { get; set; }
+
+    public ICollection<SchoolClub> SchoolClubs { get; set; } = new List<SchoolClub>();
+    public ICollection<SchoolResource> SchoolResources { get; set; } = new List<SchoolResource>();
 }

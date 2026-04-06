@@ -33,6 +33,12 @@ export default async function AdminLayout({
 						Feedback
 					</a>
 					<a
+						href="/admin/schools"
+						className="block px-4 py-2 rounded-lg text-gray-900 hover:bg-gray-100 font-medium"
+					>
+						Schools
+					</a>
+					<a
 						href="/home"
 						className="block px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50"
 					>

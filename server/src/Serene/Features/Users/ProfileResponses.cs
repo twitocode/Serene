@@ -9,5 +9,6 @@ public class ProfileResponse
     public int LongestStreak { get; set; }
 
     public string UserId { get; set; } = string.Empty;
+    public List<string> Struggles { get; set; } = new List<string>();
     public SchoolResponse? School { get; set; }
 }

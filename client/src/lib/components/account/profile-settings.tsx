@@ -3,6 +3,8 @@
 import { useForm } from "@tanstack/react-form";
 import { Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { SchoolSettings } from "@/lib/components/account/school-settings";
+import { StrugglesSettings } from "@/lib/components/account/struggles-settings";
 import {
 	Avatar,
 	AvatarFallback,
@@ -58,6 +60,7 @@ export function ProfileSettings() {
 	}
 
 	return (
+		<div className="space-y-6">
 		<Card className="card-organic border-0 shadow-lg">
 			<CardHeader className="pb-4">
 				<CardTitle className="text-xl">Profile Details</CardTitle>
@@ -139,5 +142,31 @@ export function ProfileSettings() {
 				</form>
 			</CardContent>
 		</Card>
+
+		<Card className="card-organic border-0 shadow-lg">
+			<CardHeader className="pb-4">
+				<CardTitle className="text-xl">School Community</CardTitle>
+				<CardDescription>
+					Update the school you are currently attending
+				</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<SchoolSettings />
+			</CardContent>
+		</Card>
+
+		<Card className="card-organic border-0 shadow-lg mt-6">
+			<CardHeader className="pb-4">
+				<CardTitle className="text-xl">What Brings You Here</CardTitle>
+				<CardDescription>
+					Update the areas you're looking for support with — this helps personalize your experience
+				</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<StrugglesSettings />
+			</CardContent>
+		</Card>
+		</div>
 	);
 }
+

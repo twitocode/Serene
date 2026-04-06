@@ -3,6 +3,7 @@ namespace Serene.Features.Users;
 public class UpdateUserProfileRequest
 {
     public string? Name { get; set; }
+    public List<string>? Struggles { get; set; }
 }
 
 public class ChangePasswordRequest

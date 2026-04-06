@@ -79,6 +79,7 @@ public class UsersService : IUsersService
                                     UserId = u.Id,
                                     MochiName = u.Profile.MochiName,
                                     MochiPronouns = u.Profile.MochiPronouns,
+                                    Struggles = u.Profile.Struggles,
 
                                     School =
                                         u.Profile.School != null
@@ -211,6 +212,17 @@ public class UsersService : IUsersService
 
             user.Name = dto.Name;
             user.UpdatedAt = NodaTime.SystemClock.Instance.GetCurrentInstant();
+        }
+
+        if (dto.Struggles != null)
+        {
+            if (user.Profile == null)
+            {
+                user.Profile = new Profile { UserId = userId };
+                _context.Profiles.Add(user.Profile);
+            }
+            user.Profile.Struggles = dto.Struggles;
+            user.Profile.UpdatedAt = NodaTime.SystemClock.Instance.GetCurrentInstant();
         }
 
         await _context.SaveChangesAsync();

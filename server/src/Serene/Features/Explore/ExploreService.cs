@@ -20,6 +20,7 @@ public interface IExploreService
     Task<string> AddContentAsync(CreateExploreContentRequest request);
     Task UpdateContentAsync(string id, CreateExploreContentRequest request);
     Task DeleteContentAsync(string id);
+    Task DeleteAllContentAsync();
     Task<ScrapedContentResponse> ScrapeContentAsync(string url);
     Task<int> PopulateFromSearchAsync(string query, int count);
 }
@@ -184,6 +185,12 @@ public class ExploreService : IExploreService
             _context.ExploreContent.Remove(content);
             await _context.SaveChangesAsync();
         }
+    }
+
+    public async Task DeleteAllContentAsync()
+    {
+        await _context.ExploreContent.ExecuteDeleteAsync();
+        await _context.SaveChangesAsync();
     }
 
     public async Task<ScrapedContentResponse> ScrapeContentAsync(string url)

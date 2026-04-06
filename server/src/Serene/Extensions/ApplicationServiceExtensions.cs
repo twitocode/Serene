@@ -11,6 +11,7 @@ using Serene.Data;
 using Serene.Entities;
 using Serene.Features.Activities;
 using Serene.Features.Community;
+using Serene.Features.Schools;
 using Serene.Features.Trends;
 using Serene.Jobs;
 using Serene.Services;
@@ -73,6 +74,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IFeedbackService, FeedbackService>();
         services.AddScoped<IActivityService, ActivityService>();
         services.AddScoped<IAchievementService, AchievementService>();
+        services.AddScoped<ISchoolService, SchoolService>();
         services.AddSingleton<IEncryptionService, EncryptionService>();
         services.AddHttpClient();
 

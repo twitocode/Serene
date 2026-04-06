@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
 	addContent,
+	deleteAllContent,
 	type CreateExploreContentRequest,
 	deleteContent,
 	getAllContent,
@@ -57,6 +58,7 @@ export default function ContentAdminPage() {
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [isPopulateDialogOpen, setIsPopulateDialogOpen] = useState(false);
 	const [isAlertOpen, setIsAlertOpen] = useState(false);
+	const [isDeleteAllAlertOpen, setIsDeleteAllAlertOpen] = useState(false);
 	const [editingItem, setEditingItem] = useState<ExploreContent | null>(null);
 	const [deletingId, setDeletingId] = useState<string | null>(null);
 	const [isScraping, setIsScraping] = useState(false);
@@ -166,6 +168,17 @@ export default function ContentAdminPage() {
 		setDeletingId(null);
 	};
 
+	const handleDeleteAll = async () => {
+		const res = await deleteAllContent();
+		if (res.isSuccess) {
+			toast.success("All content deleted successfully");
+			fetchContent();
+		} else {
+			toast.error("Failed to delete all content");
+		}
+		setIsDeleteAllAlertOpen(false);
+	};
+
 	const openAddDialog = () => {
 		setEditingItem(null);
 		setFormData({
@@ -197,6 +210,13 @@ export default function ContentAdminPage() {
 					Content Management
 				</h2>
 				<div className="flex gap-2">
+					<Button
+						variant="destructive"
+						onClick={() => setIsDeleteAllAlertOpen(true)}
+						disabled={content.length === 0}
+					>
+						<Trash2 className="mr-2 h-4 w-4" /> Delete All
+					</Button>
 					<Button
 						variant="outline"
 						onClick={() => setIsPopulateDialogOpen(true)}
@@ -454,6 +474,33 @@ export default function ContentAdminPage() {
 							className="bg-red-600 hover:bg-red-700"
 						>
 							Delete
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
+
+			<AlertDialog
+				open={isDeleteAllAlertOpen}
+				onOpenChange={setIsDeleteAllAlertOpen}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+						<AlertDialogDescription>
+							This action cannot be undone. This will permanently delete ALL {" "}
+							<span className="font-bold text-foreground">
+								{content.length}
+							</span>{" "}
+							admin content items from the database. Let's hope you know what you're doing.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={handleDeleteAll}
+							className="bg-red-600 hover:bg-red-700 font-bold"
+						>
+							DELETE ALL
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

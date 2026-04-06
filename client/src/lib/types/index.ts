@@ -60,6 +60,7 @@ export interface Profile {
 	school: School | null;
 	userId: string;
 	user: User;
+	struggles: string[];
 	createdAt: string;
 	updatedAt: string;
 }
@@ -100,6 +101,26 @@ export interface School {
 	countryCode: string;
 	regionCode: string | null;
 	city: string | null;
+	logo?: string;
+	clubs?: SchoolClub[];
+	resources?: SchoolResource[];
+}
+
+export interface SchoolClub {
+	id: string;
+	name: string;
+	summary: string;
+	tags: string | null;
+	links: string | null;
+	createdAt: string;
+}
+
+export interface SchoolResource {
+	id: string;
+	name: string;
+	url: string;
+	type: string;
+	createdAt: string;
 }
 
 export interface Achievement {
