@@ -72,7 +72,11 @@ public class CheckinService : ICheckinService
             .ToList();
     }
 
-    public async Task CompleteCheckinAsync(string userId, LocalDate? date, CompleteCheckinRequest dto)
+    public async Task CompleteCheckinAsync(
+        string userId,
+        LocalDate? date,
+        CompleteCheckinRequest dto
+    )
     {
         var user =
             await _context.Users.FindAsync(userId)
