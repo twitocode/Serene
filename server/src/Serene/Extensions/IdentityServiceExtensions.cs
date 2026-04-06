@@ -25,9 +25,7 @@ public static class IdentityServiceExtensions
 
         var isDev = environment.IsDevelopment();
         var externalSameSite = isDev ? SameSiteMode.Lax : SameSiteMode.None;
-        var externalSecure = isDev
-            ? CookieSecurePolicy.SameAsRequest
-            : CookieSecurePolicy.Always;
+        var externalSecure = isDev ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
 
         services
             .AddAuthentication(options =>

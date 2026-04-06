@@ -9,7 +9,10 @@ namespace Serene.Middleware;
 /// Also clears <see cref="HttpRequest.PathBase"/> so OAuth does not build <c>/auth/signin-google</c>
 /// (PathBase + CallbackPath) when this API is not actually mounted under <c>/auth</c> as a path base.
 /// </summary>
-public sealed class PublicApplicationUrlMiddleware(RequestDelegate next, IConfiguration configuration)
+public sealed class PublicApplicationUrlMiddleware(
+    RequestDelegate next,
+    IConfiguration configuration
+)
 {
     private readonly Uri? _publicBase = ParsePublicUrl(configuration["PublicApplicationUrl"]);
 
