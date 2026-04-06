@@ -45,9 +45,9 @@ export function ActivityCard({
 			border: "border-[#f0a694]/20 dark:border-[#f0a694]/30",
 		},
 		Learning: {
-			bg: "bg-navy/15 dark:bg-navy/25",
-			text: "text-navy",
-			border: "border-navy/20 dark:border-navy/30",
+			bg: "bg-cyan/15 dark:bg-cyan/25",
+			text: "text-cyan",
+			border: "border-cyan/20 dark:border-cyan/30",
 		},
 	};
 

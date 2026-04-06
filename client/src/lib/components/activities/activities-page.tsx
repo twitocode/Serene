@@ -3,6 +3,8 @@
 import { CalendarPlus, Heart, Sparkles } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { type FormEventHandler, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { formatLocalDateKey } from "@/lib/helpers/get-current-date";
 import { ActivityCard } from "@/lib/components/activities/activity-card";
 import { MoodScale } from "@/lib/components/activities/mood-scale";
 import { Badge } from "@/lib/components/ui/badge";
@@ -41,23 +43,24 @@ import {
 import type { ActivityResponse } from "@/lib/types/api-types";
 
 export default function ActivitiesPage() {
+	const searchParams = useSearchParams();
 	const today = new Date();
 	const weekStart = new Date(today);
 	weekStart.setDate(today.getDate() - today.getDay());
 	const weekEnd = new Date(weekStart);
 	weekEnd.setDate(weekStart.getDate() + 6);
 
-	const fromStr = weekStart.toISOString().split("T")[0];
-	const toStr = weekEnd.toISOString().split("T")[0];
+	const fromStr = formatLocalDateKey(weekStart);
+	const toStr = formatLocalDateKey(weekEnd);
 
 	const { data: activities = [] } = useActivitiesQuery(fromStr, toStr);
 	const createMutation = useCreateActivityMutation();
 	const completeMutation = useCompleteActivityMutation();
 	const deleteMutation = useDeleteActivityMutation();
 
-	const [title, setTitle] = useState("");
-	const [category, setCategory] = useState("");
-	const [date, setDate] = useState(today.toISOString().split("T")[0]);
+	const [title, setTitle] = useState(() => searchParams.get("title") ?? "");
+	const [category, setCategory] = useState(() => searchParams.get("category") ?? "");
+	const [date, setDate] = useState(() => searchParams.get("date") ?? today.toISOString().split("T")[0]);
 	const [completingActivity, setCompletingActivity] =
 		useState<ActivityResponse | null>(null);
 	const [moodBefore, setMoodBefore] = useState<number | null>(null);

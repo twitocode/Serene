@@ -1,5 +1,10 @@
+import { Suspense } from "react";
 import ActivitiesPage from "@/lib/components/activities/activities-page";
 
 export default function Page() {
-	return <ActivitiesPage />;
+	return (
+		<Suspense>
+			<ActivitiesPage />
+		</Suspense>
+	);
 }
