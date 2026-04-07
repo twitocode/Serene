@@ -114,24 +114,24 @@ export default function SchoolPage() {
 
 	return (
 		<div className="space-y-8 max-w-5xl mx-auto px-4 py-6">
-			<div className="flex items-start justify-between">
+			<div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
 				<div className="flex items-center gap-4">
 					{displayLogo ? (
-						<img src={displayLogo} alt="" className="h-16 w-auto max-w-[250px] object-contain rounded-md bg-white shrink-0" />
+						<img src={displayLogo} alt="" className="h-16 w-auto max-w-[200px] sm:max-w-[250px] object-contain rounded-md bg-white shrink-0" />
 					) : (
 						<div className="flex size-16 items-center justify-center rounded-md bg-primary/10 shrink-0">
 							<GraduationCap className="size-8 text-primary" />
 						</div>
 					)}
 					<div className="space-y-1">
-						<h2 className="text-3xl font-bold tracking-tight">{school.name}</h2>
+						<h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{school.name}</h2>
 						<p className="text-muted-foreground text-sm">
 							{school.city}, {school.regionCode} &bull; Your local community
 						</p>
 					</div>
 				</div>
-				<Link href="/home/account">
-					<Button variant="outline" size="sm" className="gap-2">
+				<Link href="/home/account" className="w-full sm:w-auto">
+					<Button variant="outline" size="sm" className="gap-2 w-full sm:w-auto">
 						<GraduationCap className="size-4" />
 						Switch School
 					</Button>

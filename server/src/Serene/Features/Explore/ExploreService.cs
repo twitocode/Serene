@@ -1,11 +1,11 @@
-using Google.Cloud.DiscoveryEngine.V1;
+using System.Text.Json;
 using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using NodaTime;
 using Pgvector.EntityFrameworkCore;
+using RestSharp;
 using Serene.Configuration;
 using Serene.Data;
 using Serene.Entities;
@@ -31,21 +31,21 @@ public class ExploreService : IExploreService
     private readonly IEmbeddingService _embeddingService;
     private readonly ILogger<ExploreService> _logger;
     private readonly HybridCache _cache;
-    private readonly IOptions<GoogleOptions> _googleOptions;
+    private readonly IOptions<SerperOptions> _serperOptions;
 
     public ExploreService(
         ApplicationDbContext context,
         IEmbeddingService embeddingService,
         ILogger<ExploreService> logger,
         HybridCache cache,
-        IOptions<GoogleOptions> googleOptions
+        IOptions<SerperOptions> serperOptions
     )
     {
         _context = context;
         _embeddingService = embeddingService;
         _logger = logger;
         _cache = cache;
-        _googleOptions = googleOptions;
+        _serperOptions = serperOptions;
     }
 
     public async Task<List<ExploreContentResponse>> GetRecommendationsAsync(string userId)
@@ -223,73 +223,57 @@ public class ExploreService : IExploreService
 
     public async Task<int> PopulateFromSearchAsync(string query, int count)
     {
-        var projectId = _googleOptions.Value.VertexAIProjectId;
-        var location = _googleOptions.Value.VertexAILocation;
-        var dataStoreId = _googleOptions.Value.DataStoreId;
+        var apiKey = _serperOptions.Value.ApiKey;
 
-        if (string.IsNullOrEmpty(projectId) || string.IsNullOrEmpty(dataStoreId))
+        if (string.IsNullOrEmpty(apiKey))
         {
-            throw new Exception("Vertex AI Search Project ID or Data Store ID is not configured.");
+            throw new Exception("Serper API key is not configured.");
         }
 
-        var client = await SearchServiceClient.CreateAsync();
+        var options = new RestClientOptions("https://google.serper.dev");
+        var client = new RestClient(options);
+        var request = new RestRequest("search", Method.Post);
+        request.AddHeader("X-API-KEY", apiKey);
+        request.AddHeader("Content-Type", "application/json");
 
-        var servingConfig = ServingConfigName.FromProjectLocationDataStoreServingConfig(
-            projectId,
-            location,
-            dataStoreId,
-            "default_search"
-        );
+        var body = JsonSerializer.Serialize(new { q = query, num = count, gl = "ca" });
+        request.AddStringBody(body, DataFormat.Json);
 
-        var request = new SearchRequest
+        var response = await client.ExecuteAsync(request);
+
+        if (!response.IsSuccessful || string.IsNullOrEmpty(response.Content))
         {
-            ServingConfigAsServingConfigName = servingConfig,
-            Query = query,
-            PageSize = Math.Min(count, 10),
-            ContentSearchSpec = new SearchRequest.Types.ContentSearchSpec
-            {
-                ExtractiveContentSpec =
-                    new SearchRequest.Types.ContentSearchSpec.Types.ExtractiveContentSpec
-                    {
-                        MaxExtractiveAnswerCount = 1,
-                    },
-            },
-        };
+            _logger.LogError("Serper API request failed: {Error}", response.ErrorMessage);
+            return 0;
+        }
 
-        var response = client.Search(request);
+        using var jsonDoc = JsonDocument.Parse(response.Content);
+        var root = jsonDoc.RootElement;
+
+        if (!root.TryGetProperty("organic", out var organicResults))
+        {
+            return 0;
+        }
 
         var addedCount = 0;
-        foreach (var result in response.Take(count))
+        foreach (var result in organicResults.EnumerateArray().Take(count))
         {
-            var document = result.Document;
-            var uri = document.DerivedStructData.Fields.TryGetValue("link", out var linkValue)
-                ? linkValue.StringValue
-                : "";
+            var uri = result.TryGetProperty("link", out var linkProp) ? linkProp.GetString() : "";
 
-            if (
-                string.IsNullOrEmpty(uri)
-                || await _context.ExploreContent.AnyAsync(c => c.Url == uri)
-            )
+            if (string.IsNullOrEmpty(uri) || await _context.ExploreContent.AnyAsync(c => c.Url == uri))
                 continue;
 
-            var title = document.DerivedStructData.Fields.TryGetValue("title", out var titleValue)
-                ? titleValue.StringValue
-                : "";
-            var snippet = document.DerivedStructData.Fields.TryGetValue(
-                "snippet",
-                out var snippetValue
-            )
-                ? snippetValue.StringValue
-                : "";
+            var title = result.TryGetProperty("title", out var titleProp) ? titleProp.GetString() : "";
+            var snippet = result.TryGetProperty("snippet", out var snippetProp) ? snippetProp.GetString() : "";
 
             var scraped = await ScrapeContentAsync(uri);
 
             await AddContentAsync(
                 new CreateExploreContentRequest
                 {
-                    Title = string.IsNullOrEmpty(scraped.Title) ? title : scraped.Title,
+                    Title = string.IsNullOrEmpty(scraped.Title) ? title ?? "" : scraped.Title,
                     Description = string.IsNullOrEmpty(scraped.Description)
-                        ? snippet
+                        ? snippet ?? ""
                         : scraped.Description,
                     Url = uri,
                     Type = scraped.Type,
