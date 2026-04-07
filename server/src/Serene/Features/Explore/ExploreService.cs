@@ -236,7 +236,14 @@ public class ExploreService : IExploreService
         request.AddHeader("X-API-KEY", apiKey);
         request.AddHeader("Content-Type", "application/json");
 
-        var body = JsonSerializer.Serialize(new { q = query, num = count, gl = "ca" });
+        var body = JsonSerializer.Serialize(
+            new
+            {
+                q = query,
+                num = count,
+                gl = "ca",
+            }
+        );
         request.AddStringBody(body, DataFormat.Json);
 
         var response = await client.ExecuteAsync(request);
@@ -260,11 +267,18 @@ public class ExploreService : IExploreService
         {
             var uri = result.TryGetProperty("link", out var linkProp) ? linkProp.GetString() : "";
 
-            if (string.IsNullOrEmpty(uri) || await _context.ExploreContent.AnyAsync(c => c.Url == uri))
+            if (
+                string.IsNullOrEmpty(uri)
+                || await _context.ExploreContent.AnyAsync(c => c.Url == uri)
+            )
                 continue;
 
-            var title = result.TryGetProperty("title", out var titleProp) ? titleProp.GetString() : "";
-            var snippet = result.TryGetProperty("snippet", out var snippetProp) ? snippetProp.GetString() : "";
+            var title = result.TryGetProperty("title", out var titleProp)
+                ? titleProp.GetString()
+                : "";
+            var snippet = result.TryGetProperty("snippet", out var snippetProp)
+                ? snippetProp.GetString()
+                : "";
 
             var scraped = await ScrapeContentAsync(uri);
 
