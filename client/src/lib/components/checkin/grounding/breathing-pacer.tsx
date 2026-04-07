@@ -72,47 +72,34 @@ export default function BreathingPacer({ onComplete }: BreathingPacerProps) {
 
 	return (
 		<div className="flex flex-col items-center gap-8 py-4">
-			<div className="relative flex items-center justify-center">
+			<div className="relative flex h-[320px] items-center justify-center">
 				<motion.div
 					animate={{ scale: isRunning && !finished ? circleScale : 1 }}
 					transition={{ duration: phaseSec, ease: "easeInOut" }}
-					className="flex size-48 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/30"
+					className="flex size-48 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/30 cursor-pointer transition-colors hover:bg-primary/20"
+					onClick={() => {
+						if (!finished) setIsRunning(!isRunning);
+					}}
 				>
-					<motion.div
-						animate={{ scale: isRunning && !finished ? circleScale : 1 }}
-						transition={{ duration: phaseSec, ease: "easeInOut" }}
-						className="flex size-32 items-center justify-center rounded-full bg-primary/20"
-					>
+					<div className="flex size-32 items-center justify-center rounded-full bg-primary/20">
 						<span className="text-center text-sm font-medium text-primary">
-							{!isRunning && !finished && "Tap start"}
+							{!isRunning && !finished && "Tap to start"}
 							{isRunning && !finished && phase?.label}
 							{finished && "Done"}
 						</span>
-					</motion.div>
+					</div>
 				</motion.div>
 			</div>
 
-			{isRunning && !finished && (
-				<p className="text-2xl font-semibold tabular-nums text-foreground">
-					{countdown}
-				</p>
-			)}
+			<p className="text-2xl font-semibold tabular-nums text-foreground h-8">
+				{isRunning && !finished ? countdown : ""}
+			</p>
 
 			<p className="text-xs text-muted-foreground">
 				{finished
 					? "Great work. Take a moment before continuing."
 					: `Cycle ${Math.min(cycle + 1, BREATHING_TOTAL_CYCLES)} of ${BREATHING_TOTAL_CYCLES}`}
 			</p>
-
-			{!isRunning && !finished && (
-				<Button
-					onClick={() => setIsRunning(true)}
-					size="lg"
-					className="rounded-xl"
-				>
-					Start breathing
-				</Button>
-			)}
 
 			{finished && (
 				<Button onClick={onComplete} size="lg" className="rounded-xl">

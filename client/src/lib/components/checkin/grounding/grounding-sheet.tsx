@@ -34,8 +34,8 @@ export default function GroundingSheet({
 	return (
 		<Sheet open={open} onOpenChange={onOpenChange}>
 			<SheetContent
-				side="bottom"
-				className="max-h-[85vh] overflow-y-auto rounded-t-2xl"
+				side="right"
+				className="flex flex-col justify-center overflow-y-auto"
 			>
 				<SheetHeader className="text-center">
 					<SheetTitle className="font-serif text-xl">

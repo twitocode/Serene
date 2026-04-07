@@ -13,14 +13,14 @@ import { Badge } from "@/lib/components/ui/badge";
 import { Button } from "@/lib/components/ui/button";
 import { ButtonGroup } from "@/lib/components/ui/button-group";
 import {
-	Drawer,
-	DrawerClose,
-	DrawerContent,
-	DrawerDescription,
-	DrawerFooter,
-	DrawerHeader,
-	DrawerTitle,
-} from "@/lib/components/ui/drawer";
+	Sheet,
+	SheetClose,
+	SheetContent,
+	SheetDescription,
+	SheetFooter,
+	SheetHeader,
+	SheetTitle,
+} from "@/lib/components/ui/sheet";
 import { Input } from "@/lib/components/ui/input";
 import {
 	MultiSelect,
@@ -159,7 +159,7 @@ export default function SomaticStep() {
 					</ButtonGroup>
 				</div>
 			)}
-			<Drawer
+			<Sheet
 				open={isOpen}
 				onOpenChange={(open) => {
 					if (!open) {
@@ -169,32 +169,11 @@ export default function SomaticStep() {
 					setIsOpen(open);
 				}}
 			>
-				<DrawerContent>
-					<DrawerHeader>
-						<DrawerTitle>{selectedPart?.part}</DrawerTitle>
-						<DrawerDescription asChild>
+				<SheetContent side="right">
+					<SheetHeader>
+						<SheetTitle>{selectedPart?.part}</SheetTitle>
+						<SheetDescription asChild>
 							<div className="flex flex-col gap-4 pt-4">
-								<div className="flex flex-wrap gap-2 mb-2">
-									{currentSensations.length === 0 && (
-										<span className="text-sm text-muted-foreground">
-											No sensations selected
-										</span>
-									)}
-									{currentSensations.map((s) => (
-										<Badge key={s} variant="secondary" className="gap-1 pr-1">
-											{s}
-											<X
-												className="h-3 w-3 cursor-pointer hover:text-destructive"
-												onClick={() =>
-													setCurrentSensations(
-														currentSensations.filter((x) => x !== s),
-													)
-												}
-											/>
-										</Badge>
-									))}
-								</div>
-
 								<MultiSelect
 									values={currentPresets}
 									onValuesChange={onPresetsChange}
@@ -235,17 +214,40 @@ export default function SomaticStep() {
 										<Plus className="h-4 w-4" />
 									</Button>
 								</div>
+
+								<div className="flex flex-wrap gap-2 mb-2">
+									{currentSensations.length === 0 && (
+										<span className="text-sm text-muted-foreground">
+											No sensations selected
+										</span>
+									)}
+									{currentSensations.map((s) => (
+										<Badge
+											key={s}
+											variant="secondary"
+											className="gap-1 pr-1 cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-colors group"
+											onClick={() =>
+												setCurrentSensations(
+													currentSensations.filter((x) => x !== s),
+												)
+											}
+										>
+											{s}
+											<X className="h-3 w-3 opacity-70 group-hover:opacity-100" />
+										</Badge>
+									))}
+								</div>
 							</div>
-						</DrawerDescription>
-					</DrawerHeader>
-					<DrawerFooter className="">
+						</SheetDescription>
+					</SheetHeader>
+					<SheetFooter className="">
 						<Button onClick={handleSave}>Save</Button>
-						<DrawerClose asChild>
+						<SheetClose asChild>
 							<Button variant="outline">Cancel</Button>
-						</DrawerClose>
-					</DrawerFooter>
-				</DrawerContent>
-			</Drawer>
+						</SheetClose>
+					</SheetFooter>
+				</SheetContent>
+			</Sheet>
 			<GroundingSheet open={groundingOpen} onOpenChange={setGroundingOpen} />
 		</div>
 	);
