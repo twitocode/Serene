@@ -102,8 +102,14 @@ public class ExploreController : BaseApiController
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> PopulateFromSearch([FromBody] PopulateExploreRequest request)
     {
+        var queries = request.Queries ?? new List<string>();
+        if (!string.IsNullOrEmpty(request.Query))
+        {
+            queries.Add(request.Query);
+        }
+
         return await ExecuteWithResult(() =>
-            _exploreService.PopulateFromSearchAsync(request.Query, request.Count)
+            _exploreService.PopulateFromSearchAsync(queries, request.Count)
         );
     }
 }

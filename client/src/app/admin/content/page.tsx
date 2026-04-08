@@ -52,6 +52,14 @@ import { Textarea } from "@/lib/components/ui/textarea";
 import { STRUGGLES } from "@/lib/data";
 import type { ExploreContent } from "@/lib/types";
 
+import {
+	MultiSelect,
+	MultiSelectContent,
+	MultiSelectItem,
+	MultiSelectTrigger,
+	MultiSelectValue,
+} from "@/lib/components/ui/multi-select";
+
 export default function ContentAdminPage() {
 	const [content, setContent] = useState<ExploreContent[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
@@ -74,6 +82,7 @@ export default function ContentAdminPage() {
 
 	const [populateData, setPopulateData] = useState({
 		query: "",
+		selectedTopics: [] as string[],
 		count: 10,
 	});
 
@@ -118,11 +127,25 @@ export default function ContentAdminPage() {
 		e.preventDefault();
 		setIsPopulating(true);
 
-		const res = await populateContent(populateData.query, populateData.count);
+		const textQueries = populateData.query
+			.split(/[\n,]+/)
+			.map((q) => q.trim())
+			.filter((q) => q.length > 0);
+
+		const queries = [...new Set([...populateData.selectedTopics, ...textQueries])];
+
+		if (queries.length === 0) {
+			toast.error("Please enter at least one query or select a topic");
+			setIsPopulating(false);
+			return;
+		}
+
+		const res = await populateContent(populateData.count, undefined, queries);
 		if (res.isSuccess) {
 			toast.success(`Successfully populated ${res.data} items`);
 			fetchContent();
 			setIsPopulateDialogOpen(false);
+			setPopulateData({ query: "", selectedTopics: [], count: 10 });
 		} else {
 			toast.error("Failed to populate content");
 		}
@@ -399,43 +422,52 @@ export default function ContentAdminPage() {
 					</DialogHeader>
 					<form onSubmit={handlePopulate} className="space-y-4">
 						<div className="space-y-2">
-							<Label htmlFor="struggle">Select Topic (Optional)</Label>
-							<Select
-								onValueChange={(value) =>
-									setPopulateData({ ...populateData, query: value })
+							<Label>Select Topics (Optional)</Label>
+							<MultiSelect
+								values={populateData.selectedTopics}
+								onValuesChange={(values) =>
+									setPopulateData({ ...populateData, selectedTopics: values })
 								}
 							>
-								<SelectTrigger>
-									<SelectValue placeholder="Select a struggle" />
-								</SelectTrigger>
-								<SelectContent>
+								<MultiSelectTrigger className="w-full">
+									<MultiSelectValue
+										placeholder="Select struggles..."
+										overflowBehavior="wrap"
+									/>
+								</MultiSelectTrigger>
+								<MultiSelectContent>
 									{STRUGGLES.map((struggle) => (
-										<SelectItem key={struggle} value={struggle}>
+										<MultiSelectItem key={struggle} value={struggle}>
 											{struggle}
-										</SelectItem>
+										</MultiSelectItem>
 									))}
-								</SelectContent>
-							</Select>
+								</MultiSelectContent>
+							</MultiSelect>
 						</div>
 						<div className="space-y-2">
-							<Label htmlFor="query">Search Query</Label>
-							<Input
+							<Label htmlFor="query">
+								Additional Search Queries
+								<span className="text-xs text-gray-500 block">
+									(One per line or comma separated)
+								</span>
+							</Label>
+							<Textarea
 								id="query"
-								required
 								value={populateData.query}
 								onChange={(e) =>
 									setPopulateData({ ...populateData, query: e.target.value })
 								}
 								placeholder="e.g. mental health resources for students"
+								rows={3}
 							/>
 						</div>
 						<div className="space-y-2">
-							<Label htmlFor="count">Count (Max 10)</Label>
+							<Label htmlFor="count">Items per Query (Max 100)</Label>
 							<Input
 								id="count"
 								type="number"
 								min="1"
-								max="10"
+								max="100"
 								required
 								value={populateData.count}
 								onChange={(e) =>

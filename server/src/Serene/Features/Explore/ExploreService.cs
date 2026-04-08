@@ -22,7 +22,7 @@ public interface IExploreService
     Task DeleteContentAsync(string id);
     Task DeleteAllContentAsync();
     Task<ScrapedContentResponse> ScrapeContentAsync(string url);
-    Task<int> PopulateFromSearchAsync(string query, int count);
+    Task<int> PopulateFromSearchAsync(List<string> queries, int countPerQuery);
 }
 
 public class ExploreService : IExploreService
@@ -221,7 +221,7 @@ public class ExploreService : IExploreService
         };
     }
 
-    public async Task<int> PopulateFromSearchAsync(string query, int count)
+    public async Task<int> PopulateFromSearchAsync(List<string> queries, int countPerQuery)
     {
         var apiKey = _serperOptions.Value.ApiKey;
 
@@ -230,20 +230,37 @@ public class ExploreService : IExploreService
             throw new Exception("Serper API key is not configured.");
         }
 
+        if (queries == null || queries.Count == 0)
+        {
+            return 0;
+        }
+
+        var totalAdded = 0;
+        // Serper supports batches up to 100 queries
+        foreach (var chunk in queries.Chunk(100))
+        {
+            totalAdded += await ExecuteBatchSearch(chunk.ToList(), countPerQuery, apiKey);
+        }
+
+        return totalAdded;
+    }
+
+    private async Task<int> ExecuteBatchSearch(List<string> queries, int countPerQuery, string apiKey)
+    {
         var options = new RestClientOptions("https://google.serper.dev");
         var client = new RestClient(options);
         var request = new RestRequest("search", Method.Post);
         request.AddHeader("X-API-KEY", apiKey);
         request.AddHeader("Content-Type", "application/json");
 
-        var body = JsonSerializer.Serialize(
-            new
-            {
-                q = query,
-                num = count,
-                gl = "ca",
-            }
-        );
+        var batchBody = queries.Select(q => new
+        {
+            q,
+            num = countPerQuery,
+            gl = "ca",
+        }).ToList();
+
+        var body = JsonSerializer.Serialize(batchBody);
         request.AddStringBody(body, DataFormat.Json);
 
         var response = await client.ExecuteAsync(request);
@@ -257,9 +274,35 @@ public class ExploreService : IExploreService
         using var jsonDoc = JsonDocument.Parse(response.Content);
         var root = jsonDoc.RootElement;
 
-        if (!root.TryGetProperty("organic", out var organicResults))
+        var addedCount = 0;
+
+        if (root.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var resultGroup in root.EnumerateArray())
+            {
+                addedCount += await ProcessResultGroup(resultGroup, countPerQuery);
+            }
+        }
+        else
+        {
+            addedCount += await ProcessResultGroup(root, countPerQuery);
+        }
+
+        return addedCount;
+    }
+
+    private async Task<int> ProcessResultGroup(JsonElement resultGroup, int count)
+    {
+        if (!resultGroup.TryGetProperty("organic", out var organicResults))
         {
             return 0;
+        }
+
+        var query = "";
+        if (resultGroup.TryGetProperty("searchParameters", out var searchParams) &&
+            searchParams.TryGetProperty("q", out var qProp))
+        {
+            query = qProp.GetString() ?? "";
         }
 
         var addedCount = 0;

@@ -17,6 +17,7 @@ public class ScrapeRequest
 
 public class PopulateExploreRequest
 {
-    public string Query { get; set; } = string.Empty;
+    public string? Query { get; set; }
+    public List<string> Queries { get; set; } = new();
     public int Count { get; set; } = 10;
 }
