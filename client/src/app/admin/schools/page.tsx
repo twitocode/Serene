@@ -1,26 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+	ExternalLink,
+	GraduationCap,
+	Loader2,
+	Plus,
+	School as SchoolIcon,
+	Trash2,
+} from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import type { InstantiateSchoolRequest } from "@/lib/client/school-client";
 import {
-	getAllSchools,
-	instantiateSchool,
 	addSchoolResource,
 	deleteSchoolResource,
+	getAllSchools,
+	instantiateSchool,
 } from "@/lib/client/school-client";
-import type { InstantiateSchoolRequest } from "@/lib/client/school-client";
-import type { School, SchoolResource } from "@/lib/types";
-import { schools as predefinedSchools } from "@/lib/data";
 import { Button } from "@/lib/components/ui/button";
-import { Input } from "@/lib/components/ui/input";
-import { Label } from "@/lib/components/ui/label";
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 } from "@/lib/components/ui/dialog";
+import { Input } from "@/lib/components/ui/input";
+import { Label } from "@/lib/components/ui/label";
 import {
 	Select,
 	SelectContent,
@@ -28,15 +35,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/lib/components/ui/select";
-import {
-	Loader2,
-	Plus,
-	Trash2,
-	ExternalLink,
-	GraduationCap,
-	School as SchoolIcon,
-} from "lucide-react";
-import { toast } from "sonner";
+import { schools as predefinedSchools } from "@/lib/data";
+import type { School, SchoolResource } from "@/lib/types";
 
 const stagger = {
 	container: {
@@ -65,18 +65,18 @@ export default function AdminSchoolsPage() {
 		type: "Counseling",
 	});
 
-	const fetchSchools = async () => {
+	const fetchSchools = useCallback(async () => {
 		setIsLoading(true);
 		const res = await getAllSchools();
 		if (res.isSuccess && res.data) {
 			setDbSchools(res.data);
 		}
 		setIsLoading(false);
-	};
+	}, []);
 
 	useEffect(() => {
 		fetchSchools();
-	}, []);
+	}, [fetchSchools]);
 
 	const availableToInstantiate = predefinedSchools.filter(
 		(ps) => !dbSchools.some((ds) => ds.name === ps.name),
@@ -90,7 +90,9 @@ export default function AdminSchoolsPage() {
 	const handleInstantiate = async (
 		schoolTemplate: (typeof predefinedSchools)[0],
 	) => {
-		const loadingToast = toast.loading(`Instantiating ${schoolTemplate.name}...`);
+		const loadingToast = toast.loading(
+			`Instantiating ${schoolTemplate.name}...`,
+		);
 		const res = await instantiateSchool(
 			schoolTemplate as InstantiateSchoolRequest,
 		);
@@ -197,7 +199,7 @@ export default function AdminSchoolsPage() {
 			</motion.div>
 
 			<div className="space-y-4">
-				<motion.h2 
+				<motion.h2
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					transition={{ delay: 0.2 }}
@@ -205,7 +207,7 @@ export default function AdminSchoolsPage() {
 				>
 					Active Schools ({dbSchools.length})
 				</motion.h2>
-				<motion.div 
+				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.5, delay: 0.3 }}
@@ -236,9 +238,13 @@ export default function AdminSchoolsPage() {
 											</div>
 										)}
 										<div>
-											<h3 className="font-semibold text-lg text-foreground leading-none mb-1.5">{school.name}</h3>
+											<h3 className="font-semibold text-lg text-foreground leading-none mb-1.5">
+												{school.name}
+											</h3>
 											<div className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
-												<span>{school.city}, {school.regionCode}</span>
+												<span>
+													{school.city}, {school.regionCode}
+												</span>
 												<span className="size-1 rounded-full bg-border" />
 												<span>{(school.resources || []).length} resources</span>
 												<span className="size-1 rounded-full bg-border" />
@@ -271,7 +277,9 @@ export default function AdminSchoolsPage() {
 													<span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-md">
 														{r.type}
 													</span>
-													<span className="text-sm font-medium text-foreground">{r.name}</span>
+													<span className="text-sm font-medium text-foreground">
+														{r.name}
+													</span>
 													<a
 														href={r.url}
 														target="_blank"
@@ -301,7 +309,7 @@ export default function AdminSchoolsPage() {
 
 			{availableToInstantiate.length > 0 && (
 				<div className="space-y-4">
-					<motion.h2 
+					<motion.h2
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={{ delay: 0.4 }}
@@ -309,7 +317,7 @@ export default function AdminSchoolsPage() {
 					>
 						Available to Instantiate ({availableToInstantiate.length})
 					</motion.h2>
-					<motion.div 
+					<motion.div
 						variants={stagger.container}
 						initial="initial"
 						animate="animate"
@@ -326,7 +334,7 @@ export default function AdminSchoolsPage() {
 										<div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-white p-1.5 shadow-sm ring-1 ring-border/50">
 											<Image
 												src={s.logo}
-												alt={s.name}
+												alt={s.name ?? "School Logo"}
 												width={40}
 												height={40}
 												className="h-full w-full object-contain"
@@ -338,7 +346,9 @@ export default function AdminSchoolsPage() {
 										</div>
 									)}
 									<div className="min-w-0">
-										<p className="truncate font-medium text-sm text-foreground">{s.name}</p>
+										<p className="truncate font-medium text-sm text-foreground">
+											{s.name}
+										</p>
 										<p className="text-xs text-muted-foreground">
 											{s.city}, {s.regionCode}
 										</p>
@@ -367,7 +377,12 @@ export default function AdminSchoolsPage() {
 					</DialogHeader>
 					<form onSubmit={handleAddResource} className="space-y-5 pt-4">
 						<div className="space-y-2">
-							<Label htmlFor="resourceName" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Resource Name</Label>
+							<Label
+								htmlFor="resourceName"
+								className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+							>
+								Resource Name
+							</Label>
 							<Input
 								id="resourceName"
 								required
@@ -380,7 +395,12 @@ export default function AdminSchoolsPage() {
 							/>
 						</div>
 						<div className="space-y-2">
-							<Label htmlFor="resourceUrl" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">URL</Label>
+							<Label
+								htmlFor="resourceUrl"
+								className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+							>
+								URL
+							</Label>
 							<Input
 								id="resourceUrl"
 								required
@@ -393,7 +413,12 @@ export default function AdminSchoolsPage() {
 							/>
 						</div>
 						<div className="space-y-2">
-							<Label htmlFor="resourceType" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Type</Label>
+							<Label
+								htmlFor="resourceType"
+								className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+							>
+								Type
+							</Label>
 							<Select
 								value={resourceForm.type}
 								onValueChange={(value) =>

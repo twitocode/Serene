@@ -1,5 +1,9 @@
 "use client";
 
+import { Check, GraduationCap, Loader2 } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { getMySchool, updateMySchool } from "@/lib/client/school-client";
 import { Button } from "@/lib/components/ui/button";
 import {
@@ -17,9 +21,6 @@ import {
 } from "@/lib/components/ui/tabs";
 import { colleges, schools, universities } from "@/lib/data";
 import type { School } from "@/lib/types";
-import { Check, GraduationCap, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 export function SchoolSettings() {
 	const [activeTab, setActiveTab] = useState("universities");
@@ -92,9 +93,11 @@ export function SchoolSettings() {
 				<div className="space-y-3">
 					<div className="flex items-center gap-3 rounded-lg border bg-card p-4">
 						{displayLogo ? (
-							<img
+							<Image
 								src={displayLogo}
 								alt=""
+								width={40}
+								height={40}
 								className="h-10 w-auto object-contain rounded-md bg-white shrink-0"
 							/>
 						) : (
@@ -134,9 +137,11 @@ export function SchoolSettings() {
 										<SelectItem key={name} value={name!}>
 											<div className="flex items-center gap-2">
 												{logo && (
-													<img
+													<Image
 														src={logo}
 														alt=""
+														width={20}
+														height={20}
 														className="w-5 h-5 object-contain"
 													/>
 												)}
@@ -158,9 +163,11 @@ export function SchoolSettings() {
 										<SelectItem key={name} value={name!}>
 											<div className="flex items-center gap-2">
 												{logo && (
-													<img
+													<Image
 														src={logo}
 														alt=""
+														width={20}
+														height={20}
 														className="w-5 h-5 object-contain"
 													/>
 												)}

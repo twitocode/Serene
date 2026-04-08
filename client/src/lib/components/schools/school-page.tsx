@@ -1,13 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getMySchool, addSchoolClub } from "@/lib/client/school-client";
-import type { School, SchoolClub, SchoolResource } from "@/lib/types";
+import { formatDistanceToNow } from "date-fns";
+import {
+	BookHeart,
+	ExternalLink,
+	GraduationCap,
+	Loader2,
+	Plus,
+	Tags,
+	UsersRound,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { addSchoolClub, getMySchool } from "@/lib/client/school-client";
 import { Button } from "@/lib/components/ui/button";
-import { Input } from "@/lib/components/ui/input";
-import { Textarea } from "@/lib/components/ui/textarea";
-import { Label } from "@/lib/components/ui/label";
-import { schools } from "@/lib/data";
 import {
 	Dialog,
 	DialogContent,
@@ -15,18 +23,11 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/lib/components/ui/dialog";
-import {
-	Loader2,
-	ExternalLink,
-	Plus,
-	BookHeart,
-	UsersRound,
-	Tags,
-	GraduationCap,
-} from "lucide-react";
-import Link from "next/link";
-import { toast } from "sonner";
-import { formatDistanceToNow } from "date-fns";
+import { Input } from "@/lib/components/ui/input";
+import { Label } from "@/lib/components/ui/label";
+import { Textarea } from "@/lib/components/ui/textarea";
+import { schools } from "@/lib/data";
+import type { School, SchoolClub, SchoolResource } from "@/lib/types";
 
 export default function SchoolPage() {
 	const [school, setSchool] = useState<School | null>(null);
@@ -41,7 +42,7 @@ export default function SchoolPage() {
 		links: "",
 	});
 
-	const fetchSchool = async () => {
+	const fetchSchool = useCallback(async () => {
 		setIsLoading(true);
 		const res = await getMySchool();
 		if (res.isSuccess && res.data) {
@@ -50,11 +51,11 @@ export default function SchoolPage() {
 			setSchool(null);
 		}
 		setIsLoading(false);
-	};
+	}, []);
 
 	useEffect(() => {
 		fetchSchool();
-	}, []);
+	}, [fetchSchool]);
 
 	const handleAddClub = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -109,7 +110,9 @@ export default function SchoolPage() {
 		);
 	}
 
-	const matchedSchool = school ? schools.find(s => s.name === school.name) : null;
+	const matchedSchool = school
+		? schools.find((s) => s.name === school.name)
+		: null;
 	const displayLogo = matchedSchool?.logo;
 
 	return (
@@ -117,21 +120,33 @@ export default function SchoolPage() {
 			<div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
 				<div className="flex items-center gap-4">
 					{displayLogo ? (
-						<img src={displayLogo} alt="" className="h-16 w-auto max-w-[200px] sm:max-w-[250px] object-contain rounded-md bg-white shrink-0" />
+						<Image
+							src={displayLogo}
+							alt=""
+							width={64}
+							height={64}
+							className="h-16 w-auto max-w-[200px] sm:max-w-[250px] object-contain rounded-md bg-white shrink-0"
+						/>
 					) : (
 						<div className="flex size-16 items-center justify-center rounded-md bg-primary/10 shrink-0">
 							<GraduationCap className="size-8 text-primary" />
 						</div>
 					)}
 					<div className="space-y-1">
-						<h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{school.name}</h2>
+						<h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+							{school.name}
+						</h2>
 						<p className="text-muted-foreground text-sm">
 							{school.city}, {school.regionCode} &bull; Your local community
 						</p>
 					</div>
 				</div>
 				<Link href="/home/account" className="w-full sm:w-auto">
-					<Button variant="outline" size="sm" className="gap-2 w-full sm:w-auto">
+					<Button
+						variant="outline"
+						size="sm"
+						className="gap-2 w-full sm:w-auto"
+					>
 						<GraduationCap className="size-4" />
 						Switch School
 					</Button>

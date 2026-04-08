@@ -29,9 +29,15 @@ export const stepTwoSchema = z.object({
 
 			return actualAge >= 13 && actualAge <= 120;
 		}, "You must greater than 13 years old"),
-	gender: z.string().refine((val) => ["Male", "Female", "Non-Binary", "Prefer not to say"].includes(val), {
-		message: "Please select a gender",
-	}),
+	gender: z
+		.string()
+		.refine(
+			(val) =>
+				["Male", "Female", "Non-Binary", "Prefer not to say"].includes(val),
+			{
+				message: "Please select a gender",
+			},
+		),
 	pronouns: z.string().regex(pronounsRegex, "Invalid pronouns"),
 });
 

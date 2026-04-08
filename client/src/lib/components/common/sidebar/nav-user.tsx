@@ -82,7 +82,10 @@ export function NavUser({}: NavUserProps) {
 						<DropdownMenuSeparator />
 
 						<DropdownMenuGroup>
-							<Link href="/home/account" onClick={() => sidebar.isMobile && sidebar.setOpenMobile(false)}>
+							<Link
+								href="/home/account"
+								onClick={() => sidebar.isMobile && sidebar.setOpenMobile(false)}
+							>
 								<DropdownMenuItem>
 									<BadgeCheck className="mr-2 h-4 w-4" />
 									Account Settings

@@ -131,15 +131,17 @@ function SchoolResourcesSection() {
 			</motion.div>
 
 			<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-				{isPending ? (
-					Array.from({ length: 3 }).map((_, i) => (
-						<ResourceCardSkeleton key={i} />
-					))
-				) : (
-					schoolResources?.map((resource, index) => (
-						<ResourceCard key={resource.id} resource={resource} index={index} />
-					))
-				)}
+				{isPending
+					? Array.from({ length: 3 }).map((_, i) => (
+							<ResourceCardSkeleton key={i} />
+						))
+					: schoolResources?.map((resource, index) => (
+							<ResourceCard
+								key={resource.id}
+								resource={resource}
+								index={index}
+							/>
+						))}
 			</div>
 		</>
 	);

@@ -12,6 +12,14 @@ import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
 import { Badge } from "@/lib/components/ui/badge";
 import { Button } from "@/lib/components/ui/button";
 import { ButtonGroup } from "@/lib/components/ui/button-group";
+import { Input } from "@/lib/components/ui/input";
+import {
+	MultiSelect,
+	MultiSelectContent,
+	MultiSelectGroup,
+	MultiSelectItem,
+	MultiSelectTrigger,
+} from "@/lib/components/ui/multi-select";
 import {
 	Sheet,
 	SheetClose,
@@ -21,14 +29,6 @@ import {
 	SheetHeader,
 	SheetTitle,
 } from "@/lib/components/ui/sheet";
-import { Input } from "@/lib/components/ui/input";
-import {
-	MultiSelect,
-	MultiSelectContent,
-	MultiSelectGroup,
-	MultiSelectItem,
-	MultiSelectTrigger,
-} from "@/lib/components/ui/multi-select";
 import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import { useIsMobile } from "@/lib/hooks/use-mobile";
 

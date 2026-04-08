@@ -2,9 +2,8 @@
 
 import { CalendarPlus, Heart, Sparkles } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { type FormEventHandler, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { formatLocalDateKey } from "@/lib/helpers/get-current-date";
+import { type FormEventHandler, useState } from "react";
 import { ActivityCard } from "@/lib/components/activities/activity-card";
 import { MoodScale } from "@/lib/components/activities/mood-scale";
 import { Badge } from "@/lib/components/ui/badge";
@@ -34,6 +33,7 @@ import {
 import { Textarea } from "@/lib/components/ui/textarea";
 import { ACTIVITY_CATEGORIES } from "@/lib/data/activities-data";
 import { getRandomSavoringPrompt } from "@/lib/data/savoring-prompts";
+import { formatLocalDateKey } from "@/lib/helpers/get-current-date";
 import {
 	useActivitiesQuery,
 	useCompleteActivityMutation,
@@ -59,8 +59,12 @@ export default function ActivitiesPage() {
 	const deleteMutation = useDeleteActivityMutation();
 
 	const [title, setTitle] = useState(() => searchParams.get("title") ?? "");
-	const [category, setCategory] = useState(() => searchParams.get("category") ?? "");
-	const [date, setDate] = useState(() => searchParams.get("date") ?? today.toISOString().split("T")[0]);
+	const [category, setCategory] = useState(
+		() => searchParams.get("category") ?? "",
+	);
+	const [date, setDate] = useState(
+		() => searchParams.get("date") ?? today.toISOString().split("T")[0],
+	);
 	const [completingActivity, setCompletingActivity] =
 		useState<ActivityResponse | null>(null);
 	const [moodBefore, setMoodBefore] = useState<number | null>(null);

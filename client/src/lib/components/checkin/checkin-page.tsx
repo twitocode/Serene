@@ -91,7 +91,11 @@ export default function CheckinPage() {
 							className="btn-playful w-full sm:w-auto"
 							onClick={onStartCheckin}
 						>
-							{checkins && checkins.length > 0 ? "Check in again" : (isToday(displayDate) ? "Start check-in" : "Add check-in")}
+							{checkins && checkins.length > 0
+								? "Check in again"
+								: isToday(displayDate)
+									? "Start check-in"
+									: "Add check-in"}
 						</Button>
 					</div>
 				</div>

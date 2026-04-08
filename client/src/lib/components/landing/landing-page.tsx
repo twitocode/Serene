@@ -1,11 +1,11 @@
 "use client";
+import { ArrowRight, Heart, Leaf, Shield } from "lucide-react";
+import { motion } from "motion/react";
+import Link from "next/link";
 import Footer from "@/lib/components/common/footer";
 import { MochiHappy } from "@/lib/components/common/mochi";
 import { Navbar } from "@/lib/components/common/navbar";
 import { Button } from "@/lib/components/ui/button";
-import { ArrowRight, Heart, Leaf, Shield } from "lucide-react";
-import { motion } from "motion/react";
-import Link from "next/link";
 
 const pillars = [
 	{
@@ -192,7 +192,6 @@ export default function LandingPage() {
 							</blockquote>
 						</div>
 						<div className="divider-soft mx-auto mt-6 max-w-30" />
-					
 					</motion.section>
 				</div>
 			</div>

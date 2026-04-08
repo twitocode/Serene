@@ -3,6 +3,7 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import { completeStep4 } from "@/lib/client/onboarding-client";
 import FormError from "@/lib/components/common/forms/form-error";
@@ -151,7 +152,15 @@ export function StepFour() {
 														{universities.map(({ name, logo }) => (
 															<SelectItem key={name} value={name!}>
 																<div className="flex items-center gap-2">
-																	{logo && <img src={logo} alt="" className="w-5 h-5 object-contain" />}
+																	{logo && (
+																		<Image
+																			src={logo}
+																			alt=""
+																			width={20}
+																			height={20}
+																			className="w-5 h-5 object-contain"
+																		/>
+																	)}
 																	<span>{name}</span>
 																</div>
 															</SelectItem>
@@ -188,7 +197,15 @@ export function StepFour() {
 														{colleges.map(({ name, logo }) => (
 															<SelectItem key={name} value={name!}>
 																<div className="flex items-center gap-2">
-																	{logo && <img src={logo} alt="" className="w-5 h-5 object-contain" />}
+																	{logo && (
+																		<Image
+																			src={logo}
+																			alt=""
+																			width={20}
+																			height={20}
+																			className="w-5 h-5 object-contain"
+																		/>
+																	)}
 																	<span>{name}</span>
 																</div>
 															</SelectItem>

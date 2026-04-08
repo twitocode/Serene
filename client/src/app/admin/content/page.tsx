@@ -6,8 +6,8 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
 	addContent,
-	deleteAllContent,
 	type CreateExploreContentRequest,
+	deleteAllContent,
 	deleteContent,
 	getAllContent,
 	populateContent,
@@ -34,6 +34,13 @@ import {
 import { Input } from "@/lib/components/ui/input";
 import { Label } from "@/lib/components/ui/label";
 import {
+	MultiSelect,
+	MultiSelectContent,
+	MultiSelectItem,
+	MultiSelectTrigger,
+	MultiSelectValue,
+} from "@/lib/components/ui/multi-select";
+import {
 	Select,
 	SelectContent,
 	SelectItem,
@@ -51,14 +58,6 @@ import {
 import { Textarea } from "@/lib/components/ui/textarea";
 import { STRUGGLES } from "@/lib/data";
 import type { ExploreContent } from "@/lib/types";
-
-import {
-	MultiSelect,
-	MultiSelectContent,
-	MultiSelectItem,
-	MultiSelectTrigger,
-	MultiSelectValue,
-} from "@/lib/components/ui/multi-select";
 
 const stagger = {
 	container: {
@@ -146,7 +145,9 @@ export default function ContentAdminPage() {
 			.map((q) => q.trim())
 			.filter((q) => q.length > 0);
 
-		const queries = [...new Set([...populateData.selectedTopics, ...textQueries])];
+		const queries = [
+			...new Set([...populateData.selectedTopics, ...textQueries]),
+		];
 
 		if (queries.length === 0) {
 			toast.error("Please enter at least one query or select a topic");
@@ -249,7 +250,10 @@ export default function ContentAdminPage() {
 				animate="animate"
 				className="flex flex-col gap-2"
 			>
-				<motion.div variants={stagger.item} className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+				<motion.div
+					variants={stagger.item}
+					className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between"
+				>
 					<div className="flex flex-col gap-2">
 						<div className="flex items-center gap-2">
 							<div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -282,7 +286,11 @@ export default function ContentAdminPage() {
 						>
 							<Search className="mr-2 h-4 w-4" /> Auto-Populate
 						</Button>
-						<Button size="sm" className="rounded-full h-9 font-medium btn-playful" onClick={openAddDialog}>
+						<Button
+							size="sm"
+							className="rounded-full h-9 font-medium btn-playful"
+							onClick={openAddDialog}
+						>
 							<Plus className="mr-2 h-4 w-4" /> Add Content
 						</Button>
 					</div>
@@ -298,10 +306,18 @@ export default function ContentAdminPage() {
 				<Table>
 					<TableHeader>
 						<TableRow className="hover:bg-transparent border-sidebar-border/60">
-							<TableHead className="font-semibold text-foreground">Content</TableHead>
-							<TableHead className="font-semibold text-foreground">Type</TableHead>
-							<TableHead className="font-semibold text-foreground">Description</TableHead>
-							<TableHead className="w-[100px] font-semibold text-foreground text-right pr-6">Actions</TableHead>
+							<TableHead className="font-semibold text-foreground">
+								Content
+							</TableHead>
+							<TableHead className="font-semibold text-foreground">
+								Type
+							</TableHead>
+							<TableHead className="font-semibold text-foreground">
+								Description
+							</TableHead>
+							<TableHead className="w-[100px] font-semibold text-foreground text-right pr-6">
+								Actions
+							</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -310,36 +326,51 @@ export default function ContentAdminPage() {
 								<TableCell colSpan={4} className="h-48 text-center">
 									<div className="flex flex-col items-center gap-2 text-muted-foreground">
 										<Loader2 className="h-8 w-8 animate-spin" />
-										<p className="text-sm font-medium">Loading content library...</p>
+										<p className="text-sm font-medium">
+											Loading content library...
+										</p>
 									</div>
 								</TableCell>
 							</TableRow>
 						) : content.length === 0 ? (
 							<TableRow>
 								<TableCell colSpan={4} className="h-48 text-center">
-									<p className="text-muted-foreground font-medium">No content found.</p>
+									<p className="text-muted-foreground font-medium">
+										No content found.
+									</p>
 								</TableCell>
 							</TableRow>
 						) : (
 							content.map((item) => (
-								<TableRow key={item.id} className="border-sidebar-border/40 hover:bg-sidebar-accent/30 transition-colors">
+								<TableRow
+									key={item.id}
+									className="border-sidebar-border/40 hover:bg-sidebar-accent/30 transition-colors"
+								>
 									<TableCell className="max-w-[300px]">
 										<div className="flex flex-col gap-0.5 min-w-0">
-											<span className="font-semibold text-foreground truncate">{item.title}</span>
-											<span className="text-[10px] font-mono text-muted-foreground truncate uppercase tracking-tight">{item.url}</span>
+											<span className="font-semibold text-foreground truncate">
+												{item.title}
+											</span>
+											<span className="text-[10px] font-mono text-muted-foreground truncate uppercase tracking-tight">
+												{item.url}
+											</span>
 										</div>
 									</TableCell>
 									<TableCell>
-										<span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
-											item.type === "Article" 
-												? "text-primary bg-primary/10" 
-												: "text-warm bg-warm/10"
-										}`}>
+										<span
+											className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
+												item.type === "Article"
+													? "text-primary bg-primary/10"
+													: "text-warm bg-warm/10"
+											}`}
+										>
 											{item.type}
 										</span>
 									</TableCell>
 									<TableCell className="max-w-md">
-										<p className="text-sm text-muted-foreground line-clamp-1">{item.description}</p>
+										<p className="text-sm text-muted-foreground line-clamp-1">
+											{item.description}
+										</p>
 									</TableCell>
 									<TableCell className="text-right pr-4">
 										<div className="flex justify-end gap-1">
@@ -381,7 +412,12 @@ export default function ContentAdminPage() {
 						</DialogHeader>
 						<form onSubmit={handleSubmit} className="space-y-4">
 							<div className="space-y-2">
-								<Label htmlFor="title" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Title</Label>
+								<Label
+									htmlFor="title"
+									className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+								>
+									Title
+								</Label>
 								<Input
 									id="title"
 									required
@@ -394,7 +430,12 @@ export default function ContentAdminPage() {
 							</div>
 							<div className="grid grid-cols-2 gap-4">
 								<div className="space-y-2">
-									<Label htmlFor="type" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Type</Label>
+									<Label
+										htmlFor="type"
+										className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+									>
+										Type
+									</Label>
 									<Select
 										value={formData.type}
 										onValueChange={(value: "Article" | "Video") =>
@@ -411,7 +452,12 @@ export default function ContentAdminPage() {
 									</Select>
 								</div>
 								<div className="space-y-2">
-									<Label htmlFor="tags" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Tags</Label>
+									<Label
+										htmlFor="tags"
+										className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+									>
+										Tags
+									</Label>
 									<Input
 										id="tags"
 										className="rounded-xl bg-sidebar-accent/50 h-11"
@@ -424,7 +470,12 @@ export default function ContentAdminPage() {
 								</div>
 							</div>
 							<div className="space-y-2">
-								<Label htmlFor="url" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">URL</Label>
+								<Label
+									htmlFor="url"
+									className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+								>
+									URL
+								</Label>
 								<div className="flex gap-2">
 									<Input
 										id="url"
@@ -453,7 +504,12 @@ export default function ContentAdminPage() {
 								</div>
 							</div>
 							<div className="space-y-2">
-								<Label htmlFor="description" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description</Label>
+								<Label
+									htmlFor="description"
+									className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+								>
+									Description
+								</Label>
 								<Textarea
 									id="description"
 									required
@@ -465,8 +521,14 @@ export default function ContentAdminPage() {
 								/>
 							</div>
 							<div className="flex justify-end pt-2">
-								<Button type="submit" disabled={isLoading} className="w-full btn-playful h-11">
-									{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+								<Button
+									type="submit"
+									disabled={isLoading}
+									className="w-full btn-playful h-11"
+								>
+									{isLoading && (
+										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									)}
 									{editingItem ? "Update Content" : "Create Content"}
 								</Button>
 							</div>
@@ -482,11 +544,15 @@ export default function ContentAdminPage() {
 				<DialogContent className="sm:max-w-[450px] card-glass border-none shadow-2xl p-0 overflow-hidden">
 					<div className="p-6 space-y-6">
 						<DialogHeader>
-							<h2 className="font-serif text-2xl font-semibold">Auto-Populate Library</h2>
+							<h2 className="font-serif text-2xl font-semibold">
+								Auto-Populate Library
+							</h2>
 						</DialogHeader>
 						<form onSubmit={handlePopulate} className="space-y-5">
 							<div className="space-y-2">
-								<Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Select Topics</Label>
+								<Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+									Select Topics
+								</Label>
 								<MultiSelect
 									values={populateData.selectedTopics}
 									onValuesChange={(values) =>
@@ -509,7 +575,10 @@ export default function ContentAdminPage() {
 								</MultiSelect>
 							</div>
 							<div className="space-y-2">
-								<Label htmlFor="query" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+								<Label
+									htmlFor="query"
+									className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+								>
 									Additional Search Queries
 								</Label>
 								<Textarea
@@ -523,7 +592,12 @@ export default function ContentAdminPage() {
 								/>
 							</div>
 							<div className="space-y-2">
-								<Label htmlFor="count" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Items per Query</Label>
+								<Label
+									htmlFor="count"
+									className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+								>
+									Items per Query
+								</Label>
 								<Input
 									id="count"
 									type="number"
@@ -541,7 +615,11 @@ export default function ContentAdminPage() {
 								/>
 							</div>
 							<div className="flex justify-end pt-2">
-								<Button type="submit" disabled={isPopulating} className="w-full btn-playful h-11">
+								<Button
+									type="submit"
+									disabled={isPopulating}
+									className="w-full btn-playful h-11"
+								>
 									{isPopulating && (
 										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
 									)}
@@ -556,13 +634,18 @@ export default function ContentAdminPage() {
 			<AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
 				<AlertDialogContent className="card-glass border-none shadow-2xl">
 					<AlertDialogHeader>
-						<AlertDialogTitle className="font-serif text-2xl">Remove this content?</AlertDialogTitle>
+						<AlertDialogTitle className="font-serif text-2xl">
+							Remove this content?
+						</AlertDialogTitle>
 						<AlertDialogDescription className="text-muted-foreground">
-							This item will be permanently removed from the student content library.
+							This item will be permanently removed from the student content
+							library.
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+						<AlertDialogCancel className="rounded-full">
+							Cancel
+						</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={handleDelete}
 							className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full"
@@ -579,13 +662,21 @@ export default function ContentAdminPage() {
 			>
 				<AlertDialogContent className="card-glass border-none shadow-2xl">
 					<AlertDialogHeader>
-						<AlertDialogTitle className="font-serif text-2xl text-destructive">Wipe Content Library?</AlertDialogTitle>
+						<AlertDialogTitle className="font-serif text-2xl text-destructive">
+							Wipe Content Library?
+						</AlertDialogTitle>
 						<AlertDialogDescription className="text-muted-foreground leading-relaxed">
-							You are about to delete <span className="font-bold text-foreground underline decoration-destructive">{content.length}</span> items. This action is destructive and irreversible.
+							You are about to delete{" "}
+							<span className="font-bold text-foreground underline decoration-destructive">
+								{content.length}
+							</span>{" "}
+							items. This action is destructive and irreversible.
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter className="flex-col gap-2 sm:flex-row">
-						<AlertDialogCancel className="rounded-full">Nevermind</AlertDialogCancel>
+						<AlertDialogCancel className="rounded-full">
+							Nevermind
+						</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={handleDeleteAll}
 							className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full font-bold"

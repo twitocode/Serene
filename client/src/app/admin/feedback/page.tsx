@@ -80,9 +80,15 @@ export default function FeedbackAdminPage() {
 				<Table>
 					<TableHeader>
 						<TableRow className="hover:bg-transparent border-sidebar-border/60">
-							<TableHead className="font-semibold text-foreground">Date</TableHead>
-							<TableHead className="font-semibold text-foreground">User</TableHead>
-							<TableHead className="font-semibold text-foreground">Message</TableHead>
+							<TableHead className="font-semibold text-foreground">
+								Date
+							</TableHead>
+							<TableHead className="font-semibold text-foreground">
+								User
+							</TableHead>
+							<TableHead className="font-semibold text-foreground">
+								Message
+							</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -98,17 +104,22 @@ export default function FeedbackAdminPage() {
 						) : feedback.length === 0 ? (
 							<TableRow>
 								<TableCell colSpan={3} className="h-48 text-center">
-									<p className="text-muted-foreground font-medium">No feedback found.</p>
+									<p className="text-muted-foreground font-medium">
+										No feedback found.
+									</p>
 								</TableCell>
 							</TableRow>
 						) : (
 							feedback.map((item, index) => (
-								<TableRow key={index} className="border-sidebar-border/40 hover:bg-sidebar-accent/50 transition-colors">
+								<TableRow
+									key={index}
+									className="border-sidebar-border/40 hover:bg-sidebar-accent/50 transition-colors"
+								>
 									<TableCell className="whitespace-nowrap text-sm text-muted-foreground">
 										{item.date}
 									</TableCell>
 									<TableCell className="font-mono text-[10px] text-muted-foreground uppercase tracking-tight">
-										{item.userId.split('-')[0]}...
+										{item.userId.split("-")[0]}...
 									</TableCell>
 									<TableCell className="max-w-xl break-words text-sm leading-relaxed text-foreground/90">
 										{item.message}

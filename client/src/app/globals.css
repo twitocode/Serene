@@ -413,8 +413,15 @@
 
 /* Gentle breathing glow for hero elements */
 @keyframes breathe {
-	0%, 100% { opacity: 0.4; transform: scale(1); }
-	50% { opacity: 0.7; transform: scale(1.05); }
+	0%,
+	100% {
+		opacity: 0.4;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0.7;
+		transform: scale(1.05);
+	}
 }
 
 .animate-breathe {
@@ -423,8 +430,13 @@
 
 /* Soft ring pulse on focus-within for cards */
 @keyframes ring-pulse {
-	0%, 100% { box-shadow: 0 0 0 0 rgb(124 170 250 / 0.3); }
-	50% { box-shadow: 0 0 0 6px rgb(124 170 250 / 0); }
+	0%,
+	100% {
+		box-shadow: 0 0 0 0 rgb(124 170 250 / 0.3);
+	}
+	50% {
+		box-shadow: 0 0 0 6px rgb(124 170 250 / 0);
+	}
 }
 
 /* Decorative quote marks */
@@ -470,7 +482,11 @@
 
 /* Gradient text utility */
 .text-gradient-mochi {
-	background: linear-gradient(135deg, var(--mochi-body) 0%, var(--mochi-cheek) 100%);
+	background: linear-gradient(
+		135deg,
+		var(--mochi-body) 0%,
+		var(--mochi-cheek) 100%
+	);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	background-clip: text;

@@ -1,15 +1,15 @@
 "use client";
 
+import { ArrowRight, Flower2, Sparkles, Wind } from "lucide-react";
+import { motion } from "motion/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import RecentBadges from "@/lib/components/achievements/recent-badges";
 import { MochiDefault, MochiHappy } from "@/lib/components/common/mochi";
 import DateScroll from "@/lib/components/home/date-scroll";
 import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import { useUserQuery } from "@/lib/hooks/queries/use-user";
-import { ArrowRight, Flower2, Sparkles, Wind } from "lucide-react";
-import { motion } from "motion/react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 function getGreeting(): string {
 	const hour = new Date().getHours();

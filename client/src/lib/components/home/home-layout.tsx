@@ -1,4 +1,6 @@
 "use client";
+import { Leaf, Lock } from "lucide-react";
+import type { PropsWithChildren } from "react";
 import { MochiWhisper } from "@/lib/components/common/mochi-whisper";
 import AppSidebar from "@/lib/components/common/sidebar/app-sidebar";
 import { ThemeToggle } from "@/lib/components/common/theme-toggle";
@@ -11,8 +13,6 @@ import {
 import { useSettingsQuery } from "@/lib/hooks/queries/use-settings";
 import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import { usePasswordLockStore } from "@/lib/hooks/stores/lock-store";
-import { Leaf, Lock } from "lucide-react";
-import type { PropsWithChildren } from "react";
 
 export default function HomeLayout({ children }: PropsWithChildren) {
 	const { setLockState, isLocked } = usePasswordLockStore();
