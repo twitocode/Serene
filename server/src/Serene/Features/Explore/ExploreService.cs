@@ -245,7 +245,11 @@ public class ExploreService : IExploreService
         return totalAdded;
     }
 
-    private async Task<int> ExecuteBatchSearch(List<string> queries, int countPerQuery, string apiKey)
+    private async Task<int> ExecuteBatchSearch(
+        List<string> queries,
+        int countPerQuery,
+        string apiKey
+    )
     {
         var options = new RestClientOptions("https://google.serper.dev");
         var client = new RestClient(options);
@@ -253,12 +257,14 @@ public class ExploreService : IExploreService
         request.AddHeader("X-API-KEY", apiKey);
         request.AddHeader("Content-Type", "application/json");
 
-        var batchBody = queries.Select(q => new
-        {
-            q,
-            num = countPerQuery,
-            gl = "ca",
-        }).ToList();
+        var batchBody = queries
+            .Select(q => new
+            {
+                q,
+                num = countPerQuery,
+                gl = "ca",
+            })
+            .ToList();
 
         var body = JsonSerializer.Serialize(batchBody);
         request.AddStringBody(body, DataFormat.Json);
@@ -299,8 +305,10 @@ public class ExploreService : IExploreService
         }
 
         var query = "";
-        if (resultGroup.TryGetProperty("searchParameters", out var searchParams) &&
-            searchParams.TryGetProperty("q", out var qProp))
+        if (
+            resultGroup.TryGetProperty("searchParameters", out var searchParams)
+            && searchParams.TryGetProperty("q", out var qProp)
+        )
         {
             query = qProp.GetString() ?? "";
         }

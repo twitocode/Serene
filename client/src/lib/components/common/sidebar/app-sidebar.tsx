@@ -3,8 +3,10 @@
 import {
 	Activity,
 	CompassIcon,
+	FileText,
 	Handshake,
 	HouseHeart,
+	MessageSquare,
 	Pencil,
 	School,
 	ShieldUser,
@@ -66,11 +68,24 @@ const sections: NavSection[] = [
 		],
 	},
 	{
+		label: "Management",
 		items: [
 			{
-				title: "Admin",
+				title: "Content",
 				url: "/admin/content",
-				icon: ShieldUser,
+				icon: FileText,
+				role: "Admin",
+			},
+			{
+				title: "Schools",
+				url: "/admin/schools",
+				icon: School,
+				role: "Admin",
+			},
+			{
+				title: "Feedback",
+				url: "/admin/feedback",
+				icon: MessageSquare,
 				role: "Admin",
 			},
 		],
