@@ -7,7 +7,7 @@ export function ReturningStep() {
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			goNext();
-		}, 2000);
+		}, 1200);
 
 		return () => clearTimeout(timer);
 	}, [goNext]);

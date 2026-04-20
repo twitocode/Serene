@@ -77,6 +77,9 @@ export const stepSixSchema = z.object({
 	struggles: z.array(z.string()).min(1, "Please select at least one item"),
 });
 
+export const stepTwoCombinedSchema = stepTwoSchema.merge(stepThreeSchema);
+export const stepFiveCombinedSchema = stepFiveSchema.merge(stepSixSchema);
+
 export const onboardingFormSchema = z.object({
 	...stepOneSchema.shape,
 	...stepTwoSchema.shape,
@@ -92,6 +95,8 @@ export type StepThreeSchema = z.infer<typeof stepThreeSchema>;
 export type StepFourSchema = z.infer<typeof stepFourSchema>;
 export type StepFiveSchema = z.infer<typeof stepFiveSchema>;
 export type StepSixSchema = z.infer<typeof stepSixSchema>;
+export type StepTwoCombinedSchema = z.infer<typeof stepTwoCombinedSchema>;
+export type StepFiveCombinedSchema = z.infer<typeof stepFiveCombinedSchema>;
 export type OnboardingSchema = z.infer<typeof onboardingFormSchema>;
 
 export type StepOneValues = keyof z.infer<typeof stepOneSchema>;
@@ -100,4 +105,6 @@ export type StepThreeValues = keyof z.infer<typeof stepThreeSchema>;
 export type StepFourValues = keyof z.infer<typeof stepFourSchema>;
 export type StepFiveValues = keyof z.infer<typeof stepFiveSchema>;
 export type StepSixValues = keyof z.infer<typeof stepSixSchema>;
+export type StepTwoCombinedValues = keyof z.infer<typeof stepTwoCombinedSchema>;
+export type StepFiveCombinedValues = keyof z.infer<typeof stepFiveCombinedSchema>;
 export type OnboardingValues = keyof z.infer<typeof onboardingFormSchema>;

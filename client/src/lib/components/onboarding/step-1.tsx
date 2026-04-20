@@ -81,8 +81,8 @@ export function StepOne() {
 	return (
 		<div className="text-center space-y-6 max-w-md w-full">
 			<div className="space-y-2">
-				<h2 className="text-2xl font-semibold">What should we call you?</h2>
-				<p className="text-gray-500 text-sm">This is your username</p>
+				<h2 className="text-3xl font-semibold">Welcome to Serene!</h2>
+				<p className="text-gray-500 text-sm">What should we call you?</p>
 			</div>
 
 			<Form>
@@ -115,7 +115,7 @@ export function StepOne() {
 													}));
 												}
 											}}
-											className="bg-gray-100 border-0"
+											className="bg-white border border-border shadow-sm focus-visible:ring-primary/20 transition-all duration-200"
 											autoFocus
 											autoComplete="username"
 											onBlur={field.handleBlur}

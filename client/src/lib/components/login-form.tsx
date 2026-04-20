@@ -139,11 +139,11 @@ export function LoginForm({
 				<FormDescription>
 					{step === 1 ? (
 						<>
-							Don&apos;t have an account? <Link href="/signup">Sign up</Link>
+							Don&apos;t have an account? <Link href="/signup" className="font-semibold hover:underline">Sign up</Link>
 						</>
 					) : (
 						<>
-							Welcome back, <span className="font-medium">{email}</span>
+							Welcome back, <span className="font-medium" >{email}</span>
 						</>
 					)}
 				</FormDescription>

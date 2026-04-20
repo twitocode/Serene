@@ -1,14 +1,11 @@
 import type React from "react";
 import type { OnboardingState } from "@/lib/hooks/stores/onboarding-store";
-import { IntermediateStepOne } from "./intermediate-step-1";
 import { IntermediateStepTwo } from "./intermediate-step-2";
 import { ReturningStep } from "./returning-step";
 import { StepOne } from "./step-1";
-import { StepTwo } from "./step-2";
-import { StepThree } from "./step-3";
+import { StepTwoCombined } from "./step-2-combined";
 import { StepFour } from "./step-4";
-import { StepFive } from "./step-5";
-import { StepSix } from "./step-6";
+import { StepFiveCombined } from "./step-5-combined";
 
 export type StepConfig = {
 	uiStep: number;
@@ -27,51 +24,33 @@ export const ONBOARDING_STEPS: StepConfig[] = [
 	},
 	{
 		uiStep: 1,
-		component: IntermediateStepOne,
-		serverStep: 1,
-		progress: 1,
-	},
-	{
-		uiStep: 2,
 		component: StepOne,
 		serverStep: 1,
 		progress: 1,
 	},
 	{
-		uiStep: 3,
+		uiStep: 2,
 		component: IntermediateStepTwo,
 		serverStep: 2,
 		progress: 2,
 		shouldSkip: (state) => !!state.initialName,
 	},
 	{
-		uiStep: 4,
-		component: StepTwo,
+		uiStep: 3,
+		component: StepTwoCombined,
 		serverStep: 2,
 		progress: 2,
 	},
 	{
-		uiStep: 5,
-		component: StepThree,
-		serverStep: 3,
+		uiStep: 4,
+		component: StepFour,
+		serverStep: 4,
 		progress: 3,
 	},
 	{
-		uiStep: 6,
-		component: StepFour,
-		serverStep: 4,
-		progress: 4,
-	},
-	{
-		uiStep: 7,
-		component: StepFive,
+		uiStep: 5,
+		component: StepFiveCombined,
 		serverStep: 5,
-		progress: 5,
-	},
-	{
-		uiStep: 8,
-		component: StepSix,
-		serverStep: 6,
-		progress: 6,
+		progress: 4,
 	},
 ];

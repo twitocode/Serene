@@ -145,7 +145,7 @@ export function StepFour() {
 														if (!open) field.handleBlur();
 													}}
 												>
-													<SelectTrigger className="bg-gray-100 border-0 w-full">
+													<SelectTrigger className="bg-white border border-border shadow-sm focus-visible:ring-primary/20 transition-all duration-200 w-full">
 														<SelectValue placeholder="Select School" />
 													</SelectTrigger>
 													<SelectContent>
@@ -190,7 +190,7 @@ export function StepFour() {
 														if (!open) field.handleBlur();
 													}}
 												>
-													<SelectTrigger className="bg-gray-100 border-0 w-full">
+													<SelectTrigger className="bg-white border border-border shadow-sm focus-visible:ring-primary/20 transition-all duration-200 w-full">
 														<SelectValue placeholder="Select College" />
 													</SelectTrigger>
 													<SelectContent>
@@ -226,7 +226,7 @@ export function StepFour() {
 						<Button
 							onClick={goBack}
 							variant="outline"
-							className="flex-1"
+							className="flex-1 bg-white shadow-sm"
 							type="button"
 						>
 							<ChevronLeft className="w-4 h-4 mr-2" />
