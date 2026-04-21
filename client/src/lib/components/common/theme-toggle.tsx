@@ -1,6 +1,7 @@
 "use client";
 
-import { Laptop, Moon, Sun } from "lucide-react";
+import { Moneys, Moon, Sun1 } from "iconsax-reactjs";
+import { Laptop } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -40,19 +41,19 @@ export function ThemeToggle() {
 	if (!mounted) {
 		return (
 			<Button variant="outline" size="icon-sm" className="rounded-full">
-				<Sun className="size-4" />
+				<Sun1 variant="Bulk" size={16} color="currentColor" />
 				<span className="sr-only">Toggle theme</span>
 			</Button>
 		);
 	}
 
-	const Icon = theme === "dark" ? Moon : theme === "system" ? Laptop : Sun;
+	const Icon = theme === "dark" ? Moon : theme === "system" ? Laptop : Sun1;
 
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button variant="outline" size="icon-sm" className="rounded-full">
-					<Icon className="size-4 transition-all" />
+					<Icon variant="Bulk" size={16} color="currentColor" />
 					<span className="sr-only">Toggle theme</span>
 				</Button>
 			</DropdownMenuTrigger>

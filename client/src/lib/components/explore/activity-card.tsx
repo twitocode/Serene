@@ -3,9 +3,9 @@
 import { icons, type LucideIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import type { Activity } from "@/lib/types";
-import { getCurrentDate } from "@/lib/helpers/get-current-date";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { getCurrentDate } from "@/lib/helpers/get-current-date";
+import type { Activity } from "@/lib/types";
 
 interface ActivityCardProps {
 	activity: Activity;
@@ -24,45 +24,48 @@ function getIconComponent(iconName: string): LucideIcon {
 
 export function ActivityCard({ activity, index = 0 }: ActivityCardProps) {
 	const router = useRouter();
-  const isMobile = useIsMobile();
+	const isMobile = useIsMobile();
 
-	const categoryColors: Record<string, { bg: string; text: string; border: string }> = {
-		Mindfulness: { 
-			bg: "bg-periwinkle/15 dark:bg-periwinkle/25", 
+	const categoryColors: Record<
+		string,
+		{ bg: string; text: string; border: string }
+	> = {
+		Mindfulness: {
+			bg: "bg-periwinkle/15 dark:bg-periwinkle/25",
 			text: "text-periwinkle",
-			border: "border-periwinkle/20 dark:border-periwinkle/30"
+			border: "border-periwinkle/20 dark:border-periwinkle/30",
 		},
-		Movement: { 
-			bg: "bg-lime/15 dark:bg-lime/25", 
+		Movement: {
+			bg: "bg-lime/15 dark:bg-lime/25",
 			text: "text-lime",
-			border: "border-lime/20 dark:border-lime/30"
+			border: "border-lime/20 dark:border-lime/30",
 		},
-		Creative: { 
-			bg: "bg-coral/15 dark:bg-coral/25", 
+		Creative: {
+			bg: "bg-coral/15 dark:bg-coral/25",
 			text: "text-coral",
-			border: "border-coral/20 dark:border-coral/30"
+			border: "border-coral/20 dark:border-coral/30",
 		},
-		Social: { 
-			bg: "bg-sage/15 dark:bg-sage/25", 
+		Social: {
+			bg: "bg-sage/15 dark:bg-sage/25",
 			text: "text-sage",
-			border: "border-sage/20 dark:border-sage/30"
+			border: "border-sage/20 dark:border-sage/30",
 		},
-		"Self-Care": { 
-			bg: "bg-[#f0a694]/15 dark:bg-[#f0a694]/25", 
+		"Self-Care": {
+			bg: "bg-[#f0a694]/15 dark:bg-[#f0a694]/25",
 			text: "text-[#f0a694]",
-			border: "border-[#f0a694]/20 dark:border-[#f0a694]/30"
+			border: "border-[#f0a694]/20 dark:border-[#f0a694]/30",
 		},
-		Learning: { 
-			bg: "bg-cyan/15 dark:bg-cyan/20", 
+		Learning: {
+			bg: "bg-cyan/15 dark:bg-cyan/20",
 			text: "text-cyan",
-			border: "border-cyan/20 dark:border-cyan/30"
+			border: "border-cyan/20 dark:border-cyan/30",
 		},
 	};
 
 	const colors = categoryColors[activity.category] || {
 		bg: "bg-muted",
 		text: "text-muted-foreground",
-		border: "border-border"
+		border: "border-border",
 	};
 
 	const IconComponent = getIconComponent(activity.icon);
@@ -89,7 +92,9 @@ export function ActivityCard({ activity, index = 0 }: ActivityCardProps) {
 			</div>
 
 			<div className="flex items-center gap-2 mb-3">
-				<span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${colors.bg} ${colors.text} ${colors.border}`}>
+				<span
+					className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${colors.bg} ${colors.text} ${colors.border}`}
+				>
 					{activity.category}
 				</span>
 				<span className="text-xs text-muted-foreground">
@@ -105,7 +110,9 @@ export function ActivityCard({ activity, index = 0 }: ActivityCardProps) {
 			</p>
 
 			<div className="mt-4 flex items-center text-xs font-medium text-primary lg:opacity-0 group-hover:opacity-100 transition-opacity">
-				<span>{isMobile ? "Press to try this activity" :"Try this activity"}</span>
+				<span>
+					{isMobile ? "Press to try this activity" : "Try this activity"}
+				</span>
 				<svg
 					className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform"
 					fill="none"

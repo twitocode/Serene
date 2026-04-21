@@ -1,6 +1,6 @@
 "use client";
 
-import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
+import { ArrangeVertical, Logout, TickCircle } from "iconsax-reactjs";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import {
@@ -53,7 +53,9 @@ export function NavUser({}: NavUserProps) {
 								<span className="truncate font-medium">{user?.name}</span>
 								<span className="truncate text-xs">{user?.email}</span>
 							</div>
-							<ChevronsUpDown className="ml-auto size-4" />
+							<span className="ml-auto size-4 flex items-center justify-center">
+								<ArrangeVertical variant="Bulk" size={16} color="currentColor" />
+							</span>
 						</SidebarMenuButton>
 					</DropdownMenuTrigger>
 
@@ -82,9 +84,14 @@ export function NavUser({}: NavUserProps) {
 						<DropdownMenuSeparator />
 
 						<DropdownMenuGroup>
-							<Link href="/home/account" onClick={() => sidebar.isMobile && sidebar.setOpenMobile(false)}>
+							<Link
+								href="/home/account"
+								onClick={() => sidebar.isMobile && sidebar.setOpenMobile(false)}
+							>
 								<DropdownMenuItem>
-									<BadgeCheck className="mr-2 h-4 w-4" />
+									<span className="mr-2 size-4 flex items-center justify-center">
+										<TickCircle variant="Bulk" size={16} color="currentColor" />
+									</span>
 									Account Settings
 								</DropdownMenuItem>
 							</Link>
@@ -98,7 +105,9 @@ export function NavUser({}: NavUserProps) {
 								window.location.href = "/";
 							}}
 						>
-							<LogOut className="mr-2 h-4 w-4" />
+							<span className="mr-2 size-4 flex items-center justify-center">
+								<Logout variant="Bulk" size={16} color="currentColor" />
+							</span>
 							Log out
 						</DropdownMenuItem>
 					</DropdownMenuContent>

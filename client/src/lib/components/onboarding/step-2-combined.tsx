@@ -1,36 +1,36 @@
 "use client";
 
-import { useForm } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
-import { ChevronLeft } from "lucide-react";
-import { useState } from "react";
-import { completeStep2 } from "@/lib/client/onboarding-client";
+import { completeStep2, completeStep3 } from "@/lib/client/onboarding-client";
 import FormError from "@/lib/components/common/forms/form-error";
 import { OnboardingDatePicker } from "@/lib/components/onboarding/date-picker";
 import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/lib/components/ui/select";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/lib/components/ui/tanstack-form";
 import {
-	type StepTwoSchema,
-	type StepTwoValues,
-	stepTwoSchema,
+  type StepTwoCombinedSchema,
+  type StepTwoCombinedValues,
+  stepTwoCombinedSchema,
 } from "@/lib/validation";
+import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
+import { ArrowLeft2 } from "iconsax-reactjs";
+import { useState } from "react";
 
-export function StepTwo() {
+export function StepTwoCombined() {
 	const {
 		dateOfBirth,
 		setDateOfBirth,
@@ -38,51 +38,54 @@ export function StepTwo() {
 		setGender,
 		pronouns,
 		setPronouns,
-		completeServerStep,
+		countryCode: country,
+		setCountryCode: setCountry,
+		completeServerSteps,
 		goBack,
 		hasStarted,
 	} = useOnboardingStore((state) => state);
 	const [serverError, setServerError] = useState("");
 
 	const mutation = useMutation({
-		mutationFn: (values: {
-			dateOfBirth: string;
-			gender: string;
-			pronouns: string;
-		}) => completeStep2(values.dateOfBirth, values.gender, values.pronouns),
+		mutationFn: async (values: StepTwoCombinedSchema) => {
+			const res2 = await completeStep2(
+				values.dateOfBirth,
+				values.gender,
+				values.pronouns,
+			);
+			if (!res2.isSuccess) return res2;
+			return await completeStep3(values.countryCode);
+		},
 	});
 
-	const defaultValues: StepTwoSchema = {
+	const defaultValues: StepTwoCombinedSchema = {
 		dateOfBirth: hasStarted ? dateOfBirth : "",
 		gender: hasStarted && gender ? gender : "",
 		pronouns: hasStarted && pronouns ? pronouns : "",
+		countryCode: hasStarted && country ? country : "CA",
 	};
 
 	const form = useForm({
 		defaultValues,
 		validators: {
-			onSubmit: stepTwoSchema,
+			onSubmit: stepTwoCombinedSchema,
 		},
 		onSubmit: async ({ value }) => {
 			setDateOfBirth(value.dateOfBirth);
 			setGender(value.gender);
 			setPronouns(value.pronouns);
+			setCountry(value.countryCode);
 
-			const result = await mutation.mutateAsync({
-				dateOfBirth: value.dateOfBirth,
-				gender: value.gender,
-				pronouns: value.pronouns,
-			});
+			const result = await mutation.mutateAsync(value);
 
 			if (result.isSuccess) {
-				completeServerStep();
+				completeServerSteps(2);
 				return;
 			}
 
-			console.log(result);
 			if (result.errorCode === "VALIDATION_ERROR") {
 				Object.keys(result.errors!).forEach((key) => {
-					const fieldName = key.toLowerCase() as StepTwoValues;
+					const fieldName = key as StepTwoCombinedValues;
 					form.setFieldMeta(fieldName, (prev) => ({
 						...prev,
 						errorMap: {
@@ -140,11 +143,12 @@ export function StepTwo() {
 											/>
 										</div>
 									</FormControl>
-									<FormMessage />
+									<FormMessage className="text-left" />
 								</FormItem>
 							</FormField>
 						)}
 					</form.Field>
+
 					<div className="grid grid-cols-2 gap-4">
 						<form.Field name="gender">
 							{(field) => (
@@ -170,7 +174,7 @@ export function StepTwo() {
 													if (!open) field.handleBlur();
 												}}
 											>
-												<SelectTrigger className="bg-gray-100 border-0 w-full">
+												<SelectTrigger className="bg-white border border-border shadow-sm focus-visible:ring-primary/20 transition-all duration-200 w-full">
 													<SelectValue placeholder="Select gender" />
 												</SelectTrigger>
 												<SelectContent>
@@ -194,7 +198,6 @@ export function StepTwo() {
 								<FormField field={field}>
 									<FormItem>
 										<FormLabel>Pronouns</FormLabel>
-
 										<FormControl>
 											<Select
 												value={field.state.value}
@@ -214,7 +217,7 @@ export function StepTwo() {
 													if (!open) field.handleBlur();
 												}}
 											>
-												<SelectTrigger className="bg-gray-100 border-0  w-full">
+												<SelectTrigger className="bg-white border border-border shadow-sm focus-visible:ring-primary/20 transition-all duration-200 w-full">
 													<SelectValue placeholder="Select Pronouns" />
 												</SelectTrigger>
 												<SelectContent>
@@ -233,16 +236,17 @@ export function StepTwo() {
 							)}
 						</form.Field>
 					</div>
+
 					<FormError error={serverError} />
 
 					<div className="flex gap-4">
 						<Button
 							onClick={goBack}
 							variant="outline"
-							className="flex-1"
+							className="flex-1 bg-white shadow-sm"
 							type="button"
 						>
-							<ChevronLeft className="w-4 h-4 mr-2" />
+							<ArrowLeft2 variant="Outline" size={16} color="currentColor" className="mr-2" />
 							Back
 						</Button>
 						<form.Subscribe

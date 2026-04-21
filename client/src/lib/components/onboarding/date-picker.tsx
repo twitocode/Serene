@@ -57,7 +57,7 @@ export function OnboardingDatePicker({
 			<PopoverTrigger asChild>
 				<Button
 					variant="outline"
-					className="w-full justify-between font-normal bg-gray-100 border-0"
+					className="w-full justify-between font-normal bg-white border border-border shadow-sm focus-visible:ring-primary/20 transition-all duration-200"
 				>
 					<span className={displayDate ? "" : "text-muted-foreground"}>
 						{formatDisplayDate(displayDate)}

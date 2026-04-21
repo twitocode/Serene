@@ -41,7 +41,9 @@ export async function deleteContent(
 	});
 }
 
-export async function deleteAllContent(): Promise<Result<{ success: boolean }>> {
+export async function deleteAllContent(): Promise<
+	Result<{ success: boolean }>
+> {
 	return await apiFetch<{ success: boolean }>("/explore/all", {
 		method: "DELETE",
 	});

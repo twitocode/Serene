@@ -1,4 +1,4 @@
-import { Lock, LockOpen } from "lucide-react";
+import { Lock, Unlock } from "iconsax-reactjs";
 import { AnimatePresence, motion } from "motion/react";
 import React from "react";
 import { Input } from "@/lib/components/ui/input";
@@ -44,7 +44,7 @@ export default function PasswordLock() {
 							repeatDelay: 3,
 						}}
 					>
-						<Lock size={32} />
+						<Lock variant="Bulk" size={32} color="currentColor" />
 					</motion.div>
 				) : (
 					<motion.div
@@ -53,7 +53,7 @@ export default function PasswordLock() {
 						animate={{ rotate: 0, scale: 1 }}
 						transition={{ duration: 0.6, ease: "easeOut" }}
 					>
-						<LockOpen size={32} />
+						<Unlock variant="Bulk" size={32} color="currentColor" />
 					</motion.div>
 				)}
 			</AnimatePresence>

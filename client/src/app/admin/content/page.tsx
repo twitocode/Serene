@@ -1,12 +1,14 @@
 "use client";
 
-import { Loader2, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { Add, DocumentText, Edit2, SearchNormal, Trash } from "iconsax-reactjs";
+import { motion } from "motion/react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
 	addContent,
-	deleteAllContent,
 	type CreateExploreContentRequest,
+	deleteAllContent,
 	deleteContent,
 	getAllContent,
 	populateContent,
@@ -29,10 +31,16 @@ import {
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from "@/lib/components/ui/dialog";
 import { Input } from "@/lib/components/ui/input";
 import { Label } from "@/lib/components/ui/label";
+import {
+	MultiSelect,
+	MultiSelectContent,
+	MultiSelectItem,
+	MultiSelectTrigger,
+	MultiSelectValue,
+} from "@/lib/components/ui/multi-select";
 import {
 	Select,
 	SelectContent,
@@ -52,13 +60,19 @@ import { Textarea } from "@/lib/components/ui/textarea";
 import { STRUGGLES } from "@/lib/data";
 import type { ExploreContent } from "@/lib/types";
 
-import {
-	MultiSelect,
-	MultiSelectContent,
-	MultiSelectItem,
-	MultiSelectTrigger,
-	MultiSelectValue,
-} from "@/lib/components/ui/multi-select";
+const stagger = {
+	container: {
+		animate: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
+	},
+	item: {
+		initial: { opacity: 0, y: 14 },
+		animate: {
+			opacity: 1,
+			y: 0,
+			transition: { duration: 0.45 },
+		},
+	},
+} as const;
 
 export default function ContentAdminPage() {
 	const [content, setContent] = useState<ExploreContent[]>([]);
@@ -132,7 +146,9 @@ export default function ContentAdminPage() {
 			.map((q) => q.trim())
 			.filter((q) => q.length > 0);
 
-		const queries = [...new Set([...populateData.selectedTopics, ...textQueries])];
+		const queries = [
+			...new Set([...populateData.selectedTopics, ...textQueries]),
+		];
 
 		if (queries.length === 0) {
 			toast.error("Please enter at least one query or select a topic");
@@ -227,83 +243,156 @@ export default function ContentAdminPage() {
 	};
 
 	return (
-		<div className="space-y-6">
-			<div className="flex justify-between items-center">
-				<h2 className="text-3xl font-bold tracking-tight">
-					Content Management
-				</h2>
-				<div className="flex gap-2">
-					<Button
-						variant="destructive"
-						onClick={() => setIsDeleteAllAlertOpen(true)}
-						disabled={content.length === 0}
-					>
-						<Trash2 className="mr-2 h-4 w-4" /> Delete All
-					</Button>
-					<Button
-						variant="outline"
-						onClick={() => setIsPopulateDialogOpen(true)}
-					>
-						<Search className="mr-2 h-4 w-4" /> Populate from Search
-					</Button>
-					<Button onClick={openAddDialog}>
-						<Plus className="mr-2 h-4 w-4" /> Add Content
-					</Button>
-				</div>
-			</div>
+		<div className="relative mx-auto flex min-h-full max-w-6xl flex-col gap-10 px-4 py-6 md:py-10">
+			{/* Header */}
+			<motion.div
+				variants={stagger.container}
+				initial="initial"
+				animate="animate"
+				className="flex flex-col gap-2"
+			>
+				<motion.div
+					variants={stagger.item}
+					className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between"
+				>
+					<div className="flex flex-col gap-2">
+						<div className="flex items-center gap-2">
+							<div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+								<DocumentText variant="Bulk" size={16} color="currentColor" />
+							</div>
+							<p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+								Management
+							</p>
+						</div>
+						<h1 className="font-serif text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
+							Content Library
+						</h1>
+					</div>
 
-			<div className="border rounded-lg">
+					<div className="flex flex-wrap gap-2">
+						<Button
+							variant="destructive"
+							size="sm"
+							className="rounded-full h-9 font-medium"
+							onClick={() => setIsDeleteAllAlertOpen(true)}
+							disabled={content.length === 0}
+						>
+							<Trash variant="Bulk" size={16} color="currentColor" className="mr-2" /> Delete All
+						</Button>
+						<Button
+							variant="outline"
+							size="sm"
+							className="rounded-full h-9 font-medium"
+							onClick={() => setIsPopulateDialogOpen(true)}
+						>
+							<SearchNormal variant="Bulk" size={16} color="currentColor" className="mr-2" /> Auto-Populate
+						</Button>
+						<Button
+							size="sm"
+							className="rounded-full h-9 font-medium btn-playful"
+							onClick={openAddDialog}
+						>
+							<Add variant="Bulk" size={16} color="currentColor" className="mr-2" /> Add Content
+						</Button>
+					</div>
+				</motion.div>
+			</motion.div>
+
+			<motion.div
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.5, delay: 0.1 }}
+				className="card-glass overflow-hidden shadow-md"
+			>
 				<Table>
 					<TableHeader>
-						<TableRow>
-							<TableHead>Title</TableHead>
-							<TableHead>Type</TableHead>
-							<TableHead>Description</TableHead>
-							<TableHead className="w-[100px]">Actions</TableHead>
+						<TableRow className="hover:bg-transparent border-sidebar-border/60">
+							<TableHead className="font-semibold text-foreground">
+								Content
+							</TableHead>
+							<TableHead className="font-semibold text-foreground">
+								Type
+							</TableHead>
+							<TableHead className="font-semibold text-foreground">
+								Description
+							</TableHead>
+							<TableHead className="w-[100px] font-semibold text-foreground text-right pr-6">
+								Actions
+							</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
 						{isLoading && content.length === 0 ? (
 							<TableRow>
-								<TableCell colSpan={4} className="h-24 text-center">
-									<Loader2 className="h-6 w-6 animate-spin mx-auto" />
+								<TableCell colSpan={4} className="h-48 text-center">
+									<div className="flex flex-col items-center gap-2 text-muted-foreground">
+										<Loader2 className="h-8 w-8 animate-spin" />
+										<p className="text-sm font-medium">
+											Loading content library...
+										</p>
+									</div>
 								</TableCell>
 							</TableRow>
 						) : content.length === 0 ? (
 							<TableRow>
-								<TableCell colSpan={4} className="h-24 text-center">
-									No content found.
+								<TableCell colSpan={4} className="h-48 text-center">
+									<p className="text-muted-foreground font-medium">
+										No content found.
+									</p>
 								</TableCell>
 							</TableRow>
 						) : (
 							content.map((item) => (
-								<TableRow key={item.id}>
-									<TableCell className="font-medium max-w-[300px] truncate">
-										{item.title}
-									</TableCell>
-									<TableCell>{item.type}</TableCell>
-									<TableCell className="max-w-md truncate">
-										{item.description}
+								<TableRow
+									key={item.id}
+									className="border-sidebar-border/40 hover:bg-sidebar-accent/30 transition-colors"
+								>
+									<TableCell className="max-w-[300px]">
+										<div className="flex flex-col gap-0.5 min-w-0">
+											<span className="font-semibold text-foreground truncate">
+												{item.title}
+											</span>
+											<span className="text-[10px] font-mono text-muted-foreground truncate uppercase tracking-tight">
+												{item.url}
+											</span>
+										</div>
 									</TableCell>
 									<TableCell>
-										<div className="flex gap-2">
+										<span
+											className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
+												item.type === "Article"
+													? "text-primary bg-primary/10"
+													: "text-warm bg-warm/10"
+											}`}
+										>
+											{item.type}
+										</span>
+									</TableCell>
+									<TableCell className="max-w-md">
+										<p className="text-sm text-muted-foreground line-clamp-1">
+											{item.description}
+										</p>
+									</TableCell>
+									<TableCell className="text-right pr-4">
+										<div className="flex justify-end gap-1">
 											<Button
 												variant="ghost"
 												size="icon"
+												className="h-8 w-8 rounded-lg hover:bg-sidebar-accent"
 												onClick={() => openEditDialog(item)}
 											>
-												<Pencil className="h-4 w-4" />
+												<Edit2 variant="Bulk" size={14} color="currentColor" />
 											</Button>
 											<Button
 												variant="ghost"
 												size="icon"
-												className="text-red-500 hover:text-red-600"
+												className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10"
 												onClick={() => {
 													setDeletingId(item.id);
 													setIsAlertOpen(true);
 												}}
 											>
-												<Trash2 className="h-4 w-4" />
+												<Trash variant="Bulk" size={14} color="currentColor" />
 											</Button>
 										</div>
 									</TableCell>
@@ -312,103 +401,140 @@ export default function ContentAdminPage() {
 						)}
 					</TableBody>
 				</Table>
-			</div>
+			</motion.div>
 
 			<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-				<DialogContent className="sm:max-w-[425px]">
-					<DialogHeader>
-						<DialogTitle>
-							{editingItem ? "Edit Content" : "Add Content"}
-						</DialogTitle>
-					</DialogHeader>
-					<form onSubmit={handleSubmit} className="space-y-4">
-						<div className="space-y-2">
-							<Label htmlFor="title">Title</Label>
-							<Input
-								id="title"
-								required
-								value={formData.title}
-								onChange={(e) =>
-									setFormData({ ...formData, title: e.target.value })
-								}
-							/>
-						</div>
-						<div className="space-y-2">
-							<Label htmlFor="type">Type</Label>
-							<Select
-								value={formData.type}
-								onValueChange={(value: "Article" | "Video") =>
-									setFormData({ ...formData, type: value })
-								}
-							>
-								<SelectTrigger>
-									<SelectValue placeholder="Select type" />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value="Article">Article</SelectItem>
-									<SelectItem value="Video">Video</SelectItem>
-								</SelectContent>
-							</Select>
-						</div>
-						<div className="space-y-2">
-							<Label htmlFor="url">URL</Label>
-							<div className="flex gap-2">
-								<Input
-									id="url"
-									type="url"
-									required
-									value={formData.url}
-									onChange={(e) =>
-										setFormData({ ...formData, url: e.target.value })
-									}
-									placeholder="https://example.com"
-								/>
-								<Button
-									type="button"
-									variant="outline"
-									onClick={handleScrape}
-									disabled={isScraping || !formData.url}
+				<DialogContent className="sm:max-w-[500px] card-glass border-none shadow-2xl p-0 overflow-hidden">
+					<div className="p-6 space-y-6">
+						<DialogHeader>
+							<h2 className="font-serif text-2xl font-semibold">
+								{editingItem ? "Edit Content" : "Add New Content"}
+							</h2>
+						</DialogHeader>
+						<form onSubmit={handleSubmit} className="space-y-4">
+							<div className="space-y-2">
+								<Label
+									htmlFor="title"
+									className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
 								>
-									{isScraping ? (
-										<Loader2 className="h-4 w-4 animate-spin" />
-									) : (
-										"Auto-fill"
+									Title
+								</Label>
+								<Input
+									id="title"
+									required
+									className="rounded-xl bg-sidebar-accent/50 h-11"
+									value={formData.title}
+									onChange={(e) =>
+										setFormData({ ...formData, title: e.target.value })
+									}
+								/>
+							</div>
+							<div className="grid grid-cols-2 gap-4">
+								<div className="space-y-2">
+									<Label
+										htmlFor="type"
+										className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+									>
+										Type
+									</Label>
+									<Select
+										value={formData.type}
+										onValueChange={(value: "Article" | "Video") =>
+											setFormData({ ...formData, type: value })
+										}
+									>
+										<SelectTrigger className="rounded-xl bg-sidebar-accent/50 h-11">
+											<SelectValue placeholder="Select type" />
+										</SelectTrigger>
+										<SelectContent className="card-glass border-none shadow-xl">
+											<SelectItem value="Article">Article</SelectItem>
+											<SelectItem value="Video">Video</SelectItem>
+										</SelectContent>
+									</Select>
+								</div>
+								<div className="space-y-2">
+									<Label
+										htmlFor="tags"
+										className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+									>
+										Tags
+									</Label>
+									<Input
+										id="tags"
+										className="rounded-xl bg-sidebar-accent/50 h-11"
+										value={formData.tags}
+										onChange={(e) =>
+											setFormData({ ...formData, tags: e.target.value })
+										}
+										placeholder="anxiety, stress..."
+									/>
+								</div>
+							</div>
+							<div className="space-y-2">
+								<Label
+									htmlFor="url"
+									className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+								>
+									URL
+								</Label>
+								<div className="flex gap-2">
+									<Input
+										id="url"
+										type="url"
+										required
+										className="rounded-xl bg-sidebar-accent/50 h-11"
+										value={formData.url}
+										onChange={(e) =>
+											setFormData({ ...formData, url: e.target.value })
+										}
+										placeholder="https://..."
+									/>
+									<Button
+										type="button"
+										variant="secondary"
+										className="rounded-xl px-4 h-11 font-medium"
+										onClick={handleScrape}
+										disabled={isScraping || !formData.url}
+									>
+										{isScraping ? (
+											<Loader2 className="h-4 w-4 animate-spin" />
+										) : (
+											"Auto-fill"
+										)}
+									</Button>
+								</div>
+							</div>
+							<div className="space-y-2">
+								<Label
+									htmlFor="description"
+									className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+								>
+									Description
+								</Label>
+								<Textarea
+									id="description"
+									required
+									className="rounded-xl bg-sidebar-accent/50 min-h-[100px] resize-none"
+									value={formData.description}
+									onChange={(e) =>
+										setFormData({ ...formData, description: e.target.value })
+									}
+								/>
+							</div>
+							<div className="flex justify-end pt-2">
+								<Button
+									type="submit"
+									disabled={isLoading}
+									className="w-full btn-playful h-11"
+								>
+									{isLoading && (
+										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
 									)}
+									{editingItem ? "Update Content" : "Create Content"}
 								</Button>
 							</div>
-						</div>
-						<div className="space-y-2">
-							<Label htmlFor="description">Description</Label>
-							<Textarea
-								id="description"
-								required
-								value={formData.description}
-								onChange={(e) =>
-									setFormData({ ...formData, description: e.target.value })
-								}
-							/>
-						</div>
-						<div className="space-y-2">
-							<Label htmlFor="tags">
-								Tags{" "}
-								<span className="text-xs text-gray-500">(comma separated)</span>
-							</Label>
-							<Input
-								id="tags"
-								value={formData.tags}
-								onChange={(e) =>
-									setFormData({ ...formData, tags: e.target.value })
-								}
-								placeholder="anxiety, stress, sleep"
-							/>
-						</div>
-						<div className="flex justify-end pt-4">
-							<Button type="submit" disabled={isLoading}>
-								{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-								Save
-							</Button>
-						</div>
-					</form>
+						</form>
+					</div>
 				</DialogContent>
 			</Dialog>
 
@@ -416,94 +542,114 @@ export default function ContentAdminPage() {
 				open={isPopulateDialogOpen}
 				onOpenChange={setIsPopulateDialogOpen}
 			>
-				<DialogContent className="sm:max-w-[425px]">
-					<DialogHeader>
-						<DialogTitle>Populate from Search</DialogTitle>
-					</DialogHeader>
-					<form onSubmit={handlePopulate} className="space-y-4">
-						<div className="space-y-2">
-							<Label>Select Topics (Optional)</Label>
-							<MultiSelect
-								values={populateData.selectedTopics}
-								onValuesChange={(values) =>
-									setPopulateData({ ...populateData, selectedTopics: values })
-								}
-							>
-								<MultiSelectTrigger className="w-full">
-									<MultiSelectValue
-										placeholder="Select struggles..."
-										overflowBehavior="wrap"
-									/>
-								</MultiSelectTrigger>
-								<MultiSelectContent>
-									{STRUGGLES.map((struggle) => (
-										<MultiSelectItem key={struggle} value={struggle}>
-											{struggle}
-										</MultiSelectItem>
-									))}
-								</MultiSelectContent>
-							</MultiSelect>
-						</div>
-						<div className="space-y-2">
-							<Label htmlFor="query">
-								Additional Search Queries
-								<span className="text-xs text-gray-500 block">
-									(One per line or comma separated)
-								</span>
-							</Label>
-							<Textarea
-								id="query"
-								value={populateData.query}
-								onChange={(e) =>
-									setPopulateData({ ...populateData, query: e.target.value })
-								}
-								placeholder="e.g. mental health resources for students"
-								rows={3}
-							/>
-						</div>
-						<div className="space-y-2">
-							<Label htmlFor="count">Items per Query (Max 100)</Label>
-							<Input
-								id="count"
-								type="number"
-								min="1"
-								max="100"
-								required
-								value={populateData.count}
-								onChange={(e) =>
-									setPopulateData({
-										...populateData,
-										count: parseInt(e.target.value),
-									})
-								}
-							/>
-						</div>
-						<div className="flex justify-end pt-4">
-							<Button type="submit" disabled={isPopulating}>
-								{isPopulating && (
-									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-								)}
-								Populate
-							</Button>
-						</div>
-					</form>
+				<DialogContent className="sm:max-w-[450px] card-glass border-none shadow-2xl p-0 overflow-hidden">
+					<div className="p-6 space-y-6">
+						<DialogHeader>
+							<h2 className="font-serif text-2xl font-semibold">
+								Auto-Populate Library
+							</h2>
+						</DialogHeader>
+						<form onSubmit={handlePopulate} className="space-y-5">
+							<div className="space-y-2">
+								<Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+									Select Topics
+								</Label>
+								<MultiSelect
+									values={populateData.selectedTopics}
+									onValuesChange={(values) =>
+										setPopulateData({ ...populateData, selectedTopics: values })
+									}
+								>
+									<MultiSelectTrigger className="w-full rounded-xl bg-sidebar-accent/50 min-h-11">
+										<MultiSelectValue
+											placeholder="Choose struggles..."
+											overflowBehavior="wrap"
+										/>
+									</MultiSelectTrigger>
+									<MultiSelectContent className="card-glass border-none shadow-xl max-h-60">
+										{STRUGGLES.map((struggle) => (
+											<MultiSelectItem key={struggle} value={struggle}>
+												{struggle}
+											</MultiSelectItem>
+										))}
+									</MultiSelectContent>
+								</MultiSelect>
+							</div>
+							<div className="space-y-2">
+								<Label
+									htmlFor="query"
+									className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+								>
+									Additional Search Queries
+								</Label>
+								<Textarea
+									id="query"
+									className="rounded-xl bg-sidebar-accent/50 min-h-[80px] resize-none"
+									value={populateData.query}
+									onChange={(e) =>
+										setPopulateData({ ...populateData, query: e.target.value })
+									}
+									placeholder="e.g. mindfulness exercises for university students"
+								/>
+							</div>
+							<div className="space-y-2">
+								<Label
+									htmlFor="count"
+									className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+								>
+									Items per Query
+								</Label>
+								<Input
+									id="count"
+									type="number"
+									min="1"
+									max="100"
+									required
+									className="rounded-xl bg-sidebar-accent/50 h-11"
+									value={populateData.count}
+									onChange={(e) =>
+										setPopulateData({
+											...populateData,
+											count: parseInt(e.target.value),
+										})
+									}
+								/>
+							</div>
+							<div className="flex justify-end pt-2">
+								<Button
+									type="submit"
+									disabled={isPopulating}
+									className="w-full btn-playful h-11"
+								>
+									{isPopulating && (
+										<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									)}
+									Populate Content
+								</Button>
+							</div>
+						</form>
+					</div>
 				</DialogContent>
 			</Dialog>
 
 			<AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
-				<AlertDialogContent>
+				<AlertDialogContent className="card-glass border-none shadow-2xl">
 					<AlertDialogHeader>
-						<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-						<AlertDialogDescription>
-							This action cannot be undone. This will permanently delete the
-							content from the database.
+						<AlertDialogTitle className="font-serif text-2xl">
+							Remove this content?
+						</AlertDialogTitle>
+						<AlertDialogDescription className="text-muted-foreground">
+							This item will be permanently removed from the student content
+							library.
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogCancel className="rounded-full">
+							Cancel
+						</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={handleDelete}
-							className="bg-red-600 hover:bg-red-700"
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full"
 						>
 							Delete
 						</AlertDialogAction>
@@ -515,24 +661,28 @@ export default function ContentAdminPage() {
 				open={isDeleteAllAlertOpen}
 				onOpenChange={setIsDeleteAllAlertOpen}
 			>
-				<AlertDialogContent>
+				<AlertDialogContent className="card-glass border-none shadow-2xl">
 					<AlertDialogHeader>
-						<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-						<AlertDialogDescription>
-							This action cannot be undone. This will permanently delete ALL {" "}
-							<span className="font-bold text-foreground">
+						<AlertDialogTitle className="font-serif text-2xl text-destructive">
+							Wipe Content Library?
+						</AlertDialogTitle>
+						<AlertDialogDescription className="text-muted-foreground leading-relaxed">
+							You are about to delete{" "}
+							<span className="font-bold text-foreground underline decoration-destructive">
 								{content.length}
 							</span>{" "}
-							admin content items from the database. Let's hope you know what you're doing.
+							items. This action is destructive and irreversible.
 						</AlertDialogDescription>
 					</AlertDialogHeader>
-					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
+					<AlertDialogFooter className="flex-col gap-2 sm:flex-row">
+						<AlertDialogCancel className="rounded-full">
+							Nevermind
+						</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={handleDeleteAll}
-							className="bg-red-600 hover:bg-red-700 font-bold"
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full font-bold"
 						>
-							DELETE ALL
+							WIPE ALL DATA
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

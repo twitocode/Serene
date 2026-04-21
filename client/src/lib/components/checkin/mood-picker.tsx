@@ -1,11 +1,15 @@
-import { Check } from "lucide-react";
+import { TickCircle } from "iconsax-reactjs";
 import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
 import { getMoodTypeColour, MOODS, type MoodType } from "@/lib/data/moods";
 import { useIsMobile } from "@/lib/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 interface Props {
-	Icon: React.ComponentType<{ color?: string; strokeWidth: number }>;
+	Icon: React.ComponentType<{
+		color?: string;
+		variant?: "Outline" | "Linear" | "Broken" | "Bold" | "Bulk" | "TwoTone";
+		size?: number;
+	}>;
 	type: MoodType;
 	scrollToBottom: () => void;
 }
@@ -68,7 +72,7 @@ export default function MoodPicker({ type, Icon, scrollToBottom }: Props) {
 						shell.iconRing,
 					)}
 				>
-					<Icon color={getMoodTypeColour(type)} strokeWidth={2.25} />
+					<Icon color={getMoodTypeColour(type)} variant="Bulk" size={22} />
 				</div>
 				<div className="min-w-0">
 					<h2
@@ -105,11 +109,9 @@ export default function MoodPicker({ type, Icon, scrollToBottom }: Props) {
 							}}
 						>
 							{isSelected ? (
-								<Check
-									className="size-4 shrink-0 text-primary-foreground"
-									strokeWidth={2.5}
-									aria-hidden
-								/>
+								<span className="size-4 shrink-0" aria-hidden>
+									<TickCircle variant="Bulk" size={16} color="currentColor" />
+								</span>
 							) : null}
 							<span>{x.label}</span>
 						</button>

@@ -41,7 +41,10 @@ export const auth = {
 	},
 
 	signOut: async (): Promise<Result<{ success: boolean; message: string }>> => {
-		document.cookie = "session_token=; max-age=0; path=/;";
+		// Try to clear cookie manually as well
+		document.cookie = "session_token=; max-age=0; path=/; SameSite=Lax";
+		document.cookie = "session_token=; max-age=0; path=/; SameSite=None; Secure";
+		
 		return apiFetch<{ success: boolean; message: string }>("/auth/sign-out", {
 			method: "POST",
 		});

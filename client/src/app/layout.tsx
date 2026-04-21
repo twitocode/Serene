@@ -45,7 +45,14 @@ export default function RootLayout({
 				className={`${ibmPlexMono.variable} ${lora.variable} ${plusJakarta.variable} font-sans antialiased`}
 			>
 				<Providers>{children}</Providers>
-				<Toaster position="top-right" />
+				<Toaster
+					position="top-right"
+					toastOptions={{
+						style: {
+							marginTop: "64px",
+						},
+					}}
+				/>
 			</body>
 		</html>
 	);

@@ -1,4 +1,4 @@
-import { Lightbulb, Sparkles } from "lucide-react";
+import { Lamp, Magicpen } from "iconsax-reactjs";
 import { motion } from "motion/react";
 import { type FormEventHandler, useEffect, useRef } from "react";
 import { MochiDefault } from "@/lib/components/common/mochi";
@@ -14,9 +14,9 @@ import {
 	CardTitle,
 } from "@/lib/components/ui/card";
 import { Textarea } from "@/lib/components/ui/textarea";
+import { useReframeMutation } from "@/lib/hooks/queries/use-reframe";
 import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import type { ReframeResponse } from "@/lib/types/api-types";
-import { useReframeMutation } from "@/lib/hooks/queries/use-reframe";
 
 export default function ReframingStep() {
 	const {
@@ -111,7 +111,9 @@ export default function ReframingStep() {
 					<Card className="border-primary/20 bg-primary/5 shadow-sm">
 						<CardHeader className="pb-3">
 							<div className="flex items-center gap-2">
-								<Sparkles className="size-4 text-primary" />
+								<span className="mt-0.5 size-4 shrink-0 flex items-center justify-center">
+									<Magicpen variant="Bulk" size={16} color="currentColor" />
+								</span>
 								<CardTitle className="text-sm font-semibold text-primary">
 									{mochiName}&apos;s insight
 								</CardTitle>
@@ -128,7 +130,9 @@ export default function ReframingStep() {
 						<CardContent className="space-y-4">
 							{aiResult.socraticQuestion && (
 								<div className="flex gap-2">
-									<Lightbulb className="mt-0.5 size-4 shrink-0 text-amber-500" />
+									<span className="mt-0.5 size-4 shrink-0 flex items-center justify-center">
+									<Lamp variant="Bulk" size={16} color="currentColor" />
+								</span>
 									<p className="text-sm leading-relaxed text-foreground">
 										{aiResult.socraticQuestion}
 									</p>

@@ -1,7 +1,7 @@
 "use client";
 
 import { isToday } from "date-fns";
-import { Activity, MessageCircle } from "lucide-react";
+import { Activity, MessageCircle } from "iconsax-reactjs";
 import { motion } from "motion/react";
 import { useEffect } from "react";
 import CheckinFlow from "@/lib/components/checkin/checkin-flow";
@@ -91,7 +91,11 @@ export default function CheckinPage() {
 							className="btn-playful w-full sm:w-auto"
 							onClick={onStartCheckin}
 						>
-							{checkins && checkins.length > 0 ? "Check in again" : (isToday(displayDate) ? "Start check-in" : "Add check-in")}
+							{checkins && checkins.length > 0
+								? "Check in again"
+								: isToday(displayDate)
+									? "Start check-in"
+									: "Add check-in"}
 						</Button>
 					</div>
 				</div>
@@ -176,7 +180,9 @@ export default function CheckinPage() {
 												checkin.reframedThought) && (
 												<div className="space-y-4 rounded-xl border border-border/60 bg-muted/20 p-4">
 													<h4 className="flex items-center gap-2 font-serif text-base font-medium">
-														<MessageCircle className="size-4 text-primary" />
+														<span className="size-4 flex items-center justify-center">
+															<MessageCircle variant="Bulk" size={16} color="currentColor" />
+														</span>
 														Thoughts &amp; reframe
 													</h4>
 													{checkin.lingeringThoughts && (
@@ -210,7 +216,9 @@ export default function CheckinPage() {
 												Object.keys(checkin.somaticState).length > 0 && (
 													<div className="space-y-4 rounded-xl border border-border/60 bg-muted/20 p-4">
 														<h4 className="flex items-center gap-2 font-serif text-base font-medium">
-															<Activity className="size-4 text-primary" />
+															<span className="size-4 flex items-center justify-center">
+															<Activity variant="Bulk" size={16} color="currentColor" />
+														</span>
 															Body check-in
 														</h4>
 														<div className="flex flex-col gap-3">

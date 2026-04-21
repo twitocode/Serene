@@ -30,6 +30,12 @@ export function useCompleteCheckinMutation(date: string) {
 			queryClient.invalidateQueries({
 				queryKey: ["checkins", date],
 			});
+			queryClient.invalidateQueries({
+				queryKey: ["user"],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["achievements"],
+			});
 		},
 	});
 }

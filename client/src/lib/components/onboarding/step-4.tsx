@@ -1,39 +1,26 @@
 "use client";
 
-import { useForm } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
-import { ChevronLeft } from "lucide-react";
-import { useState } from "react";
 import { completeStep4 } from "@/lib/client/onboarding-client";
 import FormError from "@/lib/components/common/forms/form-error";
 import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/lib/components/ui/select";
-import {
-	Tabs,
-	TabsContent,
-	TabsList,
-	TabsTrigger,
-} from "@/lib/components/ui/tabs";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem
 } from "@/lib/components/ui/tanstack-form";
-import { colleges, schools, universities } from "@/lib/data";
+import { schools } from "@/lib/data";
 import {
-	type StepFourSchema,
-	type StepFourValues,
-	stepFourSchema,
+    type StepFourSchema,
+    type StepFourValues,
+    stepFourSchema,
 } from "@/lib/validation";
+import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
+import { ArrowLeft2 } from "iconsax-reactjs";
+import Image from "next/image";
+import { useState } from "react";
 
 export function StepFour() {
 	const { school, setSchool, completeServerStep, goBack, hasStarted } =
@@ -48,7 +35,7 @@ export function StepFour() {
 	});
 
 	const defaultValues: StepFourSchema = {
-		name: hasStarted && school ? school : "",
+		name: hasStarted && school ? school : "McMaster University",
 
 		countryCode: "CA",
 
@@ -94,9 +81,26 @@ export function StepFour() {
 	return (
 		<div className="text-center space-y-6 max-w-md w-full">
 			<div className="space-y-2">
-				<h2 className="text-2xl font-semibold">What school do you attend?</h2>
-				<p className="text-gray-500 text-sm">
-					Select your university or college
+				<h2 className="text-2xl font-semibold">Disclaimer</h2>
+
+			</div>
+
+			<div className="">
+				<div className="flex items-center gap-4 rounded-t-2xl border-2 border-b-0 border-primary/20 bg-primary/5 p-6">
+					<Image
+						src="/university_logos/McMaster University.jpg"
+						alt="McMaster Logo"
+						width={60}
+						height={60}
+						className="h-15 w-auto object-contain rounded-md bg-white shadow-sm shrink-0"
+					/>
+					<div className="text-left">
+						<h3 className="text-xl font-bold">McMaster University</h3>
+						<p className="text-sm text-muted-foreground">Hamilton, Ontario</p>
+					</div>
+				</div>
+				<p className="text-sm font-medium text-primary bg-primary/10 px-4 py-2 rounded-b-2xl   inline-block mx-auto border-2 border-primary/20 bg-primary/5">
+					Serene is currently available exclusively for McMaster University students.
 				</p>
 			</div>
 
@@ -112,107 +116,23 @@ export function StepFour() {
 						{(field) => (
 							<FormField field={field}>
 								<FormItem>
-									<Tabs
-										value={activeTab}
-										onValueChange={setActiveTab}
-										className="w-full"
-									>
-										<TabsList className="grid w-full grid-cols-2">
-											<TabsTrigger value="universities">
-												Universities
-											</TabsTrigger>
-											<TabsTrigger value="colleges">Colleges</TabsTrigger>
-										</TabsList>
-
-										<TabsContent value="universities" className="space-y-4">
-											<FormControl>
-												<Select
-													value={field.state.value}
-													onValueChange={(value) => {
-														field.handleChange(value);
-														if (field.state.meta.errorMap.onSubmit) {
-															field.setMeta((prev) => ({
-																...prev,
-																errorMap: {
-																	...prev.errorMap,
-																	onSubmit: undefined,
-																},
-															}));
-														}
-													}}
-													onOpenChange={(open) => {
-														if (!open) field.handleBlur();
-													}}
-												>
-													<SelectTrigger className="bg-gray-100 border-0 w-full">
-														<SelectValue placeholder="Select School" />
-													</SelectTrigger>
-													<SelectContent>
-														{universities.map(({ name, logo }) => (
-															<SelectItem key={name} value={name!}>
-																<div className="flex items-center gap-2">
-																	{logo && <img src={logo} alt="" className="w-5 h-5 object-contain" />}
-																	<span>{name}</span>
-																</div>
-															</SelectItem>
-														))}
-													</SelectContent>
-												</Select>
-											</FormControl>
-										</TabsContent>
-
-										<TabsContent value="colleges" className="space-y-4">
-											<FormControl>
-												<Select
-													value={field.state.value}
-													onValueChange={(value) => {
-														field.handleChange(value);
-														if (field.state.meta.errorMap.onSubmit) {
-															field.setMeta((prev) => ({
-																...prev,
-																errorMap: {
-																	...prev.errorMap,
-																	onSubmit: undefined,
-																},
-															}));
-														}
-													}}
-													onOpenChange={(open) => {
-														if (!open) field.handleBlur();
-													}}
-												>
-													<SelectTrigger className="bg-gray-100 border-0 w-full">
-														<SelectValue placeholder="Select College" />
-													</SelectTrigger>
-													<SelectContent>
-														{colleges.map(({ name, logo }) => (
-															<SelectItem key={name} value={name!}>
-																<div className="flex items-center gap-2">
-																	{logo && <img src={logo} alt="" className="w-5 h-5 object-contain" />}
-																	<span>{name}</span>
-																</div>
-															</SelectItem>
-														))}
-													</SelectContent>
-												</Select>
-											</FormControl>
-										</TabsContent>
-									</Tabs>
-									<FormMessage />
+									<FormControl>
+										<input type="hidden" name={field.name} value="McMaster University" />
+									</FormControl>
 								</FormItem>
 							</FormField>
 						)}
 					</form.Field>
 					<FormError error={serverError} />
 
-					<div className="flex gap-4">
+					<div className="flex gap-4 pt-4">
 						<Button
 							onClick={goBack}
 							variant="outline"
-							className="flex-1"
+							className="flex-1 bg-white shadow-sm"
 							type="button"
 						>
-							<ChevronLeft className="w-4 h-4 mr-2" />
+							<ArrowLeft2 variant="Outline" size={16} color="currentColor" className="mr-2" />
 							Back
 						</Button>
 						<form.Subscribe

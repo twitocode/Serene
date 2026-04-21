@@ -20,7 +20,7 @@ public class SettingsService : ISettingsService
     public SettingsService(
         ApplicationDbContext context,
         ILogger<SettingsService> logger,
-        HybridCache cache = null
+        HybridCache? cache = null
     )
     {
         _context = context;

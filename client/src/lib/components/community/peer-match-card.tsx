@@ -1,6 +1,6 @@
 "use client";
 
-import { Handshake, Sparkles } from "lucide-react";
+import { Magicpen, People } from "iconsax-reactjs";
 import { motion } from "motion/react";
 import { Badge } from "@/lib/components/ui/badge";
 import { usePeerMatchQuery } from "@/lib/hooks/queries/use-peers";
@@ -49,7 +49,7 @@ export default function PeerMatchCard() {
 		>
 			<div className="card-organic border-border/80 bg-card/95 p-6 shadow-sm backdrop-blur-sm md:p-8">
 				<div className="mb-6 flex items-center gap-2">
-					<Handshake className="size-5 text-primary" strokeWidth={2.5} />
+					<People variant="Bulk" size={20} color="currentColor" />
 					<h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
 						Your wellness buddy
 					</h3>
@@ -72,7 +72,7 @@ export default function PeerMatchCard() {
 									variant="secondary"
 									className="rounded-full bg-primary/8 text-primary border-primary/10 px-2.5 py-0.5 text-xs"
 								>
-									<Sparkles className="mr-1 size-3" />
+									<Magicpen variant="Bulk" size={12} color="currentColor" />
 									{match.sharedInterest}
 								</Badge>
 							</div>

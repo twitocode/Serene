@@ -105,10 +105,19 @@ public class AuthController : BaseApiController
     [HttpPost("sign-out")]
     public async Task<IActionResult> Logout()
     {
-        return await ExecuteWithResult(() =>
+        _logger.LogInformation("Sign-out request received.");
+        var options = GetCookieOptions();
+
+        if (Request.Cookies.ContainsKey("session_token"))
         {
-            Response.Cookies.Delete("session_token", GetCookieOptions());
-            return Task.CompletedTask;
-        });
+            _logger.LogInformation("Deleting session_token cookie.");
+            Response.Cookies.Delete("session_token", options);
+        }
+        else
+        {
+            _logger.LogWarning("Sign-out requested but no session_token cookie was found.");
+        }
+
+        return await Task.FromResult(Ok(new { success = true, message = "Logged out" }));
     }
 }

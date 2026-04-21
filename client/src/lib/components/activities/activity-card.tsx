@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Trash2 } from "lucide-react";
+import { TickCircle, Trash } from "iconsax-reactjs";
 import { motion } from "motion/react";
 import { Badge } from "@/lib/components/ui/badge";
 import { Button } from "@/lib/components/ui/button";
@@ -102,7 +102,7 @@ export function ActivityCard({
 						className="size-8 hover:bg-primary/10 hover:text-primary"
 						onClick={onComplete}
 					>
-						<Check className="size-4" />
+						<TickCircle variant="Bulk" size={16} color="currentColor" />
 					</Button>
 				)}
 				{!activity.completed && onDelete && (
@@ -112,7 +112,7 @@ export function ActivityCard({
 						className="size-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
 						onClick={onDelete}
 					>
-						<Trash2 className="size-4" />
+						<Trash variant="Bulk" size={16} color="currentColor" />
 					</Button>
 				)}
 			</div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Sprout } from "lucide-react";
+import { Tree } from "iconsax-reactjs";
 import { motion } from "motion/react";
 import { useMemo } from "react";
 import { ActivityCard } from "@/lib/components/explore/activity-card";
@@ -79,7 +79,7 @@ export default function ExplorePage() {
 						className="flex flex-col items-center justify-center py-16 px-4 bg-card rounded-3xl border border-border"
 					>
 						<div className="w-16 h-16 rounded-full bg-lime/20 flex items-center justify-center mb-4">
-							<Sprout className="w-8 h-8 text-lime" />
+							<Tree variant="Bulk" size={32} color="currentColor" />
 						</div>
 						<h3 className="text-lg font-semibold mb-2">
 							No recommendations yet
@@ -131,15 +131,17 @@ function SchoolResourcesSection() {
 			</motion.div>
 
 			<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-				{isPending ? (
-					Array.from({ length: 3 }).map((_, i) => (
-						<ResourceCardSkeleton key={i} />
-					))
-				) : (
-					schoolResources?.map((resource, index) => (
-						<ResourceCard key={resource.id} resource={resource} index={index} />
-					))
-				)}
+				{isPending
+					? Array.from({ length: 3 }).map((_, i) => (
+							<ResourceCardSkeleton key={i} />
+						))
+					: schoolResources?.map((resource, index) => (
+							<ResourceCard
+								key={resource.id}
+								resource={resource}
+								index={index}
+							/>
+						))}
 			</div>
 		</>
 	);

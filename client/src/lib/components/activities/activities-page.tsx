@@ -1,10 +1,9 @@
 "use client";
 
-import { CalendarPlus, Heart, Sparkles } from "lucide-react";
+import { CalendarAdd, Heart, Magicpen } from "iconsax-reactjs";
 import { AnimatePresence, motion } from "motion/react";
-import { type FormEventHandler, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { formatLocalDateKey } from "@/lib/helpers/get-current-date";
+import { type FormEventHandler, useState } from "react";
 import { ActivityCard } from "@/lib/components/activities/activity-card";
 import { MoodScale } from "@/lib/components/activities/mood-scale";
 import { Badge } from "@/lib/components/ui/badge";
@@ -34,6 +33,7 @@ import {
 import { Textarea } from "@/lib/components/ui/textarea";
 import { ACTIVITY_CATEGORIES } from "@/lib/data/activities-data";
 import { getRandomSavoringPrompt } from "@/lib/data/savoring-prompts";
+import { formatLocalDateKey } from "@/lib/helpers/get-current-date";
 import {
 	useActivitiesQuery,
 	useCompleteActivityMutation,
@@ -59,8 +59,12 @@ export default function ActivitiesPage() {
 	const deleteMutation = useDeleteActivityMutation();
 
 	const [title, setTitle] = useState(() => searchParams.get("title") ?? "");
-	const [category, setCategory] = useState(() => searchParams.get("category") ?? "");
-	const [date, setDate] = useState(() => searchParams.get("date") ?? today.toISOString().split("T")[0]);
+	const [category, setCategory] = useState(
+		() => searchParams.get("category") ?? "",
+	);
+	const [date, setDate] = useState(
+		() => searchParams.get("date") ?? today.toISOString().split("T")[0],
+	);
 	const [completingActivity, setCompletingActivity] =
 		useState<ActivityResponse | null>(null);
 	const [moodBefore, setMoodBefore] = useState<number | null>(null);
@@ -158,7 +162,9 @@ export default function ActivitiesPage() {
 				<Card className="border-border/80 bg-card/95 shadow-sm">
 					<CardHeader className="pb-3">
 						<CardTitle className="flex items-center gap-2 font-serif text-lg">
-							<CalendarPlus className="size-5 text-primary" />
+							<span className="size-5 flex items-center justify-center">
+								<CalendarAdd variant="Bulk" size={20} color="currentColor" />
+							</span>
 							Schedule an activity
 						</CardTitle>
 					</CardHeader>
@@ -208,7 +214,7 @@ export default function ActivitiesPage() {
 					animate={{ opacity: 1, scale: 1 }}
 					className="mb-6 flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3"
 				>
-					<Sparkles className="size-5 text-primary" />
+					<Magicpen variant="Bulk" size={20} color="currentColor" />
 					<p className="text-sm text-foreground">
 						This week, activities shifted your mood by{" "}
 						<span className="font-semibold text-primary">
@@ -332,7 +338,9 @@ export default function ActivitiesPage() {
 							>
 								<DialogHeader>
 									<div className="flex items-center gap-2">
-										<Heart className="size-5 text-pink-500" />
+										<span className="size-5 flex items-center justify-center">
+											<Heart variant="Bulk" size={20} color="currentColor" />
+										</span>
 										<DialogTitle className="font-serif">
 											Savor this moment
 										</DialogTitle>

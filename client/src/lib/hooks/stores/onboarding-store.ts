@@ -58,6 +58,7 @@ export interface OnboardingState {
 	goNext: () => void;
 	goBack: () => void;
 	completeServerStep: () => void;
+	completeServerSteps: (count: number) => void;
 }
 
 export type OnboardingStore = ReturnType<typeof createOnboardingStore>;
@@ -162,6 +163,11 @@ export const createOnboardingStore = (initProps?: OnboardingProps) => {
 
 		completeServerStep: () => {
 			set((s) => ({ step: s.step + 1 }));
+			get().goNext();
+		},
+
+		completeServerSteps: (count: number) => {
+			set((s) => ({ step: s.step + count }));
 			get().goNext();
 		},
 	}));

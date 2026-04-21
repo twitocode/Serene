@@ -1,9 +1,5 @@
 "use client";
 
-import { useForm } from "@tanstack/react-form";
-import { Check, Loader2 } from "lucide-react";
-import { toast } from "sonner";
-import { SchoolSettings } from "@/lib/components/account/school-settings";
 import { StrugglesSettings } from "@/lib/components/account/struggles-settings";
 import {
 	Avatar,
@@ -30,6 +26,10 @@ import {
 	useUpdateProfileMutation,
 	useUserQuery,
 } from "@/lib/hooks/queries/use-user";
+import { useForm } from "@tanstack/react-form";
+import { Loader2 } from "lucide-react";
+import { TickCircle } from "iconsax-reactjs";
+import { toast } from "sonner";
 
 export function ProfileSettings() {
 	const { data: user, isLoading: userLoading } = useUserQuery();
@@ -61,112 +61,113 @@ export function ProfileSettings() {
 
 	return (
 		<div className="space-y-6">
-		<Card className="card-organic border-0 shadow-lg">
-			<CardHeader className="pb-4">
-				<CardTitle className="text-xl">Profile Details</CardTitle>
-				<CardDescription>
-					Update your personal information and how others see you
-				</CardDescription>
-			</CardHeader>
-			<CardContent>
-				<div className="flex items-center gap-6 mb-8 pb-8 border-b border-border">
-					<Avatar className="size-20 ring-4 ring-primary/10">
-						<AvatarImage
-							src={user?.image ?? undefined}
-							alt={user?.name ?? "User"}
-						/>
-						<AvatarFallback className="bg-primary/10 text-primary text-xl font-semibold">
-							{user?.name?.charAt(0) ?? user?.email?.charAt(0) ?? "U"}
-						</AvatarFallback>
-					</Avatar>
-					<div>
-						<h3 className="font-semibold text-foreground">
-							{user?.name || "No name set"}
-						</h3>
-						<p className="text-sm text-muted-foreground">{user?.email}</p>
-					</div>
-				</div>
-
-				<form
-					onSubmit={(e) => {
-						e.preventDefault();
-						e.stopPropagation();
-						profileForm.handleSubmit();
-					}}
-				>
-					<FieldGroup>
-						<profileForm.Field name="name">
-							{(field) => (
-								<Field>
-									<FieldLabel htmlFor="name">Display Name</FieldLabel>
-									<FieldDescription>
-										This is the name that will be displayed to others
-									</FieldDescription>
-									<Input
-										id="name"
-										placeholder="Enter your name"
-										value={field.state.value}
-										onChange={(e) => field.handleChange(e.target.value)}
-										onBlur={field.handleBlur}
-										className="max-w-md"
-									/>
-									{field.state.meta.errors.length > 0 && (
-										<FieldError>
-											{field.state.meta.errors.join(", ")}
-										</FieldError>
-									)}
-								</Field>
-							)}
-						</profileForm.Field>
-
-						<div className="pt-4">
-							<Button
-								type="submit"
-								disabled={updateProfile.isPending}
-								className="btn-playful"
-							>
-								{updateProfile.isPending ? (
-									<>
-										<Loader2 className="size-4 animate-spin" />
-										Saving...
-									</>
-								) : (
-									<>
-										<Check className="size-4" />
-										Save Changes
-									</>
-								)}
-							</Button>
+			<Card className="card-organic border-0 shadow-lg">
+				<CardHeader className="pb-4">
+					<CardTitle className="text-xl">Profile Details</CardTitle>
+					<CardDescription>
+						Update your personal information and how others see you
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<div className="flex items-center gap-6 mb-8 pb-8 border-b border-border">
+						<Avatar className="size-20 ring-4 ring-primary/10">
+							<AvatarImage
+								src={user?.image ?? undefined}
+								alt={user?.name ?? "User"}
+							/>
+							<AvatarFallback className="bg-primary/10 text-primary text-xl font-semibold">
+								{user?.name?.charAt(0) ?? user?.email?.charAt(0) ?? "U"}
+							</AvatarFallback>
+						</Avatar>
+						<div>
+							<h3 className="font-semibold text-foreground">
+								{user?.name || "No name set"}
+							</h3>
+							<p className="text-sm text-muted-foreground">{user?.email}</p>
 						</div>
-					</FieldGroup>
-				</form>
-			</CardContent>
-		</Card>
+					</div>
 
-		<Card className="card-organic border-0 shadow-lg">
-			<CardHeader className="pb-4">
-				<CardTitle className="text-xl">School Community</CardTitle>
-				<CardDescription>
-					Update the school you are currently attending
-				</CardDescription>
-			</CardHeader>
-			<CardContent>
-				<SchoolSettings />
-			</CardContent>
-		</Card>
+					<form
+						onSubmit={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							profileForm.handleSubmit();
+						}}
+					>
+						<FieldGroup>
+							<profileForm.Field name="name">
+								{(field) => (
+									<Field>
+										<FieldLabel htmlFor="name">Display Name</FieldLabel>
+										<FieldDescription>
+											This is the name that will be displayed to others
+										</FieldDescription>
+										<Input
+											id="name"
+											placeholder="Enter your name"
+											value={field.state.value}
+											onChange={(e) => field.handleChange(e.target.value)}
+											onBlur={field.handleBlur}
+											className="max-w-md"
+										/>
+										{field.state.meta.errors.length > 0 && (
+											<FieldError>
+												{field.state.meta.errors.join(", ")}
+											</FieldError>
+										)}
+									</Field>
+								)}
+							</profileForm.Field>
 
-		<Card className="card-organic border-0 shadow-lg mt-6">
-			<CardHeader className="pb-4">
-				<CardTitle className="text-xl">What Brings You Here</CardTitle>
-				<CardDescription>
-					Update the areas you're looking for support with — this helps personalize your experience
-				</CardDescription>
-			</CardHeader>
-			<CardContent>
-				<StrugglesSettings />
-			</CardContent>
-		</Card>
+							<div className="pt-4">
+								<Button
+									type="submit"
+									disabled={updateProfile.isPending}
+									className="btn-playful"
+								>
+									{updateProfile.isPending ? (
+										<>
+											<Loader2 className="size-4 animate-spin" />
+											Saving...
+										</>
+									) : (
+										<>
+											<TickCircle variant="Outline" size={16} color="currentColor" />
+											Save Changes
+										</>
+									)}
+								</Button>
+							</div>
+						</FieldGroup>
+					</form>
+				</CardContent>
+			</Card>
+
+			{/* Update School Community */}
+			{/* <Card className="card-organic border-0 shadow-lg">
+				<CardHeader className="pb-4">
+					<CardTitle className="text-xl">School Community</CardTitle>
+					<CardDescription>
+						Update the school you are currently attending
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<SchoolSettings />
+				</CardContent>
+			</Card> */}
+
+			<Card className="card-organic border-0 shadow-lg mt-6">
+				<CardHeader className="pb-4">
+					<CardTitle className="text-xl">What Brings You Here</CardTitle>
+					<CardDescription>
+						Update the areas you're looking for support with — this helps
+						personalize your experience
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<StrugglesSettings />
+				</CardContent>
+			</Card>
 		</div>
 	);
 }
-

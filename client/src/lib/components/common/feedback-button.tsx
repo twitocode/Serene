@@ -2,7 +2,7 @@
 
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
-import { MessageSquarePlus } from "lucide-react";
+import { MessageAdd } from "iconsax-reactjs";
 import { useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
@@ -94,7 +94,7 @@ export default function FeedbackButton() {
 			aria-label={collapsed ? "Give feedback" : undefined}
 		>
 			{collapsed ? (
-				<MessageSquarePlus className="size-4" strokeWidth={2} />
+				<MessageAdd variant="Bulk" size={16} color="currentColor" />
 			) : (
 				"Give feedback"
 			)}

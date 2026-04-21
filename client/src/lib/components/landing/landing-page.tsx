@@ -3,7 +3,7 @@ import Footer from "@/lib/components/common/footer";
 import { MochiHappy } from "@/lib/components/common/mochi";
 import { Navbar } from "@/lib/components/common/navbar";
 import { Button } from "@/lib/components/ui/button";
-import { ArrowRight, Heart, Leaf, Shield } from "lucide-react";
+import { ArrowRight2, Heart, MedalStar, Shield } from "iconsax-reactjs";
 import { motion } from "motion/react";
 import Link from "next/link";
 
@@ -11,7 +11,7 @@ const pillars = [
 	{
 		title: "Evidence-informed",
 		body: "Tools grounded in CBT and mindfulness, explained in plain language, without jargon.",
-		icon: Leaf,
+		icon: MedalStar,
 		accent: "bg-primary/10 text-primary ring-primary/15",
 	},
 	{
@@ -135,7 +135,7 @@ export default function LandingPage() {
 									className="btn-playful group h-12 min-w-55 px-2 text-base shadow-md font-bold"
 								>
 									Get Started
-									<ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1" />
+									<ArrowRight2 variant="Outline" size={16} color="currentColor" />
 								</Button>
 							</Link>
 							<Link href="/login">
@@ -192,7 +192,6 @@ export default function LandingPage() {
 							</blockquote>
 						</div>
 						<div className="divider-soft mx-auto mt-6 max-w-30" />
-					
 					</motion.section>
 				</div>
 			</div>

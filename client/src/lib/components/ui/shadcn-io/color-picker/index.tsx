@@ -337,10 +337,7 @@ export const ColorPickerOutput = ({
 
 	return (
 		<Select onValueChange={setMode} value={mode}>
-			<SelectTrigger
-				className="h-8 w-20 shrink-0 text-xs"
-				{...props}
-			>
+			<SelectTrigger className="h-8 w-20 shrink-0 text-xs" {...props}>
 				<SelectValue placeholder="Mode" />
 			</SelectTrigger>
 			<SelectContent>
@@ -445,10 +442,7 @@ export const ColorPickerFormat = ({
 			.map((value) => Math.round(value));
 
 		return (
-			<div
-				className={cn("w-full rounded-md shadow-sm", className)}
-				{...props}
-			>
+			<div className={cn("w-full rounded-md shadow-sm", className)} {...props}>
 				<Input
 					className="h-8 w-full bg-secondary px-2 text-xs shadow-none"
 					readOnly

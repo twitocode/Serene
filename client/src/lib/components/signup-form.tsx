@@ -118,7 +118,10 @@ export function SignupForm({
 				<FormDescription>
 					{step === 1 ? (
 						<>
-							Already have an account? <Link href="/login">Login</Link>
+							Already have an account?{" "}
+							<Link href="/login" className="font-semibold hover:underline">
+								Login
+							</Link>
 						</>
 					) : (
 						<>

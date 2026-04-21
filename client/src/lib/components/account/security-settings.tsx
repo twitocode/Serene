@@ -1,14 +1,9 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import {
-	Eye,
-	EyeOff,
-	KeyRound,
-	Loader2,
-	Lock,
-	ShieldCheck,
-} from "lucide-react";
+
+import { Loader2, ShieldCheck } from "lucide-react";
+import { Eye, EyeSlash, Key, KeySquare, Lock, ShieldTick } from "iconsax-reactjs";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/lib/components/ui/button";
@@ -256,7 +251,7 @@ export function SecuritySettings() {
 												className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
 											>
 												{showCurrentPassword ? (
-													<EyeOff className="size-4" />
+													<EyeSlash className="size-4" />
 												) : (
 													<Eye className="size-4" />
 												)}
@@ -294,7 +289,7 @@ export function SecuritySettings() {
 												className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
 											>
 												{showNewPassword ? (
-													<EyeOff className="size-4" />
+													<EyeSlash className="size-4" />
 												) : (
 													<Eye className="size-4" />
 												)}
@@ -336,7 +331,7 @@ export function SecuritySettings() {
 												className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
 											>
 												{showConfirmPassword ? (
-													<EyeOff className="size-4" />
+													<EyeSlash className="size-4" />
 												) : (
 													<Eye className="size-4" />
 												)}
@@ -364,7 +359,7 @@ export function SecuritySettings() {
 										</>
 									) : (
 										<>
-											<KeyRound className="size-4 mr-2" />
+											<KeySquare className="size-4 mr-2" />
 											Update Password
 										</>
 									)}

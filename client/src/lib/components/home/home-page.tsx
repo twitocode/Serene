@@ -1,15 +1,16 @@
 "use client";
 
+import { ArrowRight, ArrowRight2, Lovely, Magicpen, Wind } from "iconsax-reactjs";
+import { motion } from "motion/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import RecentBadges from "@/lib/components/achievements/recent-badges";
+import { AnimatedMochi as Mochi } from "@/lib/components/common/animated-mochi";
 import { MochiDefault, MochiHappy } from "@/lib/components/common/mochi";
 import DateScroll from "@/lib/components/home/date-scroll";
 import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import { useUserQuery } from "@/lib/hooks/queries/use-user";
-import { ArrowRight, Flower2, Sparkles, Wind } from "lucide-react";
-import { motion } from "motion/react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 function getGreeting(): string {
 	const hour = new Date().getHours();
@@ -55,7 +56,7 @@ export default function HomePage() {
 		},
 		{
 			id: "2",
-			icon: Flower2,
+			icon: Lovely,
 			title: "Daily affirmations",
 			hint: "Gentle words",
 			gradient: "from-warm/12 to-warm/4",
@@ -120,7 +121,7 @@ export default function HomePage() {
 				<div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
 					<div className="flex justify-center md:justify-start">
 						<div className="relative">
-							<MochiHappy className="size-36 drop-shadow-md md:size-40 animate-float" />
+							<Mochi className="size-36 drop-shadow-md md:size-40" />
 							{/* Soft shadow beneath Mochi */}
 							<div
 								className="absolute -bottom-2 left-1/2 -translate-x-1/2 h-4 w-24 rounded-full bg-primary/8 blur-lg"
@@ -130,7 +131,7 @@ export default function HomePage() {
 					</div>
 					<div className="flex max-w-md flex-col gap-4">
 						<div className="inline-flex w-fit items-center gap-1.5 rounded-full border border-primary/15 bg-primary/8 px-3 py-1 text-xs font-medium text-primary shadow-2xs">
-							<Sparkles className="size-3.5" />
+							<Magicpen variant="Bulk" size={14} color="currentColor" />
 							Quick check-in
 						</div>
 						<h2 className="font-serif text-2xl font-semibold leading-snug text-foreground md:text-3xl">
@@ -146,7 +147,7 @@ export default function HomePage() {
 							className="btn-playful group w-full sm:w-auto"
 						>
 							Start a check-in
-							<ArrowRight className="ml-2 size-4 transition-transform duration-200 group-hover:translate-x-1" />
+							<ArrowRight variant="Outline" size={16} color="currentColor" />
 						</Button>
 					</div>
 				</div>
@@ -190,7 +191,7 @@ export default function HomePage() {
 									<div
 										className={`flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br ${suggestion.gradient} text-foreground ring-1 ring-border/50 transition-all duration-300 ${suggestion.hoverRing} group-hover:scale-110`}
 									>
-										<Icon className="size-7" strokeWidth={1.25} />
+										<Icon variant="Bulk" size={28} color="currentColor" />
 									</div>
 									<div className="space-y-1">
 										<p className="font-medium leading-snug text-foreground">

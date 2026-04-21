@@ -1,4 +1,4 @@
-import { Brain, CloudLightning, Heart, Shield } from "lucide-react";
+import { Flash, Health, Heart, Shield } from "iconsax-reactjs";
 import type { FormEventHandler } from "react";
 import MoodPicker from "@/lib/components/checkin/mood-picker";
 import { MochiDefault as Mochi } from "@/lib/components/common/mochi";
@@ -51,12 +51,12 @@ export default function MoodStep() {
 				<MoodPicker
 					scrollToBottom={scrollToBottom}
 					type="energy"
-					Icon={CloudLightning}
+					Icon={Flash}
 				/>
 				<MoodPicker
 					scrollToBottom={scrollToBottom}
 					type="mental"
-					Icon={Brain}
+					Icon={Health}
 				/>
 				<MoodPicker
 					scrollToBottom={scrollToBottom}

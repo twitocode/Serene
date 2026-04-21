@@ -3,8 +3,11 @@
 import { motion } from "motion/react";
 import InterestPicker from "@/lib/components/community/interest-picker";
 import PeerMatchCard from "@/lib/components/community/peer-match-card";
-import { useInterestsQuery, usePeerMatchQuery } from "@/lib/hooks/queries/use-peers";
 import { Separator } from "@/lib/components/ui/separator";
+import {
+	useInterestsQuery,
+	usePeerMatchQuery,
+} from "@/lib/hooks/queries/use-peers";
 
 export function PeerMatchSection() {
 	const { data: interests = [] } = useInterestsQuery();
@@ -43,4 +46,3 @@ export function PeerMatchSection() {
 		</motion.section>
 	);
 }
-

@@ -2,14 +2,16 @@
 
 import {
 	Activity,
-	CompassIcon,
-	Handshake,
-	HouseHeart,
-	Pencil,
-	School,
-	ShieldUser,
-	Trophy,
-} from "lucide-react";
+	HeartTick,
+	Cup,
+	DocumentText,
+	Edit2,
+	Home2,
+	Message,
+	People,
+	Routing,
+	ShieldTick,
+} from "iconsax-reactjs";
 import type * as React from "react";
 import FeedbackButton from "@/lib/components/common/feedback-button";
 import AppSidebarHeader from "@/lib/components/common/sidebar/sidebar-header";
@@ -26,8 +28,8 @@ const sections: NavSection[] = [
 	{
 		label: "Today",
 		items: [
-			{ title: "Home", url: "/home", icon: HouseHeart, role: "User" },
-			{ title: "Check-in", url: "/home/checkin", icon: Pencil, role: "User" },
+			{ title: "Home", url: "/home", icon: Home2, role: "User" },
+			{ title: "Check-in", url: "/home/checkin", icon: Edit2, role: "User" },
 		],
 	},
 	{
@@ -40,37 +42,50 @@ const sections: NavSection[] = [
 				role: "User",
 			},
 			{
-				title: "Your School",
+				title: "Health & Wellness",
 				url: "/home/schools",
-				icon: School,
+				icon: HeartTick,
 				role: "User",
 			},
 			{
 				title: "Achievements",
 				url: "/home/achievements",
-				icon: Trophy,
+				icon: Cup,
 				role: "User",
 			},
 			{
 				title: "Community",
 				url: "/home/community",
-				icon: Handshake,
+				icon: People,
 				role: "User",
 			},
 			{
 				title: "Explore",
 				url: "/home/explore",
-				icon: CompassIcon,
+				icon: Routing,
 				role: "User",
 			},
 		],
 	},
 	{
+		label: "Management",
 		items: [
 			{
-				title: "Admin",
+				title: "Content",
 				url: "/admin/content",
-				icon: ShieldUser,
+				icon: DocumentText,
+				role: "Admin",
+			},
+			{
+				title: "Schools",
+				url: "/admin/schools",
+				icon: HeartTick,
+				role: "Admin",
+			},
+			{
+				title: "Feedback",
+				url: "/admin/feedback",
+				icon: Message,
 				role: "Admin",
 			},
 		],

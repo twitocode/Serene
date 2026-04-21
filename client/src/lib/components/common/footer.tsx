@@ -1,7 +1,7 @@
-import SereneLogo from "@/lib/components/common/serene-logo";
-import { Heart } from "lucide-react";
+import { Heart } from "iconsax-reactjs";
 import Image from "next/image";
 import Link from "next/link";
+import SereneLogo from "@/lib/components/common/serene-logo";
 
 export default function Footer() {
 	return (
@@ -19,11 +19,10 @@ export default function Footer() {
 			<div className="relative mx-auto flex max-w-6xl flex-col items-center gap-8 px-5 py-8 md:flex-row md:justify-between md:px-10">
 				<div className="flex flex-col items-center gap-3 text-center md:items-start md:text-left">
 					<SereneLogo className="text-primary-foreground [&_span]:text-primary-foreground" />
-					
 				</div>
 				<div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-3">
 					<span className="inline-flex items-center gap-1.5 text-xs text-primary-foreground/60">
-						Made with <Heart className="size-3 fill-current" /> for students
+						Made with <Heart variant="Bulk" size={12} color="currentColor" /> for students
 					</span>
 					<Link
 						href="https://github.com/twitocode/serene"
@@ -35,7 +34,6 @@ export default function Footer() {
 							height="20"
 							width="20"
 							alt="Github Logo"
-
 							src="https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/github.svg"
 						/>
 						<span className="font-medium">Source on GitHub</span>

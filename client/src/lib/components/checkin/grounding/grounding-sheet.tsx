@@ -1,6 +1,6 @@
 "use client";
 
-import { Scan, Wind } from "lucide-react";
+import { Scan, Wind } from "iconsax-reactjs";
 import { useState } from "react";
 import BodyScanPlayer from "@/lib/components/checkin/grounding/body-scan-player";
 import BreathingPacer from "@/lib/components/checkin/grounding/breathing-pacer";
@@ -62,7 +62,7 @@ export default function GroundingSheet({
 								className="flex-1 gap-2 rounded-xl"
 								onClick={() => setExercise("breathing")}
 							>
-								<Wind className="size-5" />
+								<Wind variant="Bulk" size={20} color="currentColor" />
 								Box Breathing
 							</Button>
 							<Button
@@ -71,7 +71,7 @@ export default function GroundingSheet({
 								className="flex-1 gap-2 rounded-xl"
 								onClick={() => setExercise("body-scan")}
 							>
-								<Scan className="size-5" />
+								<Scan variant="Bulk" size={20} color="currentColor" />
 								Body Scan
 							</Button>
 						</div>
