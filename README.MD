@@ -1,6 +1,6 @@
 
 <h1 style="display: flex; align-items: center;">
-  <img style="margin-right: 10px" src="./client/public/mochi/mochi.svg" align="left" height="46px" alt="Mochi logo"/>
+  <img style="margin-right: 10px" src="./client/public/mochi/Mochi.svg" align="left" height="46px" alt="Mochi logo"/>
   <span >Serene</span>
 </h1>
 
