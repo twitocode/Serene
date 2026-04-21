@@ -1,4 +1,11 @@
-import { Activity, Flash, Health, Heart, MessageCircle, Shield } from "iconsax-reactjs";
+import {
+	Activity,
+	Flash,
+	Health,
+	Heart,
+	MessageCircle,
+	Shield,
+} from "iconsax-reactjs";
 import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
 import { Badge } from "@/lib/components/ui/badge";
 import { Button } from "@/lib/components/ui/button";
@@ -99,8 +106,8 @@ export default function CheckinCompleteStep() {
 					<CardHeader className="pb-2">
 						<CardTitle className="flex items-center gap-2 font-serif text-lg">
 							<span className="size-5 flex items-center justify-center">
-							<MessageCircle variant="Bulk" size={20} color="currentColor" />
-						</span>
+								<MessageCircle variant="Bulk" size={20} color="currentColor" />
+							</span>
 							Thoughts &amp; reframe
 						</CardTitle>
 					</CardHeader>

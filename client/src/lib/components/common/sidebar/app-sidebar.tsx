@@ -2,10 +2,10 @@
 
 import {
 	Activity,
-	HeartTick,
 	Cup,
 	DocumentText,
 	Edit2,
+	HeartTick,
 	Home2,
 	Message,
 	People,

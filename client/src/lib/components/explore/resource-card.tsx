@@ -1,8 +1,8 @@
 "use client";
 
-import type { ExploreContent } from "@/lib/types";
 import { DocumentText, ExportSquare, VideoSquare } from "iconsax-reactjs";
 import { motion } from "motion/react";
+import type { ExploreContent } from "@/lib/types";
 
 interface ResourceCardProps {
 	resource: ExploreContent;

@@ -1,5 +1,9 @@
 "use client";
 
+import { useForm } from "@tanstack/react-form";
+import { TickCircle } from "iconsax-reactjs";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { StrugglesSettings } from "@/lib/components/account/struggles-settings";
 import {
 	Avatar,
@@ -26,10 +30,6 @@ import {
 	useUpdateProfileMutation,
 	useUserQuery,
 } from "@/lib/hooks/queries/use-user";
-import { useForm } from "@tanstack/react-form";
-import { Loader2 } from "lucide-react";
-import { TickCircle } from "iconsax-reactjs";
-import { toast } from "sonner";
 
 export function ProfileSettings() {
 	const { data: user, isLoading: userLoading } = useUserQuery();
@@ -132,7 +132,11 @@ export function ProfileSettings() {
 										</>
 									) : (
 										<>
-											<TickCircle variant="Outline" size={16} color="currentColor" />
+											<TickCircle
+												variant="Outline"
+												size={16}
+												color="currentColor"
+											/>
 											Save Changes
 										</>
 									)}

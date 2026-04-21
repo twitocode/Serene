@@ -233,7 +233,11 @@ export default function SomaticStep() {
 											}
 										>
 											{s}
-											<CloseCircle variant="Bulk" size={12} color="currentColor" />
+											<CloseCircle
+												variant="Bulk"
+												size={12}
+												color="currentColor"
+											/>
 										</Badge>
 									))}
 								</div>

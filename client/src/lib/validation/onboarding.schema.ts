@@ -106,5 +106,7 @@ export type StepFourValues = keyof z.infer<typeof stepFourSchema>;
 export type StepFiveValues = keyof z.infer<typeof stepFiveSchema>;
 export type StepSixValues = keyof z.infer<typeof stepSixSchema>;
 export type StepTwoCombinedValues = keyof z.infer<typeof stepTwoCombinedSchema>;
-export type StepFiveCombinedValues = keyof z.infer<typeof stepFiveCombinedSchema>;
+export type StepFiveCombinedValues = keyof z.infer<
+	typeof stepFiveCombinedSchema
+>;
 export type OnboardingValues = keyof z.infer<typeof onboardingFormSchema>;

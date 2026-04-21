@@ -78,10 +78,14 @@ export default function NavMain({ sections }: { sections: NavSection[] }) {
 												)}
 											>
 												{item.icon && (
-												<span className="size-4 shrink-0 flex items-center justify-center">
-													<item.icon variant="Bulk" size={16} color="currentColor" />
-												</span>
-											)}
+													<span className="size-4 shrink-0 flex items-center justify-center">
+														<item.icon
+															variant="Bulk"
+															size={16}
+															color="currentColor"
+														/>
+													</span>
+												)}
 												<span className="font-medium group-data-[collapsible=icon]:hidden">
 													{item.title}
 												</span>

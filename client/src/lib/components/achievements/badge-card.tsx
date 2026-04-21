@@ -34,10 +34,10 @@ export function BadgeCard({
 						}`}
 					>
 						{isUnlocked ? (
-						<Cup variant="Bulk" size={20} color="currentColor" />
-					) : (
-						<Lock variant="Bulk" size={16} color="currentColor" />
-					)}
+							<Cup variant="Bulk" size={20} color="currentColor" />
+						) : (
+							<Lock variant="Bulk" size={16} color="currentColor" />
+						)}
 					</div>
 					<p
 						className={`text-sm font-semibold leading-tight ${

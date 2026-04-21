@@ -1,9 +1,15 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-
+import {
+	Eye,
+	EyeSlash,
+	Key,
+	KeySquare,
+	Lock,
+	ShieldTick,
+} from "iconsax-reactjs";
 import { Loader2, ShieldCheck } from "lucide-react";
-import { Eye, EyeSlash, Key, KeySquare, Lock, ShieldTick } from "iconsax-reactjs";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/lib/components/ui/button";

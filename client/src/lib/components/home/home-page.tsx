@@ -1,6 +1,12 @@
 "use client";
 
-import { ArrowRight, ArrowRight2, Lovely, Magicpen, Wind } from "iconsax-reactjs";
+import {
+	ArrowRight,
+	ArrowRight2,
+	Lovely,
+	Magicpen,
+	Wind,
+} from "iconsax-reactjs";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

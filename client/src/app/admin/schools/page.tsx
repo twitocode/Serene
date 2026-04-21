@@ -1,42 +1,42 @@
 "use client";
 
-import type { InstantiateSchoolRequest } from "@/lib/client/school-client";
 import {
-  addSchoolResource,
-  deleteSchoolResource,
-  getAllSchools,
-  instantiateSchool,
-} from "@/lib/client/school-client";
-import { Button } from "@/lib/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/lib/components/ui/dialog";
-import { Input } from "@/lib/components/ui/input";
-import { Label } from "@/lib/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/lib/components/ui/select";
-import { schools as predefinedSchools } from "@/lib/data";
-import type { School, SchoolResource } from "@/lib/types";
-import {
-  Add,
-  ExportSquare,
-  Buildings as SchoolIcon,
-  Teacher,
-  Trash
+	Add,
+	ExportSquare,
+	Buildings as SchoolIcon,
+	Teacher,
+	Trash,
 } from "iconsax-reactjs";
 import { Loader2 } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import type { InstantiateSchoolRequest } from "@/lib/client/school-client";
+import {
+	addSchoolResource,
+	deleteSchoolResource,
+	getAllSchools,
+	instantiateSchool,
+} from "@/lib/client/school-client";
+import { Button } from "@/lib/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from "@/lib/components/ui/dialog";
+import { Input } from "@/lib/components/ui/input";
+import { Label } from "@/lib/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/lib/components/ui/select";
+import { schools as predefinedSchools } from "@/lib/data";
+import type { School, SchoolResource } from "@/lib/types";
 
 const stagger = {
 	container: {
@@ -234,7 +234,11 @@ export default function AdminSchoolsPage() {
 											</div>
 										) : (
 											<div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
-												<Teacher variant="Bulk" size={28} color="currentColor" />
+												<Teacher
+													variant="Bulk"
+													size={28}
+													color="currentColor"
+												/>
 											</div>
 										)}
 										<div>
@@ -261,7 +265,12 @@ export default function AdminSchoolsPage() {
 											setIsAddResourceOpen(true);
 										}}
 									>
-										<Add variant="Bulk" size={14} color="currentColor" className="mr-1.5" />
+										<Add
+											variant="Bulk"
+											size={14}
+											color="currentColor"
+											className="mr-1.5"
+										/>
 										Add Resource
 									</Button>
 								</div>
@@ -286,7 +295,11 @@ export default function AdminSchoolsPage() {
 														rel="noopener noreferrer"
 														className="text-muted-foreground hover:text-primary transition-colors"
 													>
-														<ExportSquare variant="Outline" size={14} color="currentColor" />
+														<ExportSquare
+															variant="Outline"
+															size={14}
+															color="currentColor"
+														/>
 													</a>
 												</div>
 												<Button
@@ -295,7 +308,11 @@ export default function AdminSchoolsPage() {
 													className="text-muted-foreground hover:text-destructive h-8 px-2 opacity-0 group-hover:opacity-100 transition-opacity"
 													onClick={() => handleDeleteResource(r.id)}
 												>
-													<Trash variant="Bulk" size={16} color="currentColor" />
+													<Trash
+														variant="Bulk"
+														size={16}
+														color="currentColor"
+													/>
 												</Button>
 											</div>
 										))}

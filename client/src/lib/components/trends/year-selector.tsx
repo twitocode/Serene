@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/lib/components/ui/button";
 import { ArrowLeft2, ArrowRight2 } from "iconsax-reactjs";
+import { Button } from "@/lib/components/ui/button";
 
 interface YearSelectorProps {
 	year: number;

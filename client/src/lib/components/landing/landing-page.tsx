@@ -1,11 +1,11 @@
 "use client";
+import { ArrowRight2, Heart, MedalStar, Shield } from "iconsax-reactjs";
+import { motion } from "motion/react";
+import Link from "next/link";
 import Footer from "@/lib/components/common/footer";
 import { MochiHappy } from "@/lib/components/common/mochi";
 import { Navbar } from "@/lib/components/common/navbar";
 import { Button } from "@/lib/components/ui/button";
-import { ArrowRight2, Heart, MedalStar, Shield } from "iconsax-reactjs";
-import { motion } from "motion/react";
-import Link from "next/link";
 
 const pillars = [
 	{
@@ -135,7 +135,11 @@ export default function LandingPage() {
 									className="btn-playful group h-12 min-w-55 px-2 text-base shadow-md font-bold"
 								>
 									Get Started
-									<ArrowRight2 variant="Outline" size={16} color="currentColor" />
+									<ArrowRight2
+										variant="Outline"
+										size={16}
+										color="currentColor"
+									/>
 								</Button>
 							</Link>
 							<Link href="/login">

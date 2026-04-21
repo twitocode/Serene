@@ -1,19 +1,19 @@
 "use client";
+import { Lock, MedalStar } from "iconsax-reactjs";
+import { motion } from "motion/react";
+import type { PropsWithChildren } from "react";
 import { MochiWhisper } from "@/lib/components/common/mochi-whisper";
 import AppSidebar from "@/lib/components/common/sidebar/app-sidebar";
 import { ThemeToggle } from "@/lib/components/common/theme-toggle";
 import { Button } from "@/lib/components/ui/button";
 import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
+	SidebarInset,
+	SidebarProvider,
+	SidebarTrigger,
 } from "@/lib/components/ui/sidebar";
 import { useSettingsQuery } from "@/lib/hooks/queries/use-settings";
 import { useUserQuery } from "@/lib/hooks/queries/use-user";
 import { usePasswordLockStore } from "@/lib/hooks/stores/lock-store";
-import { Lock, MedalStar } from "iconsax-reactjs";
-import { motion } from "motion/react";
-import type { PropsWithChildren } from "react";
 
 export default function HomeLayout({ children }: PropsWithChildren) {
 	const { setLockState, isLocked } = usePasswordLockStore();

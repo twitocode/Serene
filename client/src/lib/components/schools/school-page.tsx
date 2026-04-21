@@ -1,35 +1,29 @@
 "use client";
 
+import { formatDistanceToNow } from "date-fns";
+import { Add, Book1, ExportSquare, Tag2, Teacher } from "iconsax-reactjs";
+import { Loader2 } from "lucide-react";
+import { motion } from "motion/react";
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { addSchoolClub, getMySchool } from "@/lib/client/school-client";
 import { CrisisBanner } from "@/lib/components/health/crisis-banner";
 import { SelfScreeningTool } from "@/lib/components/health/self-screening-tool";
 import { SWCBookingGuide } from "@/lib/components/health/swc-booking-guide";
 import { Button } from "@/lib/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
 } from "@/lib/components/ui/dialog";
 import { Input } from "@/lib/components/ui/input";
 import { Label } from "@/lib/components/ui/label";
 import { Textarea } from "@/lib/components/ui/textarea";
 import { MCMASTER_RESOURCES, schools } from "@/lib/data";
 import type { School, SchoolClub, SchoolResource } from "@/lib/types";
-import { formatDistanceToNow } from "date-fns";
-import {
-  Add,
-  Book1,
-  ExportSquare,
-  Tag2,
-  Teacher
-} from "iconsax-reactjs";
-import { Loader2 } from "lucide-react";
-import { motion } from "motion/react";
-import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
 
 const stagger = {
 	container: {
@@ -177,28 +171,34 @@ export default function SchoolPage() {
 
 			<div className="relative flex items-center gap-4 py-2">
 				<div className="h-px flex-1 bg-border/40" />
-				<p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/60">Campus Resources</p>
+				<p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/60">
+					Campus Resources
+				</p>
 				<div className="h-px flex-1 bg-border/40" />
 			</div>
 
-			<motion.div 
+			<motion.div
 				variants={stagger.container}
 				initial="initial"
 				animate="animate"
-				className="grid gap-8 lg:grid-cols-2" 
+				className="grid gap-8 lg:grid-cols-2"
 				id="resources"
 			>
 				<motion.div variants={stagger.item} className="space-y-6">
 					<div className="space-y-1 border-b border-border/40 pb-3">
-						<h3 className="font-serif text-2xl font-semibold text-foreground">Official Resources</h3>
-						<p className="text-sm text-muted-foreground">University-led support and services</p>
+						<h3 className="font-serif text-2xl font-semibold text-foreground">
+							Official Resources
+						</h3>
+						<p className="text-sm text-muted-foreground">
+							University-led support and services
+						</p>
 					</div>
 
 					{school.name === "McMaster University" ? (
 						<div className="grid gap-3">
 							{MCMASTER_RESOURCES.map((r, i) => (
 								<a
-									key={r.url  + i.toString()}
+									key={r.url + i.toString()}
 									href={r.url}
 									target="_blank"
 									rel="noopener noreferrer"
@@ -206,8 +206,14 @@ export default function SchoolPage() {
 								>
 									<div className="card-glass flex flex-col gap-1 p-4 transition-all duration-200 hover:shadow-lg hover:border-primary/25 hover:-translate-y-1">
 										<div className="flex items-center justify-between">
-											<span className="font-medium text-foreground">{r.name}</span>
-											<ExportSquare variant="Outline" size={16} color="currentColor" />
+											<span className="font-medium text-foreground">
+												{r.name}
+											</span>
+											<ExportSquare
+												variant="Outline"
+												size={16}
+												color="currentColor"
+											/>
 										</div>
 										<span className="text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/8 w-fit px-2 py-0.5 rounded-full border border-primary/15">
 											{r.type}
@@ -228,8 +234,14 @@ export default function SchoolPage() {
 								>
 									<div className="card-glass flex flex-col gap-1 p-4 transition-all duration-200 hover:shadow-lg hover:border-primary/25 hover:-translate-y-1">
 										<div className="flex items-center justify-between">
-											<span className="font-medium text-foreground">{r.name}</span>
-											<ExportSquare variant="Outline" size={16} color="currentColor" />
+											<span className="font-medium text-foreground">
+												{r.name}
+											</span>
+											<ExportSquare
+												variant="Outline"
+												size={16}
+												color="currentColor"
+											/>
 										</div>
 										<span className="text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/8 w-fit px-2 py-0.5 rounded-full border border-primary/15">
 											{r.type}
@@ -248,19 +260,29 @@ export default function SchoolPage() {
 				<motion.div variants={stagger.item} className="space-y-6">
 					<div className="flex items-center justify-between border-b border-border/40 pb-3">
 						<div className="space-y-1">
-							<h3 className="font-serif text-2xl font-semibold text-foreground">Student Community</h3>
-							<p className="text-sm text-muted-foreground">Peer support and campus groups</p>
+							<h3 className="font-serif text-2xl font-semibold text-foreground">
+								Student Community
+							</h3>
+							<p className="text-sm text-muted-foreground">
+								Peer support and campus groups
+							</p>
 						</div>
 						<Dialog open={isAddClubOpen} onOpenChange={setIsAddClubOpen}>
 							<DialogTrigger asChild>
-								<Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-primary/30 text-primary hover:bg-primary/5">
+								<Button
+									size="sm"
+									variant="outline"
+									className="h-8 gap-1.5 rounded-full border-primary/30 text-primary hover:bg-primary/5"
+								>
 									<Add variant="Bulk" size={14} color="currentColor" />
 									Add Group
 								</Button>
 							</DialogTrigger>
 							<DialogContent className="sm:max-w-[425px]">
 								<DialogHeader>
-									<DialogTitle className="font-serif text-xl">Add Campus Group</DialogTitle>
+									<DialogTitle className="font-serif text-xl">
+										Add Campus Group
+									</DialogTitle>
 								</DialogHeader>
 								<form onSubmit={handleAddClub} className="space-y-4 pt-4">
 									<div className="space-y-2">
@@ -332,7 +354,9 @@ export default function SchoolPage() {
 									className="card-glass flex flex-col gap-3 p-5 transition-all duration-200 hover:shadow-lg hover:border-primary/25"
 								>
 									<div className="flex justify-between items-start gap-4">
-										<h4 className="font-semibold text-foreground leading-tight">{c.name}</h4>
+										<h4 className="font-semibold text-foreground leading-tight">
+											{c.name}
+										</h4>
 										<span className="text-[10px] font-medium text-muted-foreground whitespace-nowrap bg-muted/30 px-2 py-0.5 rounded-full">
 											{formatDistanceToNow(new Date(c.createdAt), {
 												addSuffix: true,
@@ -346,38 +370,44 @@ export default function SchoolPage() {
 									{(c.tags || c.links) && (
 										<div className="flex flex-wrap items-center gap-2 mt-1 pt-3 border-t border-border/40">
 											{c.tags
-													?.split(",")
-													.map((tag) => tag.trim())
-													.filter(Boolean)
-													.map((tag) => (
-														<span
-															key={tag}
-															className="inline-flex items-center gap-1.5 rounded-full bg-primary/8 border border-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary"
-														>
-															<Tag2 variant="Bulk" size={12} color="currentColor" />
-															{tag}
-														</span>
-													))}
+												?.split(",")
+												.map((tag) => tag.trim())
+												.filter(Boolean)
+												.map((tag) => (
+													<span
+														key={tag}
+														className="inline-flex items-center gap-1.5 rounded-full bg-primary/8 border border-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary"
+													>
+														<Tag2
+															variant="Bulk"
+															size={12}
+															color="currentColor"
+														/>
+														{tag}
+													</span>
+												))}
 											{c.links
-													?.split(",")
-													.map((link) => link.trim())
-													.filter(Boolean)
-													.map((link, idx) => (
-														<a
-															key={link + idx.toString()}
-															href={
-																link.startsWith("http")
-																	? link
-																	: `https://${link}`
-															}
-															target="_blank"
-															rel="noopener noreferrer"
-															className="inline-flex items-center gap-1.5 rounded-full text-primary bg-primary/5 hover:bg-primary/10 px-2 py-0.5 text-[10px] font-semibold transition-colors border border-primary/10"
-														>
-															<ExportSquare variant="Outline" size={12} color="currentColor" />
-															Link
-														</a>
-													))}
+												?.split(",")
+												.map((link) => link.trim())
+												.filter(Boolean)
+												.map((link, idx) => (
+													<a
+														key={link + idx.toString()}
+														href={
+															link.startsWith("http") ? link : `https://${link}`
+														}
+														target="_blank"
+														rel="noopener noreferrer"
+														className="inline-flex items-center gap-1.5 rounded-full text-primary bg-primary/5 hover:bg-primary/10 px-2 py-0.5 text-[10px] font-semibold transition-colors border border-primary/10"
+													>
+														<ExportSquare
+															variant="Outline"
+															size={12}
+															color="currentColor"
+														/>
+														Link
+													</a>
+												))}
 										</div>
 									)}
 								</div>

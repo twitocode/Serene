@@ -27,16 +27,14 @@ export function CrisisBanner() {
 							In Crisis? Get Help Now.
 						</h3>
 						<p className="text-sm text-muted-foreground max-w-md">
-							If you are in immediate danger or need urgent support, please use these 24/7 McMaster and community resources.
+							If you are in immediate danger or need urgent support, please use
+							these 24/7 McMaster and community resources.
 						</p>
 					</div>
 				</div>
 
 				<div className="grid grid-cols-2 gap-3 w-full lg:w-auto">
-					<Button
-						className="gap-2 font-bold h-12 btn-playful"
-						asChild
-					>
+					<Button className="gap-2 font-bold h-12 btn-playful" asChild>
 						<a href="tel:18669255454">
 							<CallCalling variant="Bulk" size={16} color="currentColor" />
 							Good2Talk (24/7)

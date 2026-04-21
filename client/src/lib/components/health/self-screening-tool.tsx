@@ -1,8 +1,15 @@
 "use client";
 
+import {
+	ArrowRight,
+	CloseSquare,
+	InfoCircle,
+	Refresh,
+	ShieldCross,
+	TickCircle,
+} from "iconsax-reactjs";
+import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { ArrowRight, CloseSquare, InfoCircle, Refresh, ShieldCross, TickCircle } from "iconsax-reactjs";
-import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/lib/components/ui/button";
 import { Progress } from "@/lib/components/ui/progress";
 
@@ -14,8 +21,8 @@ const QUESTIONS = [
 			{ label: "Stable / Coping well", score: 0 },
 			{ label: "Stressed / Overwhelmed", score: 1 },
 			{ label: "Low / Anxious for several days", score: 2 },
-			{ label: "In crisis / Immediate danger", score: 3 }
-		]
+			{ label: "In crisis / Immediate danger", score: 3 },
+		],
 	},
 	{
 		id: "q2",
@@ -23,8 +30,8 @@ const QUESTIONS = [
 		options: [
 			{ label: "Consistent and restful", score: 0 },
 			{ label: "Having some trouble sleeping", score: 1 },
-			{ label: "Very poor / Irregular", score: 2 }
-		]
+			{ label: "Very poor / Irregular", score: 2 },
+		],
 	},
 	{
 		id: "q3",
@@ -32,9 +39,9 @@ const QUESTIONS = [
 		options: [
 			{ label: "Not at all", score: 0 },
 			{ label: "A little bit", score: 1 },
-			{ label: "Significant difficulty", score: 2 }
-		]
-	}
+			{ label: "Significant difficulty", score: 2 },
+		],
+	},
 ];
 
 export function SelfScreeningTool() {
@@ -43,11 +50,11 @@ export function SelfScreeningTool() {
 	const [isFinished, setIsFinished] = useState(false);
 
 	const handleStart = () => setCurrentStep(0);
-	
+
 	const handleAnswer = (score: number) => {
 		const newAnswers = [...answers, score];
 		setAnswers(newAnswers);
-		
+
 		if (currentStep < QUESTIONS.length - 1) {
 			setCurrentStep(currentStep + 1);
 		} else {
@@ -62,7 +69,7 @@ export function SelfScreeningTool() {
 	};
 
 	const totalScore = answers.reduce((a, b) => a + b, 0);
-	const progress = ((currentStep) / QUESTIONS.length) * 100;
+	const progress = (currentStep / QUESTIONS.length) * 100;
 
 	return (
 		<div className="card-glass relative p-6 shadow-md overflow-hidden mb-8 transition-all duration-200">
@@ -85,14 +92,23 @@ export function SelfScreeningTool() {
 								<InfoCircle variant="Bulk" size={28} color="currentColor" />
 							</div>
 							<div className="space-y-0.5">
-								<h3 className="font-serif text-2xl font-semibold text-foreground">Wellness Check-in</h3>
-								<p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Quick triage</p>
+								<h3 className="font-serif text-2xl font-semibold text-foreground">
+									Wellness Check-in
+								</h3>
+								<p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+									Quick triage
+								</p>
 							</div>
 						</div>
 						<p className="text-sm text-muted-foreground leading-relaxed">
-							Not sure where to start? Take this quick 30-second check-in to see which McMaster resources might be best for you right now.
+							Not sure where to start? Take this quick 30-second check-in to see
+							which McMaster resources might be best for you right now.
 						</p>
-						<Button onClick={handleStart} size="lg" className="btn-playful w-full gap-2 text-base font-medium group">
+						<Button
+							onClick={handleStart}
+							size="lg"
+							className="btn-playful w-full gap-2 text-base font-medium group"
+						>
 							Start Check-in
 							<ArrowRight variant="Outline" size={16} color="currentColor" />
 						</Button>
@@ -109,11 +125,15 @@ export function SelfScreeningTool() {
 								<TickCircle variant="Bulk" size={28} color="currentColor" />
 							</div>
 							<div className="space-y-0.5">
-								<h3 className="font-serif text-2xl font-semibold text-foreground">Recommended Support</h3>
-								<p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Based on your input</p>
+								<h3 className="font-serif text-2xl font-semibold text-foreground">
+									Recommended Support
+								</h3>
+								<p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+									Based on your input
+								</p>
 							</div>
 						</div>
-						
+
 						<div className="space-y-4">
 							{totalScore >= 3 ? (
 								<div className="card-glass flex gap-4 p-4 border-l-2 border-l-destructive/60">
@@ -121,28 +141,43 @@ export function SelfScreeningTool() {
 										<ShieldCross variant="Bulk" size={20} color="#ff6c6cff" />
 									</div>
 									<div className="space-y-1">
-										<h4 className="font-semibold text-foreground leading-tight">Direct Support Recommended</h4>
+										<h4 className="font-semibold text-foreground leading-tight">
+											Direct Support Recommended
+										</h4>
 										<p className="text-sm text-muted-foreground leading-relaxed">
-											Based on your answers, we recommend contacting the Student Wellness Centre for an initial consultation.
+											Based on your answers, we recommend contacting the Student
+											Wellness Centre for an initial consultation.
 										</p>
 									</div>
 								</div>
 							) : (
 								<div className="card-glass flex gap-4 p-4 border-l-2 border-l-primary/60">
 									<div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/15">
-										<ShieldCross variant="Bulk" size={20} color="currentColor" />
+										<ShieldCross
+											variant="Bulk"
+											size={20}
+											color="currentColor"
+										/>
 									</div>
 									<div className="space-y-1">
-										<h4 className="font-semibold text-foreground leading-tight">Wellness & Peer Support</h4>
+										<h4 className="font-semibold text-foreground leading-tight">
+											Wellness & Peer Support
+										</h4>
 										<p className="text-sm text-muted-foreground leading-relaxed">
-											You seem to be managing, but could benefit from peer support or wellness workshops. Check out the Student Success Centre.
+											You seem to be managing, but could benefit from peer
+											support or wellness workshops. Check out the Student
+											Success Centre.
 										</p>
 									</div>
 								</div>
 							)}
-							
+
 							<div className="grid grid-cols-2 gap-3">
-								<Button variant="outline" onClick={handleReset} className="gap-2 text-xs h-10 rounded-xl">
+								<Button
+									variant="outline"
+									onClick={handleReset}
+									className="gap-2 text-xs h-10 rounded-xl"
+								>
 									<Refresh variant="Bulk" size={14} color="currentColor" />
 									Retake
 								</Button>
@@ -162,7 +197,9 @@ export function SelfScreeningTool() {
 					>
 						<div className="space-y-4">
 							<div className="flex items-center justify-between text-xs text-muted-foreground font-medium uppercase tracking-widest">
-								<span>Question {currentStep + 1} of {QUESTIONS.length}</span>
+								<span>
+									Question {currentStep + 1} of {QUESTIONS.length}
+								</span>
 								<span>{Math.round(progress)}%</span>
 							</div>
 							<Progress value={progress} className="h-1.5" />

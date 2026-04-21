@@ -181,7 +181,11 @@ export default function CheckinPage() {
 												<div className="space-y-4 rounded-xl border border-border/60 bg-muted/20 p-4">
 													<h4 className="flex items-center gap-2 font-serif text-base font-medium">
 														<span className="size-4 flex items-center justify-center">
-															<MessageCircle variant="Bulk" size={16} color="currentColor" />
+															<MessageCircle
+																variant="Bulk"
+																size={16}
+																color="currentColor"
+															/>
 														</span>
 														Thoughts &amp; reframe
 													</h4>
@@ -217,8 +221,12 @@ export default function CheckinPage() {
 													<div className="space-y-4 rounded-xl border border-border/60 bg-muted/20 p-4">
 														<h4 className="flex items-center gap-2 font-serif text-base font-medium">
 															<span className="size-4 flex items-center justify-center">
-															<Activity variant="Bulk" size={16} color="currentColor" />
-														</span>
+																<Activity
+																	variant="Bulk"
+																	size={16}
+																	color="currentColor"
+																/>
+															</span>
 															Body check-in
 														</h4>
 														<div className="flex flex-col gap-3">

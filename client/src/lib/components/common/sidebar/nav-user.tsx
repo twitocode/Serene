@@ -54,7 +54,11 @@ export function NavUser({}: NavUserProps) {
 								<span className="truncate text-xs">{user?.email}</span>
 							</div>
 							<span className="ml-auto size-4 flex items-center justify-center">
-								<ArrangeVertical variant="Bulk" size={16} color="currentColor" />
+								<ArrangeVertical
+									variant="Bulk"
+									size={16}
+									color="currentColor"
+								/>
 							</span>
 						</SidebarMenuButton>
 					</DropdownMenuTrigger>

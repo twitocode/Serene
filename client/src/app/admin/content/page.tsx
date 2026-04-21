@@ -1,7 +1,7 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import { Add, DocumentText, Edit2, SearchNormal, Trash } from "iconsax-reactjs";
+import { Loader2 } from "lucide-react";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -277,7 +277,13 @@ export default function ContentAdminPage() {
 							onClick={() => setIsDeleteAllAlertOpen(true)}
 							disabled={content.length === 0}
 						>
-							<Trash variant="Bulk" size={16} color="currentColor" className="mr-2" /> Delete All
+							<Trash
+								variant="Bulk"
+								size={16}
+								color="currentColor"
+								className="mr-2"
+							/>{" "}
+							Delete All
 						</Button>
 						<Button
 							variant="outline"
@@ -285,14 +291,26 @@ export default function ContentAdminPage() {
 							className="rounded-full h-9 font-medium"
 							onClick={() => setIsPopulateDialogOpen(true)}
 						>
-							<SearchNormal variant="Bulk" size={16} color="currentColor" className="mr-2" /> Auto-Populate
+							<SearchNormal
+								variant="Bulk"
+								size={16}
+								color="currentColor"
+								className="mr-2"
+							/>{" "}
+							Auto-Populate
 						</Button>
 						<Button
 							size="sm"
 							className="rounded-full h-9 font-medium btn-playful"
 							onClick={openAddDialog}
 						>
-							<Add variant="Bulk" size={16} color="currentColor" className="mr-2" /> Add Content
+							<Add
+								variant="Bulk"
+								size={16}
+								color="currentColor"
+								className="mr-2"
+							/>{" "}
+							Add Content
 						</Button>
 					</div>
 				</motion.div>

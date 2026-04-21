@@ -131,8 +131,8 @@ export default function ReframingStep() {
 							{aiResult.socraticQuestion && (
 								<div className="flex gap-2">
 									<span className="mt-0.5 size-4 shrink-0 flex items-center justify-center">
-									<Lamp variant="Bulk" size={16} color="currentColor" />
-								</span>
+										<Lamp variant="Bulk" size={16} color="currentColor" />
+									</span>
 									<p className="text-sm leading-relaxed text-foreground">
 										{aiResult.socraticQuestion}
 									</p>

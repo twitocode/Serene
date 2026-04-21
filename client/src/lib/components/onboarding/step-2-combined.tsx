@@ -1,34 +1,34 @@
 "use client";
 
+import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
+import { ArrowLeft2 } from "iconsax-reactjs";
+import { useState } from "react";
 import { completeStep2, completeStep3 } from "@/lib/client/onboarding-client";
 import FormError from "@/lib/components/common/forms/form-error";
 import { OnboardingDatePicker } from "@/lib/components/onboarding/date-picker";
 import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
 } from "@/lib/components/ui/select";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
 } from "@/lib/components/ui/tanstack-form";
 import {
-  type StepTwoCombinedSchema,
-  type StepTwoCombinedValues,
-  stepTwoCombinedSchema,
+	type StepTwoCombinedSchema,
+	type StepTwoCombinedValues,
+	stepTwoCombinedSchema,
 } from "@/lib/validation";
-import { useForm } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
-import { ArrowLeft2 } from "iconsax-reactjs";
-import { useState } from "react";
 
 export function StepTwoCombined() {
 	const {
@@ -246,7 +246,12 @@ export function StepTwoCombined() {
 							className="flex-1 bg-white shadow-sm"
 							type="button"
 						>
-							<ArrowLeft2 variant="Outline" size={16} color="currentColor" className="mr-2" />
+							<ArrowLeft2
+								variant="Outline"
+								size={16}
+								color="currentColor"
+								className="mr-2"
+							/>
 							Back
 						</Button>
 						<form.Subscribe
