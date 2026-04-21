@@ -37,8 +37,9 @@ public class UsersService : IUsersService
     public async Task<UserResponse> GetUserProfileAsync(string userId)
     {
         _logger.LogInformation("Fetching profile for user: {UserId}", userId);
+        string cacheKey = "profile-" + userId;
         var userResponse = await _cache.GetOrCreateAsync(
-            $"profile-{userId}",
+            cacheKey,
             async token =>
             {
                 var userResponse = await _context

@@ -243,8 +243,9 @@ public class AuthService : IAuthService
 
     private async Task<IList<string>> GetUserRoles(User user)
     {
+        string cacheKey = "user-roles-" + user.Id;
         return await _cache.GetOrCreateAsync(
-            $"user-roles-{user.Id}",
+            cacheKey,
             async token => await _userManager.GetRolesAsync(user),
             options: new HybridCacheEntryOptions { Expiration = TimeSpan.FromMinutes(30) }
         );

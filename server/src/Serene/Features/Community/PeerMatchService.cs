@@ -133,11 +133,10 @@ public class PeerMatchService : IPeerMatchService
                 && myInterests.Contains(ui.Interest)
             )
             .GroupBy(ui => ui.UserId)
-            .Where(g => g.Count() >= 1)
             .Select(g => new
             {
                 UserId = g.Key,
-                SharedInterests = g.Select(x => x.Interest).ToList(),
+                SharedInterest = g.Select(x => x.Interest).FirstOrDefault(),
                 OverlapCount = g.Count(),
             })
             .OrderByDescending(x => x.OverlapCount)
@@ -146,7 +145,7 @@ public class PeerMatchService : IPeerMatchService
         if (candidates == null)
             return null;
 
-        var sharedInterest = candidates.SharedInterests.First();
+        var sharedInterest = candidates.SharedInterest ?? "Shared Interest";
 
         var newMatch = new PeerMatch
         {

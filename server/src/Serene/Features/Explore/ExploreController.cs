@@ -51,7 +51,7 @@ public class ExploreController : BaseApiController
         return await ExecuteWithResult(async () =>
         {
             var id = await _exploreService.AddContentAsync(request);
-            return new { id };
+            return new IdResponse(id);
         });
     }
 
