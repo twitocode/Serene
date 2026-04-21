@@ -13,6 +13,13 @@
         "**/*.xml",
         "**/*.config"
       ]
+    },
+    {
+      "name": "Run Biome Check",
+      "command": "bun",
+      "args": ["run", "check"],
+      "cwd": "client",
+      "include": ["client/**/*.{ts,tsx,js,jsx,json}"]
     }
   ]
 }

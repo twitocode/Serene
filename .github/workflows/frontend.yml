@@ -8,11 +8,16 @@ on:
     branches: [ master ]
     paths: ['client/**', '.github/workflows/frontend.yml']
 
+permissions:
+  contents: write
+
 jobs:
   build-and-lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -27,6 +32,19 @@ jobs:
         run: bun run lint
         working-directory: client
 
+      - name: Apply lint fixes
+        if: failure()
+        run: bun run check
+        working-directory: client
+
+      - name: Commit fixes
+        if: failure()
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: auto-fix linting issues [skip ci]"
+          branch: ${{ github.head_ref }}
+
       - name: Build
         run: bun run build
         working-directory: client
+
