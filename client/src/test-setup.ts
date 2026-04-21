@@ -2,13 +2,14 @@ import { JSDOM } from "jsdom";
 import "@testing-library/jest-dom";
 
 const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>", {
-  url: "http://localhost",
+	url: "http://localhost",
 });
 
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 global.window = dom.window as any;
 global.document = dom.window.document;
 global.navigator = dom.window.navigator;
-global.Node = dom.window.Node;
+global.Node = dom.window.wNode;
 global.HTMLElement = dom.window.HTMLElement;
 global.HTMLButtonElement = dom.window.HTMLButtonElement;
 global.HTMLAnchorElement = dom.window.HTMLAnchorElement;
