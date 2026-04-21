@@ -1,6 +1,7 @@
 "use client";
 
-import { Loader2, MessageSquare } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { Message } from "iconsax-reactjs";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -57,7 +58,7 @@ export default function FeedbackAdminPage() {
 			>
 				<motion.div variants={stagger.item} className="flex items-center gap-2">
 					<div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-						<MessageSquare className="size-4" />
+						<Message variant="Bulk" size={16} color="currentColor" />
 					</div>
 					<p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
 						Management

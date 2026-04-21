@@ -1,4 +1,4 @@
-import { Plus, X } from "lucide-react";
+import { Add, CloseCircle } from "iconsax-reactjs";
 import { useState } from "react";
 import FemaleBody from "@/lib/components/checkin/bodies/female-body";
 import MaleBody from "@/lib/components/checkin/bodies/male-body";
@@ -211,7 +211,7 @@ export default function SomaticStep() {
 										variant="outline"
 										onClick={addCustomSensation}
 									>
-										<Plus className="h-4 w-4" />
+										<Add variant="Bulk" size={16} color="currentColor" />
 									</Button>
 								</div>
 
@@ -233,7 +233,7 @@ export default function SomaticStep() {
 											}
 										>
 											{s}
-											<X className="h-3 w-3 opacity-70 group-hover:opacity-100" />
+											<CloseCircle variant="Bulk" size={12} color="currentColor" />
 										</Badge>
 									))}
 								</div>

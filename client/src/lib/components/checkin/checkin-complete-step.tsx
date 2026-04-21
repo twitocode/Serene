@@ -1,11 +1,4 @@
-import {
-	Activity,
-	Brain,
-	CloudLightning,
-	Heart,
-	MessageCircle,
-	Shield,
-} from "lucide-react";
+import { Activity, Flash, Health, Heart, MessageCircle, Shield } from "iconsax-reactjs";
 import { useCheckinStore } from "@/lib/components/providers/zustand-provider";
 import { Badge } from "@/lib/components/ui/badge";
 import { Button } from "@/lib/components/ui/button";
@@ -52,8 +45,8 @@ export default function CheckinCompleteStep() {
 	const MoodIcon = selectedMood
 		? {
 				vibe: Heart,
-				energy: CloudLightning,
-				mental: Brain,
+				energy: Flash,
+				mental: Health,
 				status: Shield,
 			}[selectedMood.type]
 		: null;
@@ -85,8 +78,8 @@ export default function CheckinCompleteStep() {
 					</div>
 					{MoodIcon ? (
 						<MoodIcon
-							className="size-7 shrink-0"
-							strokeWidth={2.25}
+							variant="Bulk"
+							size={28}
 							color={getMoodTypeColour(selectedMood!.type)}
 						/>
 					) : null}
@@ -105,7 +98,9 @@ export default function CheckinCompleteStep() {
 				<Card className="border-border/80 bg-card/95 shadow-sm">
 					<CardHeader className="pb-2">
 						<CardTitle className="flex items-center gap-2 font-serif text-lg">
-							<MessageCircle className="size-5 text-primary" />
+							<span className="size-5 flex items-center justify-center">
+							<MessageCircle variant="Bulk" size={20} color="currentColor" />
+						</span>
 							Thoughts &amp; reframe
 						</CardTitle>
 					</CardHeader>
@@ -142,7 +137,9 @@ export default function CheckinCompleteStep() {
 			<Card className="border-border/80 bg-card/95 shadow-sm">
 				<CardHeader className="pb-2">
 					<CardTitle className="flex items-center gap-2 font-serif text-lg">
-						<Activity className="size-5 text-primary" />
+						<span className="size-5 flex items-center justify-center">
+							<Activity variant="Bulk" size={20} color="currentColor" />
+						</span>
 						Body check-in
 					</CardTitle>
 					<CardDescription>

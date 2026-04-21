@@ -1,35 +1,34 @@
 "use client";
 
-import { useForm } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
-import { ChevronLeft } from "lucide-react";
-import { useState } from "react";
 import { completeStep2, completeStep3 } from "@/lib/client/onboarding-client";
 import FormError from "@/lib/components/common/forms/form-error";
 import { OnboardingDatePicker } from "@/lib/components/onboarding/date-picker";
 import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/lib/components/ui/select";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/lib/components/ui/tanstack-form";
-import { countries } from "@/lib/data";
 import {
-	type StepTwoCombinedSchema,
-	type StepTwoCombinedValues,
-	stepTwoCombinedSchema,
+  type StepTwoCombinedSchema,
+  type StepTwoCombinedValues,
+  stepTwoCombinedSchema,
 } from "@/lib/validation";
+import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
+import { ArrowLeft2 } from "iconsax-reactjs";
+import { useState } from "react";
 
 export function StepTwoCombined() {
 	const {
@@ -63,7 +62,7 @@ export function StepTwoCombined() {
 		dateOfBirth: hasStarted ? dateOfBirth : "",
 		gender: hasStarted && gender ? gender : "",
 		pronouns: hasStarted && pronouns ? pronouns : "",
-		countryCode: hasStarted && country ? country : "",
+		countryCode: hasStarted && country ? country : "CA",
 	};
 
 	const form = useForm({
@@ -238,48 +237,6 @@ export function StepTwoCombined() {
 						</form.Field>
 					</div>
 
-					<form.Field name="countryCode">
-						{(field) => (
-							<FormField field={field}>
-								<FormItem>
-									<FormLabel>Where do you live?</FormLabel>
-									<FormControl>
-										<Select
-											value={field.state.value}
-											onValueChange={(value) => {
-												field.handleChange(value);
-												if (field.state.meta.errorMap.onSubmit) {
-													field.setMeta((prev) => ({
-														...prev,
-														errorMap: {
-															...prev.errorMap,
-															onSubmit: undefined,
-														},
-													}));
-												}
-											}}
-											onOpenChange={(open) => {
-												if (!open) field.handleBlur();
-											}}
-										>
-											<SelectTrigger className="bg-white border border-border shadow-sm focus-visible:ring-primary/20 transition-all duration-200 w-full">
-												<SelectValue placeholder="Select your country" />
-											</SelectTrigger>
-											<SelectContent>
-												{countries.map((country) => (
-													<SelectItem key={country.code} value={country.code}>
-														{country.name}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-									</FormControl>
-									<FormMessage className="text-left" />
-								</FormItem>
-							</FormField>
-						)}
-					</form.Field>
-
 					<FormError error={serverError} />
 
 					<div className="flex gap-4">
@@ -289,7 +246,7 @@ export function StepTwoCombined() {
 							className="flex-1 bg-white shadow-sm"
 							type="button"
 						>
-							<ChevronLeft className="w-4 h-4 mr-2" />
+							<ArrowLeft2 variant="Outline" size={16} color="currentColor" className="mr-2" />
 							Back
 						</Button>
 						<form.Subscribe

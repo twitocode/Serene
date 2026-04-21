@@ -4,7 +4,7 @@ import { Group } from "@visx/group";
 import { ParentSize } from "@visx/responsive";
 import { scaleBand, scaleLinear, scaleOrdinal } from "@visx/scale";
 import { BarGroup } from "@visx/shape";
-import { Angry, Frown, Heart, Meh, Smile } from "lucide-react";
+import { EmojiHappy, EmojiNormal, EmojiSad, Heart } from "iconsax-reactjs";
 import { TrendCard } from "@/lib/components/trends/trend-card";
 import type { MoodBreakdownData } from "@/lib/hooks/queries/use-trends";
 
@@ -13,11 +13,11 @@ interface MoodBreakdownChartProps {
 }
 
 const moodIcons: Record<string, React.ElementType> = {
-	happy: Smile,
-	neutral: Meh,
-	sad: Frown,
+	happy: EmojiHappy,
+	neutral: EmojiNormal,
+	sad: EmojiNormal,
 	anxious: Heart,
-	angry: Angry,
+	angry: EmojiSad,
 };
 
 interface ChartDataItem {
@@ -137,10 +137,10 @@ export function MoodBreakdownChart({ data }: MoodBreakdownChartProps) {
 					</div>
 					<div className="flex justify-around">
 						{chartData.map((item, index) => {
-							const Icon = moodIcons[item.mood] || Meh;
+							const Icon = moodIcons[item.mood] || EmojiNormal;
 							return (
 								<div key={index} className="flex flex-col items-center">
-									<Icon className="w-5 h-5 text-muted-foreground" />
+									<Icon variant="Bulk" size={20} color="currentColor" />
 								</div>
 							);
 						})}

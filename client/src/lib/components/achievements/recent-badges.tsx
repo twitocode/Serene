@@ -1,6 +1,6 @@
 "use client";
 
-import { Trophy } from "lucide-react";
+import { Cup } from "iconsax-reactjs";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { useAchievementsQuery } from "@/lib/hooks/queries/use-achievements";
@@ -39,7 +39,7 @@ export default function RecentBadges() {
 						key={a.id}
 						className="pill-interactive flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 cursor-default"
 					>
-						<Trophy className="size-3 text-primary" />
+						<Cup variant="Bulk" size={12} color="currentColor" />
 						<span className="text-xs font-medium text-foreground">
 							{a.title}
 						</span>

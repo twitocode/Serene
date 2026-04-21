@@ -1,6 +1,6 @@
 "use client";
 
-import { Lock, Trophy } from "lucide-react";
+import { Cup, Lock } from "iconsax-reactjs";
 import { motion } from "motion/react";
 import { Card, CardContent } from "@/lib/components/ui/card";
 import type { AchievementWithStatus } from "@/lib/types/api-types";
@@ -34,10 +34,10 @@ export function BadgeCard({
 						}`}
 					>
 						{isUnlocked ? (
-							<Trophy className="size-5" />
-						) : (
-							<Lock className="size-4" />
-						)}
+						<Cup variant="Bulk" size={20} color="currentColor" />
+					) : (
+						<Lock variant="Bulk" size={16} color="currentColor" />
+					)}
 					</div>
 					<p
 						className={`text-sm font-semibold leading-tight ${

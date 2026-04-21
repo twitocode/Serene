@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, CircleDashed, ChevronRight, RefreshCw, HelpCircle, ShieldAlert } from "lucide-react";
+import { ArrowRight, CloseSquare, InfoCircle, Refresh, ShieldCross, TickCircle } from "iconsax-reactjs";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/lib/components/ui/button";
 import { Progress } from "@/lib/components/ui/progress";
@@ -82,7 +82,7 @@ export function SelfScreeningTool() {
 					>
 						<div className="flex items-center gap-4">
 							<div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-lime/15 to-lime/5 text-lime ring-1 ring-lime/20 shadow-sm">
-								<HelpCircle className="size-7" strokeWidth={1.5} />
+								<InfoCircle variant="Bulk" size={28} color="currentColor" />
 							</div>
 							<div className="space-y-0.5">
 								<h3 className="font-serif text-2xl font-semibold text-foreground">Wellness Check-in</h3>
@@ -94,7 +94,7 @@ export function SelfScreeningTool() {
 						</p>
 						<Button onClick={handleStart} size="lg" className="btn-playful w-full gap-2 text-base font-medium group">
 							Start Check-in
-							<ChevronRight className="size-4 transition-transform duration-200 group-hover:translate-x-1" />
+							<ArrowRight variant="Outline" size={16} color="currentColor" />
 						</Button>
 					</motion.div>
 				) : isFinished ? (
@@ -106,7 +106,7 @@ export function SelfScreeningTool() {
 					>
 						<div className="flex items-center gap-4">
 							<div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-lime/15 to-lime/5 text-lime ring-1 ring-lime/20 shadow-sm">
-								<CheckCircle2 className="size-7" strokeWidth={1.5} />
+								<TickCircle variant="Bulk" size={28} color="currentColor" />
 							</div>
 							<div className="space-y-0.5">
 								<h3 className="font-serif text-2xl font-semibold text-foreground">Recommended Support</h3>
@@ -118,7 +118,7 @@ export function SelfScreeningTool() {
 							{totalScore >= 3 ? (
 								<div className="card-glass flex gap-4 p-4 border-l-2 border-l-destructive/60">
 									<div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-destructive/10 ring-1 ring-destructive/15">
-										<ShieldAlert className="size-5 text-destructive" strokeWidth={1.5} />
+										<ShieldCross variant="Bulk" size={20} color="#ff6c6cff" />
 									</div>
 									<div className="space-y-1">
 										<h4 className="font-semibold text-foreground leading-tight">Direct Support Recommended</h4>
@@ -130,7 +130,7 @@ export function SelfScreeningTool() {
 							) : (
 								<div className="card-glass flex gap-4 p-4 border-l-2 border-l-primary/60">
 									<div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/15">
-										<CheckCircle2 className="size-5 text-primary" strokeWidth={1.5} />
+										<ShieldCross variant="Bulk" size={20} color="currentColor" />
 									</div>
 									<div className="space-y-1">
 										<h4 className="font-semibold text-foreground leading-tight">Wellness & Peer Support</h4>
@@ -143,7 +143,7 @@ export function SelfScreeningTool() {
 							
 							<div className="grid grid-cols-2 gap-3">
 								<Button variant="outline" onClick={handleReset} className="gap-2 text-xs h-10 rounded-xl">
-									<RefreshCw className="size-3.5" />
+									<Refresh variant="Bulk" size={14} color="currentColor" />
 									Retake
 								</Button>
 								<Button className="text-xs h-10 rounded-xl" asChild>

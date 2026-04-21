@@ -1,6 +1,7 @@
 "use client";
 
-import { Check, GraduationCap, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { Teacher, TickCircle } from "iconsax-reactjs";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -62,7 +63,7 @@ export function SchoolSettings() {
 							/>
 						) : (
 							<div className="flex size-10 items-center justify-center rounded-md bg-primary/10 shrink-0">
-								<GraduationCap className="size-5 text-primary" />
+								<Teacher variant="Bulk" size={20} color="currentColor" />
 							</div>
 						)}
 						<div className="flex-1 space-y-1">

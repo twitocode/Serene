@@ -54,6 +54,7 @@
 		"color": "^5.0.3",
 		"date-fns": "^4.1.0",
 		"embla-carousel-react": "^8.6.0",
+		"iconsax-reactjs": "^0.0.8",
 		"lucide-react": "^1.7.0",
 		"motion": "^12.23.26",
 		"next": "16.1.1",

@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, PhoneCall, ShieldAlert } from "lucide-react";
+import { CallCalling, Danger, ShieldCross } from "iconsax-reactjs";
 import { motion } from "motion/react";
 import { Button } from "@/lib/components/ui/button";
 
@@ -20,7 +20,7 @@ export function CrisisBanner() {
 			<div className="relative flex flex-col lg:flex-row items-center gap-6 justify-between">
 				<div className="flex items-center gap-4 text-center lg:text-left">
 					<div className="bg-destructive/10 p-3 rounded-full hidden sm:block ring-1 ring-destructive/20">
-						<ShieldAlert className="size-8 text-destructive" />
+						<ShieldCross variant="Bulk" size={32} color="#ff6c6cff" />
 					</div>
 					<div className="space-y-1">
 						<h3 className="text-xl font-bold text-foreground">
@@ -38,7 +38,7 @@ export function CrisisBanner() {
 						asChild
 					>
 						<a href="tel:18669255454">
-							<PhoneCall className="size-4" />
+							<CallCalling variant="Bulk" size={16} color="currentColor" />
 							Good2Talk (24/7)
 						</a>
 					</Button>
@@ -48,7 +48,7 @@ export function CrisisBanner() {
 						asChild
 					>
 						<a href="tel:9055259140,24281">
-							<AlertTriangle className="size-4" />
+							<Danger variant="Bulk" size={16} color="currentColor" />
 							Security: ext 24281
 						</a>
 					</Button>

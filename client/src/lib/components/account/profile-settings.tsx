@@ -27,7 +27,8 @@ import {
 	useUserQuery,
 } from "@/lib/hooks/queries/use-user";
 import { useForm } from "@tanstack/react-form";
-import { Check, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { TickCircle } from "iconsax-reactjs";
 import { toast } from "sonner";
 
 export function ProfileSettings() {
@@ -131,7 +132,7 @@ export function ProfileSettings() {
 										</>
 									) : (
 										<>
-											<Check className="size-4" />
+											<TickCircle variant="Outline" size={16} color="currentColor" />
 											Save Changes
 										</>
 									)}

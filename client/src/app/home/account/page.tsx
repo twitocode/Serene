@@ -1,6 +1,6 @@
 "use client";
 
-import { KeyRound, Palette, User } from "lucide-react";
+import { Colorfilter, Key, User } from "iconsax-reactjs";
 import { PreferenceSettings } from "@/lib/components/account/preference-settings";
 import { ProfileSettings } from "@/lib/components/account/profile-settings";
 import { SecuritySettings } from "@/lib/components/account/security-settings";
@@ -26,15 +26,15 @@ export default function SettingsPage() {
 			<Tabs defaultValue="profile" className="w-full">
 				<TabsList className="grid w-full max-w-lg grid-cols-3 mb-8">
 					<TabsTrigger value="profile" className="flex items-center gap-2">
-						<User className="size-4" />
+						<User variant="Bulk" size={16} color="currentColor" />
 						Profile
 					</TabsTrigger>
 					<TabsTrigger value="preferences" className="flex items-center gap-2">
-						<Palette className="size-4" />
+						<Colorfilter variant="Bulk" size={16} color="currentColor" />
 						Preferences
 					</TabsTrigger>
 					<TabsTrigger value="security" className="flex items-center gap-2">
-						<KeyRound className="size-4" />
+						<Key variant="Bulk" size={16} color="currentColor" />
 						Security
 					</TabsTrigger>
 				</TabsList>

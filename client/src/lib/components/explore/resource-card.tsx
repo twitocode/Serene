@@ -1,8 +1,8 @@
 "use client";
 
-import { ExternalLink, FileText, Video } from "lucide-react";
-import { motion } from "motion/react";
 import type { ExploreContent } from "@/lib/types";
+import { DocumentText, ExportSquare, VideoSquare } from "iconsax-reactjs";
+import { motion } from "motion/react";
 
 interface ResourceCardProps {
 	resource: ExploreContent;
@@ -31,9 +31,9 @@ export function ResourceCard({ resource, index = 0 }: ResourceCardProps) {
 					}`}
 				>
 					{isVideo ? (
-						<Video className="w-3 h-3" />
+						<VideoSquare variant="Bulk" size={12} color="currentColor" />
 					) : (
-						<FileText className="w-3 h-3" />
+						<DocumentText variant="Bulk" size={12} color="currentColor" />
 					)}
 					<span>{resource.type}</span>
 				</div>
@@ -48,7 +48,7 @@ export function ResourceCard({ resource, index = 0 }: ResourceCardProps) {
 
 			<div className="flex items-center gap-2 text-xs font-medium text-primary">
 				<span className="group-hover:underline">View resource</span>
-				<ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+				<ExportSquare variant="Outline" size={14} color="currentColor" />
 			</div>
 		</motion.a>
 	);

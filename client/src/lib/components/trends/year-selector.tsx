@@ -1,7 +1,7 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/lib/components/ui/button";
+import { ArrowLeft2, ArrowRight2 } from "iconsax-reactjs";
 
 interface YearSelectorProps {
 	year: number;
@@ -20,7 +20,7 @@ export function YearSelector({ year, onYearChange }: YearSelectorProps) {
 				onClick={() => onYearChange(year - 1)}
 				aria-label="Previous year"
 			>
-				<ChevronLeft className="size-4" />
+				<ArrowLeft2 variant="Outline" size={16} color="currentColor" />
 			</Button>
 			<div className="min-w-0 flex-1 text-center">
 				<p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
@@ -43,7 +43,7 @@ export function YearSelector({ year, onYearChange }: YearSelectorProps) {
 				disabled={year >= currentYear}
 				aria-label="Next year"
 			>
-				<ChevronRight className="size-4" />
+				<ArrowRight2 variant="Bulk" size={16} color="currentColor" />
 			</Button>
 		</div>
 	);

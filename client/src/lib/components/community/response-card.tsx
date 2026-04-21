@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { Star1 } from "iconsax-reactjs";
 import { motion } from "motion/react";
 import { Avatar, AvatarFallback } from "@/lib/components/ui/avatar";
 import type { QOTDAnswerDto } from "@/lib/types/api-types";
@@ -34,7 +34,7 @@ export const ResponseCard = ({
 						)}
 					>
 						{isMe ? (
-							<Star className="size-4 fill-current" strokeWidth={0} />
+							<Star1 variant="Bulk" size={16} color="currentColor" />
 						) : (
 							(response.username?.[0] ?? "?").toUpperCase()
 						)}

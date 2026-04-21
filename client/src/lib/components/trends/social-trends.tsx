@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, MessageSquare, Users } from "lucide-react";
+import { Heart, Message, People } from "iconsax-reactjs";
 import { TrendCard } from "@/lib/components/trends/trend-card";
 import { Badge } from "@/lib/components/ui/badge";
 import { useInterestsQuery } from "@/lib/hooks/queries/use-peers";
@@ -27,7 +27,7 @@ export function SocialTrends({ data }: SocialTrendsProps) {
 			<div className="space-y-6">
 				<div className="grid grid-cols-3 gap-4">
 					<div className="flex flex-col items-center text-center p-3 rounded-2xl bg-zinc-50 border border-zinc-100">
-						<MessageSquare className="w-5 h-5 text-zinc-400 mb-2" />
+						<Message variant="Bulk" size={20} color="currentColor" />
 						<span className="text-xl font-semibold text-foreground">
 							{answersCount}
 						</span>
@@ -36,7 +36,7 @@ export function SocialTrends({ data }: SocialTrendsProps) {
 						</span>
 					</div>
 					<div className="flex flex-col items-center text-center p-3 rounded-2xl bg-zinc-50 border border-zinc-100">
-						<Users className="w-5 h-5 text-zinc-400 mb-2" />
+						<People variant="Bulk" size={20} color="currentColor" />
 						<span className="text-xl font-semibold text-foreground">
 							{matchesCount}
 						</span>
@@ -45,7 +45,7 @@ export function SocialTrends({ data }: SocialTrendsProps) {
 						</span>
 					</div>
 					<div className="flex flex-col items-center text-center p-3 rounded-2xl bg-zinc-50 border border-zinc-100">
-						<Heart className="w-5 h-5 text-zinc-400 mb-2" />
+						<Heart variant="Bulk" size={20} color="currentColor" />
 						<span className="text-xl font-semibold text-foreground">
 							{supportCount}
 						</span>

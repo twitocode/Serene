@@ -1,9 +1,9 @@
 "use client";
 
-import { Info, MapPin, CalendarClock, ExternalLink } from "lucide-react";
-import { motion } from "motion/react";
 import { Badge } from "@/lib/components/ui/badge";
 import { Button } from "@/lib/components/ui/button";
+import { Calendar, ExportSquare, InfoCircle } from "iconsax-reactjs";
+import { motion } from "motion/react";
 
 export function SWCBookingGuide() {
 	return (
@@ -20,7 +20,7 @@ export function SWCBookingGuide() {
 			<div className="flex flex-col gap-6">
 				<div className="flex items-center gap-4">
 					<div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary ring-1 ring-primary/20 shadow-sm">
-						<CalendarClock className="size-7" strokeWidth={1.5} />
+						<Calendar variant="Bulk" size={28} color="currentColor" />
 					</div>
 					<div className="space-y-0.5">
 						<h3 className="font-serif text-2xl font-semibold text-foreground">Booking at SWC</h3>
@@ -38,7 +38,7 @@ export function SWCBookingGuide() {
 							All students begin with an initial consultation. This is a 30-minute meeting with a mental health professional to discuss your concerns and determine next steps.
 						</p>
 						<div className="bg-primary/8 border border-primary/15 p-4 rounded-2xl flex items-start gap-3">
-							<Info className="size-5 text-primary mt-0.5 shrink-0" />
+							<InfoCircle variant="Bulk" size={20} color="currentColor" />
 							<div>
 								<p className="text-sm font-medium text-primary">Wait Time Estimates</p>
 								<p className="text-xs text-muted-foreground mt-1 leading-relaxed">
@@ -67,7 +67,7 @@ export function SWCBookingGuide() {
 						<Button className="w-full gap-2 mt-4 btn-playful rounded-xl" asChild>
 							<a href="https://wellness.mcmaster.ca/services/counselling/" target="_blank" rel="noreferrer">
 								Visit SWC Website
-								<ExternalLink className="size-4" />
+								<ExportSquare variant="Outline" size={16} color="currentColor" />
 							</a>
 						</Button>
 					</div>

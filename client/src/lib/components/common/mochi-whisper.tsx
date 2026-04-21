@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { CloseCircle } from "iconsax-reactjs";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MochiHappy } from "@/lib/components/common/mochi";
@@ -116,7 +116,7 @@ export function MochiWhisper() {
 						onClick={() => closeWhisper()}
 						aria-label="Dismiss message"
 					>
-						<X className="size-4" />
+						<CloseCircle variant="Bulk" size={16} color="currentColor" />
 					</Button>
 				</motion.aside>
 			) : null}

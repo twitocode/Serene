@@ -1,40 +1,26 @@
 "use client";
 
-import { useForm } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
-import { ChevronLeft } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
 import { completeStep4 } from "@/lib/client/onboarding-client";
 import FormError from "@/lib/components/common/forms/form-error";
 import { useOnboardingStore } from "@/lib/components/providers/zustand-provider";
 import { Button } from "@/lib/components/ui/button";
 import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/lib/components/ui/select";
-import {
-	Tabs,
-	TabsContent,
-	TabsList,
-	TabsTrigger,
-} from "@/lib/components/ui/tabs";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem
 } from "@/lib/components/ui/tanstack-form";
-import { colleges, schools, universities } from "@/lib/data";
+import { schools } from "@/lib/data";
 import {
-	type StepFourSchema,
-	type StepFourValues,
-	stepFourSchema,
+    type StepFourSchema,
+    type StepFourValues,
+    stepFourSchema,
 } from "@/lib/validation";
+import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
+import { ArrowLeft2 } from "iconsax-reactjs";
+import Image from "next/image";
+import { useState } from "react";
 
 export function StepFour() {
 	const { school, setSchool, completeServerStep, goBack, hasStarted } =
@@ -95,14 +81,12 @@ export function StepFour() {
 	return (
 		<div className="text-center space-y-6 max-w-md w-full">
 			<div className="space-y-2">
-				<h2 className="text-2xl font-semibold">What school do you attend?</h2>
-				<p className="text-gray-500 text-sm">
-					Select your university or college
-				</p>
+				<h2 className="text-2xl font-semibold">Disclaimer</h2>
+
 			</div>
 
-			<div className="space-y-4">
-				<div className="flex items-center gap-4 rounded-2xl border-2 border-primary/20 bg-primary/5 p-6">
+			<div className="">
+				<div className="flex items-center gap-4 rounded-t-2xl border-2 border-b-0 border-primary/20 bg-primary/5 p-6">
 					<Image
 						src="/university_logos/McMaster University.jpg"
 						alt="McMaster Logo"
@@ -115,8 +99,8 @@ export function StepFour() {
 						<p className="text-sm text-muted-foreground">Hamilton, Ontario</p>
 					</div>
 				</div>
-				<p className="text-xs text-muted-foreground italic">
-					Serene is currently optimized for McMaster students.
+				<p className="text-sm font-medium text-primary bg-primary/10 px-4 py-2 rounded-b-2xl   inline-block mx-auto border-2 border-primary/20 bg-primary/5">
+					Serene is currently available exclusively for McMaster University students.
 				</p>
 			</div>
 
@@ -148,7 +132,7 @@ export function StepFour() {
 							className="flex-1 bg-white shadow-sm"
 							type="button"
 						>
-							<ChevronLeft className="w-4 h-4 mr-2" />
+							<ArrowLeft2 variant="Outline" size={16} color="currentColor" className="mr-2" />
 							Back
 						</Button>
 						<form.Subscribe

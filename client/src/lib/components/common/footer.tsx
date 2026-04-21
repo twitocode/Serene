@@ -1,4 +1,4 @@
-import { Heart } from "lucide-react";
+import { Heart } from "iconsax-reactjs";
 import Image from "next/image";
 import Link from "next/link";
 import SereneLogo from "@/lib/components/common/serene-logo";
@@ -22,7 +22,7 @@ export default function Footer() {
 				</div>
 				<div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-3">
 					<span className="inline-flex items-center gap-1.5 text-xs text-primary-foreground/60">
-						Made with <Heart className="size-3 fill-current" /> for students
+						Made with <Heart variant="Bulk" size={12} color="currentColor" /> for students
 					</span>
 					<Link
 						href="https://github.com/twitocode/serene"

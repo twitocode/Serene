@@ -1,42 +1,41 @@
 "use client";
 
-import {
-	ExternalLink,
-	GraduationCap,
-	Loader2,
-	Plus,
-	School as SchoolIcon,
-	Trash2,
-} from "lucide-react";
-import { motion } from "motion/react";
-import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
 import type { InstantiateSchoolRequest } from "@/lib/client/school-client";
 import {
-	addSchoolResource,
-	deleteSchoolResource,
-	getAllSchools,
-	instantiateSchool,
+  addSchoolResource,
+  deleteSchoolResource,
+  getAllSchools,
+  instantiateSchool,
 } from "@/lib/client/school-client";
 import { Button } from "@/lib/components/ui/button";
 import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
 } from "@/lib/components/ui/dialog";
 import { Input } from "@/lib/components/ui/input";
 import { Label } from "@/lib/components/ui/label";
 import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/lib/components/ui/select";
 import { schools as predefinedSchools } from "@/lib/data";
 import type { School, SchoolResource } from "@/lib/types";
+import {
+  Add,
+  Buildings as SchoolIcon,
+  Teacher,
+  Trash
+} from "iconsax-reactjs";
+import { Loader2 } from "lucide-react";
+import { motion } from "motion/react";
+import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const stagger = {
 	container: {
@@ -184,7 +183,7 @@ export default function AdminSchoolsPage() {
 			>
 				<motion.div variants={stagger.item} className="flex items-center gap-2">
 					<div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-						<SchoolIcon className="size-4" />
+						<SchoolIcon variant="Bulk" size={16} color="currentColor" />
 					</div>
 					<p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
 						Management
@@ -234,7 +233,7 @@ export default function AdminSchoolsPage() {
 											</div>
 										) : (
 											<div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
-												<GraduationCap className="size-7" />
+												<Teacher variant="Bulk" size={28} color="currentColor" />
 											</div>
 										)}
 										<div>
@@ -261,7 +260,7 @@ export default function AdminSchoolsPage() {
 											setIsAddResourceOpen(true);
 										}}
 									>
-										<Plus className="size-3.5 mr-1.5" />
+										<Add variant="Bulk" size={14} color="currentColor" className="mr-1.5" />
 										Add Resource
 									</Button>
 								</div>
@@ -286,7 +285,7 @@ export default function AdminSchoolsPage() {
 														rel="noopener noreferrer"
 														className="text-muted-foreground hover:text-primary transition-colors"
 													>
-														<ExternalLink className="size-3.5" />
+														<ExportSquare variant="Outline" size={14} color="currentColor" />
 													</a>
 												</div>
 												<Button
@@ -295,7 +294,7 @@ export default function AdminSchoolsPage() {
 													className="text-muted-foreground hover:text-destructive h-8 px-2 opacity-0 group-hover:opacity-100 transition-opacity"
 													onClick={() => handleDeleteResource(r.id)}
 												>
-													<Trash2 className="size-4" />
+													<Trash variant="Bulk" size={16} color="currentColor" />
 												</Button>
 											</div>
 										))}
@@ -342,7 +341,7 @@ export default function AdminSchoolsPage() {
 										</div>
 									) : (
 										<div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/5 text-primary/40 shadow-inner">
-											<GraduationCap className="size-5" />
+											<Teacher variant="Bulk" size={20} color="currentColor" />
 										</div>
 									)}
 									<div className="min-w-0">
@@ -360,7 +359,7 @@ export default function AdminSchoolsPage() {
 									className="text-primary hover:bg-primary/10 hover:text-primary transition-colors"
 									onClick={() => handleInstantiate(s)}
 								>
-									<Plus className="size-4" />
+									<Add variant="Bulk" size={16} color="currentColor" />
 								</Button>
 							</motion.div>
 						))}

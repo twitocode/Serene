@@ -1,37 +1,35 @@
 "use client";
 
-import { formatDistanceToNow } from "date-fns";
-import {
-	BookHeart,
-	ExternalLink,
-	GraduationCap,
-	Loader2,
-	Plus,
-	Tags,
-	UsersRound,
-} from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
 import { addSchoolClub, getMySchool } from "@/lib/client/school-client";
 import { CrisisBanner } from "@/lib/components/health/crisis-banner";
-import { SWCBookingGuide } from "@/lib/components/health/swc-booking-guide";
 import { SelfScreeningTool } from "@/lib/components/health/self-screening-tool";
+import { SWCBookingGuide } from "@/lib/components/health/swc-booking-guide";
 import { Button } from "@/lib/components/ui/button";
 import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/lib/components/ui/dialog";
 import { Input } from "@/lib/components/ui/input";
 import { Label } from "@/lib/components/ui/label";
 import { Textarea } from "@/lib/components/ui/textarea";
 import { MCMASTER_RESOURCES, schools } from "@/lib/data";
 import type { School, SchoolClub, SchoolResource } from "@/lib/types";
+import { formatDistanceToNow } from "date-fns";
+import {
+  Add,
+  Book1,
+  ExportSquare,
+  Tag2,
+  Teacher
+} from "iconsax-reactjs";
+import { Loader2 } from "lucide-react";
 import { motion } from "motion/react";
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const stagger = {
 	container: {
@@ -110,7 +108,7 @@ export default function SchoolPage() {
 		return (
 			<div className="mx-auto max-w-2xl px-4 py-8 text-center space-y-4">
 				<div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-					<BookHeart className="h-10 w-10 text-primary" />
+					<Book1 variant="Bulk" size={40} color="currentColor" />
 				</div>
 				<h2 className="text-2xl font-bold tracking-tight">Your School</h2>
 				<p className="text-muted-foreground">
@@ -120,7 +118,7 @@ export default function SchoolPage() {
 				</p>
 				<Link href="/home/account">
 					<Button variant="outline" className="gap-2 mt-4">
-						<GraduationCap className="size-4" />
+						<Teacher variant="Bulk" size={16} color="currentColor" />
 						Go to Settings
 					</Button>
 				</Link>
@@ -209,7 +207,7 @@ export default function SchoolPage() {
 									<div className="card-glass flex flex-col gap-1 p-4 transition-all duration-200 hover:shadow-lg hover:border-primary/25 hover:-translate-y-1">
 										<div className="flex items-center justify-between">
 											<span className="font-medium text-foreground">{r.name}</span>
-											<ExternalLink className="size-4 text-muted-foreground transition-colors group-hover:text-primary" />
+											<ExportSquare variant="Outline" size={16} color="currentColor" />
 										</div>
 										<span className="text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/8 w-fit px-2 py-0.5 rounded-full border border-primary/15">
 											{r.type}
@@ -231,7 +229,7 @@ export default function SchoolPage() {
 									<div className="card-glass flex flex-col gap-1 p-4 transition-all duration-200 hover:shadow-lg hover:border-primary/25 hover:-translate-y-1">
 										<div className="flex items-center justify-between">
 											<span className="font-medium text-foreground">{r.name}</span>
-											<ExternalLink className="size-4 text-muted-foreground transition-colors group-hover:text-primary" />
+											<ExportSquare variant="Outline" size={16} color="currentColor" />
 										</div>
 										<span className="text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/8 w-fit px-2 py-0.5 rounded-full border border-primary/15">
 											{r.type}
@@ -256,7 +254,7 @@ export default function SchoolPage() {
 						<Dialog open={isAddClubOpen} onOpenChange={setIsAddClubOpen}>
 							<DialogTrigger asChild>
 								<Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-primary/30 text-primary hover:bg-primary/5">
-									<Plus className="size-3.5" />
+									<Add variant="Bulk" size={14} color="currentColor" />
 									Add Group
 								</Button>
 							</DialogTrigger>
@@ -356,7 +354,7 @@ export default function SchoolPage() {
 															key={tag}
 															className="inline-flex items-center gap-1.5 rounded-full bg-primary/8 border border-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary"
 														>
-															<Tags className="size-3" />
+															<Tag2 variant="Bulk" size={12} color="currentColor" />
 															{tag}
 														</span>
 													))}
@@ -376,7 +374,7 @@ export default function SchoolPage() {
 															rel="noopener noreferrer"
 															className="inline-flex items-center gap-1.5 rounded-full text-primary bg-primary/5 hover:bg-primary/10 px-2 py-0.5 text-[10px] font-semibold transition-colors border border-primary/10"
 														>
-															<ExternalLink className="size-3" />
+															<ExportSquare variant="Outline" size={12} color="currentColor" />
 															Link
 														</a>
 													))}

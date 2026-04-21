@@ -1,6 +1,7 @@
 "use client";
 
-import { Check, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { TickCircle } from "iconsax-reactjs";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/lib/components/ui/button";
@@ -80,7 +81,7 @@ export function StrugglesSettings() {
 					</>
 				) : (
 					<>
-						<Check className="size-4 mr-2" />
+						<TickCircle variant="Outline" size={16} color="currentColor" />
 						Save Changes
 					</>
 				)}

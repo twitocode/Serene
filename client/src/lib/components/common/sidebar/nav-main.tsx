@@ -77,7 +77,11 @@ export default function NavMain({ sections }: { sections: NavSection[] }) {
 														: "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
 												)}
 											>
-												{item.icon && <item.icon className="size-4 shrink-0" />}
+												{item.icon && (
+												<span className="size-4 shrink-0 flex items-center justify-center">
+													<item.icon variant="Bulk" size={16} color="currentColor" />
+												</span>
+											)}
 												<span className="font-medium group-data-[collapsible=icon]:hidden">
 													{item.title}
 												</span>

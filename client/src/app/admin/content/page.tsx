@@ -1,6 +1,7 @@
 "use client";
 
-import { FileText, Loader2, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { Add, DocumentText, Edit2, SearchNormal, Trash } from "iconsax-reactjs";
 import { motion } from "motion/react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -257,7 +258,7 @@ export default function ContentAdminPage() {
 					<div className="flex flex-col gap-2">
 						<div className="flex items-center gap-2">
 							<div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-								<FileText className="size-4" />
+								<DocumentText variant="Bulk" size={16} color="currentColor" />
 							</div>
 							<p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
 								Management
@@ -276,7 +277,7 @@ export default function ContentAdminPage() {
 							onClick={() => setIsDeleteAllAlertOpen(true)}
 							disabled={content.length === 0}
 						>
-							<Trash2 className="mr-2 h-4 w-4" /> Delete All
+							<Trash variant="Bulk" size={16} color="currentColor" className="mr-2" /> Delete All
 						</Button>
 						<Button
 							variant="outline"
@@ -284,14 +285,14 @@ export default function ContentAdminPage() {
 							className="rounded-full h-9 font-medium"
 							onClick={() => setIsPopulateDialogOpen(true)}
 						>
-							<Search className="mr-2 h-4 w-4" /> Auto-Populate
+							<SearchNormal variant="Bulk" size={16} color="currentColor" className="mr-2" /> Auto-Populate
 						</Button>
 						<Button
 							size="sm"
 							className="rounded-full h-9 font-medium btn-playful"
 							onClick={openAddDialog}
 						>
-							<Plus className="mr-2 h-4 w-4" /> Add Content
+							<Add variant="Bulk" size={16} color="currentColor" className="mr-2" /> Add Content
 						</Button>
 					</div>
 				</motion.div>
@@ -380,7 +381,7 @@ export default function ContentAdminPage() {
 												className="h-8 w-8 rounded-lg hover:bg-sidebar-accent"
 												onClick={() => openEditDialog(item)}
 											>
-												<Pencil className="h-3.5 w-3.5" />
+												<Edit2 variant="Bulk" size={14} color="currentColor" />
 											</Button>
 											<Button
 												variant="ghost"
@@ -391,7 +392,7 @@ export default function ContentAdminPage() {
 													setIsAlertOpen(true);
 												}}
 											>
-												<Trash2 className="h-3.5 w-3.5" />
+												<Trash variant="Bulk" size={14} color="currentColor" />
 											</Button>
 										</div>
 									</TableCell>
