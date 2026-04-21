@@ -1,3 +1,4 @@
+global using Serene.Common;
 global using Serene.Features.Activities;
 global using Serene.Features.AI;
 global using Serene.Features.Auth;
@@ -8,3 +9,6 @@ global using Serene.Features.Onboarding;
 global using Serene.Features.Shared;
 global using Serene.Features.Users;
 global using Serene.Features.UserSettings;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("Serene.Tests")]

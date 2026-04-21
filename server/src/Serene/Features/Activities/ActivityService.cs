@@ -113,7 +113,7 @@ public class ActivityService : IActivityService
             Id = a.Id,
             Title = a.Title,
             Category = a.Category,
-            ScheduledDate = a.ScheduledDate.ToString(),
+            ScheduledDate = a.ScheduledDate.ToString("yyyy-MM-dd", null),
             Completed = a.Completed,
             CompletedAt = a.CompletedAt?.ToString(),
             MoodBefore = a.MoodBefore,

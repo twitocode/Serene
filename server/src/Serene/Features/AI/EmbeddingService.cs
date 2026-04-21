@@ -23,6 +23,9 @@ public class EmbeddingService : IEmbeddingService
 
     public EmbeddingService(IOptions<AIOptions> options, HybridCache cache, IDistributedCache l2)
     {
+        _cache = cache;
+        _l2 = l2;
+
         var apiKey = options.Value.OpenRouterApiKey;
 
         if (string.IsNullOrWhiteSpace(apiKey))
@@ -37,6 +40,12 @@ public class EmbeddingService : IEmbeddingService
 
         var client = new OpenAIClient(new ApiKeyCredential(apiKey), clientOptions);
         _client = client.GetEmbeddingClient(ModelName);
+    }
+
+    // Constructor for testing
+    internal EmbeddingService(EmbeddingClient client, HybridCache cache, IDistributedCache l2)
+    {
+        _client = client;
         _cache = cache;
         _l2 = l2;
     }
@@ -45,8 +54,9 @@ public class EmbeddingService : IEmbeddingService
     {
         var options = new EmbeddingGenerationOptions { Dimensions = 1024 };
 
+        string cacheKey = "embeddings-" + queryText;
         var embeddingFloats = await _cache.GetOrCreateAsync(
-            $"embeddings-{queryText}",
+            cacheKey,
             async token =>
             {
                 var response = await _client.GenerateEmbeddingAsync(queryText, options, token);
