@@ -147,7 +147,7 @@ export default function HomePage() {
 							className="btn-playful group w-full sm:w-auto"
 						>
 							Start a check-in
-							<ArrowRight variant="oultine" size={16} color="currentColor" />
+							<ArrowRight variant="Outline" size={16} color="currentColor" />
 						</Button>
 					</div>
 				</div>

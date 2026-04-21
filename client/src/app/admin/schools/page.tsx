@@ -27,6 +27,7 @@ import { schools as predefinedSchools } from "@/lib/data";
 import type { School, SchoolResource } from "@/lib/types";
 import {
   Add,
+  ExportSquare,
   Buildings as SchoolIcon,
   Teacher,
   Trash

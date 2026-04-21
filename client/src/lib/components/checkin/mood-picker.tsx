@@ -5,7 +5,11 @@ import { useIsMobile } from "@/lib/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 interface Props {
-	Icon: React.ComponentType<{ color?: string; variant?: string; size?: number }>;
+	Icon: React.ComponentType<{
+		color?: string;
+		variant?: "Outline" | "Linear" | "Broken" | "Bold" | "Bulk" | "TwoTone";
+		size?: number;
+	}>;
 	type: MoodType;
 	scrollToBottom: () => void;
 }
