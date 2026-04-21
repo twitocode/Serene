@@ -49,7 +49,7 @@ export function StepFour() {
 	});
 
 	const defaultValues: StepFourSchema = {
-		name: hasStarted && school ? school : "",
+		name: hasStarted && school ? school : "McMaster University",
 
 		countryCode: "CA",
 
@@ -101,6 +101,25 @@ export function StepFour() {
 				</p>
 			</div>
 
+			<div className="space-y-4">
+				<div className="flex items-center gap-4 rounded-2xl border-2 border-primary/20 bg-primary/5 p-6">
+					<Image
+						src="/university_logos/McMaster University.jpg"
+						alt="McMaster Logo"
+						width={60}
+						height={60}
+						className="h-15 w-auto object-contain rounded-md bg-white shadow-sm shrink-0"
+					/>
+					<div className="text-left">
+						<h3 className="text-xl font-bold">McMaster University</h3>
+						<p className="text-sm text-muted-foreground">Hamilton, Ontario</p>
+					</div>
+				</div>
+				<p className="text-xs text-muted-foreground italic">
+					Serene is currently optimized for McMaster students.
+				</p>
+			</div>
+
 			<Form>
 				<form
 					onSubmit={(e) => {
@@ -113,116 +132,16 @@ export function StepFour() {
 						{(field) => (
 							<FormField field={field}>
 								<FormItem>
-									<Tabs
-										value={activeTab}
-										onValueChange={setActiveTab}
-										className="w-full"
-									>
-										<TabsList className="grid w-full grid-cols-2">
-											<TabsTrigger value="universities">
-												Universities
-											</TabsTrigger>
-											<TabsTrigger value="colleges">Colleges</TabsTrigger>
-										</TabsList>
-
-										<TabsContent value="universities" className="space-y-4">
-											<FormControl>
-												<Select
-													value={field.state.value}
-													onValueChange={(value) => {
-														field.handleChange(value);
-														if (field.state.meta.errorMap.onSubmit) {
-															field.setMeta((prev) => ({
-																...prev,
-																errorMap: {
-																	...prev.errorMap,
-																	onSubmit: undefined,
-																},
-															}));
-														}
-													}}
-													onOpenChange={(open) => {
-														if (!open) field.handleBlur();
-													}}
-												>
-													<SelectTrigger className="bg-white border border-border shadow-sm focus-visible:ring-primary/20 transition-all duration-200 w-full">
-														<SelectValue placeholder="Select School" />
-													</SelectTrigger>
-													<SelectContent>
-														{universities.map(({ name, logo }) => (
-															<SelectItem key={name} value={name!}>
-																<div className="flex items-center gap-2">
-																	{logo && (
-																		<Image
-																			src={logo}
-																			alt=""
-																			width={20}
-																			height={20}
-																			className="w-5 h-5 object-contain"
-																		/>
-																	)}
-																	<span>{name}</span>
-																</div>
-															</SelectItem>
-														))}
-													</SelectContent>
-												</Select>
-											</FormControl>
-										</TabsContent>
-
-										<TabsContent value="colleges" className="space-y-4">
-											<FormControl>
-												<Select
-													value={field.state.value}
-													onValueChange={(value) => {
-														field.handleChange(value);
-														if (field.state.meta.errorMap.onSubmit) {
-															field.setMeta((prev) => ({
-																...prev,
-																errorMap: {
-																	...prev.errorMap,
-																	onSubmit: undefined,
-																},
-															}));
-														}
-													}}
-													onOpenChange={(open) => {
-														if (!open) field.handleBlur();
-													}}
-												>
-													<SelectTrigger className="bg-white border border-border shadow-sm focus-visible:ring-primary/20 transition-all duration-200 w-full">
-														<SelectValue placeholder="Select College" />
-													</SelectTrigger>
-													<SelectContent>
-														{colleges.map(({ name, logo }) => (
-															<SelectItem key={name} value={name!}>
-																<div className="flex items-center gap-2">
-																	{logo && (
-																		<Image
-																			src={logo}
-																			alt=""
-																			width={20}
-																			height={20}
-																			className="w-5 h-5 object-contain"
-																		/>
-																	)}
-																	<span>{name}</span>
-																</div>
-															</SelectItem>
-														))}
-													</SelectContent>
-												</Select>
-											</FormControl>
-										</TabsContent>
-									</Tabs>
-									<FormMessage />
+									<FormControl>
+										<input type="hidden" name={field.name} value="McMaster University" />
+									</FormControl>
 								</FormItem>
 							</FormField>
 						)}
 					</form.Field>
 					<FormError error={serverError} />
 
-					<div className="flex gap-4">
+					<div className="flex gap-4 pt-4">
 						<Button
 							onClick={goBack}
 							variant="outline"

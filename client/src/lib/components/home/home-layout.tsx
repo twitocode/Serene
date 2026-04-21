@@ -1,4 +1,5 @@
 "use client";
+import { AnimatePresence, motion } from "motion/react";
 import { Leaf, Lock } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { MochiWhisper } from "@/lib/components/common/mochi-whisper";
@@ -31,13 +32,25 @@ export default function HomeLayout({ children }: PropsWithChildren) {
 					<SidebarTrigger className="-ml-0.5 text-muted-foreground hover:text-foreground md:hidden" />
 					<div className="flex-1"></div>
 					<div className="flex shrink-0 items-center gap-2">
-						<div className="pill-interactive flex h-8 items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 text-primary shadow-sm">
+						<motion.div
+							key={user?.profile?.currentStreak}
+							initial={{ scale: 1 }}
+							animate={{
+								scale: [1, 1.15, 1],
+								rotate: [0, -5, 5, 0],
+							}}
+							transition={{
+								duration: 0.5,
+								ease: "backOut",
+							}}
+							className="pill-interactive flex h-8 items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 text-primary shadow-sm"
+						>
 							<Leaf className="size-3.5 animate-pulse" strokeWidth={2.5} />
 							<span className="text-xs font-semibold tabular-nums">
 								{user?.profile?.currentStreak ?? 0}{" "}
 								<span className="font-normal text-primary/80">day streak</span>
 							</span>
-						</div>
+						</motion.div>
 						<ThemeToggle />
 						{!!settings?.passwordLock && (
 							<Button

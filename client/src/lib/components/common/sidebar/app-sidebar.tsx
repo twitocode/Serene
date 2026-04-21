@@ -42,7 +42,7 @@ const sections: NavSection[] = [
 				role: "User",
 			},
 			{
-				title: "Your School",
+				title: "Health & Wellness",
 				url: "/home/schools",
 				icon: School,
 				role: "User",

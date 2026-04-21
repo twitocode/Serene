@@ -15,6 +15,9 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { addSchoolClub, getMySchool } from "@/lib/client/school-client";
+import { CrisisBanner } from "@/lib/components/health/crisis-banner";
+import { SWCBookingGuide } from "@/lib/components/health/swc-booking-guide";
+import { SelfScreeningTool } from "@/lib/components/health/self-screening-tool";
 import { Button } from "@/lib/components/ui/button";
 import {
 	Dialog,
@@ -26,8 +29,23 @@ import {
 import { Input } from "@/lib/components/ui/input";
 import { Label } from "@/lib/components/ui/label";
 import { Textarea } from "@/lib/components/ui/textarea";
-import { schools } from "@/lib/data";
+import { MCMASTER_RESOURCES, schools } from "@/lib/data";
 import type { School, SchoolClub, SchoolResource } from "@/lib/types";
+import { motion } from "motion/react";
+
+const stagger = {
+	container: {
+		animate: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
+	},
+	item: {
+		initial: { opacity: 0, y: 14 },
+		animate: {
+			opacity: 1,
+			y: 0,
+			transition: { duration: 0.45 },
+		},
+	},
+} as const;
 
 export default function SchoolPage() {
 	const [school, setSchool] = useState<School | null>(null);
@@ -116,51 +134,91 @@ export default function SchoolPage() {
 	const displayLogo = matchedSchool?.logo;
 
 	return (
-		<div className="space-y-8 max-w-5xl mx-auto px-4 py-6">
-			<div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-				<div className="flex items-center gap-4">
-					{displayLogo ? (
-						<Image
-							src={displayLogo}
-							alt=""
-							width={64}
-							height={64}
-							className="h-16 w-auto max-w-[200px] sm:max-w-[250px] object-contain rounded-md bg-white shrink-0"
-						/>
-					) : (
-						<div className="flex size-16 items-center justify-center rounded-md bg-primary/10 shrink-0">
-							<GraduationCap className="size-8 text-primary" />
-						</div>
-					)}
-					<div className="space-y-1">
-						<h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-							{school.name}
-						</h2>
-						<p className="text-muted-foreground text-sm">
-							{school.city}, {school.regionCode} &bull; Your local community
-						</p>
-					</div>
+		<div className="space-y-8 max-w-6xl mx-auto px-4 py-8">
+			<motion.header
+				initial={{ opacity: 0, y: -12 }}
+				animate={{ opacity: 1, y: 0 }}
+				className="flex flex-col items-center text-center"
+			>
+				<p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+					Campus Support
+				</p>
+				<h1 className="font-serif text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
+					{school.name === "McMaster University"
+						? "Health & Wellness Hub"
+						: school.name}
+				</h1>
+				<p className="mx-auto mt-2 max-w-lg text-sm text-muted-foreground">
+					{school.name === "McMaster University"
+						? "Official support and student resources for the McMaster community."
+						: `${school.city}, ${school.regionCode} • Your local community`}
+				</p>
+
+				{displayLogo && (
+					<></>
+					// <Image
+					// 	src={displayLogo}
+					// 	alt=""
+					// 	width={48}
+					// 	height={48}
+					// 	className="mt-6 h-10 w-auto grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
+					// />
+				)}
+			</motion.header>
+
+			<CrisisBanner />
+
+			<div className="grid gap-6 lg:grid-cols-2">
+				<div className="flex flex-col gap-6">
+					<SelfScreeningTool />
 				</div>
-				<Link href="/home/account" className="w-full sm:w-auto">
-					<Button
-						variant="outline"
-						size="sm"
-						className="gap-2 w-full sm:w-auto"
-					>
-						<GraduationCap className="size-4" />
-						Switch School
-					</Button>
-				</Link>
+				<div className="flex flex-col gap-6">
+					<SWCBookingGuide />
+				</div>
 			</div>
 
-			<div className="grid gap-6 md:grid-cols-2">
-				<div className="space-y-4">
-					<div className="flex items-center gap-2 border-b pb-2">
-						<BookHeart className="size-5 text-primary" />
-						<h3 className="text-xl font-semibold">Official Resources</h3>
+			<div className="relative flex items-center gap-4 py-2">
+				<div className="h-px flex-1 bg-border/40" />
+				<p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/60">Campus Resources</p>
+				<div className="h-px flex-1 bg-border/40" />
+			</div>
+
+			<motion.div 
+				variants={stagger.container}
+				initial="initial"
+				animate="animate"
+				className="grid gap-8 lg:grid-cols-2" 
+				id="resources"
+			>
+				<motion.div variants={stagger.item} className="space-y-6">
+					<div className="space-y-1 border-b border-border/40 pb-3">
+						<h3 className="font-serif text-2xl font-semibold text-foreground">Official Resources</h3>
+						<p className="text-sm text-muted-foreground">University-led support and services</p>
 					</div>
 
-					{school.resources && school.resources.length > 0 ? (
+					{school.name === "McMaster University" ? (
+						<div className="grid gap-3">
+							{MCMASTER_RESOURCES.map((r, i) => (
+								<a
+									key={r.url  + i.toString()}
+									href={r.url}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="group block"
+								>
+									<div className="card-glass flex flex-col gap-1 p-4 transition-all duration-200 hover:shadow-lg hover:border-primary/25 hover:-translate-y-1">
+										<div className="flex items-center justify-between">
+											<span className="font-medium text-foreground">{r.name}</span>
+											<ExternalLink className="size-4 text-muted-foreground transition-colors group-hover:text-primary" />
+										</div>
+										<span className="text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/8 w-fit px-2 py-0.5 rounded-full border border-primary/15">
+											{r.type}
+										</span>
+									</div>
+								</a>
+							))}
+						</div>
+					) : school.resources && school.resources.length > 0 ? (
 						<div className="grid gap-3">
 							{school.resources.map((r: SchoolResource) => (
 								<a
@@ -168,41 +226,43 @@ export default function SchoolPage() {
 									href={r.url}
 									target="_blank"
 									rel="noopener noreferrer"
-									className="group flex flex-col gap-1 rounded-xl border bg-card p-4 shadow-sm transition-colors hover:border-primary/50 hover:bg-primary/5"
+									className="group block"
 								>
-									<div className="flex items-center justify-between">
-										<span className="font-semibold">{r.name}</span>
-										<ExternalLink className="size-4 text-muted-foreground group-hover:text-primary transition-colors" />
+									<div className="card-glass flex flex-col gap-1 p-4 transition-all duration-200 hover:shadow-lg hover:border-primary/25 hover:-translate-y-1">
+										<div className="flex items-center justify-between">
+											<span className="font-medium text-foreground">{r.name}</span>
+											<ExternalLink className="size-4 text-muted-foreground transition-colors group-hover:text-primary" />
+										</div>
+										<span className="text-[10px] font-semibold uppercase tracking-wider text-primary bg-primary/8 w-fit px-2 py-0.5 rounded-full border border-primary/15">
+											{r.type}
+										</span>
 									</div>
-									<span className="text-sm font-medium text-primary bg-primary/10 w-fit px-2 py-0.5 rounded-full">
-										{r.type}
-									</span>
 								</a>
 							))}
 						</div>
 					) : (
-						<p className="text-sm text-muted-foreground italic bg-muted/50 rounded-lg p-4 text-center">
+						<p className="text-sm text-muted-foreground italic bg-muted/15 rounded-2xl p-8 border border-dashed text-center">
 							No official resources listed yet.
 						</p>
 					)}
-				</div>
+				</motion.div>
 
-				<div className="space-y-4">
-					<div className="flex items-center justify-between border-b pb-2">
-						<div className="flex items-center gap-2">
-							<UsersRound className="size-5 text-indigo-500" />
-							<h3 className="text-xl font-semibold">Student Community</h3>
+				<motion.div variants={stagger.item} className="space-y-6">
+					<div className="flex items-center justify-between border-b border-border/40 pb-3">
+						<div className="space-y-1">
+							<h3 className="font-serif text-2xl font-semibold text-foreground">Student Community</h3>
+							<p className="text-sm text-muted-foreground">Peer support and campus groups</p>
 						</div>
 						<Dialog open={isAddClubOpen} onOpenChange={setIsAddClubOpen}>
 							<DialogTrigger asChild>
-								<Button size="sm" variant="outline" className="h-8 gap-1">
+								<Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-primary/30 text-primary hover:bg-primary/5">
 									<Plus className="size-3.5" />
 									Add Group
 								</Button>
 							</DialogTrigger>
 							<DialogContent className="sm:max-w-[425px]">
 								<DialogHeader>
-									<DialogTitle>Add Campus Group</DialogTitle>
+									<DialogTitle className="font-serif text-xl">Add Campus Group</DialogTitle>
 								</DialogHeader>
 								<form onSubmit={handleAddClub} className="space-y-4 pt-4">
 									<div className="space-y-2">
@@ -254,7 +314,7 @@ export default function SchoolPage() {
 									<Button
 										type="submit"
 										disabled={isSubmitting}
-										className="w-full"
+										className="w-full btn-playful"
 									>
 										{isSubmitting && (
 											<Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -271,44 +331,42 @@ export default function SchoolPage() {
 							{school.clubs.map((c: SchoolClub) => (
 								<div
 									key={c.id}
-									className="flex flex-col gap-2 rounded-xl border bg-card p-4 shadow-sm"
+									className="card-glass flex flex-col gap-3 p-5 transition-all duration-200 hover:shadow-lg hover:border-primary/25"
 								>
 									<div className="flex justify-between items-start gap-4">
-										<h4 className="font-semibold leading-none">{c.name}</h4>
-										<span className="text-[10px] text-muted-foreground whitespace-nowrap">
+										<h4 className="font-semibold text-foreground leading-tight">{c.name}</h4>
+										<span className="text-[10px] font-medium text-muted-foreground whitespace-nowrap bg-muted/30 px-2 py-0.5 rounded-full">
 											{formatDistanceToNow(new Date(c.createdAt), {
 												addSuffix: true,
 											})}
 										</span>
 									</div>
-									<p className="text-sm text-muted-foreground mt-1">
+									<p className="text-sm text-muted-foreground leading-relaxed">
 										{c.summary}
 									</p>
 
 									{(c.tags || c.links) && (
-										<div className="flex flex-wrap items-center gap-2 mt-2 pt-2 border-t">
-											{c.tags &&
-												c.tags
-													.split(",")
+										<div className="flex flex-wrap items-center gap-2 mt-1 pt-3 border-t border-border/40">
+											{c.tags
+													?.split(",")
 													.map((tag) => tag.trim())
 													.filter(Boolean)
 													.map((tag) => (
 														<span
 															key={tag}
-															className="inline-flex items-center gap-1 rounded bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-secondary-foreground"
+															className="inline-flex items-center gap-1.5 rounded-full bg-primary/8 border border-primary/15 px-2 py-0.5 text-[10px] font-semibold text-primary"
 														>
 															<Tags className="size-3" />
 															{tag}
 														</span>
 													))}
-											{c.links &&
-												c.links
-													.split(",")
+											{c.links
+													?.split(",")
 													.map((link) => link.trim())
 													.filter(Boolean)
 													.map((link, idx) => (
 														<a
-															key={idx}
+															key={link + idx.toString()}
 															href={
 																link.startsWith("http")
 																	? link
@@ -316,7 +374,7 @@ export default function SchoolPage() {
 															}
 															target="_blank"
 															rel="noopener noreferrer"
-															className="inline-flex items-center gap-1 rounded text-primary hover:underline px-1 py-0.5 text-[10px] font-medium"
+															className="inline-flex items-center gap-1.5 rounded-full text-primary bg-primary/5 hover:bg-primary/10 px-2 py-0.5 text-[10px] font-semibold transition-colors border border-primary/10"
 														>
 															<ExternalLink className="size-3" />
 															Link
@@ -328,12 +386,12 @@ export default function SchoolPage() {
 							))}
 						</div>
 					) : (
-						<p className="text-sm text-muted-foreground italic bg-muted/50 rounded-lg p-4 text-center">
+						<p className="text-sm text-muted-foreground italic bg-muted/15 rounded-2xl p-8 border border-dashed text-center">
 							No campus groups added yet. Be the first to share one!
 						</p>
 					)}
-				</div>
-			</div>
+				</motion.div>
+			</motion.div>
 		</div>
 	);
 }

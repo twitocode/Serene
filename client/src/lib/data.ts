@@ -1,4 +1,32 @@
-import type { School } from "@/lib/types/index";
+import type { School, SchoolResource } from "@/lib/types/index";
+
+export const MCMASTER_RESOURCES: Omit<SchoolResource, "id" | "createdAt">[] = [
+	{
+		name: "Student Wellness Centre",
+		url: "https://wellness.mcmaster.ca/",
+		type: "Mental Health",
+	},
+	{
+		name: "Good2Talk (24/7 Support)",
+		url: "https://good2talk.ca/",
+		type: "Crisis Support",
+	},
+	{
+		name: "MSU Food Collective Centre",
+		url: "https://msumcmaster.ca/service/food-collective-centre/",
+		type: "Food Security",
+	},
+	{
+		name: "Student Success Centre",
+		url: "https://studentsuccess.mcmaster.ca/",
+		type: "Academic Support",
+	},
+	{
+		name: "Student Accessibility Services",
+		url: "https://sas.mcmaster.ca/",
+		type: "Accessibility",
+	},
+];
 
 // Get a list of countries sorted by the user's local language
 const getCountryList = (locale = window.navigator.language) => {

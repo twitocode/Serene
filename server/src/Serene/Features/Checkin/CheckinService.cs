@@ -82,10 +82,10 @@ public class CheckinService : ICheckinService
             await _context.Users.FindAsync(userId)
             ?? throw new AppException("User not found", ErrorCodes.UserNotFound);
 
+        var zone = DateTimeZoneProviders.Tzdb.GetSystemDefault();
         var instant = SystemClock.Instance.GetCurrentInstant();
         if (date.HasValue)
         {
-            var zone = DateTimeZoneProviders.Tzdb.GetSystemDefault();
             instant = date.Value.At(new LocalTime(12, 0)).InZoneStrictly(zone).ToInstant();
         }
 
@@ -107,8 +107,9 @@ public class CheckinService : ICheckinService
         await _context.Checkins.AddAsync(checkin);
         await _context.SaveChangesAsync();
 
-        // Update streak after successful check-in
-        await _streakService.UpdateStreakAsync(userId);
+        // Update streak after successful check-in, passing the target date
+        var checkinDate = date ?? SystemClock.Instance.GetCurrentInstant().InZone(zone).Date;
+        await _streakService.UpdateStreakAsync(userId, checkinDate);
 
         await _achievementService.CheckAndGrantAchievementsAsync(userId);
 

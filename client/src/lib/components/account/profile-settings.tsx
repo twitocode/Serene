@@ -1,9 +1,5 @@
 "use client";
 
-import { useForm } from "@tanstack/react-form";
-import { Check, Loader2 } from "lucide-react";
-import { toast } from "sonner";
-import { SchoolSettings } from "@/lib/components/account/school-settings";
 import { StrugglesSettings } from "@/lib/components/account/struggles-settings";
 import {
 	Avatar,
@@ -30,6 +26,9 @@ import {
 	useUpdateProfileMutation,
 	useUserQuery,
 } from "@/lib/hooks/queries/use-user";
+import { useForm } from "@tanstack/react-form";
+import { Check, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export function ProfileSettings() {
 	const { data: user, isLoading: userLoading } = useUserQuery();
@@ -143,7 +142,8 @@ export function ProfileSettings() {
 				</CardContent>
 			</Card>
 
-			<Card className="card-organic border-0 shadow-lg">
+			{/* Update School Community */}
+			{/* <Card className="card-organic border-0 shadow-lg">
 				<CardHeader className="pb-4">
 					<CardTitle className="text-xl">School Community</CardTitle>
 					<CardDescription>
@@ -153,7 +153,7 @@ export function ProfileSettings() {
 				<CardContent>
 					<SchoolSettings />
 				</CardContent>
-			</Card>
+			</Card> */}
 
 			<Card className="card-organic border-0 shadow-lg mt-6">
 				<CardHeader className="pb-4">

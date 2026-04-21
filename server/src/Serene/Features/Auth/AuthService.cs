@@ -1,12 +1,11 @@
 using System.Security.Claims;
-using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
-using NodaTime;
 using Serene.Common;
 using Serene.Data;
 using Serene.Entities;
+using Serene.Services;
 
 namespace Serene.Features.Auth;
 
@@ -25,13 +24,15 @@ public class AuthService : IAuthService
     private readonly ApplicationDbContext _context;
     private readonly ILogger<AuthService> _logger;
     private readonly HybridCache _cache;
+    private readonly IStreakService _streakService;
 
     public AuthService(
         UserManager<User> userManager,
         TokenService tokenService,
         ApplicationDbContext context,
         ILogger<AuthService> logger,
-        HybridCache hybridCache
+        HybridCache hybridCache,
+        IStreakService streakService
     )
     {
         _userManager = userManager;
@@ -39,6 +40,7 @@ public class AuthService : IAuthService
         _context = context;
         _logger = logger;
         _cache = hybridCache;
+        _streakService = streakService;
     }
 
     public async Task<CheckEmailResponse> CheckEmailAsync(string email)
@@ -135,6 +137,10 @@ public class AuthService : IAuthService
         }
 
         _logger.LogInformation("User {Email} logged in successfully", dto.Email);
+
+        // Update streak upon login
+        await _streakService.UpdateStreakAsync(user.Id);
+
         var roles = await GetUserRoles(user);
         var token = _tokenService.GenerateToken(user, roles);
 
@@ -217,6 +223,9 @@ public class AuthService : IAuthService
                     new UserLoginInfo("Google", subject, "Google")
                 );
             }
+
+            // Update streak upon login
+            await _streakService.UpdateStreakAsync(user.Id);
 
             var roles = await GetUserRoles(user);
             var token = _tokenService.GenerateToken(user, roles);
