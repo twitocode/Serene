@@ -5,7 +5,7 @@
 </h1>
 
 
-**Serene** is a premium mental health and wellness platform designed exclusively for university students, currently optimized for the **McMaster University** community. It combines evidence-based wellness tools with a user experience to support students throughout their academic journey.
+**Serene** is a mental health and wellness platform designed for **McMaster University** students. It combines evidence-based wellness tools with a user experience to support students throughout their academic journey.
 
 ![Serene Platform](https://img.shields.io/badge/Focus-Student_Wellness-emerald)
 ![Tech Stack](https://img.shields.io/badge/Stack-Next.js_%7C_ASP.NET_Core-blue)
