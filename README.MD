@@ -1,5 +1,5 @@
 
-<h1 style="display: flex; align-items: center;">
+<h1 style="display: flex; align-items: center; justify-content: center;">
   <img style="margin-right: 10px" src="./client/public/mochi/Mochi.svg" align="left" height="46px" alt="Mochi logo"/>
   <span >Serene</span>
 </h1>
