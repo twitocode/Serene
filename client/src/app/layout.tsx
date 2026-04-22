@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, Lora, Plus_Jakarta_Sans } from "next/font/google";
 import Providers from "@/lib/components/providers";
 import { Toaster } from "@/lib/components/ui/sonner";
+import { MSWProvider } from "@/mocks/msw-provider";
 import "./globals.css";
 
 const ibmPlexMono = IBM_Plex_Mono({
@@ -44,7 +45,9 @@ export default function RootLayout({
 			<body
 				className={`${ibmPlexMono.variable} ${lora.variable} ${plusJakarta.variable} font-sans antialiased`}
 			>
-				<Providers>{children}</Providers>
+				<MSWProvider>
+					<Providers>{children}</Providers>
+				</MSWProvider>
 				<Toaster
 					position="top-right"
 					toastOptions={{

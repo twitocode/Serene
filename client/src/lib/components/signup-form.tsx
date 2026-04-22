@@ -2,12 +2,12 @@
 
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { z } from "zod";
 import { auth } from "@/lib/auth";
-import GoogleButton from "@/lib/components/auth/google-button";
 import FormError from "@/lib/components/common/forms/form-error";
-import SereneLogo from "@/lib/components/common/serene-logo";
 import { Button } from "@/lib/components/ui/button";
 import { Input } from "@/lib/components/ui/input";
 import { Separator } from "@/lib/components/ui/separator";
@@ -20,42 +20,41 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/lib/components/ui/tanstack-form";
-import { cn } from "@/lib/utils";
-import { emailSchema, signupSchema } from "@/lib/validation";
 
-interface Props {
-	serverUrl: string;
-}
+const emailSchema = z.object({
+	email: z.string().email("Invalid email address"),
+});
 
-export function SignupForm({
-	className,
-	serverUrl,
-	...props
-}: React.ComponentProps<"div"> & Props) {
+const authSchema = z.object({
+	email: z.string().email("Invalid email address"),
+	password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
+export function SignupForm() {
 	const [step, setStep] = useState(1);
-	const [email, setEmail] = useState("");
 	const [signupError, setSignupError] = useState("");
 
 	const checkEmailMutation = useMutation({
 		mutationFn: auth.checkEmail,
 		onSuccess: (result) => {
-			if (result.isSuccess && result.data) {
-				if (!result.data.exists) {
-					setEmail(form.getFieldValue("email"));
+			if (result.isSuccess) {
+				if (!result.data?.exists) {
 					setStep(2);
 					setSignupError("");
 				} else {
-					setSignupError("Account already exists. Please log in instead.");
+					setSignupError("Account already exists. Please login instead.");
 				}
 			} else {
-				setSignupError(result.message || "Failed to verify email.");
+				setSignupError(
+					result.message || "An error occurred. Please try again.",
+				);
 			}
 		},
 	});
 
 	const signUpMutation = useMutation({
 		mutationFn: auth.signUp,
-		onSuccess: (result) => {
+		onSuccess: async (result) => {
 			if (result.isSuccess) {
 				window.location.href = "/onboarding";
 			} else {
@@ -68,18 +67,12 @@ export function SignupForm({
 		defaultValues: {
 			email: "",
 			password: "",
-			confirmPassword: "",
 		},
 		validators: {
-			onSubmit: signupSchema,
+			onSubmit: authSchema,
 		},
 		onSubmit: async ({ value }) => {
-			setSignupError("");
-			await signUpMutation.mutateAsync({
-				email: email,
-				password: value.password,
-				name: email.split("@")[0],
-			});
+			signUpMutation.mutate({ ...value, name: "" });
 		},
 	});
 
@@ -92,13 +85,7 @@ export function SignupForm({
 			setSignupError("");
 			checkEmailMutation.mutate(emailValue);
 		} else {
-			// Manually set error for step 1
-			form.setFieldMeta("email", (prev) => ({
-				...prev,
-				errorMap: {
-					onSubmit: [emailValidation.error.issues[0].message],
-				},
-			}));
+			setSignupError(emailValidation.error.issues[0].message);
 		}
 	};
 
@@ -108,32 +95,44 @@ export function SignupForm({
 	};
 
 	return (
-		<div className={cn("flex flex-col gap-6", className)} {...props}>
+		<div className="flex flex-col gap-6">
 			<div className="flex flex-col items-center gap-3 text-center">
-				<SereneLogo noText />
-
+				<Link
+					href="/"
+					className="flex items-center gap-3 transition-transform duration-200 hover:opacity-90"
+				>
+					<Image
+						src="/mochi/Mochi.svg"
+						alt=""
+						width={36}
+						height={36}
+						className="shrink-0 text-primary size-9"
+					/>
+				</Link>
 				<h1 className="font-serif text-2xl font-semibold tracking-tight">
-					{step === 1 ? "Create Account" : "Set Password"}
+					Create Account
 				</h1>
 				<FormDescription>
-					{step === 1 ? (
-						<>
-							Already have an account?{" "}
-							<Link href="/login" className="font-semibold hover:underline">
-								Login
-							</Link>
-						</>
-					) : (
-						<>
-							Create account for <span className="font-medium">{email}</span>
-						</>
-					)}
+					Already have an account?{" "}
+					<Link href="/login" className="font-semibold hover:underline">
+						Login
+					</Link>
 				</FormDescription>
 			</div>
 
 			<Form>
-				{step === 1 ? (
-					<form onSubmit={handleEmailSubmit} className="space-y-4">
+				<form
+					onSubmit={(e) => {
+						if (step === 1) {
+							handleEmailSubmit(e);
+						} else {
+							e.preventDefault();
+							form.handleSubmit();
+						}
+					}}
+					className="space-y-4"
+				>
+					{step === 1 ? (
 						<form.Field name="email">
 							{(field) => (
 								<FormField field={field}>
@@ -144,127 +143,83 @@ export function SignupForm({
 												type="email"
 												placeholder="m@example.com"
 												value={field.state.value}
-												onChange={(e) => {
-													field.handleChange(e.target.value);
-													if (field.state.meta.errorMap.onSubmit) {
-														field.setMeta((prev) => ({
-															...prev,
-															errorMap: {
-																...prev.errorMap,
-																onSubmit: undefined,
-															},
-														}));
-													}
-												}}
+												onBlur={field.handleBlur}
+												onChange={(e) => field.handleChange(e.target.value)}
 											/>
 										</FormControl>
-										<FormMessage />
 									</FormItem>
 								</FormField>
 							)}
 						</form.Field>
+					) : (
+						<>
+							<div className="flex flex-col gap-1">
+								<p className="text-sm font-medium">Email</p>
+								<div className="flex items-center justify-between">
+									<p className="text-sm text-muted-foreground">
+										{form.getFieldValue("email")}
+									</p>
+									<button
+										type="button"
+										onClick={handleBack}
+										className="text-xs font-semibold text-primary hover:underline"
+									>
+										Change
+									</button>
+								</div>
+							</div>
+							<form.Field name="password">
+								{(field) => (
+									<FormField field={field}>
+										<FormItem>
+											<FormLabel>Password</FormLabel>
+											<FormControl>
+												<Input
+													type="password"
+													placeholder="Enter your password"
+													value={field.state.value}
+													onBlur={field.handleBlur}
+													onChange={(e) => field.handleChange(e.target.value)}
+													autoFocus
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									</FormField>
+								)}
+							</form.Field>
+						</>
+					)}
 
-						<FormError error={signupError} />
+					<FormError error={signupError} />
 
-						<Button
-							type="submit"
-							className="w-full"
-							disabled={checkEmailMutation.isPending}
-						>
-							{checkEmailMutation.isPending ? "Checking..." : "Continue"}
-						</Button>
-					</form>
-				) : (
-					<form
-						onSubmit={(e) => {
-							e.preventDefault();
-							form.handleSubmit();
-						}}
-						className="space-y-4"
+					<form.Subscribe
+						selector={(state) => [state.canSubmit, state.isSubmitting]}
 					>
-						<form.Field name="password">
-							{(field) => (
-								<FormField field={field}>
-									<FormItem>
-										<FormLabel>Password</FormLabel>
-										<FormControl>
-											<Input
-												type="password"
-												placeholder="Enter your password"
-												value={field.state.value}
-												onChange={(e) => {
-													field.handleChange(e.target.value);
-													if (field.state.meta.errorMap.onSubmit) {
-														field.setMeta((prev) => ({
-															...prev,
-															errorMap: {
-																...prev.errorMap,
-																onSubmit: undefined,
-															},
-														}));
-													}
-												}}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								</FormField>
-							)}
-						</form.Field>
-
-						<form.Field name="confirmPassword">
-							{(field) => (
-								<FormField field={field}>
-									<FormItem>
-										<FormLabel>Confirm Password</FormLabel>
-										<FormControl>
-											<Input
-												type="password"
-												placeholder="Confirm your password"
-												value={field.state.value}
-												onChange={(e) => {
-													field.handleChange(e.target.value);
-													if (field.state.meta.errorMap.onSubmit) {
-														field.setMeta((prev) => ({
-															...prev,
-															errorMap: {
-																...prev.errorMap,
-																onSubmit: undefined,
-															},
-														}));
-													}
-												}}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								</FormField>
-							)}
-						</form.Field>
-
-						<FormError error={signupError} />
-
-						<div className="flex gap-2">
-							<Button
-								type="button"
-								variant="outline"
-								onClick={handleBack}
-								className="flex-1"
-							>
-								Back
-							</Button>
-
-							<Button
-								type="submit"
-								className="flex-1"
-								disabled={signUpMutation.isPending}
-							>
-								{signUpMutation.isPending ? "Creating..." : "Sign Up"}
-							</Button>
-						</div>
-					</form>
-				)}
+						{([canSubmit, isSubmitting]) => (
+							<div className="flex gap-3">
+								<Button
+									type="submit"
+									className="flex-1"
+									disabled={
+										(step === 1 && checkEmailMutation.isPending) ||
+										(step === 2 && (!canSubmit || isSubmitting))
+									}
+								>
+									{step === 1
+										? checkEmailMutation.isPending
+											? "Checking..."
+											: "Continue"
+										: signUpMutation.isPending
+											? "Creating account..."
+											: "Create Account"}
+								</Button>
+							</div>
+						)}
+					</form.Subscribe>
+				</form>
 			</Form>
+
 			<div className="relative my-1">
 				<div className="absolute inset-0 flex items-center">
 					<Separator className="w-full" />
@@ -275,7 +230,20 @@ export function SignupForm({
 					</span>
 				</div>
 			</div>
-			<GoogleButton serverUrl={serverUrl} />
+
+			<Button
+				variant="outline"
+				className="w-full items-center justify-center space-x-2"
+				asChild
+			>
+				<Link href="/api/auth/sign-in/google?returnUrl=http://localhost:3000/home">
+					<svg viewBox="0 0 24 24" className="size-5" fill="currentColor">
+						<path d="M3.06364 7.50914C4.70909 4.24092 8.09084 2 12 2C14.6954 2 16.959 2.99095 18.6909 4.60455L15.8227 7.47274C14.7864 6.48185 13.4681 5.97727 12 5.97727C9.39542 5.97727 7.19084 7.73637 6.40455 10.1C6.2045 10.7 6.09086 11.3409 6.09086 12C6.09086 12.6591 6.2045 13.3 6.40455 13.9C7.19084 16.2636 9.39542 18.0227 12 18.0227C13.3454 18.0227 14.4909 17.6682 15.3864 17.0682C16.4454 16.3591 17.15 15.3 17.3818 14.05H12V10.1818H21.4181C21.5364 10.8363 21.6 11.5182 21.6 12.2273C21.6 15.2727 20.5091 17.8363 18.6181 19.5773C16.9636 21.1046 14.7 22 12 22C8.09084 22 4.70909 19.7591 3.06364 16.4909C2.38638 15.1409 2 13.6136 2 12C2 10.3864 2.38638 8.85911 3.06364 7.50914Z" />
+					</svg>
+					<span className="text-sm font-medium">Sign in with Google</span>
+				</Link>
+			</Button>
+
 			<FormDescription className="px-6 text-center">
 				By clicking continue, you agree to our{" "}
 				<Link href="/terms">Terms of Service</Link> and{" "}

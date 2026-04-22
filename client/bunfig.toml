@@ -1,0 +1,3 @@
+[test]
+preload = ["./src/test-setup.tsx"]
+exclude = ["**/src/lib/components/ui/**", "**/tests/e2e/**"]
