@@ -6,10 +6,11 @@ export default defineConfig({
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
 	workers: process.env.CI ? 1 : undefined,
-	reporter: "html",
+	reporter: process.env.CI ? "github" : [["html", { open: "never" }]],
 	use: {
 		baseURL: "http://localhost:3000",
 		trace: "on-first-retry",
+		headless: true,
 	},
 	projects: [
 		{
@@ -18,8 +19,11 @@ export default defineConfig({
 		},
 	],
 	webServer: {
-		command: "bun dev",
+		command: process.env.CI ? "bun run build && bun start" : "bun dev",
 		url: "http://localhost:3000",
 		reuseExistingServer: !process.env.CI,
+		env: {
+			NEXT_PUBLIC_API_MOCKING: "enabled",
+		},
 	},
 });

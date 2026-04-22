@@ -34,9 +34,15 @@ const useTanStackFormField = () => {
 	const context = React.useContext(TanStackFormFieldContext);
 
 	const field = context?.field;
-	const firstError = field?.state.meta.errors[0];
-	const isTouched = field?.state.meta.isTouched ?? false;
-	const isValidating = field?.state.meta.isValidating ?? false;
+	const meta = field?.state.meta;
+	
+	const firstError = meta?.errors?.[0] ?? 
+		meta?.errorMap?.onSubmit?.[0] ?? 
+		meta?.errorMap?.onChange?.[0] ?? 
+		meta?.errorMap?.onBlur?.[0];
+		
+	const isTouched = meta?.isTouched ?? false;
+	const isValidating = meta?.isValidating ?? false;
 
 	const error = React.useMemo(() => {
 		if (!firstError) return undefined;
@@ -109,12 +115,12 @@ function FormLabel({
 	className,
 	...props
 }: React.ComponentProps<typeof Label>) {
-	const { error, formItemId, isTouched } = useTanStackFormField();
+	const { error, formItemId } = useTanStackFormField();
 
 	return (
 		<Label
 			data-slot="form-label"
-			data-error={isTouched && !!error}
+			data-error={!!error}
 			className={cn("data-[error=true]:text-destructive", className)}
 			htmlFor={formItemId}
 			{...props}
@@ -123,7 +129,7 @@ function FormLabel({
 }
 
 function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
-	const { error, formItemId, formDescriptionId, formMessageId, isTouched } =
+	const { error, formItemId, formDescriptionId, formMessageId } =
 		useTanStackFormField();
 
 	return (
@@ -133,11 +139,11 @@ function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
 			aria-describedby={
 				!formDescriptionId
 					? undefined
-					: !(isTouched && error)
+					: !error
 						? `${formDescriptionId}`
 						: `${formDescriptionId} ${formMessageId}`
 			}
-			aria-invalid={isTouched && !!error}
+			aria-invalid={!!error}
 			{...props}
 		/>
 	);
@@ -157,7 +163,7 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
 }
 
 function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
-	const { error, formMessageId, isValidating, isTouched } =
+	const { error, formMessageId, isValidating } =
 		useTanStackFormField();
 
 	if (isValidating) {
@@ -172,7 +178,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
 		);
 	}
 
-	if (!isTouched || !error) {
+	if (!error) {
 		return null;
 	}
 
@@ -181,7 +187,6 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
 			data-slot="form-message"
 			id={formMessageId}
 			className={cn("text-destructive text-sm", className)}
-			{...props}
 		>
 			{error}
 		</p>
@@ -196,5 +201,5 @@ export {
 	FormItem,
 	FormLabel,
 	FormMessage,
-	useTanStackFormField,
+	useFormField,
 };
