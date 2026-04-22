@@ -2,8 +2,10 @@
 
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { z } from "zod";
 import { auth } from "@/lib/auth";
 import FormError from "@/lib/components/common/forms/form-error";
 import { Button } from "@/lib/components/ui/button";
@@ -18,7 +20,6 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/lib/components/ui/tanstack-form";
-import { z } from "zod";
 
 const emailSchema = z.object({
 	email: z.string().email("Invalid email address"),
@@ -44,7 +45,9 @@ export function SignupForm() {
 					setSignupError("Account already exists. Please login instead.");
 				}
 			} else {
-				setSignupError(result.message || "An error occurred. Please try again.");
+				setSignupError(
+					result.message || "An error occurred. Please try again.",
+				);
 			}
 		},
 	});
@@ -98,9 +101,11 @@ export function SignupForm() {
 					href="/"
 					className="flex items-center gap-3 transition-transform duration-200 hover:opacity-90"
 				>
-					<img
+					<Image
 						src="/mochi/Mochi.svg"
 						alt=""
+						width={36}
+						height={36}
 						className="shrink-0 text-primary size-9"
 					/>
 				</Link>

@@ -1,4 +1,4 @@
-import { http, HttpResponse } from "msw";
+import { HttpResponse, http } from "msw";
 
 export const handlers = [
 	http.get("*/users/me", () => {
@@ -13,7 +13,7 @@ export const handlers = [
 	}),
 
 	http.post("*/auth/check-email", async ({ request }) => {
-		const body: any = await request.json();
+		const body = (await request.json()) as { email?: string };
 		if (body.email === "test@example.com") {
 			return HttpResponse.json({ isSuccess: true, data: { exists: true } });
 		}
@@ -32,7 +32,9 @@ export const handlers = [
 
 	http.get("*/users/onboarding", ({ request }) => {
 		const cookie = request.headers.get("cookie") || "";
-		const onboardingNotCompleted = cookie.includes("x-test-onboarding=incomplete");
+		const onboardingNotCompleted = cookie.includes(
+			"x-test-onboarding=incomplete",
+		);
 
 		return HttpResponse.json({
 			isSuccess: true,

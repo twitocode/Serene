@@ -1,5 +1,5 @@
-import { describe, expect, it, afterEach, mock } from "bun:test";
-import { renderHook, act } from "@testing-library/react";
+import { afterEach, describe, expect, it, mock } from "bun:test";
+import { act, renderHook } from "@testing-library/react";
 import { useIsMobile } from "./use-mobile";
 
 describe("useIsMobile", () => {
@@ -39,7 +39,7 @@ describe("useIsMobile", () => {
 
 	it("should update when window is resized", () => {
 		let changeListener: (() => void) | null = null;
-		
+
 		window.matchMedia = mock((query: string) => ({
 			matches: false,
 			media: query,
@@ -51,7 +51,7 @@ describe("useIsMobile", () => {
 			}),
 			removeEventListener: mock(() => {}),
 			dispatchEvent: () => false,
-		})) as any;
+		})) as unknown as typeof window.matchMedia;
 
 		Object.defineProperty(window, "innerWidth", {
 			writable: true,

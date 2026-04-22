@@ -1,8 +1,14 @@
-import { afterEach, describe, expect, it, mock, beforeEach } from "bun:test";
-import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
-import { LoginForm } from "./login-form";
-import React from "react";
+import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/react";
+import type React from "react";
+import { LoginForm } from "./login-form";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -28,9 +34,7 @@ describe("LoginForm", () => {
 
 	const renderWithClient = (ui: React.ReactElement) => {
 		return render(
-			<QueryClientProvider client={queryClient}>
-				{ui}
-			</QueryClientProvider>
+			<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
 		);
 	};
 
@@ -44,7 +48,10 @@ describe("LoginForm", () => {
 		// Mock checkEmail to return exists: true
 		mock.module("@/lib/auth", () => ({
 			auth: {
-				checkEmail: mock(async () => ({ isSuccess: true, data: { exists: true } })),
+				checkEmail: mock(async () => ({
+					isSuccess: true,
+					data: { exists: true },
+				})),
 				signIn: mock(async () => ({ isSuccess: true })),
 			},
 		}));
@@ -64,18 +71,25 @@ describe("LoginForm", () => {
 		// Mock checkEmail to return exists: false
 		mock.module("@/lib/auth", () => ({
 			auth: {
-				checkEmail: mock(async () => ({ isSuccess: true, data: { exists: false } })),
+				checkEmail: mock(async () => ({
+					isSuccess: true,
+					data: { exists: false },
+				})),
 			},
 		}));
 
 		renderWithClient(<LoginForm />);
 
 		const emailInput = screen.getByPlaceholderText(/m@example.com/i);
-		fireEvent.change(emailInput, { target: { value: "nonexistent@example.com" } });
+		fireEvent.change(emailInput, {
+			target: { value: "nonexistent@example.com" },
+		});
 		fireEvent.click(screen.getByRole("button", { name: /continue/i }));
 
 		await waitFor(() => {
-			expect(screen.getByText(/No accounts associated with this email/i)).toBeDefined();
+			expect(
+				screen.getByText(/No accounts associated with this email/i),
+			).toBeDefined();
 		});
 	});
 });

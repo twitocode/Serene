@@ -1,7 +1,10 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test.describe("Onboarding Flow", () => {
-	test("should navigate through onboarding steps", async ({ page, context }) => {
+	test("should navigate through onboarding steps", async ({
+		page,
+		context,
+	}) => {
 		await context.addCookies([
 			{
 				name: "session_token",

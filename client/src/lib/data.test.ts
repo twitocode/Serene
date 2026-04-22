@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { MCMASTER_RESOURCES, countries, schools } from "./data";
+import { countries, MCMASTER_RESOURCES, schools } from "./data";
 
 describe("Data structures", () => {
 	describe("MCMASTER_RESOURCES", () => {

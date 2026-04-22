@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, mock } from "bun:test";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
-import { Input } from "./input";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
+import { Input } from "./input";
 
 describe("Input component", () => {
 	afterEach(() => {
@@ -21,7 +21,7 @@ describe("Input component", () => {
 		const input = screen.getByPlaceholderText("Enter text");
 		fireEvent.change(input, { target: { value: "Hello" } });
 		expect(handleChange).toHaveBeenCalledTimes(1);
-		// Note: Since this is a controlled vs uncontrolled component test, 
+		// Note: Since this is a controlled vs uncontrolled component test,
 		// we just check if the event was fired.
 	});
 

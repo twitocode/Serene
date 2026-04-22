@@ -2,6 +2,7 @@
 
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
@@ -42,7 +43,9 @@ export function LoginForm() {
 					setStep(2);
 					setLoginError("");
 				} else {
-					setLoginError("No accounts associated with this email. Please sign up.");
+					setLoginError(
+						"No accounts associated with this email. Please sign up.",
+					);
 				}
 			} else {
 				setLoginError(result.message || "An error occurred. Please try again.");
@@ -108,9 +111,11 @@ export function LoginForm() {
 					href="/"
 					className="flex items-center gap-3 transition-transform duration-200 hover:opacity-90"
 				>
-					<img
+					<Image
 						src="/mochi/Mochi.svg"
 						alt=""
+						width={36}
+						height={36}
 						className="shrink-0 text-primary size-9"
 					/>
 				</Link>

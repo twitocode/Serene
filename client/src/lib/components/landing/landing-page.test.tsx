@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { render, screen, cleanup } from "@testing-library/react";
-import LandingPage from "./landing-page";
+import { cleanup, render, screen } from "@testing-library/react";
 import React from "react";
+import LandingPage from "./landing-page";
 
 describe("LandingPage", () => {
 	afterEach(() => {
@@ -16,13 +16,17 @@ describe("LandingPage", () => {
 
 	it("renders the 'Get Started' button", () => {
 		render(<LandingPage />);
-		const getStartedButton = screen.getByRole("button", { name: /get started/i });
+		const getStartedButton = screen.getByRole("button", {
+			name: /get started/i,
+		});
 		expect(getStartedButton).toBeDefined();
 	});
 
 	it("renders the 'I already have an account' button", () => {
 		render(<LandingPage />);
-		const loginButton = screen.getByRole("button", { name: /i already have an account/i });
+		const loginButton = screen.getByRole("button", {
+			name: /i already have an account/i,
+		});
 		expect(loginButton).toBeDefined();
 	});
 

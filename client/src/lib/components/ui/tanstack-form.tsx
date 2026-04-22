@@ -35,12 +35,13 @@ const useTanStackFormField = () => {
 
 	const field = context?.field;
 	const meta = field?.state.meta;
-	
-	const firstError = meta?.errors?.[0] ?? 
-		meta?.errorMap?.onSubmit?.[0] ?? 
-		meta?.errorMap?.onChange?.[0] ?? 
+
+	const firstError =
+		meta?.errors?.[0] ??
+		meta?.errorMap?.onSubmit?.[0] ??
+		meta?.errorMap?.onChange?.[0] ??
 		meta?.errorMap?.onBlur?.[0];
-		
+
 	const isTouched = meta?.isTouched ?? false;
 	const isValidating = meta?.isValidating ?? false;
 
@@ -163,8 +164,7 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
 }
 
 function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
-	const { error, formMessageId, isValidating } =
-		useTanStackFormField();
+	const { error, formMessageId, isValidating } = useTanStackFormField();
 
 	if (isValidating) {
 		return (

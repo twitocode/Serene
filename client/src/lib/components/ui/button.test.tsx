@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, mock } from "bun:test";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
-import { Button } from "./button";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
+import { Button } from "./button";
 
 describe("Button component", () => {
 	afterEach(() => {
@@ -21,10 +21,12 @@ describe("Button component", () => {
 	});
 
 	it("applies variant classes", () => {
-		const { rerender } = render(<Button variant="destructive">Destructive</Button>);
+		const { rerender } = render(
+			<Button variant="destructive">Destructive</Button>,
+		);
 		const button = screen.getByText("Destructive");
 		expect(button.getAttribute("data-variant")).toBe("destructive");
-		
+
 		rerender(<Button variant="outline">Outline</Button>);
 		expect(button.getAttribute("data-variant")).toBe("outline");
 	});
@@ -33,14 +35,18 @@ describe("Button component", () => {
 		const { rerender } = render(<Button size="sm">Small</Button>);
 		const button = screen.getByText("Small");
 		expect(button.getAttribute("data-size")).toBe("sm");
-		
+
 		rerender(<Button size="lg">Large</Button>);
 		expect(button.getAttribute("data-size")).toBe("lg");
 	});
 
 	it("is disabled when disabled prop is true", () => {
 		const handleClick = mock(() => {});
-		render(<Button disabled onClick={handleClick}>Disabled</Button>);
+		render(
+			<Button disabled onClick={handleClick}>
+				Disabled
+			</Button>,
+		);
 		const button = screen.getByText("Disabled");
 		expect(button.hasAttribute("disabled")).toBe(true);
 		fireEvent.click(button);
@@ -51,7 +57,7 @@ describe("Button component", () => {
 		render(
 			<Button asChild>
 				<a href="/test">Link Button</a>
-			</Button>
+			</Button>,
 		);
 		const link = screen.getByRole("link", { name: /link button/i });
 		expect(link).toBeDefined();

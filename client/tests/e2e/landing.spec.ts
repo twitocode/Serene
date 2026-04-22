@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test.describe("Landing Page", () => {
 	test.beforeEach(async ({ page }) => {
@@ -29,7 +29,9 @@ test.describe("Landing Page", () => {
 	test("should have a visible navbar with logo", async ({ page }) => {
 		// Use a more specific locator to avoid strict mode violations
 		await expect(page.getByRole("navigation").first()).toBeVisible();
-		await expect(page.getByRole("link", { name: /serene/i }).first()).toBeVisible();
+		await expect(
+			page.getByRole("link", { name: /serene/i }).first(),
+		).toBeVisible();
 	});
 
 	test("should display pillars of the platform", async ({ page }) => {

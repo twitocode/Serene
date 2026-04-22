@@ -1,8 +1,14 @@
-import { afterEach, describe, expect, it, mock, beforeEach } from "bun:test";
-import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
-import { SignupForm } from "./signup-form";
-import React from "react";
+import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/react";
+import type React from "react";
+import { SignupForm } from "./signup-form";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -28,9 +34,7 @@ describe("SignupForm", () => {
 
 	const renderWithClient = (ui: React.ReactElement) => {
 		return render(
-			<QueryClientProvider client={queryClient}>
-				{ui}
-			</QueryClientProvider>
+			<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
 		);
 	};
 
@@ -44,7 +48,10 @@ describe("SignupForm", () => {
 		// Mock checkEmail to return exists: false
 		mock.module("@/lib/auth", () => ({
 			auth: {
-				checkEmail: mock(async () => ({ isSuccess: true, data: { exists: false } })),
+				checkEmail: mock(async () => ({
+					isSuccess: true,
+					data: { exists: false },
+				})),
 				signUp: mock(async () => ({ isSuccess: true })),
 			},
 		}));
@@ -65,7 +72,10 @@ describe("SignupForm", () => {
 		// Mock checkEmail to return exists: true
 		mock.module("@/lib/auth", () => ({
 			auth: {
-				checkEmail: mock(async () => ({ isSuccess: true, data: { exists: true } })),
+				checkEmail: mock(async () => ({
+					isSuccess: true,
+					data: { exists: true },
+				})),
 			},
 		}));
 
