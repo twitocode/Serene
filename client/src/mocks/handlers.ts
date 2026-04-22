@@ -8,6 +8,7 @@ export const handlers = [
 				id: "1",
 				email: "test@example.com",
 				name: "Test User",
+				roles: [],
 			},
 		});
 	}),
@@ -56,8 +57,33 @@ export const handlers = [
 		});
 	}),
 
-	http.post("*/onboarding/step1", () => {
+	http.post("*/users/onboarding/step*", () => {
 		return HttpResponse.json({ isSuccess: true });
+	}),
+
+	http.get("*/checkin", () => {
+		return HttpResponse.json({
+			isSuccess: true,
+			data: [],
+		});
+	}),
+
+	http.post("*/checkin/reframe", () => {
+		return HttpResponse.json({
+			isSuccess: true,
+			data: {
+				suggestedReframe: "Test reframe",
+				distortion: "All-or-Nothing",
+				socraticQuestion: "Is this really true?",
+			},
+		});
+	}),
+
+	http.post("*/checkin", () => {
+		return HttpResponse.json({
+			isSuccess: true,
+			data: { success: true },
+		});
 	}),
 
 	http.get("*/settings", () => {
