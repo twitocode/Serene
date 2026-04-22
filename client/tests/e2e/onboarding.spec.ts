@@ -34,7 +34,10 @@ test.describe("Onboarding Flow", () => {
 		// Click the date picker
 		await page.getByRole("button", { name: /Select date of birth/i }).click();
 		// In shadcn calendar with dropdowns, we can select the year to be > 13 years ago
-		await page.locator("select").filter({ hasText: "2000" }).selectOption("2000");
+		await page
+			.locator("select")
+			.filter({ hasText: "2000" })
+			.selectOption("2000");
 		await page.getByRole("gridcell", { name: "15" }).first().click();
 
 		// Select Gender

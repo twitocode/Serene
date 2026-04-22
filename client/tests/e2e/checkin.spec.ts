@@ -15,8 +15,12 @@ test.describe("Check-in Flow", () => {
 		await expect(page).toHaveURL(/\/home\/checkin/, { timeout: 10000 });
 
 		// Start Check-in
-		await expect(page.getByRole("heading", { name: "Check-in", exact: true })).toBeVisible();
-		await page.getByRole("button", { name: /Start check-in|Add check-in/i }).click();
+		await expect(
+			page.getByRole("heading", { name: "Check-in", exact: true }),
+		).toBeVisible();
+		await page
+			.getByRole("button", { name: /Start check-in|Add check-in/i })
+			.click();
 
 		// Step 1: Mood
 		await expect(page.getByText(/How are you right now\?/i)).toBeVisible();
@@ -28,7 +32,9 @@ test.describe("Check-in Flow", () => {
 		await expect(
 			page.getByText(/Have you felt any physical discomfort lately\?/i),
 		).toBeVisible();
-		await expect(page.getByRole("button", { name: "Skip", exact: true })).toBeVisible();
+		await expect(
+			page.getByRole("button", { name: "Skip", exact: true }),
+		).toBeVisible();
 		await page.getByRole("button", { name: "Skip", exact: true }).click();
 
 		// Step 3: Weighing
@@ -40,7 +46,9 @@ test.describe("Check-in Flow", () => {
 
 		// Step 4: Reframing
 		await expect(page.getByText(/A kinder angle/i)).toBeVisible();
-		await page.getByPlaceholder(/Write your own reframed thought/i).fill("Test reframe");
+		await page
+			.getByPlaceholder(/Write your own reframed thought/i)
+			.fill("Test reframe");
 		await page.getByRole("button", { name: "Next", exact: true }).click();
 
 		// Step 5: Checkin Complete Step
