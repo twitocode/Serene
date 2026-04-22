@@ -20,6 +20,13 @@
       "args": ["run", "check"],
       "cwd": "client",
       "include": ["client/**/*.{ts,tsx,js,jsx,json}"]
+    },
+    {
+      "name": "Run Client Build",
+      "command": "bun",
+      "args": ["run", "build"],
+      "cwd": "client",
+      "include": ["client/**/*.{ts,tsx,js,jsx,json,css}"]
     }
   ]
 }

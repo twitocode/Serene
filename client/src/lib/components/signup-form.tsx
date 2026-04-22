@@ -72,7 +72,7 @@ export function SignupForm() {
 			onSubmit: authSchema,
 		},
 		onSubmit: async ({ value }) => {
-			signUpMutation.mutate(value);
+			signUpMutation.mutate({ ...value, name: "" });
 		},
 	});
 
